@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFFFFF"
     tools:context=".cliente.detalles_pedido_cliente">
 
     <!-- Header con ícono de flecha y título -->
@@ -16,27 +17,40 @@
         android:gravity="center_vertical"
         android:padding="16dp"
         android:background="#FFFFFF"
+        android:minHeight="56dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/baseline_arrow_back_ios_24"
-            android:contentDescription="Volver"
-            android:padding="8dp" />
+    <!-- Flecha de retroceso más pequeña -->
+    <ImageView
+        android:layout_width="44dp"
+        android:layout_height="34dp"
+        android:src="@drawable/baseline_arrow_back_ios_24"
+        android:contentDescription="Volver"
+        android:padding="8dp" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Detalles de orden"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="#000000"
-            android:layout_gravity="center"
-            android:layout_marginStart="16dp" />
+    <!-- Texto centrado usando un margin en el TextView -->
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Detalles de orden"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="#000000"
+        android:gravity="center"
+        android:layout_weight="1" />
     </LinearLayout>
+
+    <!-- Línea horizontal de color plomo justo debajo del header -->
+    <View
+    android:layout_width="match_parent"
+    android:layout_height="1dp"
+    android:background="#D3D3D3"
+    app:layout_constraintTop_toBottomOf="@id/header_layout"
+    android:layout_marginTop="-10dp" />
+
+
 
     <!-- Título de la orden -->
     <TextView
@@ -49,10 +63,8 @@
         android:textColor="#000000"
         app:layout_constraintTop_toBottomOf="@id/header_layout"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp" />
+        android:layout_marginStart="16dp" />
 
     <!-- Estado de la orden y fecha -->
     <LinearLayout
@@ -61,25 +73,26 @@
         android:orientation="horizontal"
         app:layout_constraintTop_toBottomOf="@id/order_title"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="8dp">
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Orden entregada"
-            android:textColor="#00B050"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Orden entregada"
+        android:textColor="#00B050"
+        android:textSize="14sp"
+        android:textStyle="bold" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=" • 27/08/2024"
-            android:textColor="#888888"
-            android:textSize="14sp"
-            android:layout_marginStart="8dp" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=" • 27/08/2024"
+        android:textColor="#888888"
+        android:textSize="14sp"
+        android:layout_marginStart="8dp" />
     </LinearLayout>
+
 
     <!-- Botón Ver más -->
     <TextView
@@ -95,49 +108,57 @@
         android:layout_marginTop="8dp" />
 
     <!-- Cuadro para lista de productos -->
+    <!-- Texto "Productos - 27" Fuera de la tarjeta -->
+    <TextView
+        android:id="@+id/products_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Productos - 27"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#000000"
+        app:layout_constraintTop_toBottomOf="@id/see_more"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"/>
+
+    <!-- Tarjeta para los productos -->
     <androidx.cardview.widget.CardView
         android:id="@+id/products_list_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         app:cardCornerRadius="12dp"
-        app:layout_constraintTop_toBottomOf="@id/see_more"
+        app:layout_constraintTop_toBottomOf="@id/products_title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:orientation="horizontal"
             android:padding="16dp">
 
-            <!-- Lista de productos -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Productos - 27"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="#000000" />
+            <!-- Imagen del producto -->
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="90dp"
+                android:background="@drawable/placeholder"
+                android:layout_marginEnd="16dp" />
 
-            <!-- Cada producto (repite este bloque para más productos) -->
+            <!-- Contenido del producto -->
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingVertical="8dp"
-                android:layout_marginTop="8dp">
+                android:orientation="vertical"
+                android:layout_weight="1">
 
-                <ImageView
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:background="@drawable/placeholder" />
-
+                <!-- Título del producto y el número 27 -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginStart="16dp">
+                    android:orientation="horizontal"
+                    android:gravity="start">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -150,23 +171,74 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="con tártara de la casa"
-                        android:textSize="14sp"
-                        android:textColor="#888888" />
+                        android:text="  #27"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="#000000"
+                        android:layout_marginStart="16dp" />
+                </LinearLayout>
+
+                <!-- Descripción -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="con tártara de la casa"
+                    android:textSize="14sp"
+                    android:textColor="#888888"
+                    android:layout_marginTop="4dp" />
+
+                <!-- Precio Unidad y Precio Total -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="8dp">
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="Precio Unidad S/. 15.00  •  Precio total S/. 405.00"
+                        android:layout_weight="1"
+                        android:text="Precio Unidad"
                         android:textSize="14sp"
-                        android:textColor="#000000"
-                        android:layout_marginTop="4dp" />
+                        android:textColor="#000000" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Precio Total"
+                        android:textSize="14sp"
+                        android:textColor="#000000" />
+                </LinearLayout>
+
+                <!-- Valores de los precios -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="4dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="S/. 15.00"
+                        android:textSize="14sp"
+                        android:textColor="#000000" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="S/. 405.00"
+                        android:textSize="14sp"
+                        android:textColor="#000000" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-    <!-- Cuadro para detalles de orden -->
+    <!-- CardView para Detalles de la orden -->
     <androidx.cardview.widget.CardView
         android:id="@+id/order_details_card"
         android:layout_width="match_parent"
@@ -195,22 +267,51 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
+                android:orientation="vertical"
                 android:layout_marginTop="8dp">
 
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/baseline_location_on_24"
-                    android:layout_marginEnd="8dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
+                <!-- Ubicación -->
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="El molle #156 B, Miguel Angel Lugo"
-                    android:textSize="14sp"
-                    android:textColor="#000000" />
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/baseline_location_on_24"
+                        android:layout_marginEnd="8dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="El molle #156 B"
+                        android:textSize="14sp"
+                        android:textColor="#000000" />
+                </LinearLayout>
+
+                <!-- Nombre del repartidor -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="4dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/baseline_delivery_dining_24"
+                        android:layout_marginEnd="8dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Miguel Angel Lugo"
+                        android:textSize="14sp"
+                        android:textColor="#000000" />
+                </LinearLayout>
             </LinearLayout>
 
             <!-- Costo total -->
@@ -223,6 +324,14 @@
                 android:textColor="#000000"
                 android:layout_marginTop="16dp" />
 
+            <!-- Línea gris debajo de Costo Total -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#E0E0E0"
+                android:layout_marginTop="8dp" />
+
+            <!-- Costos de productos -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -245,6 +354,7 @@
                     android:textColor="#000000" />
             </LinearLayout>
 
+            <!-- Envío -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -267,12 +377,14 @@
                     android:textColor="#000000" />
             </LinearLayout>
 
+            <!-- Línea gris debajo de Envío -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="#E0E0E0"
                 android:layout_marginTop="8dp" />
 
+            <!-- Pago Total -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

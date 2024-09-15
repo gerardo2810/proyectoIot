@@ -13,6 +13,9 @@
         android:theme="@style/Theme.Proyecto_Iot"
         tools:targetApi="31">
         <activity
+            android:name=".cliente.detalles_pedido_cliente"
+            android:exported="false" />
+        <activity
             android:name=".cliente.historial_pedidos_cliente"
             android:exported="false" />
         <activity

@@ -31,6 +31,12 @@
             android:name=".cliente.perfil_cliente"
             android:exported="false" />
         <activity
+            android:name=".repartidor.RegistroRepartidorActivity"
+            android:exported="false" />
+        <activity
+            android:name=".LoginActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>

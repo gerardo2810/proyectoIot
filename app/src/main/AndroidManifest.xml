@@ -76,6 +76,21 @@
             android:name=".repartidor.RegistroRepartidorActivity"
             android:exported="false" />
         <activity
+            android:name=".repartidor.InicioRepartidorActivity"
+            android:exported="false" />
+        <activity
+            android:name=".repartidor.NuevoPedidoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".repartidor.RecojoCurso1Activity"
+            android:exported="false" />
+        <activity
+            android:name=".repartidor.RecojoCurso2Activity"
+            android:exported="false" />
+        <activity
+            android:name=".repartidor.EntregaCurso1Activity"
+            android:exported="false" />
+        <activity
             android:name=".LoginActivity"
             android:exported="false" />
         <activity

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".EnPreparacionActivity">
+
+    <!-- Top Bar -->
+    <LinearLayout
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="#F5EAFB">
+
+        <!-- Restaurant Title and Description -->
+        <TextView
+            android:id="@+id/restaurantName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SHI - NUÁ"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:gravity="center" />
+
+        <TextView
+            android:id="@+id/restaurantCuisine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="peruvian-chinese cuisine"
+            android:textSize="14sp"
+            android:textColor="#999999"
+            android:gravity="center" />
+
+        <!-- Restaurant Status Button -->
+        <Button
+            android:id="@+id/statusButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="RESTAURANTE ABIERTO"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#3AA14F"
+            app:layout_constraintTop_toBottomOf="@id/restaurantCuisine"
+            android:drawableRight="@drawable/ic_calendar"
+            android:layout_gravity="center"
+            android:layout_marginTop="8dp"/>
+    </LinearLayout>
+
+    <!-- Tab Layout -->
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/topBar"
+        android:background="#F3EFFA"
+        app:tabIndicatorColor="#9D70B8"
+        app:tabSelectedTextColor="#9D70B8"
+        app:tabTextColor="#A0A0A0">
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/tab_accept"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Por aceptar (0)" />
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/tab_preparing"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="En preparación (1)" />
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/tab_toDeliver"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Por entregar (0)" />
+    </com.google.android.material.tabs.TabLayout>
+
+    <!-- Order List -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/orderList"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/tabLayout"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavigationView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:padding="16dp"
+        android:scrollbars="vertical"/>
+
+    <!-- Bottom Navigation Bar -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigationView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#EAE6F7"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:menu="@menu/bottom_navigation_menu" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

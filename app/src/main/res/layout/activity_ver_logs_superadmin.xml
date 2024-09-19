@@ -5,9 +5,10 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".superadmin.gestion_reportes_superadmin">
+    tools:context=".superadmin.ver_logs_superadmin">
 
     <!-- Header -->
+
     <LinearLayout
         android:id="@+id/header_layout"
         android:layout_width="match_parent"
@@ -24,6 +25,12 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <!-- Flecha hacia atrás -->
+        <ImageView
+            android:layout_width="44dp"
+            android:layout_height="32dp"
+            android:contentDescription="Volver"
+            android:padding="8dp"
+            android:src="@drawable/baseline_arrow_back_ios_24" />
 
         <!-- Título del header -->
         <TextView
@@ -31,8 +38,8 @@
             android:layout_width="147dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center"
-            android:text="Gestión de Reportes"
+            android:gravity="start"
+            android:text="Gestión de Usuarios"
             android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -121,7 +128,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
-        android:text="Lista de Opciones"
+        android:text="Logs"
         android:textColor="#000000"
         android:textSize="22sp"
         android:textStyle="bold"
@@ -130,26 +137,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/header_layout" />
 
-    <TextView
-        android:id="@+id/textView7"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="50dp"
-        android:layout_marginTop="150dp"
-        android:text="Elija una opción"
-        android:textColor="#000000"
-        android:textSize="13sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/header_layout" />
-
     <ScrollView
-        android:layout_width="401dp"
-        android:layout_height="415dp"
-        android:layout_marginTop="180dp"
+        android:layout_width="389dp"
+        android:layout_height="477dp"
+        android:layout_marginTop="40dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/header_layout">
+        app:layout_constraintTop_toBottomOf="@+id/textView4">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -157,12 +151,14 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Opcion 1 -->
+            <!-- Usuarios -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="8dp"
-                android:layout_marginBottom="18dp">
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -176,9 +172,10 @@
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:layout_marginEnd="16dp"
-                        android:background="@drawable/icon_lista_reportes_2" />
+                        android:background="@drawable/circle_shape"
+                        android:src="@drawable/placeholder" />
 
-                    <!-- Opcion -->
+                    <!-- Información de la solicitud -->
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -188,32 +185,27 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Reportes Recibidos"
+                            android:text="El administrador de Pardos chicken ha creado una nueva sede"
                             android:textColor="#000000"
-                            android:textSize="16sp"
-                            android:textStyle="bold" />
+                            android:textSize="16sp" />
                     </LinearLayout>
 
-                    <!-- Flecha hacia la derecha -->
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/baseline_arrow_forward_ios_24"
-                        android:tint="#888888" />
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>
 
+            <!-- Usuarios -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="8dp"
-                android:layout_marginBottom="16dp">
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="#FFFFFF"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:padding="16dp">
@@ -223,9 +215,10 @@
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:layout_marginEnd="16dp"
-                        android:background="@drawable/icon_generar_reporte" />
+                        android:background="@drawable/circle_shape"
+                        android:src="@drawable/placeholder" />
 
-                    <!-- Información del pedido -->
+                    <!-- Información de la solicitud -->
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -235,24 +228,19 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Generar un reporte de ventas"
+                            android:text="El repartidor Julio Julian ha sido deshabilitado"
                             android:textColor="#000000"
-                            android:textSize="15.5sp"
-                            android:textStyle="bold" />
-
+                            android:textSize="16sp" />
                     </LinearLayout>
 
-                    <!-- Flecha hacia la derecha -->
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/baseline_arrow_forward_ios_24"
-                        android:tint="#888888" />
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>
+
+
 
         </LinearLayout>
+
     </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

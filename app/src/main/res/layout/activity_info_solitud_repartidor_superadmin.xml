@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".superadmin.info_usuario_superadmin">
+    tools:context=".superadmin.info_solitud_repartidor_superadmin">
 
     <!-- Header -->
     <LinearLayout
@@ -136,7 +136,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
-        android:text="Lista de Usuarios"
+        android:text="Información de la solicitud"
         android:textColor="#000000"
         android:textSize="22sp"
         android:textStyle="bold"
@@ -148,7 +148,7 @@
     <ScrollView
         android:id="@+id/scrollViewInfo"
         android:layout_width="360dp"
-        android:layout_height="330dp"
+        android:layout_height="250dp"
         android:layout_marginTop="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.49"
@@ -180,7 +180,7 @@
                     android:layout_width="90dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Ana Armas Antuna"
+                    android:text="David Dario Donostio"
                     android:textColor="#000000" />
             </LinearLayout>
 
@@ -204,7 +204,7 @@
                     android:layout_width="90dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="45786321"
+                    android:text="45789321"
                     android:textColor="#000000" />
             </LinearLayout>
 
@@ -228,7 +228,7 @@
                     android:layout_width="90dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="anaarmas@gmail.com"
+                    android:text="daviddario@gmail.com"
                     android:textColor="#000000" />
             </LinearLayout>
 
@@ -252,31 +252,7 @@
                     android:layout_width="90dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="999999911"
-                    android:textColor="#000000" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="12dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="10dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:layout_weight="1"
-                    android:text="OCUPACIÓN"
-                    android:textColor="#000000"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/textViewOcupacion"
-                    android:layout_width="90dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Administradora"
+                    android:text="999999912"
                     android:textColor="#000000" />
             </LinearLayout>
 
@@ -300,7 +276,7 @@
                     android:layout_width="90dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Papa John’s"
+                    android:text="MC Donald’s"
                     android:textColor="#000000" />
             </LinearLayout>
 
@@ -324,34 +300,64 @@
                     android:layout_width="90dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Jr. Las aguilas 123"
+                    android:text="Jr. Las aguilas 983"
                     android:textColor="#000000" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="20dp"
-                android:layout_marginStart="5dp"
+                android:layout_marginBottom="12dp"
                 android:orientation="horizontal">
 
-                <Switch
-                    android:id="@+id/estadoSwitch"
-                    android:layout_width="wrap_content"
+                <TextView
+                    android:layout_width="10dp"
                     android:layout_height="wrap_content"
-                    android:text="ESTADO DE CUENTA"
-                    android:textColor="@color/black"
-                    android:textOff="Desactivado"
-                    android:textOn="Activado"
-                    android:textStyle="bold"
-                    android:thumbTint="@color/white"
-                    android:trackTint="@color/green" />
+                    android:layout_marginStart="5dp"
+                    android:layout_weight="1"
+                    android:text="CV"
+                    android:textColor="#000000"
+                    android:textStyle="bold" />
 
+                <ImageView
+                    android:id="@+id/imageView4"
+                    android:layout_width="90dp"
+                    android:layout_height="20dp"
+                    android:layout_weight="1"
+                    app:srcCompat="@drawable/pdf_SA" />
 
             </LinearLayout>
 
         </LinearLayout>
 
     </ScrollView>
+
+    <Button
+        android:id="@+id/btnAceptar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:layout_marginStart="70dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/button_registro_background"
+        android:padding="10dp"
+        android:text="Aceptar"
+        android:textColor="@android:color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/scrollViewInfo" />
+
+    <Button
+        android:id="@+id/btnRechazar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="70dp"
+        android:background="@drawable/button_rechazar_bg"
+        android:padding="10dp"
+        android:text="Rechazar"
+        android:textColor="@android:color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/scrollViewInfo" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

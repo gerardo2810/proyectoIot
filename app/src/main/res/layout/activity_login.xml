@@ -68,6 +68,7 @@
         android:layout_width="292dp"
         android:layout_height="43dp"
         android:text="Quiero ser repartidor"
+        android:onClick="abrirPagRegistroRepartidor"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.493"

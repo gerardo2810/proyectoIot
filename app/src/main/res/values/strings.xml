@@ -1,5 +1,10 @@
 <resources>
     <string name="app_name">Proyecto_Iot</string>
     <string name="chinawork_chifa">Chinawork-Chifa</string>
-
+    <string-array name="document_types">
+        <item>Tipo de Documento de Identidad</item>
+        <item>DNI</item>
+        <item>Pasaporte</item>
+        <item>Carnet de Extranjería</item>
+    </string-array>
 </resources>

@@ -13,6 +13,9 @@
         android:theme="@style/Theme.Proyecto_Iot"
         tools:targetApi="31">
         <activity
+            android:name=".admin_restaurante.reportes_restaurante"
+            android:exported="false" />
+        <activity
             android:name=".admin_restaurante.historial_ordenes"
             android:exported="false" />
         <activity

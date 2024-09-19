@@ -7,4 +7,10 @@
         <item>Pasaporte</item>
         <item>Carnet de Extranjería</item>
     </string-array>
+    <string-array name="spinner_roles">
+        <item>-Seleccionar-</item>
+        <item>Administradores</item>
+        <item>Repartidores</item>
+        <item>Clientes</item>
+    </string-array>
 </resources>

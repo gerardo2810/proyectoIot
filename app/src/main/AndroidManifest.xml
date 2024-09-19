@@ -13,6 +13,24 @@
         android:theme="@style/Theme.Proyecto_Iot"
         tools:targetApi="31">
         <activity
+            android:name=".superadmin.gestion_reportes_superadmin"
+            android:exported="false" />
+        <activity
+            android:name=".superadmin.solicitudes_repartidores_superadmin"
+            android:exported="false" />
+        <activity
+            android:name=".superadmin.info_usuario_superadmin"
+            android:exported="false" />
+        <activity
+            android:name=".superadmin.registro_nuevoadmin_superadmin"
+            android:exported="false" />
+        <activity
+            android:name=".superadmin.lista_usuarios_superadmin"
+            android:exported="false" />
+        <activity
+            android:name=".superadmin.gestion_usuarios_superadmin"
+            android:exported="false" />
+        <activity
             android:name=".cliente.carrito_cliente"
             android:exported="false" />
         <activity

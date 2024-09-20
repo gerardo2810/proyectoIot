@@ -96,7 +96,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#F3EFFA"
-            app:layout_constraintTop_toBottomOf="@id/topBar"
             app:tabIndicatorColor="#9D70B8"
             app:tabSelectedTextColor="#9D70B8"
             app:tabTextColor="#A0A0A0">
@@ -336,6 +335,14 @@
                 android:textSize="13sp"
                 android:textStyle="bold" />
 
+            <Button
+                android:id="@+id/button4"
+                android:layout_width="wrap_content"
+                android:layout_height="38dp"
+                android:layout_weight="1"
+                android:text="Listo para entregar"
+                android:textSize="12sp" />
+
         </LinearLayout>
 
         <ImageView
@@ -343,14 +350,6 @@
             android:layout_height="24dp"
             android:src="@drawable/baseline_arrow_forward_ios_24"
             android:tint="#888888" />
-
-        <Button
-            android:id="@+id/button4"
-            android:layout_width="wrap_content"
-            android:layout_height="38dp"
-            android:layout_weight="1"
-            android:text="Listo para entregar"
-            android:textSize="12sp" />
 
     </LinearLayout>
 

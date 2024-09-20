@@ -182,8 +182,7 @@
             android:src="@drawable/outline_menu_book_24"
             android:scaleType="centerCrop"
             android:background="@drawable/circle_shape"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/view_top_line" />
+            app:layout_constraintStart_toStartOf="parent" />
 
         <!-- Información del pedido (ID, dirección, precio) -->
         <LinearLayout

@@ -323,12 +323,8 @@
                     android:id="@+id/imageView4"
                     android:layout_width="90dp"
                     android:layout_height="20dp"
-<<<<<<< HEAD
                     android:layout_weight="1"
                     app:srcCompat="@drawable/pdf_sa" />
-=======
-                    android:layout_weight="1" />
->>>>>>> f2081b87bf021df7b0a0299b561609ec9376b789
 
             </LinearLayout>
 

@@ -103,6 +103,9 @@
             android:name=".repartidor.EntregaCurso1Activity"
             android:exported="false" />
         <activity
+            android:name=".repartidor.EntregaCurso2Activity"
+            android:exported="false" />
+        <activity
             android:name=".LoginActivity"
             android:exported="false" />
         <activity

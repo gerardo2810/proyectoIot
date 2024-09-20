@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
-    tools:context=".admin_restaurante.horarios_restaurante">
+
+    tools:context=".admin_restaurante.abrir_restaurante">
 
     <!-- Card para nombre del restaurante -->
     <androidx.cardview.widget.CardView
@@ -52,165 +53,105 @@
 
     </androidx.cardview.widget.CardView>
 
-
-    <!-- Título HORARIOS -->
-    <TextView
-        android:id="@+id/title_horarios"
-        android:layout_width="wrap_content"
+    <!-- Estado del restaurante -->
+    <LinearLayout
+        android:id="@+id/status_layout"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="HORARIOS"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:layout_marginTop="16dp"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp"
         app:layout_constraintTop_toBottomOf="@id/top_bar_card"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:gravity="center">
 
-    <!-- Descripción -->
-    <TextView
-        android:id="@+id/description_horarios"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Aquí podrás configurar los horarios de tu local."
-        android:textSize="14sp"
-        android:layout_marginTop="4dp"
-        app:layout_constraintTop_toBottomOf="@id/title_horarios"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <Button
+            android:id="@+id/status_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="RESTAURANTE ABIERTO"
+            android:textColor="@android:color/white"
+            android:backgroundTint="@color/green"
+            android:drawableEnd="@drawable/baseline_calendar_month_24" />
 
-    <!-- Card de horario regular -->
+    </LinearLayout>
+
+    <!-- Card para los estados de pedido -->
     <androidx.cardview.widget.CardView
-        android:id="@+id/horarios_card"
+        android:id="@+id/order_status_card"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:backgroundTint="@android:color/darker_gray"
+        android:elevation="4dp"
         app:cardCornerRadius="12dp"
-        app:layout_constraintTop_toBottomOf="@id/description_horarios"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/status_layout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <LinearLayout
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+            app:layout_constraintTop_toBottomOf="@id/topBar"
+            android:background="#F3EFFA"
+            app:tabIndicatorColor="#9D70B8"
+            app:tabSelectedTextColor="#9D70B8"
+            app:tabTextColor="#A0A0A0">
 
-            <!-- Título horario regular y botón editar -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Horario regular"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <ImageButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/baseline_edit_24"
-                    android:contentDescription="Editar"
-                    android:background="?android:attr/selectableItemBackgroundBorderless"/>
-            </LinearLayout>
-
-            <!-- Descripción de horario -->
-            <TextView
-                android:id="@+id/horario_description"
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/tab_accept"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Este es el horario que aplicas a diario"
-                android:textSize="14sp"
-                android:layout_marginTop="4dp" />
+                android:text="Por aceptar (1)" />
 
-            <!-- Horarios con líneas divisorias -->
-            <LinearLayout
-                android:layout_width="match_parent"
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/tab_preparing"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="16dp">
+                android:text="En preparación (0)" />
 
-                <!-- Día Lunes -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/tab_toDeliver"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Por entregar (0)" />
+        </com.google.android.material.tabs.TabLayout>
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:text="Lunes"
-                        android:textSize="14sp"
-                        android:layout_weight="1" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="12:30 pm a 11:00 pm"
-                        android:textSize="14sp" />
-                </LinearLayout>
-
-                <!-- Línea divisoria -->
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@android:color/darker_gray"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp" />
-
-                <!-- Día Martes -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:text="Martes"
-                        android:textSize="14sp"
-                        android:layout_weight="1" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="12:30 pm a 11:00 pm"
-                        android:textSize="14sp" />
-                </LinearLayout>
-
-                <!-- Línea divisoria -->
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@android:color/darker_gray"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp" />
-
-                <!-- Repite el patrón para Miércoles, Jueves, Viernes, Sábado, Domingo -->
-
-            </LinearLayout>
-        </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-    <!-- Botón de Cerrar restaurante -->
-    <Button
-        android:id="@+id/close_restaurant_button"
-        android:layout_width="wrap_content"
+    <!-- Cuadro de búsqueda -->
+    <EditText
+        android:id="@+id/order_search"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Cerrar restaurante"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-        android:backgroundTint="@android:color/holo_blue_light"
-        android:textColor="@android:color/white"
-        app:layout_constraintTop_toBottomOf="@id/horarios_card"
+        android:hint="Por N° de orden"
+        android:drawableEnd="@drawable/baseline_search_24"
+        android:padding="12dp"
+        android:background="@drawable/search_background"
+        android:maxWidth="400dp"
+        android:layout_margin="16dp"
+        app:layout_constraintTop_toBottomOf="@id/order_status_card"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+
+    <!-- Texto para abrir restaurante y botón -->
+
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginBottom="16dp"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="4dp">
+
+    </androidx.cardview.widget.CardView>
+
 
     <!-- Bottom Navigation -->
     <LinearLayout
@@ -350,5 +291,57 @@
                 android:textColor="#000000" />
         </LinearLayout>
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="329dp"
+        android:layout_height="79dp"
+        android:background="#419479A0"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.47">
+
+        <!-- Imagen circular -->
+        <ImageView
+            android:layout_width="17dp"
+            android:layout_height="46dp"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/button_registro_background" />
+
+        <!-- Información de la solicitud -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="#002"
+                android:textColor="#000000"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="XXX-1234-2 productos"
+                android:textColor="#888888"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Flecha hacia la derecha -->
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/baseline_arrow_forward_ios_24"
+            android:tint="#888888" />
+    </LinearLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

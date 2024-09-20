@@ -40,7 +40,7 @@
             android:name=".admin_restaurante.admin_editar_restaurante"
             android:exported="false" />
         <activity
-            android:name=".admin_restaurante.horarios_resta"
+            android:name=".admin_restaurante.horarios_restaurante"
             android:exported="false" />
         <activity
             android:name=".admin_restaurante.horarios_restaurante"

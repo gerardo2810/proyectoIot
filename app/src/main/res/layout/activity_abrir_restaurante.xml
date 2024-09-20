@@ -95,7 +95,6 @@
             android:id="@+id/tabLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/topBar"
             android:background="#F3EFFA"
             app:tabIndicatorColor="#9D70B8"
             app:tabSelectedTextColor="#9D70B8"

@@ -6,7 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
-
     tools:context=".admin_restaurante.abrir_restaurante">
 
     <!-- Card para nombre del restaurante -->
@@ -95,7 +94,6 @@
             android:id="@+id/tabLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/topBar"
             android:background="#F3EFFA"
             app:tabIndicatorColor="#9D70B8"
             app:tabSelectedTextColor="#9D70B8"
@@ -120,7 +118,6 @@
                 android:text="Por entregar (0)" />
         </com.google.android.material.tabs.TabLayout>
 
-
     </androidx.cardview.widget.CardView>
 
     <!-- Cuadro de búsqueda -->
@@ -139,19 +136,88 @@
         app:layout_constraintEnd_toEndOf="parent"/>
 
 
-    <!-- Texto para abrir restaurante y botón -->
 
 
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="8dp"
-        android:layout_marginBottom="16dp"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="4dp">
+    <RelativeLayout
+        android:layout_width="331dp"
+        android:layout_height="297dp"
+        android:layout_margin="20dp"
+        android:background="#FFFFFF"
+        android:elevation="4dp"
+        android:padding="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.741">
 
-    </androidx.cardview.widget.CardView>
+        <TextView
+            android:id="@+id/tvOrderNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pedido N° 002"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
+        <TextView
+            android:id="@+id/tvPrepTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvOrderNumber"
+            android:text="Tiempo aproximado de preparación: 30 min"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+
+        <LinearLayout
+            android:id="@+id/linearLayoutOrderDetails"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvPrepTime"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="1 x Chaufa especial"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="1 x Salmon al curry"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvTotalCost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/linearLayoutOrderDetails"
+            android:layout_marginTop="10dp"
+            android:text="Costo Total: S/106.00"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+
+        <Button
+            android:id="@+id/btnAccept"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvTotalCost"
+            android:layout_marginTop="10dp"
+            android:background="@android:color/holo_green_dark"
+            android:text="ACEPTAR PEDIDO"
+            android:textColor="#FFFFFF" /> <!-- Blanco sigue siendo un buen contraste -->
+
+
+        <Button
+            android:id="@+id/btnReject"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/btnAccept"
+            android:layout_marginTop="10dp"
+            android:background="@android:color/holo_red_dark"
+            android:text="RECHAZAR PEDIDO"
+            android:textColor="#FFFFFF" />
+
+    </RelativeLayout>
 
     <!-- Bottom Navigation -->
     <LinearLayout
@@ -291,88 +357,6 @@
                 android:textColor="#000000" />
         </LinearLayout>
     </LinearLayout>
-
-
-    <RelativeLayout
-        android:layout_width="331dp"
-        android:layout_height="297dp"
-        android:layout_below="@id/tvRestaurantStatus"
-        android:layout_margin="20dp"
-        android:background="#FFFFFF"
-        android:elevation="4dp"
-        android:padding="20dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.741">
-
-        <TextView
-            android:id="@+id/tvOrderNumber"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Pedido N° 002"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
-
-        <TextView
-            android:id="@+id/tvPrepTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/tvOrderNumber"
-            android:text="Tiempo aproximado de preparación: 30 min"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
-
-        <LinearLayout
-            android:id="@+id/linearLayoutOrderDetails"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/tvPrepTime"
-            android:layout_marginTop="10dp"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="1 x Chaufa especial"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="1 x Salmon al curry"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/tvTotalCost"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/linearLayoutOrderDetails"
-            android:layout_marginTop="10dp"
-            android:text="Costo Total: S/106.00"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
-
-        <Button
-            android:id="@+id/btnAccept"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/tvTotalCost"
-            android:layout_marginTop="10dp"
-            android:background="@android:color/holo_green_dark"
-            android:text="ACEPTAR PEDIDO"
-            android:textColor="#FFFFFF" />
-
-        <Button
-            android:id="@+id/btnReject"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/btnAccept"
-            android:layout_marginTop="10dp"
-            android:background="@android:color/holo_red_dark"
-            android:text="RECHAZAR PEDIDO"
-            android:textColor="#FFFFFF" />
-
-    </RelativeLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -184,13 +184,13 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-    android:layout_marginTop="2dp"
-    android:layout_marginBottom="8dp"
-    android:background="@drawable/rounded_background_grey"
-    app:layout_constraintTop_toBottomOf="@id/seguimiento_pedido_layout"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    android:padding="4dp">
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/rounded_background_grey"
+        app:layout_constraintTop_toBottomOf="@id/seguimiento_pedido_layout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:padding="4dp">
 
     <!-- Botón "Detalle de Orden" con fondo blanco -->
     <LinearLayout

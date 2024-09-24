@@ -8,200 +8,56 @@
     tools:context=".MainActivity"
     android:background="#E0E0E0">
 
-    <!-- Card para los datos -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardView"
-        android:layout_width="0dp"
+    <!-- Botón Cliente -->
+    <Button
+        android:id="@+id/btn_cliente"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:text="Cliente"
+        android:layout_marginTop="24dp"
+        android:backgroundTint="#2196F3"
+        android:textColor="#FFFFFF"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="8dp">
+        app:layout_constraintEnd_toEndOf="parent" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+    <!-- Botón Admin Restaurante -->
+    <Button
+        android:id="@+id/btn_admin_restaurante"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Admin Restaurante"
+        android:layout_marginTop="24dp"
+        android:backgroundTint="#FF5722"
+        android:textColor="#FFFFFF"
+        app:layout_constraintTop_toBottomOf="@id/btn_cliente"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-            <!-- Título y descripción -->
-            <TextView
-                android:id="@+id/titleTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Crea tu cuenta aquí"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="@android:color/black" />
+    <!-- Botón Superadmin -->
+    <Button
+        android:id="@+id/btn_superadmin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Superadmin"
+        android:layout_marginTop="24dp"
+        android:backgroundTint="#4CAF50"
+        android:textColor="#FFFFFF"
+        app:layout_constraintTop_toBottomOf="@id/btn_admin_restaurante"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-            <TextView
-                android:id="@+id/subTitleTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Datos personales"
-                android:textSize="14sp"
-                android:textColor="@android:color/darker_gray"
-                android:layout_marginBottom="16dp"/>
-
-            <!-- Imagen de perfil y botón Subir Foto -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="16dp">
-
-                <!-- Imagen de perfil circular -->
-                <ImageView
-                    android:id="@+id/profile_image"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:layout_marginEnd="16dp"
-                    android:background="@drawable/circle_shape"
-                android:src="@drawable/placeholder"
-                android:contentDescription="Imagen de perfil" />
-
-                <!-- Botón para subir foto -->
-                <Button
-                    android:id="@+id/buttonUpload"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Subir Foto"
-                    android:drawableStart="@drawable/baseline_file_upload_24"
-                android:backgroundTint="@android:color/holo_green_light"
-                android:textColor="@android:color/white"/>
-            </LinearLayout>
-
-            <!-- Nombre y Apellidos -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <EditText
-                    android:id="@+id/editTextName"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="Nombre"
-                    android:inputType="textPersonName"
-                    android:layout_marginEnd="8dp"/>
-
-                <EditText
-                    android:id="@+id/editTextLastName"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="Apellidos"
-                    android:inputType="textPersonName"/>
-            </LinearLayout>
-
-            <!-- Tipo de Documento de Identidad -->
-            <Spinner
-                android:id="@+id/spinnerIdType"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:hint="Tipo de Documento de Identidad"/>
-
-            <!-- Número de Documento -->
-            <EditText
-                android:id="@+id/editTextIdNumber"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Número de documento de identidad"
-                android:inputType="number"/>
-
-            <!-- Fecha de nacimiento -->
-            <EditText
-                android:id="@+id/editTextBirthDate"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Fecha de nacimiento"
-                android:enabled="false"
-                android:drawableEnd="@drawable/baseline_calendar_month_24"
-            android:inputType="none"/>
-
-            <!-- Correo Electrónico -->
-            <EditText
-                android:id="@+id/editTextEmail"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Correo electronico"
-                android:inputType="textEmailAddress"/>
-
-            <!-- Teléfono -->
-            <EditText
-                android:id="@+id/editTextPhone"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Teléfono"
-                android:inputType="phone"/>
-
-            <!-- Domicilio -->
-            <EditText
-                android:id="@+id/editTextAddress"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Domicilio"
-                android:inputType="textPostalAddress"/>
-
-            <!-- Contraseña -->
-            <EditText
-                android:id="@+id/editTextPassword"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Contraseña"
-                android:inputType="textPassword"
-                android:drawableEnd="@drawable/baseline_remove_red_eye_24"/>
-
-            <!-- Confirmar contraseña -->
-            <EditText
-                android:id="@+id/editTextConfirmPassword"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Confirme su Contraseña"
-                android:inputType="textPassword"
-                android:drawableEnd="@drawable/baseline_remove_red_eye_24"/>
-
-            <!-- Botones Regresar y Crear Cuenta -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center"
-                android:layout_marginTop="16dp">
-
-                <!-- Botón Regresar -->
-                <Button
-                    android:id="@+id/buttonBack"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Regresar"
-                    android:backgroundTint="@android:color/holo_red_light"
-                    android:textColor="@android:color/white"/>
-
-                <!-- Espacio entre botones -->
-                <Space
-                    android:layout_width="16dp"
-                    android:layout_height="wrap_content"/>
-
-                <!-- Botón Crear Cuenta -->
-                <Button
-                    android:id="@+id/buttonCreateAccount"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Crear Cuenta"
-                    android:backgroundTint="@android:color/holo_green_light"
-                    android:textColor="@android:color/white"/>
-            </LinearLayout>
-
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
+    <!-- Botón Repartidor -->
+    <Button
+        android:id="@+id/btn_repartidor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Repartidor"
+        android:layout_marginTop="24dp"
+        android:backgroundTint="#FFC107"
+        android:textColor="#FFFFFF"
+        app:layout_constraintTop_toBottomOf="@id/btn_superadmin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

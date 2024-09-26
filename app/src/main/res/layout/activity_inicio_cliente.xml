@@ -471,18 +471,18 @@
     </LinearLayout>
 
          <LinearLayout
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:gravity="center"
-    android:layout_marginStart="16dp">
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginStart="16dp">
 
-    <ImageView
-        android:id="@+id/most_favorite_two"
-        android:layout_width="200dp"
-        android:layout_height="120dp"
-        android:background="@drawable/placeholder"
-        android:layout_marginBottom="8dp"/>
+        <ImageView
+            android:id="@+id/most_favorite_two"
+            android:layout_width="200dp"
+            android:layout_height="120dp"
+            android:background="@drawable/placeholder"
+            android:layout_marginBottom="8dp"/>
 
     <LinearLayout
         android:layout_width="wrap_content"

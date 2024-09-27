@@ -12,6 +12,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Proyecto_Iot"
         tools:targetApi="31">
+
+
         <activity
             android:name=".cliente.lista_restaurantes_categorias_cliente"
             android:exported="true" />
@@ -24,6 +26,33 @@
         <activity
             android:name=".cliente.seguimiento_pedido_cliente"
             android:exported="true" />
+        <activity
+            android:name=".cliente.realizar_pedido_cliente"
+            android:exported="true" />
+        <activity
+            android:name=".cliente.carrito_cliente"
+            android:exported="true" />
+        <activity
+            android:name=".cliente.perfil_restaurante_cliente"
+            android:exported="true" />
+        <activity
+            android:name=".cliente.detalles_pedido_cliente"
+            android:exported="true" />
+        <activity
+            android:name=".cliente.historial_pedidos_cliente"
+            android:exported="true" />
+        <activity
+            android:name=".cliente.inicio_cliente"
+            android:exported="true" />
+        <activity
+            android:name=".cliente.perfil_cliente"
+            android:exported="true" />
+
+
+        <activity
+            android:name=".superadmin.gestion_usuarios_superadmin"
+            android:exported="true" >
+        </activity>
         <activity
             android:name=".superadmin.lista_restaurantes_superadmin"
             android:exported="true" />
@@ -51,9 +80,8 @@
         <activity
             android:name=".superadmin.lista_usuarios_superadmin"
             android:exported="true" />
-        <activity
-            android:name=".superadmin.gestion_usuarios_superadmin"
-            android:exported="true" />
+
+
         <activity
             android:name=".admin_restaurante.perfil_admin_restaurante"
             android:exported="true" />
@@ -72,27 +100,8 @@
         <activity
             android:name=".admin_restaurante.abrir_restaurante"
             android:exported="true" />
-        <activity
-            android:name=".cliente.realizar_pedido_cliente"
-            android:exported="true" />
-        <activity
-            android:name=".cliente.carrito_cliente"
-            android:exported="true" />
-        <activity
-            android:name=".cliente.perfil_restaurante_cliente"
-            android:exported="true" />
-        <activity
-            android:name=".cliente.detalles_pedido_cliente"
-            android:exported="true" />
-        <activity
-            android:name=".cliente.historial_pedidos_cliente"
-            android:exported="true" />
-        <activity
-            android:name=".cliente.inicio_cliente"
-            android:exported="true" />
-        <activity
-            android:name=".cliente.perfil_cliente"
-            android:exported="true" />
+
+
         <activity
             android:name=".repartidor.RegistroRepartidorActivity"
             android:exported="true" />
@@ -114,6 +123,8 @@
         <activity
             android:name=".repartidor.EntregaCurso2Activity"
             android:exported="true" />
+
+
         <activity
             android:name=".LoginActivity"
             android:exported="true" />
@@ -122,7 +133,6 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

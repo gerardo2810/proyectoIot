@@ -58,6 +58,10 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".superadmin.gestion_reportes_superadmin"
+            android:exported="true" >
+        </activity>
+        <activity
             android:name=".superadmin.lista_restaurantes_superadmin"
             android:exported="true" />
         <activity
@@ -68,9 +72,6 @@
             android:exported="true" />
         <activity
             android:name=".superadmin.info_solitud_repartidor_superadmin"
-            android:exported="true" />
-        <activity
-            android:name=".superadmin.gestion_reportes_superadmin"
             android:exported="true" />
         <activity
             android:name=".superadmin.solicitudes_repartidores_superadmin"

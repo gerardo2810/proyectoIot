@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/item_1"
-        android:enabled="true"
-        android:icon="@drawable/usuarios"
+        android:id="@+id/navigation_usuarios"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/usuarios_icon"
         android:title="Usuarios"/>
     <item
-        android:id="@+id/item_2"
-        android:enabled="true"
+        android:id="@+id/navigation_reportes"
+        app:showAsAction="ifRoom"
         android:icon="@drawable/reportes"
         android:title="Reportes"/>
 
     <item
-        android:id="@+id/item_3"
-        android:enabled="true"
+        android:id="@+id/navigation_perfil"
+        app:showAsAction="ifRoom"
         android:icon="@drawable/baseline_person_24"
         android:title="Perfil"/>
 </menu>

@@ -9,18 +9,14 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.proyecto_iot.R;
+import com.example.proyecto_iot.databinding.SuperadminActivityGestionReportesBinding;
 
 public class gestion_usuarios_superadmin extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.superadmin_activity_gestion_usuarios);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+        binding = SuperadminActivityGestionReportesBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
     }
 }

@@ -16,7 +16,7 @@
         android:layout_marginHorizontal="5dp"
         android:layout_marginTop="10dp"
         android:background="@drawable/border_layout"
-        android:backgroundTint="#E8CFF6"
+        android:backgroundTint="#62CAD7"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingVertical="13dp"
@@ -39,18 +39,19 @@
 
     </LinearLayout>
 
-    <LinearLayout
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent">
+        android:background="?android:attr/windowBackground"
+        app:itemBackground="@drawable/superadmin_nav_ripple"
+        app:labelVisibilityMode="labeled"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/superadmin_navigation_bar" />
 
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottom_navigation"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:menu="@menu/superadmin_navigation_bar" />
-
-    </LinearLayout>
 
     <TextView
         android:id="@+id/textView4"

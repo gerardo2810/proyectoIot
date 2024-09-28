@@ -13,9 +13,10 @@
         android:id="@+id/header_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginHorizontal="7dp"
+        android:layout_marginTop="10dp"
         android:background="@drawable/border_layout"
-        android:backgroundTint="#E8CFF6"
+        android:backgroundTint="#62CAD7"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingVertical="13dp"
@@ -26,8 +27,9 @@
 
         <!-- Flecha hacia atrás -->
         <ImageView
+            android:id="@+id/arrow_back_icon"
             android:layout_width="44dp"
-            android:layout_height="32dp"
+            android:layout_height="30dp"
             android:contentDescription="Volver"
             android:padding="8dp"
             android:src="@drawable/baseline_arrow_back_ios_24" />
@@ -46,81 +48,6 @@
 
     </LinearLayout>
 
-
-    <!-- Menú inferior -->
-
-    <LinearLayout
-        android:id="@+id/bottom_navigation"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="#BB84DC"
-        android:orientation="horizontal"
-        android:padding="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@drawable/usuarios" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Usuarios"
-                android:textColor="#000"
-                android:textSize="12sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@drawable/reportes" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Reportes"
-                android:textColor="#000"
-                android:textSize="12sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@drawable/baseline_person_24" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Perfil"
-                android:textColor="#000"
-                android:textSize="12sp" />
-        </LinearLayout>
-    </LinearLayout>
-
     <TextView
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
@@ -135,353 +62,285 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/header_layout" />
 
-    <LinearLayout
-        android:id="@+id/linearLayout2"
-        android:layout_width="170dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="20dp"
+    <ScrollView
+        android:id="@+id/scrollView1"
+        android:layout_width="match_parent"
+        android:layout_height="390dp"
         android:layout_marginTop="40dp"
-        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView4">
 
-        <TextView
-            android:id="@+id/textView5"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="NOMBRES"
-            android:textColor="#655F5F"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+            android:orientation="vertical">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:boxBackgroundMode="outline"
-            app:boxStrokeColor="@color/black"
-            app:boxStrokeWidth="2dp"
-            app:hintTextColor="@color/black"
-            app:passwordToggleEnabled="false">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/editTextName"
+            <LinearLayout
+                android:id="@+id/linearLayout2"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="top"
-                android:inputType="textMultiLine"
-                android:lines="4"
-                android:maxLines="6"
-                android:minLines="2"
-                android:textSize="14sp" />
-        </com.google.android.material.textfield.TextInputLayout>
-    </LinearLayout>
+                android:layout_height="70dp"
+                android:orientation="horizontal">
 
-    <LinearLayout
-        android:id="@+id/linearLayout3"
-        android:layout_width="170dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="40dp"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/linearLayout2"
-        app:layout_constraintTop_toBottomOf="@+id/textView4">
+                <LinearLayout
+                    android:id="@+id/linearLayout3"
+                    android:layout_width="170dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="20dp"
+                    android:orientation="vertical"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView4">
 
-        <TextView
-            android:id="@+id/textView6"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="APELLIDOS"
-            android:textColor="#655F5F"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+                    <TextView
+                        android:id="@+id/textView5"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="NOMBRES"
+                        android:padding="0dp"
+                        android:textColor="#655F5F"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:boxBackgroundMode="outline"
-            app:boxStrokeColor="@color/black"
-            app:boxStrokeWidth="2dp"
-            app:hintTextColor="@color/black"
-            app:passwordToggleEnabled="false">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editTextName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textMultiLine"
+                        android:maxLength="25"
+                        android:textSize="18sp" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/editTextApellidos"
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/linearLayout4"
+                    android:layout_width="170dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="20dp"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/linearLayout2"
+                    app:layout_constraintTop_toBottomOf="@+id/textView4">
+
+                    <TextView
+                        android:id="@+id/textView6"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="APELLIDOS"
+                        android:textColor="#655F5F"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editTextApellidos"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textMultiLine"
+                        android:maxLength="25"
+                        android:textSize="18sp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linearLayout5"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="top"
-                android:inputType="textMultiLine"
-                android:lines="4"
-                android:maxLines="6"
-                android:minLines="2"
-                android:textSize="14sp" />
-        </com.google.android.material.textfield.TextInputLayout>
-    </LinearLayout>
+                android:layout_height="70dp"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
 
-    <LinearLayout
-        android:id="@+id/linearLayout4"
-        android:layout_width="370dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="15dp"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
+                <LinearLayout
+                    android:id="@+id/linearLayout6"
+                    android:layout_width="360dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="20dp"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
 
-        <TextView
-            android:id="@+id/textView7"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="CORREO"
-            android:textColor="#655F5F"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+                    <TextView
+                        android:id="@+id/textView7"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="CORREO"
+                        android:textColor="#655F5F"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:boxBackgroundMode="outline"
-            app:boxStrokeColor="@color/black"
-            app:boxStrokeWidth="2dp"
-            app:hintTextColor="@color/black"
-            app:passwordToggleEnabled="false">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editTexCorreo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textEmailAddress"
+                        android:maxLength="50"
+                        android:textSize="18sp" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/editTexCorreo"
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linearLayout7"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="top"
-                android:inputType="textEmailAddress"
-                android:lines="4"
-                android:maxLines="6"
-                android:minLines="2"
-                android:textSize="14sp" />
-        </com.google.android.material.textfield.TextInputLayout>
-    </LinearLayout>
+                android:layout_height="70dp"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
 
-    <LinearLayout
-        android:id="@+id/linearLayout6"
-        android:layout_width="170dp"
-        android:layout_height="53dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="15dp"
-        android:orientation="vertical"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout4">
+                <LinearLayout
+                    android:id="@+id/linearLayout8"
+                    android:layout_width="170dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="20dp"
+                    android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/textView8"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="DNI"
-            android:textColor="#655F5F"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+                    <TextView
+                        android:id="@+id/textView8"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="DNI"
+                        android:textColor="#655F5F"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editTextDNI"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        android:maxLength="8"
+                        android:textSize="18sp" />
+                </LinearLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:boxBackgroundMode="outline"
-            app:boxStrokeColor="@color/black"
-            app:boxStrokeWidth="2dp"
-            app:hintTextColor="@color/black"
-            app:passwordToggleEnabled="false">
+                <LinearLayout
+                    android:id="@+id/linearLayout9"
+                    android:layout_width="170dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="20dp"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toEndOf="parent">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/editTextDNI"
+                    <TextView
+                        android:id="@+id/textView9"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="TELEFONO"
+                        android:textColor="#655F5F"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editTextTelefono"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        android:maxLength="9"
+                        android:textSize="18sp" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linearLayout10"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="top"
-                android:inputType="number"
-                android:lines="4"
-                android:maxLines="6"
-                android:minLines="2"
-                android:textSize="14sp" />
-        </com.google.android.material.textfield.TextInputLayout>
-    </LinearLayout>
+                android:layout_height="70dp"
+                android:layout_marginTop="25dp"
+                android:orientation="horizontal">
 
-    <LinearLayout
-        android:id="@+id/linearLayout7"
-        android:layout_width="170dp"
-        android:layout_height="53dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="15dp"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/linearLayout6"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout4">
+                <LinearLayout
+                    android:id="@+id/linearLayout11"
+                    android:layout_width="360dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="20dp"
+                    android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/textView9"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="TELEFONO"
-            android:textColor="#655F5F"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+                    <TextView
+                        android:id="@+id/textView10"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="DIRECCION"
+                        android:textColor="#655F5F"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:boxBackgroundMode="outline"
-            app:boxStrokeColor="@color/black"
-            app:boxStrokeWidth="2dp"
-            app:hintTextColor="@color/black"
-            app:passwordToggleEnabled="false">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editTexDireccion"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textMultiLine"
+                        android:maxLength="100"
+                        android:textSize="18sp" />
+                </LinearLayout>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/editTextTelefono"
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linearLayout12"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="top"
-                android:inputType="number"
-                android:lines="4"
-                android:maxLines="6"
-                android:minLines="2"
-                android:textSize="14sp" />
-        </com.google.android.material.textfield.TextInputLayout>
-    </LinearLayout>
+                android:layout_height="70dp"
+                android:layout_marginTop="25dp"
+                android:orientation="horizontal">
 
-    <LinearLayout
-        android:id="@+id/linearLayout8"
-        android:layout_width="370dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="15dp"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout6">
+                <LinearLayout
+                    android:id="@+id/linearLayout13"
+                    android:layout_width="360dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="20dp"
+                    android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/textView10"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="DIRECCION"
-            android:textColor="#655F5F"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+                    <TextView
+                        android:id="@+id/textView11"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="TIPO DE ADMIN"
+                        android:textColor="#655F5F"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:boxBackgroundMode="outline"
-            app:boxStrokeColor="@color/black"
-            app:boxStrokeWidth="2dp"
-            app:hintTextColor="@color/black"
-            app:passwordToggleEnabled="false">
+                    <Spinner
+                        android:id="@+id/spinnerTipoAdmin"
+                        android:layout_width="170dp"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/border_layout_combobox"/>
+                </LinearLayout>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/editTexDireccion"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="top"
-                android:inputType="textMultiLine"
-                android:lines="4"
-                android:maxLines="6"
-                android:minLines="2"
-                android:textSize="14sp" />
-        </com.google.android.material.textfield.TextInputLayout>
-    </LinearLayout>
+            </LinearLayout>
 
-    <!-- Línea horizontal -->
-    <View
-        android:id="@+id/view"
-        android:layout_width="380dp"
-        android:layout_height="1dp"
-        android:layout_marginTop="10dp"
-        android:background="#D3D3D3"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/linearLayout8" />
+        </LinearLayout>
+    </ScrollView>
 
-    <LinearLayout
-        android:id="@+id/linearLayout9"
-        android:layout_width="415dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view">
-
-        <TextView
-            android:id="@+id/textView11"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="RESTAURANTE"
-            android:textColor="#655F5F"
-            android:textSize="14sp"
-            android:textStyle="bold" />
-
-        <RadioGroup
-            android:id="@+id/radioGroup1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <RadioButton
-                android:id="@+id/radioNuevo"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="25sp"
-                android:text="Nuevo" />
-
-            <EditText
-                android:id="@+id/editTextNuevo"
-                android:layout_width="250dp"
-                android:layout_height="wrap_content"
-                android:background="@drawable/border_layout_combobox"
-                android:enabled="false"
-                android:hint="ingrese el nombre"
-                android:inputType="textMultiLine" />
-        </RadioGroup>
-
-        <RadioGroup
-            android:id="@+id/radioGroup2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <RadioButton
-                android:id="@+id/radioExistente"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="25sp"
-                android:text="Existente" />
-
-            <Spinner
-                android:id="@+id/spinnerExistente"
-                android:layout_width="250dp"
-                android:layout_height="wrap_content"
-                android:background="@drawable/border_layout_combobox"
-                android:enabled="false" />
-        </RadioGroup>
-
-    </LinearLayout>
-
-    <!-- Línea horizontal -->
-    <View
-        android:id="@+id/view2"
-        android:layout_width="380dp"
-        android:layout_height="1dp"
-        android:background="#D3D3D3"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/linearLayout9" />
 
     <Button
         android:id="@+id/btnRegistrar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="20dp"
         android:background="@drawable/button_registro_background"
         android:padding="10dp"
         android:text="Registrar"
         android:textColor="@android:color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout9" />
+        app:layout_constraintTop_toBottomOf="@+id/scrollView1" />
+
+    <View
+        android:id="@+id/view3"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="-5dp"
+        android:background="#8E8E8E"
+        app:layout_constraintTop_toTopOf="@id/bottom_navigation" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/windowBackground"
+        app:itemBackground="@drawable/superadmin_nav_ripple"
+        app:labelVisibilityMode="labeled"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/superadmin_navigation_bar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

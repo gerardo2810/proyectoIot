@@ -12,12 +12,11 @@
         android:id="@+id/header_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:background="@drawable/border_layout"
-        android:backgroundTint="#E8CFF6"
+        android:background="@drawable/none_border_layout"
+        android:backgroundTint="#62CAD7"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingVertical="13dp"
+        android:paddingVertical="23dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -25,8 +24,9 @@
 
         <!-- Flecha hacia atrás -->
         <ImageView
+            android:id="@+id/arrow_back_icon"
             android:layout_width="44dp"
-            android:layout_height="32dp"
+            android:layout_height="30dp"
             android:contentDescription="Volver"
             android:padding="8dp"
             android:src="@drawable/baseline_arrow_back_ios_24" />
@@ -38,89 +38,12 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="start"
-            android:text="Gestión de Usuarios"
+            android:text="Lista de Solicitudes"
             android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 
     </LinearLayout>
-
-    <!-- Menú inferior -->
-
-    <LinearLayout
-        android:id="@+id/bottom_navigation"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="#BB84DC"
-        android:orientation="horizontal"
-        android:padding="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@drawable/usuarios" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Usuarios"
-                android:textColor="#000"
-                android:textSize="12sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@drawable/reportes" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Reportes"
-                android:textColor="#000"
-                android:textSize="12sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@drawable/baseline_person_24" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Perfil"
-                android:textColor="#000"
-                android:textSize="12sp" />
-        </LinearLayout>
-    </LinearLayout>
-
-
-    <!-- Imagen circular -->
 
     <ImageView
         android:id="@+id/imageView3"
@@ -135,8 +58,8 @@
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:text="Información de la solicitud"
+        android:layout_marginTop="20dp"
+        android:text="Información de la Solicitud"
         android:textColor="#000000"
         android:textSize="22sp"
         android:textStyle="bold"
@@ -147,8 +70,8 @@
 
     <ScrollView
         android:id="@+id/scrollViewInfo"
-        android:layout_width="360dp"
-        android:layout_height="250dp"
+        android:layout_width="390dp"
+        android:layout_height="290dp"
         android:layout_marginTop="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.49"
@@ -163,7 +86,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginBottom="12dp"
+                android:layout_marginBottom="15dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -173,6 +96,7 @@
                     android:layout_weight="1"
                     android:text="NOMBRE"
                     android:textColor="#000000"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -181,13 +105,14 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="David Dario Donostio"
+                    android:textSize="16sp"
                     android:textColor="#000000" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginBottom="12dp"
+                android:layout_marginBottom="15dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -197,6 +122,7 @@
                     android:layout_weight="1"
                     android:text="DNI"
                     android:textColor="#000000"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -205,13 +131,14 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="45789321"
+                    android:textSize="16sp"
                     android:textColor="#000000" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginBottom="12dp"
+                android:layout_marginBottom="15dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -221,6 +148,7 @@
                     android:layout_weight="1"
                     android:text="CORREO"
                     android:textColor="#000000"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -229,13 +157,14 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="daviddario@gmail.com"
+                    android:textSize="16sp"
                     android:textColor="#000000" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginBottom="12dp"
+                android:layout_marginBottom="15dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -245,6 +174,7 @@
                     android:layout_weight="1"
                     android:text="TELEFONO"
                     android:textColor="#000000"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -253,13 +183,14 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="999999912"
+                    android:textSize="16sp"
                     android:textColor="#000000" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginBottom="12dp"
+                android:layout_marginBottom="15dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -269,6 +200,7 @@
                     android:layout_weight="1"
                     android:text="RESTAURANTE"
                     android:textColor="#000000"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -277,13 +209,14 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="MC Donald’s"
+                    android:textSize="16sp"
                     android:textColor="#000000" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginBottom="12dp"
+                android:layout_marginBottom="15dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -293,6 +226,7 @@
                     android:layout_weight="1"
                     android:text="DIRECCIÓN"
                     android:textColor="#000000"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -301,13 +235,14 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Jr. Las aguilas 983"
+                    android:textSize="16sp"
                     android:textColor="#000000" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginBottom="12dp"
+                android:layout_marginBottom="15dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -317,14 +252,52 @@
                     android:layout_weight="1"
                     android:text="CV"
                     android:textColor="#000000"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <ImageView
                     android:id="@+id/imageView4"
                     android:layout_width="90dp"
-                    android:layout_height="20dp"
+                    android:layout_height="25dp"
                     android:layout_weight="1"
                     app:srcCompat="@drawable/pdf_sa" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btnAceptar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:layout_marginStart="70dp"
+                    android:layout_marginTop="15dp"
+                    android:background="@drawable/button_registro_background"
+                    android:padding="10dp"
+                    android:text="Aceptar"
+                    android:textColor="@android:color/white"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/scrollViewInfo" />
+
+                <Button
+                    android:id="@+id/btnRechazar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginEnd="70dp"
+                    android:background="@drawable/button_rechazar_bg"
+                    android:padding="10dp"
+                    android:text="Rechazar"
+                    android:textColor="@android:color/white"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/scrollViewInfo" />
 
             </LinearLayout>
 
@@ -332,32 +305,25 @@
 
     </ScrollView>
 
-    <Button
-        android:id="@+id/btnAceptar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:layout_marginStart="70dp"
-        android:layout_marginTop="15dp"
-        android:background="@drawable/button_registro_background"
-        android:padding="10dp"
-        android:text="Aceptar"
-        android:textColor="@android:color/white"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/scrollViewInfo" />
 
-    <Button
-        android:id="@+id/btnRechazar"
-        android:layout_width="wrap_content"
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="-5dp"
+        android:background="#8E8E8E"
+        app:layout_constraintTop_toTopOf="@id/bottom_navigation" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginEnd="70dp"
-        android:background="@drawable/button_rechazar_bg"
-        android:padding="10dp"
-        android:text="Rechazar"
-        android:textColor="@android:color/white"
+        android:background="?android:attr/windowBackground"
+        app:itemBackground="@drawable/superadmin_nav_ripple"
+        app:labelVisibilityMode="labeled"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/scrollViewInfo" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/superadmin_navigation_bar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -13,9 +13,10 @@
         android:id="@+id/header_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginHorizontal="7dp"
+        android:layout_marginTop="10dp"
         android:background="@drawable/border_layout"
-        android:backgroundTint="#E8CFF6"
+        android:backgroundTint="#62CAD7"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingVertical="13dp"
@@ -26,8 +27,9 @@
 
         <!-- Flecha hacia atrás -->
         <ImageView
+            android:id="@+id/arrow_back_icon"
             android:layout_width="44dp"
-            android:layout_height="32dp"
+            android:layout_height="30dp"
             android:contentDescription="Volver"
             android:padding="8dp"
             android:src="@drawable/baseline_arrow_back_ios_24" />
@@ -46,88 +48,12 @@
 
     </LinearLayout>
 
-    <!-- ScrollView para los Usuarios -->
-
-
-    <!-- Menú inferior -->
-
-    <LinearLayout
-        android:id="@+id/bottom_navigation"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="#BB84DC"
-        android:orientation="horizontal"
-        android:padding="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@drawable/usuarios" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Usuarios"
-                android:textColor="#000"
-                android:textSize="12sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@drawable/reportes" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Reportes"
-                android:textColor="#000"
-                android:textSize="12sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@drawable/baseline_person_24" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Perfil"
-                android:textColor="#000"
-                android:textSize="12sp" />
-        </LinearLayout>
-    </LinearLayout>
 
     <TextView
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="45dp"
         android:text="Solicitudes de Repartidores"
         android:textColor="#000000"
         android:textSize="22sp"
@@ -323,5 +249,24 @@
         </LinearLayout>
 
     </ScrollView>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="-5dp"
+        android:background="#8E8E8E"
+        app:layout_constraintTop_toTopOf="@id/bottom_navigation" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/windowBackground"
+        app:itemBackground="@drawable/superadmin_nav_ripple"
+        app:labelVisibilityMode="labeled"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/superadmin_navigation_bar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

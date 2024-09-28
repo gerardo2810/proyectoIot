@@ -39,7 +39,6 @@ public class gestion_usuarios_superadmin extends AppCompatActivity {
                     intent = new Intent(gestion_usuarios_superadmin.this, ver_logs_superadmin.class);
                 }
 
-                // Iniciar la actividad si el intent no es nulo
                 if (intent != null) {
                     startActivity(intent);
                 }
@@ -70,6 +69,5 @@ public class gestion_usuarios_superadmin extends AppCompatActivity {
             }
         });
         //----------------------------------------------------------------------------
-
     }
 }

@@ -86,7 +86,7 @@
 
     <ScrollView
         android:layout_width="401dp"
-        android:layout_height="415dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -137,6 +137,7 @@
 
                     <!-- Flecha hacia la derecha -->
                     <ImageView
+                        android:id="@+id/arrow_icon_1"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@drawable/baseline_arrow_forward_ios_24"
@@ -185,6 +186,7 @@
 
                     <!-- Flecha hacia la derecha -->
                     <ImageView
+                        android:id="@+id/arrow_icon_2"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@drawable/baseline_arrow_forward_ios_24"

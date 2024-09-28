@@ -62,6 +62,10 @@
             android:exported="true" >
         </activity>
         <activity
+            android:name=".superadmin.lista_usuarios_superadmin"
+            android:exported="true">
+        </activity>
+        <activity
             android:name=".superadmin.lista_restaurantes_superadmin"
             android:exported="true" />
         <activity
@@ -71,20 +75,19 @@
             android:name=".superadmin.ver_logs_superadmin"
             android:exported="true" />
         <activity
-            android:name=".superadmin.info_solitud_repartidor_superadmin"
-            android:exported="true" />
-        <activity
             android:name=".superadmin.solicitudes_repartidores_superadmin"
-            android:exported="true" />
-        <activity
-            android:name=".superadmin.info_usuario_superadmin"
             android:exported="true" />
         <activity
             android:name=".superadmin.registro_nuevoadmin_superadmin"
             android:exported="true" />
         <activity
-            android:name=".superadmin.lista_usuarios_superadmin"
-            android:exported="true" />
+            android:name=".superadmin.info_solitud_repartidor_superadmin"
+            android:exported="true">
+        </activity>
+        <activity
+            android:name=".superadmin.info_usuario_superadmin"
+            android:exported="true" >
+        </activity>
 
 
         <activity

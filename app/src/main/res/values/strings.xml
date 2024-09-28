@@ -7,10 +7,32 @@
         <item>Pasaporte</item>
         <item>Carnet de Extranjería</item>
     </string-array>
-    <string-array name="spinner_roles">
+    <string-array name="superadmin_lista_roles">
         <item>-Seleccionar-</item>
         <item>Administradores</item>
         <item>Repartidores</item>
         <item>Clientes</item>
+    </string-array>
+    <string-array name="superadmin_lista_estados">
+        <item>-Seleccionar-</item>
+        <item>Activo</item>
+        <item>Inactivo</item>
+    </string-array>
+    <string-array name="superadmin_lista_tipoRegistro">
+        <item>-Seleccionar-</item>
+        <item>Nuevo</item>
+        <item>Existente</item>
+    </string-array>
+    <string-array name="superadmin_lista_tipoReporte">
+        <item>-Seleccionar-</item>
+        <item>Por Plato</item>
+        <item>Por Usuarios</item>
+    </string-array>
+    <string-array name="superadmin_lista_restaurante">
+        <item>-Seleccionar-</item>
+        <item>Pizza hut</item>
+        <item>KFC</item>
+        <item>Papa Johns</item>
+        <item>Pardos Chicken</item>
     </string-array>
 </resources>

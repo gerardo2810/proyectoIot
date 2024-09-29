@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="colorIngresos">#4CAF50</color>   <!-- Verde para ingresos -->
+    <color name="colorEgresos">#F44336</color>    <!-- Rojo para egresos -->
+    <color name="colorValorNeto">#2196F3</color>  <!-- Azul para valor neto -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="green">#4CAF50</color>

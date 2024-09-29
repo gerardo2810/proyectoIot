@@ -37,7 +37,7 @@ public class gestion_reportes_superadmin extends AppCompatActivity {
                     intent = new Intent(gestion_reportes_superadmin.this, reportes_recibidos_superadmin.class);
                     intent.putExtra("SELECTED_ITEM_ID", R.id.navigation_reportes);
                 } else {
-                    intent = new Intent(gestion_reportes_superadmin.this, gestion_reportes_superadmin.class);
+                    intent = new Intent(gestion_reportes_superadmin.this, lista_restaurantes_superadmin.class);
                 }
 
                 if (intent != null) {

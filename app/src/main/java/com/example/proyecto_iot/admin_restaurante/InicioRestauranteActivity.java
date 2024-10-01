@@ -13,7 +13,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
 
 public class InicioRestauranteActivity extends AppCompatActivity {
-    // Declaración de los fragments
     private final HomeRestauranteFragment homeRestauranteFragment = new HomeRestauranteFragment();
     private final OrdenesRestauranteFragment ordenesRestauranteFragment = new OrdenesRestauranteFragment();
     private final CartaRestauranteFragment cartaRestauranteFragment = new CartaRestauranteFragment();
@@ -27,47 +26,13 @@ public class InicioRestauranteActivity extends AppCompatActivity {
 
         // Inicializa el BottomNavigationView
         BottomNavigationView navigation = findViewById(R.id.bottom_navigation);
-        // Usa setOnNavigationItemSelectedListener en lugar de setOnNavigationItemReselectedListener
+        // Listener para manejar las selecciones en el BottomNavigationView
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-
-
-        TabLayout tabLayout = findViewById(R.id.tabLayout);
-
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                Fragment selectedFragment = null;
-
-                switch (tab.getPosition()) {
-                    case 0:
-                        selectedFragment = new PorAceptarFragment();
-                        break;
-                    case 1:
-                        selectedFragment = new EnPreparacionFragment();
-                        break;
-                    case 2:
-                        selectedFragment = new PorEntregarFragment();
-                        break;
-                }
-
-                if (selectedFragment != null) {
-                    replaceFragment(selectedFragment);
-                }
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-                // No action needed
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-                // No action needed
-            }
-        });
-
-
+        // Cargar fragmento inicial cuando la actividad se crea (home por defecto)
+        if (savedInstanceState == null) {
+            loadFragment(homeRestauranteFragment);  // Home inicial por defecto
+        }
     }
 
     // Listener para manejar las selecciones en el menú de navegación
@@ -75,41 +40,37 @@ public class InicioRestauranteActivity extends AppCompatActivity {
             new BottomNavigationView.OnNavigationItemSelectedListener() {
                 @Override
                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                    int itemId = item.getItemId();
+                    Fragment selectedFragment = null;
 
-                    if (itemId == R.id.navigation_home) {
-                        loadFragment(homeRestauranteFragment);
-                        return true;
-                    } else if (itemId == R.id.navigation_ordenes) {
-                        loadFragment(ordenesRestauranteFragment);
-                        return true;
-                    } else if (itemId == R.id.navigation_carta) {
-                        loadFragment(cartaRestauranteFragment);
-                        return true;
-                    } else if (itemId == R.id.navigation_reportes) {
-                        loadFragment(reportesRestauranteFragment);
-                        return true;
-                    } else if (itemId == R.id.navigation_perfil) {
-                        loadFragment(perfilRestauranteFragment);
-                        return true;
+                    if (item.getItemId() == R.id.navigation_home) {
+                        selectedFragment = homeRestauranteFragment;
+                    } else if (item.getItemId() == R.id.navigation_ordenes) {
+                        selectedFragment = ordenesRestauranteFragment;
+                    } else if (item.getItemId() == R.id.navigation_carta) {
+                        selectedFragment = cartaRestauranteFragment;
+                    } else if (item.getItemId() == R.id.navigation_reportes) {
+                        selectedFragment = reportesRestauranteFragment;
+                    } else if (item.getItemId() == R.id.navigation_perfil) {
+                        selectedFragment = perfilRestauranteFragment;
                     }
-                    return false;
+
+                    // Cargar el fragmento seleccionado
+                    if (selectedFragment != null) {
+                        loadFragment(selectedFragment);
+                    }
+
+                    return true;
                 }
             };
 
-    // Método para cargar el fragmento seleccionado
+    // Método para cargar los fragments del BottomNavigationView
     public void loadFragment(Fragment fragment) {
-        // Reemplaza el fragmento en el contenedor y asegura que no se sobrepongan
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.frame_container, fragment)
+                .replace(R.id.frame_navigation_container, fragment)  // Contenedor principal de BottomNavigationView
                 .commit();
     }
-
-    private void replaceFragment(Fragment fragment) {
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, fragment);
-        transaction.commit();
-    }
 }
+
+
 

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <!-- Color de fondo del botón -->
+    <solid android:color="#6A1B9A"/> <!-- Púrpura -->
+
+    <!-- Borde redondeado para hacer el botón cuadrado -->
+    <corners android:radius="10dp"/> <!-- Ajusta este valor según tus preferencias -->
+
+    <!-- Añadir un borde al botón, si es necesario -->
+    <stroke
+        android:width="2dp"
+        android:color="#6A1B9A"/> <!-- Borde del mismo color que el fondo -->
+
+    <!-- Padding interno del botón -->
+    <padding
+        android:left="10dp"
+        android:right="10dp"
+        android:top="5dp"
+        android:bottom="5dp"/>
+</shape>

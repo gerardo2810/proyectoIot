@@ -91,22 +91,10 @@
 
 
         <activity
-            android:name=".admin_restaurante.perfil_admin_restaurante"
+            android:name=".admin_restaurante.AbrirRestauranteActivity"
             android:exported="true" />
         <activity
-            android:name=".admin_restaurante.admin_editar_restaurante"
-            android:exported="true" />
-        <activity
-            android:name=".admin_restaurante.horarios_restaurante"
-            android:exported="true" />
-        <activity
-            android:name=".admin_restaurante.reportes_restaurante"
-            android:exported="true" />
-        <activity
-            android:name=".admin_restaurante.historial_ordenes"
-            android:exported="true" />
-        <activity
-            android:name=".admin_restaurante.abrir_restaurante"
+            android:name=".admin_restaurante.InicioRestauranteActivity"
             android:exported="true" />
 
 

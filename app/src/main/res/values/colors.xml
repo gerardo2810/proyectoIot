@@ -153,4 +153,9 @@
     <color name="md_theme_surfaceContainer_highContrast">#EDEDF4</color>
     <color name="md_theme_surfaceContainerHigh_highContrast">#E7E8EE</color>
     <color name="md_theme_surfaceContainerHighest_highContrast">#E2E2E9</color>
+
+    <color name="green_dark">#062925</color>
+    <color name="green_normal">#044a42</color>
+    <color name="green_light">#3a9188</color>
+    <color name="green_light_2">#b8e1dd</color>
 </resources>

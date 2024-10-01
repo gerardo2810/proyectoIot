@@ -50,4 +50,10 @@
     </style>
 
     <style name="Theme.Proyecto_Iot" parent="Base.Theme.Proyecto_Iot" />
+
+    <style name="BottomNavigation">
+        <item name="android:background">@color/green_dark</item>
+        <item name="itemIconTint">@color/black</item>
+        <item name="itemTextColor">@color/green_light_2</item>
+    </style>
 </resources>

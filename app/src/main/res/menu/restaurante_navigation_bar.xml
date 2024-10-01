@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/navigation_home"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/baseline_home_24"
+        android:title="Inicio"/>
+    <item
+        android:id="@+id/navigation_ordenes"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/histoial"
+        android:title="Ordenes"/>
+    <item
+        android:id="@+id/navigation_carta"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/outline_menu_book_24"
+        android:title="Carta"/>
+    <item
+        android:id="@+id/navigation_reportes"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/chart"
+        android:title="Reportes"/>
+    <item
+        android:id="@+id/navigation_perfil"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/baseline_person_24"
+        android:title="Perfil"/>
+</menu>

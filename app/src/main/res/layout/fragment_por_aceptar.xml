@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFCFD">
+
+
+    <!-- Texto para abrir restaurante y botón -->
+
+
+    <LinearLayout
+        android:id="@+id/newpedido1"
+        android:layout_width="327dp"
+        android:layout_height="94dp"
+        android:background="@drawable/border_pedido"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/order_search"
+        app:layout_constraintVertical_bias="0.056">
+
+        <!-- Imagen circular -->
+        <ImageView
+            android:layout_width="10dp"
+            android:layout_height="61dp"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/btn1" />
+
+        <!-- Información de la solicitud -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="¡Nuevo!"
+                android:textColor="@android:color/holo_green_dark"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="#002"
+                android:textColor="#000000"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="XXX-1234-2 productos"
+                android:textColor="#888888"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Flecha hacia la derecha -->
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/baseline_arrow_forward_ios_24"
+            app:tint="#888888" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/newpedido2"
+        android:layout_width="327dp"
+        android:layout_height="94dp"
+        android:background="@drawable/border_pedido"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/newpedido1"
+        app:layout_constraintVertical_bias="0.056">
+
+        <!-- Imagen circular -->
+        <ImageView
+            android:layout_width="10dp"
+            android:layout_height="61dp"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/btn1" />
+
+        <!-- Información de la solicitud -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="¡Nuevo!"
+                android:textColor="@android:color/holo_green_dark"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="#002"
+                android:textColor="#000000"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="XXX-1234-2 productos"
+                android:textColor="#888888"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Flecha hacia la derecha -->
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/baseline_arrow_forward_ios_24"
+            app:tint="#888888" />
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/order_search"
+        android:layout_width="352dp"
+        android:layout_height="52dp"
+        android:layout_margin="16dp"
+        android:background="@drawable/search_background"
+        android:drawableEnd="@drawable/baseline_search_24"
+        android:hint="Por N° de orden"
+        android:maxWidth="400dp"
+        android:padding="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.39"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

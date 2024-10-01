@@ -1,24 +1,21 @@
 package com.example.proyecto_iot.admin_restaurante;
 
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import com.example.proyecto_iot.R;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link PorAceptarFragment#newInstance} factory method to
+ * Use the {@link PedidoDetallesFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class PorAceptarFragment extends Fragment {
+public class PedidoDetallesFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -29,7 +26,7 @@ public class PorAceptarFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public PorAceptarFragment() {
+    public PedidoDetallesFragment() {
         // Required empty public constructor
     }
 
@@ -39,11 +36,11 @@ public class PorAceptarFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment PorAceptarFragment.
+     * @return A new instance of fragment PedidoDetallesFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static PorAceptarFragment newInstance(String param1, String param2) {
-        PorAceptarFragment fragment = new PorAceptarFragment();
+    public static PedidoDetallesFragment newInstance(String param1, String param2) {
+        PedidoDetallesFragment fragment = new PedidoDetallesFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -60,26 +57,10 @@ public class PorAceptarFragment extends Fragment {
         }
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_por_aceptar, container, false);
-
-        // Obtener referencia a la flecha (ImageView)
-        ImageView arrowImageView = view.findViewById(R.id.arrowImageView);
-
-        // Configurar listener en la flecha para cambiar a la actividad de detalles
-        arrowImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Iniciar la nueva actividad que muestra los detalles del pedido
-                Intent intent = new Intent(getActivity(), PedidoDetallesActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        return view;
+        return inflater.inflate(R.layout.fragment_pedido_detalles, container, false);
     }
 }

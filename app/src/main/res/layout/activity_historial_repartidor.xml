@@ -107,10 +107,10 @@
 
         <!-- Product Image -->
         <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_marginStart="20dp"
-            android:src="@drawable/baseline_delivery_dining_24"
+            android:src="@drawable/baseline_attach_money_24"
             android:contentDescription="Ubicación" />
 
 
@@ -168,10 +168,10 @@
 
         <!-- Product Image -->
         <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_marginStart="20dp"
-            android:src="@drawable/baseline_delivery_dining_24"
+            android:src="@drawable/baseline_attach_money_24"
             android:contentDescription="Ubicación" />
 
 

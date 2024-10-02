@@ -129,6 +129,9 @@
         <activity
             android:name=".repartidor.HistorialRepartidorActivity"
             android:exported="true" />
+        <activity
+            android:name=".repartidor.PerfilRepartidorActivity"
+            android:exported="true" />
 
         <activity
             android:name=".LoginActivity"

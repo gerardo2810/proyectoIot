@@ -3,6 +3,7 @@ package com.example.proyecto_iot.cliente.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,9 +17,11 @@ import java.util.List;
 public class ProductoCarritoAdapter extends RecyclerView.Adapter<ProductoCarritoAdapter.ProductoViewHolder> {
 
     private List<Producto> productos;
+    private OnProductUpdateListener listener;
 
-    public ProductoCarritoAdapter(List<Producto> productos) {
+    public ProductoCarritoAdapter(List<Producto> productos, OnProductUpdateListener listener) {
         this.productos = productos;
+        this.listener = listener;
     }
 
     @NonNull
@@ -31,32 +34,34 @@ public class ProductoCarritoAdapter extends RecyclerView.Adapter<ProductoCarrito
     @Override
     public void onBindViewHolder(@NonNull ProductoViewHolder holder, int position) {
         Producto producto = productos.get(position);
-        holder.nombreProducto.setText(producto.getNombre());
-        holder.descripcionProducto.setText(producto.getDescripcion());
-        holder.precioProducto.setText("S/. " + String.valueOf(producto.getPrecio()));
-        holder.textQuantity.setText(String.valueOf(producto.getCantidad()));
 
-        // Botón de aumentar cantidad
+        holder.textProductName.setText(producto.getNombre());
+        holder.textProductDescription.setText(producto.getDescripcion());
+        holder.textProductPrice.setText("S/ " + producto.getPrecio());
+        holder.textQuantity.setText(String.valueOf(producto.getCantidad()));
+        holder.btnAdd.setText("Pagar S/ " + producto.getTotal());
+
+        // Aumentar la cantidad
         holder.increaseQuantity.setOnClickListener(v -> {
-            producto.incrementarCantidad();
-            holder.textQuantity.setText(String.valueOf(producto.getCantidad()));
+            producto.setCantidad(producto.getCantidad() + 1);
             notifyItemChanged(position);
+            listener.onProductUpdated();
         });
 
-        // Botón de disminuir cantidad
+        // Disminuir la cantidad
         holder.decreaseQuantity.setOnClickListener(v -> {
             if (producto.getCantidad() > 1) {
-                producto.disminuirCantidad();
-                holder.textQuantity.setText(String.valueOf(producto.getCantidad()));
+                producto.setCantidad(producto.getCantidad() - 1);
                 notifyItemChanged(position);
+                listener.onProductUpdated();
             }
         });
 
-        // Botón de eliminar producto
+        // Eliminar producto
         holder.deleteProduct.setOnClickListener(v -> {
             productos.remove(position);
             notifyItemRemoved(position);
-            notifyItemRangeChanged(position, productos.size());
+            listener.onProductUpdated();
         });
     }
 
@@ -66,18 +71,25 @@ public class ProductoCarritoAdapter extends RecyclerView.Adapter<ProductoCarrito
     }
 
     public static class ProductoViewHolder extends RecyclerView.ViewHolder {
-        TextView nombreProducto, descripcionProducto, precioProducto, textQuantity;
+        TextView textProductName, textProductDescription, textProductPrice, textQuantity;
         ImageView increaseQuantity, decreaseQuantity, deleteProduct;
+        Button btnAdd;
 
         public ProductoViewHolder(@NonNull View itemView) {
             super(itemView);
-            nombreProducto = itemView.findViewById(R.id.product_name);
-            descripcionProducto = itemView.findViewById(R.id.product_description);
-            precioProducto = itemView.findViewById(R.id.product_price);
+            textProductName = itemView.findViewById(R.id.product_name);
+            textProductDescription = itemView.findViewById(R.id.product_description);
+            textProductPrice = itemView.findViewById(R.id.product_price);
             textQuantity = itemView.findViewById(R.id.quantity);
             increaseQuantity = itemView.findViewById(R.id.increase_quantity);
             decreaseQuantity = itemView.findViewById(R.id.decrease_quantity);
             deleteProduct = itemView.findViewById(R.id.delete_product);
+            btnAdd = itemView.findViewById(R.id.add_button);
         }
+    }
+
+    // Listener para notificar cuando se actualiza el producto
+    public interface OnProductUpdateListener {
+        void onProductUpdated();
     }
 }

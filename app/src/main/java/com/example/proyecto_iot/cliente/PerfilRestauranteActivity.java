@@ -12,7 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.proyecto_iot.R;
 
-public class perfil_restaurante_cliente extends AppCompatActivity {
+public class PerfilRestauranteActivity extends AppCompatActivity {
 
     private int productQuantity = 0;
     private double productPrice = 15.00;
@@ -31,7 +31,7 @@ public class perfil_restaurante_cliente extends AppCompatActivity {
         backArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(perfil_restaurante_cliente.this, inicio_cliente.class);
+                Intent intent = new Intent(PerfilRestauranteActivity.this, InicioClienteActivity.class);
                 startActivity(intent);
                 finish(); // Cierra la actividad actual
             }
@@ -42,7 +42,7 @@ public class perfil_restaurante_cliente extends AppCompatActivity {
         cartIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(perfil_restaurante_cliente.this, carrito_cliente.class);
+                Intent intent = new Intent(PerfilRestauranteActivity.this, CarritoClienteActivity.class);
                 startActivity(intent);
             }
         });
@@ -97,7 +97,7 @@ public class perfil_restaurante_cliente extends AppCompatActivity {
         iconoRestaurantes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(perfil_restaurante_cliente.this, inicio_cliente.class);
+                Intent intent = new Intent(PerfilRestauranteActivity.this, InicioClienteActivity.class);
                 startActivity(intent);
             }
         });
@@ -107,7 +107,7 @@ public class perfil_restaurante_cliente extends AppCompatActivity {
         iconoCarritoNav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(perfil_restaurante_cliente.this, carrito_cliente.class);
+                Intent intent = new Intent(PerfilRestauranteActivity.this, CarritoClienteActivity.class);
                 startActivity(intent);
             }
         });
@@ -117,7 +117,7 @@ public class perfil_restaurante_cliente extends AppCompatActivity {
         iconoPerfilNav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(perfil_restaurante_cliente.this, perfil_cliente.class);
+                Intent intent = new Intent(PerfilRestauranteActivity.this, PerfilClienteActivity.class);
                 startActivity(intent);
             }
         });

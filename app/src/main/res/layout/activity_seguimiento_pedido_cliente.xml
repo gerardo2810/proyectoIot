@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
-    tools:context=".cliente.seguimiento_pedido_cliente">
+    tools:context=".cliente.SeguimientoPedidoActivity">
 
     <!-- Header con ícono de flecha y título -->
     <LinearLayout
@@ -191,56 +191,55 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:padding="4dp">
 
-    <!-- Botón "Detalle de Orden" con fondo blanco -->
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:padding="8dp"
-        android:background="@drawable/rounded_background_white"
-        android:layout_marginEnd="4dp">
-
-        <TextView
-            android:id="@+id/tv_detalle_orden"
+        <!-- Botón "Detalle de Orden" con fondo blanco -->
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Detalle de Orden"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="#000000" />
-    </LinearLayout>
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="8dp"
+            android:background="@drawable/rounded_background_white"
+            android:layout_marginEnd="4dp">
 
-    <!-- Botón "Verificación de Envío" dentro de un layout para mantener la alineación -->
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:padding="8dp"
-        android:layout_marginStart="4dp">
+            <TextView
+                android:id="@+id/tv_detalle_orden"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Detalle de Orden"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#000000" />
+        </LinearLayout>
 
-        <TextView
-            android:id="@+id/tv_verificacion_envio"
+        <!-- Botón "Verificación de Envío" dentro de un layout para mantener la alineación -->
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Verificación de envío"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="#000000" />
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="8dp"
+            android:layout_marginStart="4dp">
+
+
+            <TextView
+                android:id="@+id/tv_verificacion_envio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Verificación de envío"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#000000" />
+        </LinearLayout>
     </LinearLayout>
-</LinearLayout>
 
 
     <!-- Línea gris debajo de los botones -->
     <View
-    android:layout_width="match_parent"
-    android:layout_height="1dp"
-    android:background="#D3D3D3"
-    android:layout_marginTop="6dp"
-    app:layout_constraintTop_toBottomOf="@id/detalles" />
-
-
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#D3D3D3"
+        android:layout_marginTop="6dp"
+        app:layout_constraintTop_toBottomOf="@id/detalles" />
 
     <!-- CardView para Detalles de la orden -->
     <androidx.cardview.widget.CardView
@@ -413,5 +412,134 @@
             </LinearLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
+
+    <!-- Nueva sección de pago con código QR -->
+    <LinearLayout
+        android:id="@+id/payment_section"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/order_details_card">
+
+        <!-- Texto "Paga aquí" en color rojo -->
+        <TextView
+            android:id="@+id/text_pay_here"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Paga aquí"
+            android:textColor="#FF0000"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginEnd="16dp" />
+
+        <!-- Botón con ícono de código QR y texto "Escanea código QR" -->
+        <LinearLayout
+            android:id="@+id/qr_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_background_grey"
+            android:padding="12dp"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_gravity="center_vertical">
+
+            <!-- Ícono del código QR -->
+            <ImageView
+                android:id="@+id/qr_icon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/imagen_qr_code"
+                 android:layout_marginEnd="8dp" />
+
+            <!-- Texto "Escanea código QR" -->
+            <TextView
+                android:id="@+id/text_scan_qr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Escanea código QR"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Navigation Bar -->
+    <LinearLayout
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="#F5E1FF"
+        android:padding="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:id="@+id/nav_restaurantes"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/baseline_restaurant_menu_24" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Restaurantes"
+                android:textSize="12sp"
+                android:textColor="#000000" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/nav_carrito"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/baseline_shopping_cart_24" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Carrito"
+                android:textSize="12sp"
+                android:textColor="#000000" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/nav_perfil"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/baseline_person_24" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Perfil"
+                android:textSize="12sp"
+                android:textColor="#000000" />
+        </LinearLayout>
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

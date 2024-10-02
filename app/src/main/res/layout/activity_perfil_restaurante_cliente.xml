@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
-    tools:context=".cliente.perfil_restaurante_cliente">
+    tools:context=".cliente.PerfilRestauranteActivity">
 
     <!-- Mantener el diseño anterior intacto -->
     <!-- Imagen de portada con flecha para retroceder -->

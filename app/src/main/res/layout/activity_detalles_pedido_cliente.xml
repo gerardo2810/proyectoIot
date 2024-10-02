@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
-    tools:context=".cliente.detalles_pedido_cliente">
+    tools:context=".cliente.DetallesPedidoActivity">
 
     <!-- Header con ícono de flecha y título -->
     <LinearLayout

@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="#FFFFFF"
 
-    tools:context=".cliente.todos_los_productos_cliente">
+    tools:context=".cliente.TodosLosProductosActivity">
 
     <!-- Header con ícono de flecha y título -->
     <LinearLayout

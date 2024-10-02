@@ -13,37 +13,37 @@
         android:theme="@style/Theme.Proyecto_Iot"
         tools:targetApi="31">
         <activity
-            android:name=".cliente.lista_restaurantes_categorias_cliente"
+            android:name=".cliente.ListaRestaurantesCategoriasClienteActivity"
             android:exported="true" />
         <activity
-            android:name=".cliente.todos_los_productos_cliente"
+            android:name=".cliente.TodosLosProductosActivity"
             android:exported="true" />
         <activity
-            android:name=".cliente.seguimiento_pedido_2_cliente"
+            android:name=".cliente.SeguimientoPedido2Activity"
             android:exported="true" />
         <activity
-            android:name=".cliente.seguimiento_pedido_cliente"
+            android:name=".cliente.SeguimientoPedidoActivity"
             android:exported="true" />
         <activity
-            android:name=".cliente.realizar_pedido_cliente"
+            android:name=".cliente.RealizarPedidoActivity"
             android:exported="true" />
         <activity
-            android:name=".cliente.carrito_cliente"
+            android:name=".cliente.CarritoClienteActivity"
             android:exported="true" />
         <activity
-            android:name=".cliente.perfil_restaurante_cliente"
+            android:name=".cliente.PerfilRestauranteActivity"
             android:exported="true" />
         <activity
-            android:name=".cliente.detalles_pedido_cliente"
+            android:name=".cliente.DetallesPedidoActivity"
             android:exported="true" />
         <activity
-            android:name=".cliente.historial_pedidos_cliente"
+            android:name=".cliente.HistorialPedidosActivity"
             android:exported="true" />
         <activity
-            android:name=".cliente.inicio_cliente"
+            android:name=".cliente.InicioClienteActivity"
             android:exported="true" />
         <activity
-            android:name=".cliente.perfil_cliente"
+            android:name=".cliente.PerfilClienteActivity"
             android:exported="true" />
 
 

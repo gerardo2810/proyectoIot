@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
-    tools:context=".cliente.realizar_pedido_cliente">
+    tools:context=".cliente.RealizarPedidoActivity">
 
     <LinearLayout
         android:id="@+id/header"
@@ -345,6 +345,7 @@
         app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
+            android:id="@+id/nav_restaurantes"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -365,6 +366,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/nav_carrito"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -385,6 +387,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/nav_perfil"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -404,4 +407,5 @@
                 android:textColor="#000000" />
         </LinearLayout>
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

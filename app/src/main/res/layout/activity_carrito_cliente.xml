@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
-    tools:context=".cliente.carrito_cliente">
+    tools:context=".cliente.CarritoClienteActivity">
 
     <LinearLayout
         android:id="@+id/header"

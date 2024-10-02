@@ -3,13 +3,12 @@ package com.example.proyecto_iot.cliente;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.proyecto_iot.R;
 
-public class inicio_cliente extends AppCompatActivity {
+public class InicioClienteActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,7 +20,7 @@ public class inicio_cliente extends AppCompatActivity {
         iconoPerfil.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(inicio_cliente.this, perfil_cliente.class);
+                Intent intent = new Intent(InicioClienteActivity.this, PerfilClienteActivity.class);
                 startActivity(intent);
             }
         });
@@ -31,7 +30,7 @@ public class inicio_cliente extends AppCompatActivity {
         iconoCarrito.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(inicio_cliente.this, carrito_cliente.class);
+                Intent intent = new Intent(InicioClienteActivity.this, CarritoClienteActivity.class);
                 startActivity(intent);
             }
         });
@@ -42,7 +41,7 @@ public class inicio_cliente extends AppCompatActivity {
         categoriaPolleria.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(inicio_cliente.this, lista_restaurantes_categorias_cliente.class);
+                Intent intent = new Intent(InicioClienteActivity.this, ListaRestaurantesCategoriasClienteActivity.class);
                 startActivity(intent);
             }
         });
@@ -53,7 +52,7 @@ public class inicio_cliente extends AppCompatActivity {
         popularRestaurante12.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(inicio_cliente.this, perfil_restaurante_cliente.class);
+                Intent intent = new Intent(InicioClienteActivity.this, PerfilRestauranteActivity.class);
                 startActivity(intent);
             }
         });
@@ -65,7 +64,7 @@ public class inicio_cliente extends AppCompatActivity {
         popularRestaurante1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(inicio_cliente.this, perfil_restaurante_cliente.class);
+                Intent intent = new Intent(InicioClienteActivity.this, PerfilRestauranteActivity.class);
                 startActivity(intent);
             }
         });
@@ -77,7 +76,7 @@ public class inicio_cliente extends AppCompatActivity {
         iconoRestaurantes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(inicio_cliente.this, inicio_cliente.class);
+                Intent intent = new Intent(InicioClienteActivity.this, InicioClienteActivity.class);
                 startActivity(intent);
             }
         });
@@ -87,7 +86,7 @@ public class inicio_cliente extends AppCompatActivity {
         iconoCarritoNav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(inicio_cliente.this, carrito_cliente.class);
+                Intent intent = new Intent(InicioClienteActivity.this, CarritoClienteActivity.class);
                 startActivity(intent);
             }
         });
@@ -97,7 +96,7 @@ public class inicio_cliente extends AppCompatActivity {
         iconoPerfilNav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(inicio_cliente.this, perfil_cliente.class);
+                Intent intent = new Intent(InicioClienteActivity.this, PerfilClienteActivity.class);
                 startActivity(intent);
             }
         });

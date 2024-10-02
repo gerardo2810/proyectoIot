@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="#FFFFFF"
 
-    tools:context=".cliente.seguimiento_pedido_2_cliente">
+    tools:context=".cliente.SeguimientoPedido2Activity">
 
     <!-- Header con ícono de flecha y título -->
     <LinearLayout

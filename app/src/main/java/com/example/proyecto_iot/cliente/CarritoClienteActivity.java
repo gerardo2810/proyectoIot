@@ -1,10 +1,10 @@
 package com.example.proyecto_iot.cliente;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -14,7 +14,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.proyecto_iot.R;
 
-public class carrito_cliente extends AppCompatActivity {
+import java.text.NumberFormat;
+import java.util.Locale;
+
+public class CarritoClienteActivity extends AppCompatActivity {
 
     private int productQuantity = 0;
     private double productPrice = 15.00; // Precio unitario del producto
@@ -23,6 +26,8 @@ public class carrito_cliente extends AppCompatActivity {
     private Button addButton;
     private TextView cartCount;
     private LinearLayout productContainer;
+    private ImageView backArrow;
+    private Button payButton;  // Agregamos el botón de pagar
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,9 +40,9 @@ public class carrito_cliente extends AppCompatActivity {
         addButton = findViewById(R.id.add_button);
         cartCount = findViewById(R.id.cart_count);
         ScrollView scrollView = findViewById(R.id.scroll_products);
-        // Si dentro del ScrollView tienes un LinearLayout para agregar productos
-        LinearLayout productContainer = scrollView.findViewById(R.id.product_container);
-
+        // Ajustar ID correcto del contenedor del producto
+        productContainer = scrollView.findViewById(R.id.product_container);
+        payButton = findViewById(R.id.pay_button);  // Inicializamos el botón de pagar
 
         // Inicializar cantidad y ocultar el botón al inicio
         textQuantity.setText(String.valueOf(productQuantity));
@@ -49,6 +54,16 @@ public class carrito_cliente extends AppCompatActivity {
         ImageView decreaseButton = findViewById(R.id.decrease_quantity);
         ImageView deleteProduct = findViewById(R.id.delete_product);
         ImageView shoppingCartIcon = findViewById(R.id.shopping_cart);
+        backArrow = findViewById(R.id.back_arrow);
+
+        // Listener para regresar a la vista de inicio del cliente
+        backArrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(CarritoClienteActivity.this, InicioClienteActivity.class);
+                startActivity(intent);
+            }
+        });
 
         // Listener para aumentar la cantidad
         increaseButton.setOnClickListener(new View.OnClickListener() {
@@ -81,16 +96,22 @@ public class carrito_cliente extends AppCompatActivity {
             }
         });
 
-        // Listener para vaciar el carrito
+        // Listener para vaciar el carrito con confirmación
         TextView clearCart = findViewById(R.id.clear_cart);
         clearCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Vaciar todos los productos del carrito
-                productQuantity = 0;
-                updateQuantityAndPrice();
-                productContainer.setVisibility(View.GONE);
-                cartCount.setVisibility(View.GONE);
+                new AlertDialog.Builder(CarritoClienteActivity.this)
+                        .setTitle("Vaciar Carrito")
+                        .setMessage("¿Estás seguro de que quieres vaciar el carrito?")
+                        .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                            productQuantity = 0;
+                            updateQuantityAndPrice();
+                            productContainer.setVisibility(View.GONE);
+                            cartCount.setVisibility(View.GONE);
+                        })
+                        .setNegativeButton(android.R.string.no, null)
+                        .show();
             }
         });
 
@@ -98,7 +119,7 @@ public class carrito_cliente extends AppCompatActivity {
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Aquí puedes agregar la lógica para añadir el producto al sistema del carrito
+                // Lógica para añadir el producto al sistema del carrito
             }
         });
 
@@ -109,7 +130,8 @@ public class carrito_cliente extends AppCompatActivity {
         navRestaurantes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(carrito_cliente.this, inicio_cliente.class);
+                Intent intent = new Intent(CarritoClienteActivity.this, InicioClienteActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }
         });
@@ -118,7 +140,8 @@ public class carrito_cliente extends AppCompatActivity {
         navPerfil.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(carrito_cliente.this, perfil_cliente.class);
+                Intent intent = new Intent(CarritoClienteActivity.this, PerfilClienteActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }
         });
@@ -127,11 +150,21 @@ public class carrito_cliente extends AppCompatActivity {
         shoppingCartIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(carrito_cliente.this, carrito_cliente.class);
+                Intent intent = new Intent(CarritoClienteActivity.this, CarritoClienteActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }
         });
 
+        // Listener para ir a la vista de realizar pedido al presionar el botón "Ir a pagar"
+        payButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Redirigir a la actividad de realizar pedido
+                Intent intent = new Intent(CarritoClienteActivity.this, RealizarPedidoActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     /**
@@ -140,14 +173,15 @@ public class carrito_cliente extends AppCompatActivity {
     private void updateQuantityAndPrice() {
         textQuantity.setText(String.valueOf(productQuantity));
 
-        // Calcular el nuevo precio total
+        // Formatear el precio en soles (PEN) utilizando NumberFormat para Perú
+        NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("es", "PE"));
         double totalPrice = productQuantity * productPrice;
-        productPriceTextView.setText("S/ " + String.format("%.2f", totalPrice));
+        productPriceTextView.setText(currencyFormat.format(totalPrice));
 
         // Mostrar u ocultar el botón de añadir producto
         if (productQuantity > 0) {
             addButton.setVisibility(View.VISIBLE);
-            addButton.setText("Añadir S/ " + String.format("%.2f", totalPrice));
+            addButton.setText("Añadir " + currencyFormat.format(totalPrice));
             cartCount.setVisibility(View.VISIBLE);
             cartCount.setText(String.valueOf(productQuantity));
         } else {

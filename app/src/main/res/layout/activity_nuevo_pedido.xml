@@ -12,55 +12,67 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center_vertical"
+        android:gravity="center_horizontal"
         android:paddingVertical="8dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:paddingHorizontal="16dp">
 
-        <!-- Ícono de Perfil -->
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/baseline_person_24"
-            android:layout_gravity="center_vertical" />
 
-        <!-- Layout para icono de ubicación y dirección -->
         <LinearLayout
-            android:layout_width="0dp"
+            android:id="@+id/header_layout2"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_marginHorizontal="7dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/border_layout"
+            android:backgroundTint="@color/md_theme_tertiaryFixedDim"
+            android:layout_gravity="center_horizontal"
             android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_marginStart="16dp">
+            android:paddingVertical="13dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-            <!-- Texto de la dirección -->
+
+
+            <!-- Título del header -->
             <TextView
-                android:layout_width="wrap_content"
+                android:id="@+id/header_title"
+                android:layout_width="300dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="30dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:layout_marginStart="60dp"
                 android:text="Nuevo pedido"
                 android:textColor="#000000"
                 android:textSize="18sp"
                 android:textStyle="bold" />
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="-60dp"
-                android:text="Cancelar registro"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="10dp"
+                android:text="Cancelar"
                 android:textColor="#CA1010"
-                android:textSize="15sp"
+                android:textSize="16sp"
                 android:textStyle="bold" />
+
+
         </LinearLayout>
+
+
+
     </LinearLayout>
+
 
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="380dp"
-        android:layout_height="200dp"
-        android:scaleType="fitStart"
+        android:layout_height="240dp"
+        android:scaleType="fitXY"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/header_layout"
@@ -71,28 +83,30 @@
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="32dp"
         android:text="S/ 10.00 (2.5 Km)"
+        android:textColor="#000000"
         android:textSize="23sp"
         android:textStyle="bold"
-        android:textColor="#000000"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.081"
+        app:layout_constraintHorizontal_bias="0.069"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="409dp"
-        android:layout_height="250dp"
+        android:layout_height="195dp"
+        android:layout_marginTop="4dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView3">
 
         <LinearLayout
             android:layout_width="80dp"
-            android:layout_height="240dp"
+            android:layout_height="195dp"
             android:orientation="vertical">
 
             <ImageView
@@ -122,18 +136,18 @@
 
         <LinearLayout
             android:layout_width="320dp"
-            android:layout_height="240dp"
+            android:layout_height="195dp"
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView3">
+            app:layout_constraintTop_toBottomOf="@+id/textView">
 
             <TextView
                 android:layout_width="200dp"
                 android:layout_height="25dp"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="20dp"
-                android:background="#78BA8080"
+                android:background="#789F74E4"
                 android:gravity="center"
                 android:text="Punto de retiro"
                 android:textSize="18sp" />
@@ -144,14 +158,16 @@
                 android:layout_marginStart="18dp"
                 android:layout_marginTop="5dp"
                 android:text="El Tío Bigote"
+                android:textColor="#000000"
                 android:textSize="18sp" />
 
             <TextView
-                android:layout_width="290dp"
-                android:layout_height="25dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="18dp"
                 android:layout_marginTop="5dp"
                 android:text="Av. Mariano H. Cornejo 2294, Pueblo Libre"
+                android:textColor="#000000"
                 android:textSize="15sp" />
 
             <TextView
@@ -159,111 +175,49 @@
                 android:layout_height="25dp"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="20dp"
-                android:background="#78BA8080"
+                android:background="#789F74E4"
                 android:gravity="center"
                 android:text="Punto de entrega"
                 android:textSize="18sp" />
 
             <TextView
-                android:layout_width="290dp"
-                android:layout_height="25dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="18dp"
                 android:layout_marginTop="5dp"
-                android:text="Av de los Precursores 281, San Miguel"
+                android:text="Av. de los Precursores 281, San Miguel"
+                android:textColor="#000000"
                 android:textSize="15sp" />
 
 
         </LinearLayout>
     </LinearLayout>
 
-
     <Button
         android:id="@+id/button2"
         android:layout_width="178dp"
         android:layout_height="57dp"
-        android:layout_marginBottom="36dp"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="@color/md_theme_onTertiaryFixed"
+        android:onClick="abrirPagRecojo1"
         android:text="Tomar pedido"
         android:textSize="18sp"
-        android:onClick="abrirPagRecojo1"
         app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <LinearLayout
+    <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="#F5E1FF"
-        android:padding="8dp"
+        android:background="@color/md_theme_tertiaryFixedDim"
+        app:itemBackground="@drawable/superadmin_nav_ripple"
+        app:labelVisibilityMode="labeled"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <!-- Icono Inicio -->
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center">
-
-            <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@drawable/baseline_home_24" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Inicio"
-                android:textSize="12sp"
-                android:textColor="#000000" />
-        </LinearLayout>
-
-
-        <!-- Icono Reportes -->
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center">
-
-            <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@drawable/baseline_restaurant_menu_24" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Historial"
-                android:textSize="12sp"
-                android:textColor="#000000" />
-        </LinearLayout>
-
-        <!-- Icono Perfil -->
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center">
-
-            <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@drawable/baseline_person_24" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Perfil"
-                android:textSize="12sp"
-                android:textColor="#000000" />
-        </LinearLayout>
-    </LinearLayout>
+        app:menu="@menu/repartidor_navigation_bar" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

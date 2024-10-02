@@ -99,6 +99,12 @@
         <activity
             android:name=".admin_restaurante.PedidoDetallesActivity"
             android:exported="true" />
+        <activity
+            android:name=".admin_restaurante.DetallePlatoActivity"
+            android:exported="true" />
+
+
+
 
         <activity
             android:name=".repartidor.RegistroRepartidorActivity"

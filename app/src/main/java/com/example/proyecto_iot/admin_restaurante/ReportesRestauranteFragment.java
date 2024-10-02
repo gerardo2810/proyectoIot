@@ -2,13 +2,25 @@ package com.example.proyecto_iot.admin_restaurante;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.example.proyecto_iot.R;
+import com.example.proyecto_iot.admin_restaurante.RecyclerView.Plato;
+import com.example.proyecto_iot.admin_restaurante.RecyclerView.PlatoAdapter;
+import com.google.android.material.tabs.TabLayout;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -16,6 +28,10 @@ import com.example.proyecto_iot.R;
  * create an instance of this fragment.
  */
 public class ReportesRestauranteFragment extends Fragment {
+
+    private Button btnVentasPorPlato, btnVentasPorUsuario;
+    private TabLayout tabLayout;
+    private Fragment selectedFragment;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -57,10 +73,58 @@ public class ReportesRestauranteFragment extends Fragment {
         }
     }
 
+    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_reportes_restaurante, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_reportes_restaurante, container, false);
+
+        // Inicializa el TabLayout
+        tabLayout = view.findViewById(R.id.tabLayout);
+
+        // Listener para manejar las selecciones de pestañas
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                // Cambia el fragmento en el TabLayout basado en la pestaña seleccionada
+                switch (tab.getPosition()) {
+                    case 0:
+                        selectedFragment = new VentasPorPlatoFragent();
+                        break;
+                    case 1:
+                        selectedFragment = new VentasPorUsuarioFragment();
+                        break;
+                }
+
+                // Reemplazar el fragmento del TabLayout
+                if (selectedFragment != null) {
+                    replaceTabFragment(selectedFragment);
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+                // No action needed
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                // No action needed
+            }
+        });
+
+        // Cargar el fragmento inicial para el TabLayout (PorAceptarFragment)
+        if (savedInstanceState == null) {
+            replaceTabFragment(new VentasPorPlatoFragent());
+        }
+
+        return view;
+    }
+
+    // Método para reemplazar los fragments dentro del TabLayout
+    private void replaceTabFragment(Fragment fragment) {
+        getChildFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, fragment)  // Asegúrate de usar un contenedor de fragmentos dentro del fragmento
+                .commit();
     }
 }

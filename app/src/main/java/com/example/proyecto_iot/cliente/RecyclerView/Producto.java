@@ -34,6 +34,15 @@ public class Producto {
     public void setCantidad(int cantidad) {
         this.cantidad = cantidad;
     }
+    public void incrementarCantidad() {
+        this.cantidad++;
+    }
+
+    public void disminuirCantidad() {
+        if (this.cantidad > 1) {
+            this.cantidad--;
+        }
+    }
 
     public double getTotal() {
         return this.precio * this.cantidad;

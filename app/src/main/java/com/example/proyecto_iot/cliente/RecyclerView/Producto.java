@@ -8,11 +8,11 @@ public class Producto {
     private double precio;
     private int cantidad;  // Nueva propiedad para manejar la cantidad del producto
 
-    public Producto(String nombre, String descripcion, double precio) {
+    public Producto(String nombre, String descripcion, double precio,int cantidad) {
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.precio = precio;
-        this.cantidad = 1; // Inicializamos con una cantidad mínima de 1
+        this.cantidad = cantidad; // Inicializamos con una cantidad mínima de 1
     }
 
     public String getNombre() {

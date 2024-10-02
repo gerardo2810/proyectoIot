@@ -1,5 +1,7 @@
 package com.example.proyecto_iot.admin_restaurante.RecyclerView;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,21 +12,19 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.proyecto_iot.R;
+import com.example.proyecto_iot.admin_restaurante.DetalleOrdenActivity;
 
 import java.util.List;
 
 public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHolder> {
 
     private List<Order> orderList;
-    private OnOrderClickListener listener;
+    private Context context;
 
-    public interface OnOrderClickListener {
-        void onOrderClick(Order order);
-    }
 
-    public OrderAdapter(List<Order> orderList, OnOrderClickListener listener) {
+    public OrderAdapter(List<Order> orderList, Context context) {
         this.orderList = orderList;
-        this.listener = listener;
+        this.context = context;
     }
 
     @NonNull
@@ -37,7 +37,24 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
     @Override
     public void onBindViewHolder(@NonNull OrderViewHolder holder, int position) {
         Order order = orderList.get(position);
-        holder.bind(order);
+
+        holder.tvOrderId.setText(order.getOrderId());
+        holder.tvOrderAddress.setText(order.getDireccion());
+        holder.tvOrderPrice.setText(order.getPrecio());
+        holder.tvOrderStatus.setText(order.getEstado());
+
+        // Evento de clic para abrir los detalles del plato
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, DetalleOrdenActivity.class);
+            intent.putExtra("estado", order.getEstado());
+            intent.putExtra("orderId", order.getOrderId());
+            intent.putExtra("date", order.getDate());
+            intent.putExtra("cliente", order.getCliente());
+            intent.putExtra("direccion", order.getDireccion());
+            intent.putExtra("precio", order.getPrecio());
+            intent.putExtra("repartidor", order.getRepartidor());
+            context.startActivity(intent);
+        });
     }
 
     @Override
@@ -45,7 +62,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         return orderList.size();
     }
 
-    class OrderViewHolder extends RecyclerView.ViewHolder {
+    public static class OrderViewHolder extends RecyclerView.ViewHolder {
         TextView tvOrderId, tvOrderAddress, tvOrderPrice, tvOrderStatus;
         ImageView ivOrderDetails;
 
@@ -58,18 +75,5 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
             ivOrderDetails = itemView.findViewById(R.id.iv_order_details);
         }
 
-        public void bind(final Order order) {
-            tvOrderId.setText(order.getOrderId());
-            tvOrderAddress.setText(order.getAddress());
-            tvOrderPrice.setText("S/ " + order.getPrice());
-            tvOrderStatus.setText(order.getStatus());
-
-            ivOrderDetails.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listener.onOrderClick(order);  // Llamamos al listener para manejar el clic
-                }
-            });
-        }
     }
 }

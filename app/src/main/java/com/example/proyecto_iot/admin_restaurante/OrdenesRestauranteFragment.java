@@ -43,26 +43,19 @@ public class OrdenesRestauranteFragment extends Fragment {
 
         // Crear la lista de órdenes
         orderList = new ArrayList<>();
-        orderList.add(new Order("ID 0000012", "El Molle # 156 B", "106.00", "EN CAMINO"));
-        orderList.add(new Order("ID 0000013", "El Molle # 156 B", "76.00", "EN PREPARACIÓN"));
-        orderList.add(new Order("ID 0000014", "El Molle # 156 B", "20.00", "ENTREGADO"));
-        orderList.add(new Order("ID 0000015", "El Molle # 156 B", "20.00", "EN CAMINO"));
-        orderList.add(new Order("ID 0000016", "El Molle # 156 B", "20.00", "EN TIENDA"));
-        orderList.add(new Order("ID 0000017", "El Molle # 156 B", "20.00", "ENTREGADO"));
+        orderList.add(new Order("EN CAMINO","ID 0000012", "Sep 05,2024. 06:45:51 PM", "Ana Armas", "El Molle #156B", "106.00", "Walter Gomez"));
+        orderList.add(new Order("EN PREPARACIÓN","ID 0000013", "Sep 05,2024. 06:45:51 PM", "Jose Hernandez","Av.Universitaria 2011", "76.00", "Damian Rojas"));
+        orderList.add(new Order("ENTREGADO","ID 0000014", "Sep 05,2024. 06:45:51 PM","Diana Rosas","Av.Magnolias #255B", "18.20", "Damian Rojas"));
+        orderList.add(new Order("EN CAMINO","ID 0000015","Sep 05,2024. 06:45:51 PM", "Maria Jose Ramirez","Calle 8, San Miguel", "20.00", "Walter Gomez"));
+        orderList.add(new Order("EN TIENDA","ID 0000016", "Sep 05,2024. 06:45:51 PM", "Melissa Jimenez","Los Álamos #156B", "50.00", "Damian Rojas"));
+        orderList.add(new Order("ENTREGADO","ID 0000017", "Sep 05,2024. 06:45:51 PM","Alvaro Dorian","Las Casuarinas # 156B", "40.00", "Walter Gomez"));
 
         // Configurar el adaptador
-        orderAdapter = new OrderAdapter(orderList, new OrderAdapter.OnOrderClickListener() {
-            @Override
-            public void onOrderClick(Order order) {
-                // Manejar el clic en el pedido (mostrar detalles, por ejemplo)
-                Toast.makeText(getContext(), "Detalles de " + order.getOrderId(), Toast.LENGTH_SHORT).show();
-                // Aquí puedes iniciar una nueva actividad o cambiar a otro fragmento
-            }
-        });
-
+        orderAdapter = new OrderAdapter(orderList,getContext());
+        rvOrdersList.setLayoutManager(new LinearLayoutManager(getContext()));
         rvOrdersList.setAdapter(orderAdapter);
 
-        return view;  // Retornar la vista del fragmento
+        return view;
     }
 
 

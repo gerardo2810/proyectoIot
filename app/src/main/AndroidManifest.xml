@@ -105,6 +105,9 @@
         <activity
             android:name=".admin_restaurante.DetalleUsuarioActivity"
             android:exported="true" />
+        <activity
+            android:name=".admin_restaurante.DetalleOrdenActivity"
+            android:exported="true" />
 
 
 

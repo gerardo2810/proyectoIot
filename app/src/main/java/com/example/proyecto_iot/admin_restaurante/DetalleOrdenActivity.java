@@ -14,24 +14,30 @@ public class DetalleOrdenActivity extends AppCompatActivity {
         setContentView(R.layout.restaurante_activity_detalle_orden);
 
         // Obtener los datos del Intent
-        String idPedido = getIntent().getStringExtra("id_pedido");
+        String estado = getIntent().getStringExtra("estado");
+        String idPedido = getIntent().getStringExtra("orderId");
+        String date = getIntent().getStringExtra("direccion");
         String cliente = getIntent().getStringExtra("cliente");
         String direccion = getIntent().getStringExtra("direccion");
-        String estado = getIntent().getStringExtra("estado");
-        String detalles = getIntent().getStringExtra("detalles");
+        String precio = getIntent().getStringExtra("direccion");
+        String repartidor = getIntent().getStringExtra("repartidor");
 
         // Obtener referencias a las vistas
-        TextView tvIdPedido = findViewById(R.id.tv_id_pedido);
+        TextView tvIdPedido = findViewById(R.id.tv_idOrder);
+        TextView tvDate = findViewById(R.id.tv_date);
         TextView tvCliente = findViewById(R.id.tv_cliente);
         TextView tvDireccion = findViewById(R.id.tv_direccion);
-        TextView tvEstado = findViewById(R.id.tv_estado);
-        TextView tvDetalles = findViewById(R.id.tv_detalles);
+        TextView tvEstado = findViewById(R.id.order_status_button);
+        TextView tvPrecio = findViewById(R.id.tv_total);
+        TextView tvRepartidor = findViewById(R.id.tv_repartidor);
 
         // Asignar los datos recibidos a las vistas
+        tvEstado.setText(estado);
         tvIdPedido.setText(idPedido);
+        tvDate.setText(date);
         tvCliente.setText(cliente);
         tvDireccion.setText(direccion);
-        tvEstado.setText(estado);
-        tvDetalles.setText(detalles);
+        tvPrecio.setText(precio);
+        tvRepartidor.setText(repartidor);
     }
 }

@@ -6,14 +6,36 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.proyecto_iot.R;
+import com.example.proyecto_iot.cliente.RecyclerView.Restaurante;
+import com.example.proyecto_iot.cliente.RecyclerView.RestauranteAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class InicioClienteActivity extends AppCompatActivity {
-
+    private RecyclerView recyclerBestOption;
+    private RestauranteAdapter bestOptionAdapter;
+    private List<Restaurante> bestOptionList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inicio_cliente);
+
+        // Inicializar RecyclerView
+        recyclerBestOption = findViewById(R.id.recycler_best_option);
+        recyclerBestOption.setLayoutManager(new LinearLayoutManager(this));
+
+        // Inicializar lista de opciones y adaptador
+        bestOptionList = new ArrayList<>();
+        bestOptionList.add(new Restaurante("La Lucha", 3.49, "Desayunos", "San Miguel"));
+        bestOptionList.add(new Restaurante("Pinkberry", 3.49, "Heladería", "San Miguel"));
+
+        bestOptionAdapter = new RestauranteAdapter(this, bestOptionList);
+        recyclerBestOption.setAdapter(bestOptionAdapter);
 
         // Listener para el ícono de perfil en el header
         ImageView iconoPerfil = findViewById(R.id.icono_perfil);

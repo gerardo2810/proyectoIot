@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.example.proyecto_iot.R;
 
@@ -39,5 +40,24 @@ public class DetalleOrdenActivity extends AppCompatActivity {
         tvDireccion.setText(direccion);
         tvPrecio.setText(precio);
         tvRepartidor.setText(repartidor);
+
+
+        switch (estado) {
+            case "ENTREGADO":
+                tvEstado.setBackgroundColor(ContextCompat.getColor(this, R.color.order_delivered));
+                break;
+            case "EN PREPARACIÓN":
+                tvEstado.setBackgroundColor(ContextCompat.getColor(this, R.color.order_in_preparation));
+                break;
+            case "EN CAMINO":
+                tvEstado.setBackgroundColor(ContextCompat.getColor(this, R.color.order_on_the_way));
+                break;
+            case "EN TIENDA":
+                tvEstado.setBackgroundColor(ContextCompat.getColor(this, R.color.order_in_store));
+                break;
+            default:
+                tvEstado.setBackgroundColor(ContextCompat.getColor(this, R.color.default_order_background));
+                break;
+        }
     }
 }

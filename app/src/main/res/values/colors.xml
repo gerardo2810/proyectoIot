@@ -158,4 +158,10 @@
     <color name="green_normal">#044a42</color>
     <color name="green_light">#3a9188</color>
     <color name="green_light_2">#b8e1dd</color>
+
+    <color name="order_delivered">#72CB90</color>
+    <color name="order_in_preparation">#EA9595</color>
+    <color name="order_on_the_way">#F4E661</color>
+    <color name="order_in_store">#C5AAD6</color>
+    <color name="default_order_background">#FFFFFF</color>
 </resources>

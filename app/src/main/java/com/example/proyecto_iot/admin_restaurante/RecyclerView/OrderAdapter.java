@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.proyecto_iot.R;
@@ -42,6 +43,25 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         holder.tvOrderAddress.setText(order.getDireccion());
         holder.tvOrderPrice.setText(order.getPrecio());
         holder.tvOrderStatus.setText(order.getEstado());
+
+        // Cambiar el color de fondo dependiendo del estado de la orden
+        switch (order.getEstado()) {
+            case "ENTREGADO":
+                holder.tvOrderStatus.setBackgroundColor(ContextCompat.getColor(context, R.color.order_delivered));
+                break;
+            case "EN PREPARACIÓN":
+                holder.tvOrderStatus.setBackgroundColor(ContextCompat.getColor(context, R.color.order_in_preparation));
+                break;
+            case "EN CAMINO":
+                holder.tvOrderStatus.setBackgroundColor(ContextCompat.getColor(context, R.color.order_on_the_way));
+                break;
+            case "EN TIENDA":
+                holder.tvOrderStatus.setBackgroundColor(ContextCompat.getColor(context, R.color.order_in_store));
+                break;
+            default:
+                holder.tvOrderStatus.setBackgroundColor(ContextCompat.getColor(context, R.color.default_order_background));
+                break;
+        }
 
         // Evento de clic para abrir los detalles del plato
         holder.itemView.setOnClickListener(v -> {

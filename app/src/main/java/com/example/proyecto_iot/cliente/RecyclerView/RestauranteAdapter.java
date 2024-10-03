@@ -1,12 +1,15 @@
 package com.example.proyecto_iot.cliente.RecyclerView;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.example.proyecto_iot.R;
+import com.example.proyecto_iot.cliente.PerfilRestauranteActivity;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -42,6 +45,12 @@ public class RestauranteAdapter extends RecyclerView.Adapter<RestauranteAdapter.
         // Asignar la imagen correspondiente
         holder.productImage.setImageResource(option.getImageResourceId());
 
+        // Acción del botón restaurante
+        holder.linearLayout.setOnClickListener(v -> {
+            Intent intent = new Intent(context, PerfilRestauranteActivity.class);
+            context.startActivity(intent);
+        });
+
     }
 
     @Override
@@ -53,6 +62,7 @@ public class RestauranteAdapter extends RecyclerView.Adapter<RestauranteAdapter.
 
         ImageView productImage;
         TextView productName, productPrice, productCategory, productLocation;
+        LinearLayout linearLayout;
 
         public BestOptionViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -61,6 +71,7 @@ public class RestauranteAdapter extends RecyclerView.Adapter<RestauranteAdapter.
             productPrice = itemView.findViewById(R.id.product_price);
             productCategory = itemView.findViewById(R.id.product_category);
             productLocation = itemView.findViewById(R.id.product_location);
+            linearLayout = itemView.findViewById(R.id.item_opcion_restaurante);
         }
     }
 }

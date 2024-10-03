@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:paddingBottom="12dp">
+
+    <LinearLayout
+        android:id="@+id/newpedido1"
+        android:layout_width="363dp"
+        android:layout_height="106dp"
+        android:background="@drawable/border_pedido"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.341">
+
+        <!-- Imagen circular -->
+        <ImageView
+            android:layout_width="13dp"
+            android:layout_height="83dp"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/btn1" />
+
+        <!-- Información de la solicitud -->
+        <LinearLayout
+            android:layout_width="299dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="¡Nuevo!"
+                android:textColor="@android:color/holo_green_dark"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/id_new_pedido"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="#002"
+                android:textColor="#000000"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/cant_productos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="XXX-1234-2 productos"
+                android:textColor="#888888"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/total"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Precio"
+                android:textColor="#888888"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Flecha hacia la derecha -->
+        <ImageView
+            android:id="@+id/arrowImageView"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/baseline_arrow_forward_ios_24"
+            app:tint="#888888" />
+
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -93,19 +93,19 @@
             android:id="@+id/tab_accept"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Por aceptar (1)" />
+            android:text="Por aceptar" />
 
         <com.google.android.material.tabs.TabItem
             android:id="@+id/tab_preparing"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="En preparación (0)" />
+            android:text="En preparación" />
 
         <com.google.android.material.tabs.TabItem
             android:id="@+id/tab_toDeliver"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Por entregar (0)" />
+            android:text="Por entregar" />
     </com.google.android.material.tabs.TabLayout>
 
     <!-- Contenedor para fragments del BottomNavigationView -->

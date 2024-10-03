@@ -3,8 +3,12 @@ package com.example.proyecto_iot.admin_restaurante;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +16,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.example.proyecto_iot.R;
+import com.example.proyecto_iot.admin_restaurante.RecyclerView.Order;
+import com.example.proyecto_iot.admin_restaurante.RecyclerView.OrderAdapter;
+import com.example.proyecto_iot.admin_restaurante.RecyclerView.Pedido;
+import com.example.proyecto_iot.admin_restaurante.RecyclerView.PedidoAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -19,6 +30,10 @@ import com.example.proyecto_iot.R;
  * create an instance of this fragment.
  */
 public class PorAceptarFragment extends Fragment {
+
+    private RecyclerView rv_orders_list;
+    private PedidoAdapter pedidoAdapter;
+    private List<Pedido> pedidoList;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -60,25 +75,30 @@ public class PorAceptarFragment extends Fragment {
         }
     }
 
-
+    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_por_aceptar, container, false);
 
-        // Obtener referencia a la flecha (ImageView)
-        ImageView arrowImageView = view.findViewById(R.id.arrowImageView);
+        // Configurar el RecyclerView
+        rv_orders_list = view.findViewById(R.id.rv_orders_list);
+        rv_orders_list.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // Configurar listener en la flecha para cambiar a la actividad de detalles
-        arrowImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Iniciar la nueva actividad que muestra los detalles del pedido
-                Intent intent = new Intent(getActivity(), PedidoDetallesActivity.class);
-                startActivity(intent);
-            }
-        });
+        // Crear la lista de órdenes
+        pedidoList = new ArrayList<>();
+        pedidoList.add(new Pedido("#001","2 productos", "S/45.00"));
+        pedidoList.add(new Pedido("#002","1 producto", "S/55.00"));
+        pedidoList.add(new Pedido("#003","2 productos", "S/85.00"));
+        pedidoList.add(new Pedido("#004","3 productos", "S/155.00"));
+        pedidoList.add(new Pedido("#005","3 productos", "S/205.00"));
+        pedidoList.add(new Pedido("#006","4 productos", "S/380.00"));
+        pedidoList.add(new Pedido("#007","7 productos", "S/555.00"));
+
+        // Configurar el adaptador
+        pedidoAdapter = new PedidoAdapter(pedidoList,getContext());
+        rv_orders_list.setLayoutManager(new LinearLayoutManager(getContext()));
+        rv_orders_list.setAdapter(pedidoAdapter);
 
         return view;
     }

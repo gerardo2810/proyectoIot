@@ -76,8 +76,8 @@ public class InicioClienteActivity extends AppCompatActivity {
 
         // Inicializar lista de opciones y adaptador
         bestOptionList = new ArrayList<>();
-        bestOptionList.add(new Restaurante("La Lucha", 3.49, "Desayunos", "San Miguel",R.drawable.chinawok_portada));
-        bestOptionList.add(new Restaurante("Pinkberry", 3.49, "Heladería", "San Miguel",R.drawable.chinawok_portada));
+        bestOptionList.add(new Restaurante("La Lucha", 3.49, "Desayunos", "San Miguel",R.drawable.laluchaf));
+        bestOptionList.add(new Restaurante("Pinkberry", 3.49, "Heladería", "San Miguel",R.drawable.pinkberryf));
 
         bestOptionAdapter = new RestauranteAdapter(this, bestOptionList);
         recyclerBestOption.setAdapter(bestOptionAdapter);
@@ -154,24 +154,24 @@ public class InicioClienteActivity extends AppCompatActivity {
 
     private List<Restaurante> getFavoritosList() {
         List<Restaurante> favoritosList = new ArrayList<>();
-        favoritosList.add(new Restaurante("La Lucha", 3.49, "Desayunos", "San Miguel",R.drawable.lalucha));
-        favoritosList.add(new Restaurante("Pinkberry", 3.49, "Heladería", "San Miguel",R.drawable.pinkberry));
-        favoritosList.add(new Restaurante("Taco Bell", 2.50, "Comida mexicana", "San Miguel",R.drawable.tacobell));
-        favoritosList.add(new Restaurante("Popeyes", 1.20, "Pollos", "San Miguel",R.drawable.popeyes));
-        favoritosList.add(new Restaurante("EDO Sushi Bar", 3.49, "Sushi", "San Miguel",R.drawable.edo));
-        favoritosList.add(new Restaurante("Mediterráneo", 3.49, "Pollos", "San Miguel",R.drawable.mediterraneo));
+        favoritosList.add(new Restaurante("La Lucha", 3.49, "Desayunos", "San Miguel",R.drawable.laluchaf));
+        favoritosList.add(new Restaurante("Pinkberry", 3.49, "Heladería", "San Miguel",R.drawable.pinkberryf));
+        favoritosList.add(new Restaurante("Taco Bell", 2.50, "Comida mexicana", "San Miguel",R.drawable.tacobellf));
+        favoritosList.add(new Restaurante("Popeyes", 1.20, "Pollos", "San Miguel",R.drawable.popeyesf));
+        favoritosList.add(new Restaurante("EDO Sushi Bar", 3.49, "Sushi", "San Miguel",R.drawable.edof));
+        favoritosList.add(new Restaurante("Mediterráneo", 3.49, "Pollos", "San Miguel",R.drawable.mediterraneof));
         return favoritosList;
     }
 
 
     private List<Restaurante> getPopularesList() {
         List<Restaurante> popularesList = new ArrayList<>();
-        popularesList.add(new Restaurante("Papa John's", 3.49, "Pizzas", "San Miguel",R.drawable.papajhons));
-        popularesList.add(new Restaurante("Bembos", 1.39, "Hamburguesas", "San Miguel",R.drawable.bembos));
-        popularesList.add(new Restaurante("Chinawok", 2.39, "Chifa", "San Miguel",R.drawable.chinawok));
-        popularesList.add(new Restaurante("Don Belisario", 4.49, "Pollos", "San Miguel",R.drawable.donbelisario));
-        popularesList.add(new Restaurante("Santoku Sushi Bar", 2.79, "Sushi", "San Miguel",R.drawable.santoku));
-        popularesList.add(new Restaurante("Wing House", 1.49, "Alitas", "San Miguel",R.drawable.wings));
+        popularesList.add(new Restaurante("Papa John's", 3.49, "Pizzas", "San Miguel",R.drawable.papajhonsf));
+        popularesList.add(new Restaurante("Bembos", 1.39, "Hamburguesas", "San Miguel",R.drawable.bembosf));
+        popularesList.add(new Restaurante("Chinawok", 2.39, "Chifa", "San Miguel",R.drawable.chinawokf));
+        popularesList.add(new Restaurante("Don Belisario", 4.49, "Pollos", "San Miguel",R.drawable.donbelisariof));
+        popularesList.add(new Restaurante("Santoku Sushi Bar", 2.79, "Sushi", "San Miguel",R.drawable.santokuf));
+        popularesList.add(new Restaurante("Wing House", 1.49, "Alitas", "San Miguel",R.drawable.winhousef));
         return popularesList;
     }
 

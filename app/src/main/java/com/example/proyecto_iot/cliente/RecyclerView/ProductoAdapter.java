@@ -56,14 +56,11 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.Produc
             }
         });
 
-        // Acción del botón restaurante
-        holder.linearLayout.setOnClickListener(v -> {
+        // Acción del clic para abrir la actividad del restaurante
+        holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, PerfilRestauranteActivity.class);
             context.startActivity(intent);
         });
-
-
-
     }
 
     @Override
@@ -75,7 +72,6 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.Produc
         TextView productTitle, productDescription, productPrice, textQuantity;
         Button  buttonAddProduct;
         ImageView buttonIncrease, buttonDecrease, productImage;
-        LinearLayout linearLayout;
 
         public ProductoViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -87,7 +83,6 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.Produc
             buttonDecrease = itemView.findViewById(R.id.decrease_quantity);
             buttonAddProduct = itemView.findViewById(R.id.add_button);
             productImage = itemView.findViewById(R.id.product_image);
-            linearLayout = itemView.findViewById(R.id.item_opcion_restaurante);// Referencia a la ImageView
         }
     }
 }

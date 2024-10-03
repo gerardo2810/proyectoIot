@@ -1,6 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:paddingBottom="12dp">
+
+    <LinearLayout
+        android:id="@+id/newpedido2"
+        android:layout_width="353dp"
+        android:layout_height="106dp"
+        android:background="@drawable/border_pedido"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.081">
+
+        <!-- Imagen circular -->
+        <ImageView
+            android:layout_width="10dp"
+            android:layout_height="75dp"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/btn1" />
+
+        <!-- Información de la solicitud -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/id_new_pedido"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="#002"
+                android:textColor="#000000"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/cant_productos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="XXX-1234 - 2 productos"
+                android:textColor="#888888"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/repartidor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Repartidor Asignado"
+                android:textColor="@android:color/holo_green_dark"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <!-- Cronómetro de tiempo -->
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <!-- Flecha hacia la derecha -->
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="end"
+                android:paddingEnd="10dp"
+                android:src="@drawable/baseline_arrow_forward_ios_24"
+                app:tint="#888888" />
+
+            <Button
+                android:id="@+id/btn_ready_to_deliver"
+                android:layout_width="111dp"
+                android:layout_height="36dp"
+                android:layout_gravity="end"
+                android:backgroundTint="#6A1B9A"
+                android:padding="3dp"
+                android:text="Pedido Entregado"
+                android:textColor="@android:color/white"
+                android:textSize="11sp" />
+
+        </LinearLayout>
+
+        <!-- Botón "Listo para entregar" -->
+    </LinearLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

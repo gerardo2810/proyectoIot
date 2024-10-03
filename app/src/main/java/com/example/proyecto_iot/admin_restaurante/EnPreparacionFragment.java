@@ -2,13 +2,23 @@ package com.example.proyecto_iot.admin_restaurante;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.proyecto_iot.R;
+import com.example.proyecto_iot.admin_restaurante.RecyclerView.Pedido;
+import com.example.proyecto_iot.admin_restaurante.RecyclerView.PedidoAdapter;
+import com.example.proyecto_iot.admin_restaurante.RecyclerView.PedidoPreparadoAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -16,6 +26,10 @@ import com.example.proyecto_iot.R;
  * create an instance of this fragment.
  */
 public class EnPreparacionFragment extends Fragment {
+
+    private RecyclerView rv_orders_list;
+    private PedidoPreparadoAdapter pedidoPreparadoAdapter;
+    private List<Pedido> pedidoList;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -57,10 +71,28 @@ public class EnPreparacionFragment extends Fragment {
         }
     }
 
+    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_en_preparacion, container, false);
+        View view = inflater.inflate(R.layout.fragment_en_preparacion, container, false);
+
+        // Configurar el RecyclerView
+        rv_orders_list = view.findViewById(R.id.rv_orders_list);
+        rv_orders_list.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        // Crear la lista de órdenes
+        pedidoList = new ArrayList<>();
+        pedidoList.add(new Pedido("#004","3 productos", "S/155.00", "20 min", "Repartidor Asignado"));
+        pedidoList.add(new Pedido("#005","3 productos", "S/205.00", "10 min", "Repartidor Asignado"));
+        pedidoList.add(new Pedido("#006","4 productos", "S/380.00", "18 min", "Repartidor Asignado"));
+        pedidoList.add(new Pedido("#007","7 productos", "S/555.00", "35 min", "Repartidor Asignado"));
+
+        // Configurar el adaptador
+        pedidoPreparadoAdapter = new PedidoPreparadoAdapter(pedidoList,getContext());
+        rv_orders_list.setLayoutManager(new LinearLayoutManager(getContext()));
+        rv_orders_list.setAdapter(pedidoPreparadoAdapter);
+
+        return view;
     }
 }

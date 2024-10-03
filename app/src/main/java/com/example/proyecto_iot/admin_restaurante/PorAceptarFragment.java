@@ -87,13 +87,13 @@ public class PorAceptarFragment extends Fragment {
 
         // Crear la lista de órdenes
         pedidoList = new ArrayList<>();
-        pedidoList.add(new Pedido("#001","2 productos", "S/45.00"));
-        pedidoList.add(new Pedido("#002","1 producto", "S/55.00"));
-        pedidoList.add(new Pedido("#003","2 productos", "S/85.00"));
-        pedidoList.add(new Pedido("#004","3 productos", "S/155.00"));
-        pedidoList.add(new Pedido("#005","3 productos", "S/205.00"));
-        pedidoList.add(new Pedido("#006","4 productos", "S/380.00"));
-        pedidoList.add(new Pedido("#007","7 productos", "S/555.00"));
+        pedidoList.add(new Pedido("#001","2 productos", "S/45.00", "20 min", "Repartidor Asiganado"));
+        pedidoList.add(new Pedido("#002","1 producto", "S/55.00", "30 min", "Repartidor Asiganado"));
+        pedidoList.add(new Pedido("#003","2 productos", "S/85.00", "15 min", "Repartidor Asiganado"));
+        pedidoList.add(new Pedido("#004","3 productos", "S/155.00", "20 min", "Repartidor Asiganado"));
+        pedidoList.add(new Pedido("#005","3 productos", "S/205.00", "10 min", "Repartidor Asiganado"));
+        pedidoList.add(new Pedido("#006","4 productos", "S/380.00", "18 min", "Repartidor Asiganado"));
+        pedidoList.add(new Pedido("#007","7 productos", "S/555.00", "35 min", "Repartidor Asiganado"));
 
         // Configurar el adaptador
         pedidoAdapter = new PedidoAdapter(pedidoList,getContext());

@@ -164,4 +164,7 @@
     <color name="order_on_the_way">#F4E661</color>
     <color name="order_in_store">#C5AAD6</color>
     <color name="default_order_background">#FFFFFF</color>
+
+    <color name="con_repartidor">#669800</color>
+    <color name="sin_repartidor">#FD4444</color>
 </resources>

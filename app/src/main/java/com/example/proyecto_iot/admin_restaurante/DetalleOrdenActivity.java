@@ -1,6 +1,8 @@
 package com.example.proyecto_iot.admin_restaurante;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -59,5 +61,15 @@ public class DetalleOrdenActivity extends AppCompatActivity {
                 tvEstado.setBackgroundColor(ContextCompat.getColor(this, R.color.default_order_background));
                 break;
         }
+
+        ImageView backButton = findViewById(R.id.back_button);
+
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Termina esta actividad para volver a la anterior
+                finish();
+            }
+        });
     }
 }

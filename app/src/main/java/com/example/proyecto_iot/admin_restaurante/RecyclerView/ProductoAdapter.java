@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -37,6 +38,7 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.Produc
     public void onBindViewHolder(@NonNull ProductoViewHolder holder, int position) {
         Producto product = productList.get(position);
         holder.tvProductName.setText(product.getName());
+        holder.img_product.setImageResource(product.getImageResId());
         holder.tvProductStock.setText("stock: " + product.getStock() + " unidades");
 
         // Configurar el switch
@@ -61,6 +63,7 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.Produc
 
     public static class ProductoViewHolder extends RecyclerView.ViewHolder {
         TextView tvProductName, tvProductStock;
+        ImageView img_product;
         Switch switchProduct;
         Button btnEditProduct;
 
@@ -68,6 +71,7 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.Produc
             super(itemView);
             tvProductName = itemView.findViewById(R.id.tv_product_name);
             tvProductStock = itemView.findViewById(R.id.tv_product_stock);
+            img_product = itemView.findViewById(R.id.img_product);
             switchProduct = itemView.findViewById(R.id.switch_product);
             btnEditProduct = itemView.findViewById(R.id.btn_edit_product);
         }

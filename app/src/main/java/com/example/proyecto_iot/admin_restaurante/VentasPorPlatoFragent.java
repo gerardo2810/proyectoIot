@@ -113,9 +113,9 @@ public class VentasPorPlatoFragent extends Fragment {
 
 
         // Agregar platos a la lista
-        listaPlatos.add(new Plato("Chaufa Especial", "Arroces & Tallarines", "Pollo / Langostino / Cerdo", "S/38.00", "40 unidades", "S/1520.00"));
-        listaPlatos.add(new Plato("Mongolian Beef", "Carnes & Pollos","Melosas láminas de Lomo Fino al estilo mongol / Base de texturas de cebolla chinas", "S/58.00", "35 unidades", "S/2030.00"));
-        listaPlatos.add(new Plato("Sopa Spicy Wantan", "Entradas","Toretellini de pollo y cerdo", "S/29.00", "80 unidades", "S/2320.00"));
+        listaPlatos.add(new Plato("Chaufa Especial", "Arroces & Tallarines", "Pollo / Langostino / Cerdo", "S/38.00", "40 unidades", "S/1520.00", R.drawable.chaufa));
+        listaPlatos.add(new Plato("Mongolian Beef", "Carnes & Pollos","Melosas láminas de Lomo Fino al estilo mongol / Base de texturas de cebolla chinas", "S/58.00", "35 unidades", "S/2030.00", R.drawable.mongolianbeef));
+        listaPlatos.add(new Plato("Sopa Spicy Wantan", "Entradas","Toretellini de pollo y cerdo", "S/29.00", "80 unidades", "S/2320.00", R.drawable.sopawantan));
 
         // Configurar el adaptador y el RecyclerView
         platoAdapter = new PlatoAdapter(listaPlatos, getContext());

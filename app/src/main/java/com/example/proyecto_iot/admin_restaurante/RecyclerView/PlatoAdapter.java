@@ -47,6 +47,10 @@ public class PlatoAdapter extends RecyclerView.Adapter<PlatoAdapter.PlatoViewHol
             intent.putExtra("precio", plato.getPrecio());
             intent.putExtra("cantVendida", plato.getCantVendida());
             intent.putExtra("ganancia", plato.getGanancia());
+            int imageResId = plato.getImageResId();
+            if (imageResId != 0) { // Si el recurso de imagen es válido
+                intent.putExtra("imageResId", String.valueOf(imageResId));
+            }
             context.startActivity(intent);
         });
     }

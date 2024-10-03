@@ -7,14 +7,16 @@ public class Plato {
     private String cantVendida;
     private String ganancia;
     private String precio;
+    private int imageResId;
 
-    public Plato(String nombre, String categoria, String descripcion, String precio, String cantVendida, String ganancia) {
+    public Plato(String nombre, String categoria, String descripcion, String precio, String cantVendida, String ganancia,  int imageResId) {
         this.nombre = nombre;
         this.categoria = categoria;
         this.descripcion = descripcion;
         this.precio = precio;
         this.cantVendida = cantVendida;
         this.ganancia = ganancia;
+        this.imageResId = imageResId;
     }
 
     public String getNombre() {
@@ -63,5 +65,13 @@ public class Plato {
 
     public void setPrecio(String precio) {
         this.precio = precio;
+    }
+
+    public int getImageResId() {
+        return imageResId;
+    }
+
+    public void setImageResId(int imageResId) {
+        this.imageResId = imageResId;
     }
 }

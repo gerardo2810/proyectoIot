@@ -25,6 +25,7 @@ public class DetallePlatoActivity extends AppCompatActivity {
 
         // Obtener datos del intent
         Intent intent = getIntent();
+        String imageResId = intent.getStringExtra("imageResId");
         String nombre = intent.getStringExtra("nombre");
         String categoria = intent.getStringExtra("categoria");
         String descripcion = intent.getStringExtra("descripcion");
@@ -39,5 +40,6 @@ public class DetallePlatoActivity extends AppCompatActivity {
         tvPrecio.setText(precio);
         tvCantidadVendida.setText(cantVendida);
         tvGanancia.setText(ganancia);
+        ivImagenPlato.setImageResource(Integer.parseInt(imageResId));
     }
 }

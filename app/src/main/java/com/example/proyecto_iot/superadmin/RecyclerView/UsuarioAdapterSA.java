@@ -11,11 +11,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-public class ListaUsuariosAdapter extends RecyclerView.Adapter<ListaUsuariosAdapter.UsuarioSAViewHolder> {
+public class UsuarioAdapterSA extends RecyclerView.Adapter<UsuarioAdapterSA.UsuarioSAViewHolder> {
 
     private List<UsuarioSA> usuarios;
 
-    public ListaUsuariosAdapter(List<UsuarioSA> usuarios) {
+    public UsuarioAdapterSA(List<UsuarioSA> usuarios) {
         this.usuarios = usuarios;
     }
 

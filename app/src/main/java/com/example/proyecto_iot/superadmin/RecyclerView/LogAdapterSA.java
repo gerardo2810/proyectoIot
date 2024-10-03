@@ -12,23 +12,23 @@ import com.example.proyecto_iot.R;
 
 import java.util.List;
 
-public class VerLogsAdapter extends RecyclerView.Adapter<VerLogsAdapter.LogsSAViewHolder>{
+public class LogAdapterSA extends RecyclerView.Adapter<LogAdapterSA.LogsSAViewHolder>{
 
     private List<LogSA> logs;
 
-    public VerLogsAdapter(List<LogSA> logs) {
+    public LogAdapterSA(List<LogSA> logs) {
         this.logs = logs;
     }
 
     @NonNull
     @Override
-    public VerLogsAdapter.LogsSAViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public LogAdapterSA.LogsSAViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.superadmin_item_logs, parent, false);
-        return new VerLogsAdapter.LogsSAViewHolder(view);
+        return new LogAdapterSA.LogsSAViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull VerLogsAdapter.LogsSAViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull LogAdapterSA.LogsSAViewHolder holder, int position) {
         LogSA log = logs.get(position);
         holder.textViewContenido.setText(log.getContenido());
     }

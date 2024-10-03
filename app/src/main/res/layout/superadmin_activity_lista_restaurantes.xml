@@ -64,7 +64,7 @@
 
     <!-- RecyclerView para los Usuarios -->
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewListaUsuariosSA"
+        android:id="@+id/recyclerViewListaRestaurantesSA"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="40dp"

@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,14 +15,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.repartidor.RecyclerView.PedidoRecoger;
 import com.example.proyecto_iot.repartidor.RecyclerView.PedidosRecogerAdapter;
-import com.example.proyecto_iot.superadmin.RecyclerView.ListaUsuariosAdapter;
-import com.example.proyecto_iot.superadmin.RecyclerView.UsuarioSA;
-import com.example.proyecto_iot.superadmin.gestion_reportes_superadmin;
-import com.example.proyecto_iot.superadmin.gestion_usuarios_superadmin;
-import com.example.proyecto_iot.superadmin.lista_usuarios_superadmin;
-import com.example.proyecto_iot.superadmin.registro_nuevoadmin_superadmin;
-import com.example.proyecto_iot.superadmin.solicitudes_repartidores_superadmin;
-import com.example.proyecto_iot.superadmin.ver_logs_superadmin;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 

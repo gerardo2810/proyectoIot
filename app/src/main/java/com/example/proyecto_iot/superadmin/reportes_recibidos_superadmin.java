@@ -13,14 +13,26 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.proyecto_iot.R;
+import com.example.proyecto_iot.superadmin.RecyclerView.ReporteAdapterSA;
+import com.example.proyecto_iot.superadmin.RecyclerView.ReporteSA;
+import com.example.proyecto_iot.superadmin.RecyclerView.UsuarioAdapterSA;
+import com.example.proyecto_iot.superadmin.RecyclerView.UsuarioSA;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class reportes_recibidos_superadmin extends AppCompatActivity {
 
     private BottomNavigationView bottomNavigationView;
+    private RecyclerView recyclerViewReportesRecibidos;
+    private ReporteAdapterSA adapter;
+    private List<ReporteSA> listaReportes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +63,25 @@ public class reportes_recibidos_superadmin extends AppCompatActivity {
         //----------------------------------------------------------------------------
 
         //Gestion del Recycler View
+        recyclerViewReportesRecibidos = findViewById(R.id.recyclerViewReportesRecibidos);
+        recyclerViewReportesRecibidos.setLayoutManager(new LinearLayoutManager(this));
 
+        listaReportes = new ArrayList<>();
+        listaReportes.add(new ReporteSA("Papa Johns", "Ana Armas", "03 / 10 / 2024"));
+        listaReportes.add(new ReporteSA("Pardos Chickens", "Benito Bueno", "02 / 10 / 2024"));
+        listaReportes.add(new ReporteSA("Central", "Ana Armas", "02 / 10 / 2024"));
+        listaReportes.add(new ReporteSA("Maido", "Benito Bueno", "01 / 10 / 2024"));
+        listaReportes.add(new ReporteSA("Astrid y Gastón", "Carlos Carrion", "30 / 09 / 2024"));
+        listaReportes.add(new ReporteSA("Rafael", "Daniela Delgado", "29 / 09 / 2024"));
+        listaReportes.add(new ReporteSA("La Mar", "Eduardo Esquivel", "28 / 09 / 2024"));
+        listaReportes.add(new ReporteSA("Isolina", "Francisco Fernandez", "27 / 09 / 2024"));
+        listaReportes.add(new ReporteSA("Panchita", "Gabriela Garcia", "26 / 09 / 2024"));
+        listaReportes.add(new ReporteSA("Tanta", "Hector Hidalgo", "25 / 09 / 2024"));
+        listaReportes.add(new ReporteSA("Osso", "Irene Iglesias", "24 / 09 / 2024"));
+        listaReportes.add(new ReporteSA("Fiesta", "Jorge Juarez", "23 / 09 / 2024"));
+
+        adapter = new ReporteAdapterSA(listaReportes);
+        recyclerViewReportesRecibidos.setAdapter(adapter);
         //----------------------------------------------------------------------------
 
         //Gestion de la bottom navigation bar

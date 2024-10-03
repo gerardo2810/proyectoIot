@@ -7,20 +7,26 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.Spinner;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.proyecto_iot.R;
+import com.example.proyecto_iot.superadmin.RecyclerView.ListaUsuariosAdapter;
+import com.example.proyecto_iot.superadmin.RecyclerView.UsuarioSA;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class lista_usuarios_superadmin extends AppCompatActivity {
 
     private BottomNavigationView bottomNavigationView;
+    private RecyclerView recyclerViewListaUsuarios;
+    private ListaUsuariosAdapter adapter;
+    private List<UsuarioSA> listaUsuarios;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +56,33 @@ public class lista_usuarios_superadmin extends AppCompatActivity {
         //----------------------------------------------------------------------------
 
         //Gestion del Recycler View
+        recyclerViewListaUsuarios = findViewById(R.id.recyclerViewListaUsuariosSA);
+        recyclerViewListaUsuarios.setLayoutManager(new LinearLayoutManager(this));
 
+        listaUsuarios = new ArrayList<>();
+        listaUsuarios.add(new UsuarioSA("Ana", "Armas", "Administrador", "Activo"));
+        listaUsuarios.add(new UsuarioSA("Benito", "Bueno", "Repartidor", "Inactivo"));
+        listaUsuarios.add(new UsuarioSA("Carlos", "Carrion", "Cliente", "Activo"));
+        listaUsuarios.add(new UsuarioSA("Daniela", "Delgado", "Administrador", "Activo"));
+        listaUsuarios.add(new UsuarioSA("Eduardo", "Esquivel", "Repartidor", "Inactivo"));
+        listaUsuarios.add(new UsuarioSA("Francisco", "Fernandez", "Cliente", "Activo"));
+        listaUsuarios.add(new UsuarioSA("Gabriela", "Garcia", "Administrador", "Inactivo"));
+        listaUsuarios.add(new UsuarioSA("Hector", "Hidalgo", "Repartidor", "Activo"));
+        listaUsuarios.add(new UsuarioSA("Irene", "Iglesias", "Cliente", "Inactivo"));
+        listaUsuarios.add(new UsuarioSA("Jorge", "Juarez", "Administrador", "Activo"));
+        listaUsuarios.add(new UsuarioSA("Karla", "Krause", "Repartidor", "Inactivo"));
+        listaUsuarios.add(new UsuarioSA("Luis", "Lopez", "Cliente", "Activo"));
+        listaUsuarios.add(new UsuarioSA("Mariana", "Mendoza", "Administrador", "Inactivo"));
+        listaUsuarios.add(new UsuarioSA("Nicolas", "Navarro", "Repartidor", "Activo"));
+        listaUsuarios.add(new UsuarioSA("Oscar", "Ortega", "Cliente", "Inactivo"));
+        listaUsuarios.add(new UsuarioSA("Patricia", "Perez", "Administrador", "Activo"));
+        listaUsuarios.add(new UsuarioSA("Raul", "Ramirez", "Repartidor", "Inactivo"));
+        listaUsuarios.add(new UsuarioSA("Silvia", "Sanchez", "Cliente", "Activo"));
+        listaUsuarios.add(new UsuarioSA("Tomas", "Torres", "Administrador", "Inactivo"));
+        listaUsuarios.add(new UsuarioSA("Ulises", "Uribe", "Repartidor", "Activo"));
+
+        adapter = new ListaUsuariosAdapter(listaUsuarios);
+        recyclerViewListaUsuarios.setAdapter(adapter);
         //----------------------------------------------------------------------------
 
         //Gestion de la bottom navigation bar

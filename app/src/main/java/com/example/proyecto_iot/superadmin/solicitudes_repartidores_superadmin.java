@@ -13,14 +13,26 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.proyecto_iot.R;
+import com.example.proyecto_iot.superadmin.RecyclerView.ListaUsuariosAdapter;
+import com.example.proyecto_iot.superadmin.RecyclerView.RepartidorSA;
+import com.example.proyecto_iot.superadmin.RecyclerView.SolicitudesRepartidoresAdapter;
+import com.example.proyecto_iot.superadmin.RecyclerView.UsuarioSA;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class solicitudes_repartidores_superadmin extends AppCompatActivity {
 
     private BottomNavigationView bottomNavigationView;
+    private RecyclerView recyclerViewSolicitudesRepartidores;
+    private SolicitudesRepartidoresAdapter adapter;
+    private List<RepartidorSA> listaSolicitudes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +48,23 @@ public class solicitudes_repartidores_superadmin extends AppCompatActivity {
         //----------------------------------------------------------------------------
 
         //Gestion del Recycler View
+        recyclerViewSolicitudesRepartidores = findViewById(R.id.recyclerViewListaRepartidoresSA);
+        recyclerViewSolicitudesRepartidores.setLayoutManager(new LinearLayoutManager(this));
 
+        listaSolicitudes = new ArrayList<>();
+        listaSolicitudes.add(new RepartidorSA("Ana", "Armas", "02 / 10 / 2024"));
+        listaSolicitudes.add(new RepartidorSA("Benito", "Bueno", "02 / 10 / 2024"));
+        listaSolicitudes.add(new RepartidorSA("Carlos", "Carrion", "01 / 10 / 2024"));
+        listaSolicitudes.add(new RepartidorSA("Daniela", "Delgado", "01 / 10 / 2024"));
+        listaSolicitudes.add(new RepartidorSA("Eduardo", "Esquivel", "01 / 10 / 2024"));
+        listaSolicitudes.add(new RepartidorSA("Francisco", "Fernandez", "30 / 09 / 2024"));
+        listaSolicitudes.add(new RepartidorSA("Gabriela", "Garcia", "29 / 09 / 2024"));
+        listaSolicitudes.add(new RepartidorSA("Hector", "Hidalgo", "29 / 09 / 2024"));
+        listaSolicitudes.add(new RepartidorSA("Irene", "Iglesias", "29 / 09 / 2024"));
+        listaSolicitudes.add(new RepartidorSA("Jorge", "Juarez", "28 / 09 / 2024"));
+
+        adapter = new SolicitudesRepartidoresAdapter(listaSolicitudes);
+        recyclerViewSolicitudesRepartidores.setAdapter(adapter);
         //----------------------------------------------------------------------------
 
         //Gestion de la bottom navigation bar

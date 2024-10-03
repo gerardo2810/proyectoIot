@@ -62,111 +62,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/header_layout" />
 
-    <ScrollView
-        android:layout_width="390dp"
-        android:layout_height="450dp"
+    <!-- RecyclerView para los Logs -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewLogsSA"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:layout_marginTop="40dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView4">
+        android:padding="16dp"
+        app:layout_constraintBottom_toTopOf="@id/view_bottom_navigation"
+        app:layout_constraintTop_toBottomOf="@id/textView4" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <!-- Usuarios -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="8dp"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="16dp">
-
-                    <!-- Imagen circular -->
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_marginEnd="16dp"
-                        android:background="@drawable/circle_shape"
-                        android:src="@drawable/placeholder" />
-
-                    <!-- Información de la solicitud -->
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="El administrador de Pardos chicken ha creado una nueva sede"
-                            android:textColor="#000000"
-                            android:textSize="16sp" />
-                    </LinearLayout>
-
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
-
-            <!-- Usuarios -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="8dp"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="16dp">
-
-                    <!-- Imagen circular -->
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_marginEnd="16dp"
-                        android:background="@drawable/circle_shape"
-                        android:src="@drawable/placeholder" />
-
-                    <!-- Información de la solicitud -->
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="El repartidor Julio Julian ha sido deshabilitado"
-                            android:textColor="#000000"
-                            android:textSize="16sp" />
-                    </LinearLayout>
-
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
-
-        </LinearLayout>
-
-    </ScrollView>
-
+    <!-- Bottom Navigation -->
     <View
+        android:id="@+id/view_bottom_navigation"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginTop="-5dp"

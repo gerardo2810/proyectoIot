@@ -11,14 +11,26 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.proyecto_iot.R;
+import com.example.proyecto_iot.superadmin.RecyclerView.LogSA;
+import com.example.proyecto_iot.superadmin.RecyclerView.RepartidorSA;
+import com.example.proyecto_iot.superadmin.RecyclerView.SolicitudesRepartidoresAdapter;
+import com.example.proyecto_iot.superadmin.RecyclerView.VerLogsAdapter;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ver_logs_superadmin extends AppCompatActivity {
 
     private BottomNavigationView bottomNavigationView;
+    private RecyclerView recyclerViewVerLogs;
+    private VerLogsAdapter adapter;
+    private List<LogSA> listaLogs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +46,15 @@ public class ver_logs_superadmin extends AppCompatActivity {
         //----------------------------------------------------------------------------
 
         //Gestion del Recycler View
+        recyclerViewVerLogs = findViewById(R.id.recyclerViewLogsSA);
+        recyclerViewVerLogs.setLayoutManager(new LinearLayoutManager(this));
 
+        listaLogs = new ArrayList<>();
+        listaLogs.add(new LogSA("El administrador Ana Armas ha cambiado el nombre de su restaurante 'Pardos Chicken' a 'Marlos Chicken' "));
+        listaLogs.add(new LogSA("El repartidor Benito Bueno ha finalizado y recibido su pago por la entrega N°1993321 "));
+
+        adapter = new VerLogsAdapter(listaLogs);
+        recyclerViewVerLogs.setAdapter(adapter);
         //----------------------------------------------------------------------------
 
         //Gestion de la bottom navigation bar

@@ -1,12 +1,16 @@
 package com.example.proyecto_iot.admin_restaurante;
 
+import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.example.proyecto_iot.R;
 
@@ -57,10 +61,31 @@ public class PerfilRestauranteFragment extends Fragment {
         }
     }
 
+    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_perfil_restaurante, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_perfil_restaurante, container, false);
+
+        // Enlazar los botones para editar datos personales y del restaurante
+        LinearLayout personalInfoLayout = view.findViewById(R.id.edit_personal_info);
+        LinearLayout restaurantInfoLayout = view.findViewById(R.id.edit_restaurant_info);
+        LinearLayout scheduleLayout = view.findViewById(R.id.view_schedule);
+
+        personalInfoLayout.setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), EditPersonalInfoActivity.class);
+            startActivity(intent);
+        });
+
+        restaurantInfoLayout.setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), EditRestaurantInfoActivity.class);
+            startActivity(intent);
+        });
+
+        scheduleLayout.setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), ViewRestaurantScheduleActivity.class);
+            startActivity(intent);
+        });
+
+        return view;
     }
 }

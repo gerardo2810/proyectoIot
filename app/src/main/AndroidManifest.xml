@@ -114,6 +114,15 @@
         <activity
             android:name=".admin_restaurante.EditarProductoActivity"
             android:exported="true" />
+        <activity
+            android:name=".admin_restaurante.EditPersonalInfoActivity"
+            android:exported="true" />
+        <activity
+            android:name=".admin_restaurante.EditRestaurantInfoActivity"
+            android:exported="true" />
+        <activity
+            android:name=".admin_restaurante.ViewRestaurantScheduleActivity"
+            android:exported="true" />
 
 
         <activity

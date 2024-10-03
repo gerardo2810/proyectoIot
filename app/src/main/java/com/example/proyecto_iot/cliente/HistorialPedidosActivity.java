@@ -36,6 +36,11 @@ public class HistorialPedidosActivity extends AppCompatActivity {
         listaPedidos = new ArrayList<>();
         listaPedidos.add(new Pedido("Papa John's", "Entregado", "01/09"));
         listaPedidos.add(new Pedido("Fridays", "Entregado", "21/07"));
+        listaPedidos.add(new Pedido("Fridays", "Entregado", "21/07"));
+        listaPedidos.add(new Pedido("Fridays", "Entregado", "21/07"));
+        listaPedidos.add(new Pedido("Fridays", "Entregado", "21/07"));
+
+
 
         // Configurar Adapter
         adapter = new HistorialPedidosAdapter(listaPedidos);

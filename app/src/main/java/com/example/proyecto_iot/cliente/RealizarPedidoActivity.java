@@ -44,7 +44,7 @@ public class RealizarPedidoActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // Regresar a la vista anterior (puede ser InicioClienteActivity o CarritoClienteActivity)
-                Intent intent = new Intent(RealizarPedidoActivity.this, InicioClienteActivity.class); // O CarritoClienteActivity, según sea el caso
+                Intent intent = new Intent(RealizarPedidoActivity.this, CarritoClienteActivity.class); // O CarritoClienteActivity, según sea el caso
                 startActivity(intent);
                 finish(); // Finaliza la actividad actual
             }
@@ -55,7 +55,7 @@ public class RealizarPedidoActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Aquí podrías navegar a una actividad donde muestres más detalles de los productos
-                Intent intent = new Intent(RealizarPedidoActivity.this, DetallesPedidoActivity.class); // Crear esta actividad según tu estructura
+                Intent intent = new Intent(RealizarPedidoActivity.this, VerMasProductosClienteActivity.class); // Crear esta actividad según tu estructura
                 startActivity(intent);
             }
         });

@@ -1,6 +1,10 @@
 package com.example.proyecto_iot.cliente;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageView;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -34,6 +38,20 @@ public class VerMasProductosClienteActivity extends AppCompatActivity implements
         // Configurar el adaptador
         adapter = new ProductoCarritoAdapter(productoList, this);
         recyclerView.setAdapter(adapter);
+
+
+// Configurar la flecha de retroceso
+        ImageView backArrow = findViewById(R.id.back_arrow);
+        backArrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Navegar a la vista de Historial de Pedidos
+                Intent intent = new Intent(VerMasProductosClienteActivity.this, RealizarPedidoActivity.class);
+                startActivity(intent);
+                finish(); // Finaliza la actividad actual para no volver a ella con el botón de retroceso
+            }
+        });
+
     }
 
     @Override

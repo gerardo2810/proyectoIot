@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -68,12 +69,12 @@ public class InicioRepartidorActivity extends AppCompatActivity {
         recyclerViewListaPedidosRecoger = findViewById(R.id.recyclerViewListaPedidosRecoger);
         recyclerViewListaPedidosRecoger.setLayoutManager(new LinearLayoutManager(this));
         listaPedidos = new ArrayList<>();
-        listaPedidos.add(new PedidoRecoger("1 pedido a","Av. de los Precursores 281, San Miguel"));
-        listaPedidos.add(new PedidoRecoger("1 pedido a","Av. Simon Bolivar 1486, Pueblo libre"));
-        listaPedidos.add(new PedidoRecoger("1 pedido a","Av. Universitaria 456, San Miguel"));
-        listaPedidos.add(new PedidoRecoger("1 pedido a","Av. Venezuela 789, Cercado de Lima"));
-        listaPedidos.add(new PedidoRecoger("1 pedido a","Av. Mariano Cornejo 1434, Pueblo libre"));
-        listaPedidos.add(new PedidoRecoger("1 pedido a","Av. La marina 4596, San Miguel"));
+        listaPedidos.add(new PedidoRecoger("El Tío Bigote","1 pedido a","Av. de los Precursores 281, San Miguel",R.drawable.tio_bigote));
+        listaPedidos.add(new PedidoRecoger("Pizza Party","1 pedido a","Av. Simon Bolivar 1486, Pueblo libre",R.drawable.pizzaparty));
+        listaPedidos.add(new PedidoRecoger("El Tío Bigote","1 pedido a","Av. Universitaria 456, San Miguel",R.drawable.tio_bigote));
+        listaPedidos.add(new PedidoRecoger("Pizza Party","1 pedido a","Av. Venezuela 789, Cercado de Lima",R.drawable.pizzaparty));
+        listaPedidos.add(new PedidoRecoger("El Tío Bigote","1 pedido a","Av. Mariano Cornejo 1434, Pueblo libre",R.drawable.tio_bigote));
+        listaPedidos.add(new PedidoRecoger("Pizza Party","1 pedido a","Av. La marina 4596, San Miguel",R.drawable.pizzaparty));
 
         adapter = new PedidosRecogerAdapter(listaPedidos);
         recyclerViewListaPedidosRecoger.setAdapter(adapter);

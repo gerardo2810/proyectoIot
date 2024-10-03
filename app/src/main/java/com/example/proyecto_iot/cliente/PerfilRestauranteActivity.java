@@ -29,7 +29,7 @@ public class PerfilRestauranteActivity extends AppCompatActivity {
         recyclerProductos.setLayoutManager(new LinearLayoutManager(this));
 
         List<Producto> productos = new ArrayList<>();
-        productos.add(new Producto("Pavo a la leña", "Con tártara de la casa", 15.00,1));
+        productos.add(new Producto("Pavo a la leña", "Con tártara de la casa", 15.00,1,R.drawable.lalucha_inicio));
         // Añadir más productos aquí
 
         ProductoAdapter adapter = new ProductoAdapter(productos);

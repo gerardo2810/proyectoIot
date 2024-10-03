@@ -33,6 +33,8 @@ public class ProductoDetallesAdapter extends RecyclerView.Adapter<ProductoDetall
         holder.productPriceUnit.setText("S/. " + producto.getPrecio());
         holder.productPriceTotal.setText("S/. " + producto.getTotal());
         // Puedes usar Glide o Picasso para cargar la imagen si es necesario
+
+        holder.productImage.setImageResource(producto.getImageResourceId());
     }
 
     @Override

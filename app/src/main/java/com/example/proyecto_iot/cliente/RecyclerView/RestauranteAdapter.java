@@ -37,6 +37,11 @@ public class RestauranteAdapter extends RecyclerView.Adapter<RestauranteAdapter.
         holder.productCategory.setText(option.getCategory());
         holder.productLocation.setText(option.getLocation());
         // Aquí puedes cargar la imagen con Glide o Picasso si es necesario
+
+
+        // Asignar la imagen correspondiente
+        holder.productImage.setImageResource(option.getImageResourceId());
+
     }
 
     @Override

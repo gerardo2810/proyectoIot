@@ -5,11 +5,13 @@ public class Pedido {
     private String estado;
     private String fecha;
     private int pedidoId;
-    public Pedido(String nombreRestaurante, String estado, String fecha, int pedidoId) {
+    private int imageResourceId; // Campo para el ID del recurso de imagen
+    public Pedido(String nombreRestaurante, String estado, String fecha, int pedidoId,int imageResourceId) {
         this.nombreRestaurante = nombreRestaurante;
         this.estado = estado;
         this.fecha = fecha;
         this.pedidoId=pedidoId;
+        this.imageResourceId=imageResourceId;
     }
 
     public String getNombreRestaurante() {
@@ -26,5 +28,8 @@ public class Pedido {
 
     public int getPedidoId() {
         return pedidoId;
+    }
+    public int getImageResourceId() {
+        return imageResourceId;
     }
 }

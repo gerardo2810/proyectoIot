@@ -42,11 +42,11 @@ public class HistorialPedidosActivity extends AppCompatActivity {
 
         // Crear lista de pedidos (aquí puedes obtener los datos de una fuente real)
         listaPedidos = new ArrayList<>();
-        listaPedidos.add(new Pedido("Papa John's", "Entregado", "01/09", 1));
-        listaPedidos.add(new Pedido("Fridays", "Entregado", "21/07", 2));
-        listaPedidos.add(new Pedido("Fridays", "Entregado", "21/07", 3));
-        listaPedidos.add(new Pedido("Fridays", "Entregado", "21/07", 4));
-        listaPedidos.add(new Pedido("Fridays", "Entregado", "21/07", 5));
+        listaPedidos.add(new Pedido("Papa John's", "Entregado", "01/09", 1,R.drawable.lalucha_inicio));
+        listaPedidos.add(new Pedido("Fridays", "Entregado", "21/07", 2,R.drawable.lalucha_inicio));
+        listaPedidos.add(new Pedido("Fridays", "Entregado", "21/07", 3,R.drawable.lalucha_inicio));
+        listaPedidos.add(new Pedido("Fridays", "Entregado", "21/07", 4,R.drawable.lalucha_inicio));
+        listaPedidos.add(new Pedido("Fridays", "Entregado", "21/07", 5,R.drawable.lalucha_inicio));
 
         // Configurar Adapter
         adapter = new HistorialPedidosAdapter(listaPedidos, this);

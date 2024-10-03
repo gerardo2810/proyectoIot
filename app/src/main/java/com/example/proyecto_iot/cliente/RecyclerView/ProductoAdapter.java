@@ -34,6 +34,7 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.Produc
         holder.productTitle.setText(producto.getNombre());
         holder.productDescription.setText(producto.getDescripcion());
         holder.productPrice.setText("S/ " + producto.getPrecio());
+        holder.productImage.setImageResource(producto.getImageResourceId());
 
         // Lógica para los botones de aumentar y disminuir cantidad
         holder.buttonIncrease.setOnClickListener(view -> {
@@ -57,7 +58,7 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.Produc
     public static class ProductoViewHolder extends RecyclerView.ViewHolder {
         TextView productTitle, productDescription, productPrice, textQuantity;
         Button  buttonAddProduct;
-        ImageView buttonIncrease, buttonDecrease;
+        ImageView buttonIncrease, buttonDecrease, productImage;
 
         public ProductoViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -68,6 +69,7 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.Produc
             buttonIncrease =itemView.findViewById(R.id.increase_quantity);
             buttonDecrease = itemView.findViewById(R.id.decrease_quantity);
             buttonAddProduct = itemView.findViewById(R.id.add_button);
+            productImage = itemView.findViewById(R.id.product_image); // Referencia a la ImageView
         }
     }
 }

@@ -36,9 +36,10 @@ public class CarritoClienteActivity extends AppCompatActivity implements Product
         recyclerViewCarrito.setLayoutManager(new LinearLayoutManager(this));
 
         productos = new ArrayList<>();
-        productos.add(new Producto("Producto 1", "Descripción del Producto 1", 15.00,1));
-        productos.add(new Producto("Producto 2", "Descripción del Producto 2", 25.00,1));
-        productos.add(new Producto("Producto 3", "Descripción del Producto 3", 10.00,1));
+        productos.add(new Producto("Pavo a la leña", "Con tártara de la casa", 15.00, 1, R.drawable.lalucha_inicio));
+        productos.add(new Producto("Pollo a la brasa", "Con papas fritas", 20.00, 2, R.drawable.pollo));
+        productos.add(new Producto("Hamburguesa", "Con papas y gaseosa", 12.00, 1, R.drawable.plato1));
+
 
         productoCarritoAdapter = new ProductoCarritoAdapter(productos, this);
         recyclerViewCarrito.setAdapter(productoCarritoAdapter);

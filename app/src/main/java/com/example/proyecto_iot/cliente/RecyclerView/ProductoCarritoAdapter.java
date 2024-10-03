@@ -41,6 +41,9 @@ public class ProductoCarritoAdapter extends RecyclerView.Adapter<ProductoCarrito
         holder.textQuantity.setText(String.valueOf(producto.getCantidad()));
         holder.btnAdd.setText("Pagar S/ " + producto.getTotal());
 
+        // Asignar la imagen correspondiente
+        holder.productImage.setImageResource(producto.getImageResourceId());
+
         // Aumentar la cantidad
         holder.increaseQuantity.setOnClickListener(v -> {
             producto.setCantidad(producto.getCantidad() + 1);
@@ -72,7 +75,7 @@ public class ProductoCarritoAdapter extends RecyclerView.Adapter<ProductoCarrito
 
     public static class ProductoViewHolder extends RecyclerView.ViewHolder {
         TextView textProductName, textProductDescription, textProductPrice, textQuantity;
-        ImageView increaseQuantity, decreaseQuantity, deleteProduct;
+        ImageView increaseQuantity, decreaseQuantity, deleteProduct, productImage; // Agregar ImageView
         Button btnAdd;
 
         public ProductoViewHolder(@NonNull View itemView) {
@@ -85,6 +88,7 @@ public class ProductoCarritoAdapter extends RecyclerView.Adapter<ProductoCarrito
             decreaseQuantity = itemView.findViewById(R.id.decrease_quantity);
             deleteProduct = itemView.findViewById(R.id.delete_product);
             btnAdd = itemView.findViewById(R.id.add_button);
+            productImage = itemView.findViewById(R.id.product_image);
         }
     }
 

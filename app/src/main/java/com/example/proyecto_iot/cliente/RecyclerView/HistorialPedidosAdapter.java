@@ -49,6 +49,7 @@ public class HistorialPedidosAdapter extends RecyclerView.Adapter<HistorialPedid
             // Iniciar la actividad
             context.startActivity(intent);
         });
+        holder.productImage.setImageResource(pedido.getImageResourceId());
     }
 
     @Override
@@ -58,13 +59,14 @@ public class HistorialPedidosAdapter extends RecyclerView.Adapter<HistorialPedid
 
     public static class PedidoViewHolder extends RecyclerView.ViewHolder {
         TextView textRestaurantName, textOrderStatus;
-        ImageView forwardArrow;  // Referencia a la flecha
+        ImageView forwardArrow,productImage;  // Referencia a la flecha
 
         public PedidoViewHolder(@NonNull View itemView) {
             super(itemView);
             textRestaurantName = itemView.findViewById(R.id.text_restaurant_name);
             textOrderStatus = itemView.findViewById(R.id.text_order_status);
             forwardArrow = itemView.findViewById(R.id.forward_arrow);  // Inicializar la flecha
+            productImage = itemView.findViewById(R.id.product_image);
         }
     }
 }

@@ -38,15 +38,15 @@ public class TodosLosProductosActivity extends AppCompatActivity {
 
         // Inicializar la lista de productos
         productoList = new ArrayList<>();
-        productoList.add(new Producto("Pavo a la leña", "Con tártara de la casa", 15.00, 27));
-        productoList.add(new Producto("Pollo a la brasa", "Con papas fritas", 12.00, 15));
-        productoList.add(new Producto("Pollo a la brasa", "Con papas fritas", 12.00, 15));
-        productoList.add(new Producto("Pollo a la brasa", "Con papas fritas", 12.00, 15));
-        productoList.add(new Producto("Pollo a la brasa", "Con papas fritas", 12.00, 15));
-        productoList.add(new Producto("Pollo a la brasa", "Con papas fritas", 12.00, 15));
-        productoList.add(new Producto("Pollo a la brasa", "Con papas fritas", 12.00, 15));
-        productoList.add(new Producto("Pollo a la brasa", "Con papas fritas", 12.00, 15));
-        productoList.add(new Producto("Pollo a la brasa", "Con papas fritas", 12.00, 15));
+        productoList.add(new Producto("Pavo a la leña", "Con tártara de la casa", 15.00, 27,R.drawable.lalucha_inicio));
+        productoList.add(new Producto("Pollo a la brasa", "Con papas fritas", 12.00, 15,R.drawable.lalucha_inicio));
+        productoList.add(new Producto("Pollo a la brasa", "Con papas fritas", 12.00, 15,R.drawable.lalucha_inicio));
+        productoList.add(new Producto("Pollo a la brasa", "Con papas fritas", 12.00, 15,R.drawable.lalucha_inicio));
+        productoList.add(new Producto("Pollo a la brasa", "Con papas fritas", 12.00, 15,R.drawable.lalucha_inicio));
+        productoList.add(new Producto("Pollo a la brasa", "Con papas fritas", 12.00, 15,R.drawable.lalucha_inicio));
+        productoList.add(new Producto("Pollo a la brasa", "Con papas fritas", 12.00, 15,R.drawable.lalucha_inicio));
+        productoList.add(new Producto("Pollo a la brasa", "Con papas fritas", 12.00, 15,R.drawable.lalucha_inicio));
+        productoList.add(new Producto("Pollo a la brasa", "Con papas fritas", 12.00, 15,R.drawable.lalucha_inicio));
 
         // Configurar el adaptador
         adapter = new ProductoDetallesAdapter(productoList);

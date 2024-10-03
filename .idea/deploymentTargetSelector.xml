@@ -2,38 +2,18 @@
 <project version="4">
   <component name="deploymentTargetSelector">
     <selectionStates>
-      <SelectionState runConfigName="app">
-        <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-09-28T20:59:01.618582100Z">
-          <Target type="DEFAULT_BOOT">
-            <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\HP.MILENE\.android\avd\Pixel_8_Pro_API_35.avd" />
-            </handle>
-          </Target>
-        </DropdownSelection>
-        <DialogSelection />
-      </SelectionState>
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
-      <SelectionState runConfigName="HistorialPedidosActivity">
+      <SelectionState runConfigName="CarritoClienteActivity">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="InicioClienteActivity">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="ListaRestaurantesCategoriasClienteActivity">
+      <SelectionState runConfigName="DetallesPedidoActivity">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
       <SelectionState runConfigName="PerfilRestauranteActivity">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="RealizarPedidoActivity">
+      <SelectionState runConfigName="HistorialPedidosActivity">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-=======
->>>>>>> 89393db138b16894b3abdf566f51c6cbbc7d5d2a
->>>>>>> Stashed changes
     </selectionStates>
   </component>
 </project>

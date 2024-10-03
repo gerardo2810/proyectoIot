@@ -6,12 +6,15 @@ public class Restaurante {
     private double priceDelivery;
     private String category;
     private String location;
+    private int imageResourceId; // Campo para el ID del recurso de imagen
 
-    public Restaurante(String nameTitlte, double priceDelivery, String category, String location) {
+
+    public Restaurante(String nameTitlte, double priceDelivery, String category, String location, int imageResourceId) {
         this.nameTitlte = nameTitlte;
         this.priceDelivery = priceDelivery;
         this.category = category;
         this.location = location;
+        this.imageResourceId=imageResourceId;
     }
 
     public String getNameTitlte() {
@@ -28,6 +31,9 @@ public class Restaurante {
 
     public String getLocation() {
         return location;
+    }
+    public int getImageResourceId() {
+        return imageResourceId;
     }
 }
 

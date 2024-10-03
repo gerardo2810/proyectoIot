@@ -27,9 +27,9 @@ public class VerMasProductosClienteActivity extends AppCompatActivity implements
 
         // Inicializar la lista de productos
         productoList = new ArrayList<>();
-        productoList.add(new Producto("Pavo a la leña", "Con tártara de la casa", 15.00, 1));
-        productoList.add(new Producto("Pollo a la brasa", "Acompañado de papas fritas", 20.00, 2));
-        productoList.add(new Producto("Hamburguesa", "Con papas y gaseosa", 12.00, 1));
+        productoList.add(new Producto("Pavo a la leña", "Con tártara de la casa", 15.00, 1,R.drawable.lalucha_inicio));
+        productoList.add(new Producto("Pollo a la brasa", "Acompañado de papas fritas", 20.00, 2,R.drawable.lalucha_inicio));
+        productoList.add(new Producto("Hamburguesa", "Con papas y gaseosa", 12.00, 1,R.drawable.lalucha_inicio));
 
         // Configurar el adaptador
         adapter = new ProductoCarritoAdapter(productoList, this);

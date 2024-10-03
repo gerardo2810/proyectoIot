@@ -7,12 +7,14 @@ public class Producto {
     private String descripcion;
     private double precio;
     private int cantidad;  // Nueva propiedad para manejar la cantidad del producto
+    private int imageResourceId; // Campo para el ID del recurso de imagen
 
-    public Producto(String nombre, String descripcion, double precio,int cantidad) {
+    public Producto(String nombre, String descripcion, double precio,int cantidad, int imageResourceId) {
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.precio = precio;
         this.cantidad = cantidad; // Inicializamos con una cantidad mínima de 1
+        this.imageResourceId= imageResourceId;
     }
 
     public String getNombre() {
@@ -46,6 +48,9 @@ public class Producto {
 
     public double getTotal() {
         return this.precio * this.cantidad;
+    }
+    public int getImageResourceId() {
+        return imageResourceId;
     }
 }
 

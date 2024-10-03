@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:paddingBottom="12dp">
+
+    <LinearLayout
+        android:layout_width="370dp"
+        android:layout_height="102dp"
+        android:background="@drawable/border_layout_combobox"
+        android:backgroundTint="@color/lavender"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/img_product"
+            android:layout_width="64dp"
+            android:layout_height="62dp"
+            android:src="@drawable/placeholder" />
+
+        <LinearLayout
+            android:layout_width="157dp"
+            android:layout_height="61dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingStart="16dp">
+
+            <TextView
+                android:id="@+id/tv_product_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nombre del producto"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_product_stock"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="stock: 10 unidades"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="112dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Switch
+                android:id="@+id/switch_product"
+                android:layout_width="wrap_content"
+                android:layout_height="37dp"
+                android:layout_gravity="end" />
+
+            <Button
+                android:id="@+id/btn_edit_product"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:layout_gravity="end"
+                android:background="@drawable/rectangle_placeholder"
+                android:text="Editar" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

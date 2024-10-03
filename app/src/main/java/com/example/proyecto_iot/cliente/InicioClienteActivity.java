@@ -31,8 +31,8 @@ public class InicioClienteActivity extends AppCompatActivity {
 
         // Inicializar lista de opciones y adaptador
         bestOptionList = new ArrayList<>();
-        bestOptionList.add(new Restaurante("La Lucha", 3.49, "Desayunos", "San Miguel",R.drawable.lalucha_inicio));
-        bestOptionList.add(new Restaurante("Pinkberry", 3.49, "Heladería", "San Miguel",R.drawable.lalucha_inicio));
+        bestOptionList.add(new Restaurante("La Lucha", 3.49, "Desayunos", "San Miguel",R.drawable.chinawok_portada));
+        bestOptionList.add(new Restaurante("Pinkberry", 3.49, "Heladería", "San Miguel",R.drawable.chinawok_portada));
 
         bestOptionAdapter = new RestauranteAdapter(this, bestOptionList);
         recyclerBestOption.setAdapter(bestOptionAdapter);

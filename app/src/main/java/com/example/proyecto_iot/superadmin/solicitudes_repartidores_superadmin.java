@@ -3,24 +3,16 @@ package com.example.proyecto_iot.superadmin;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.Spinner;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.proyecto_iot.R;
-import com.example.proyecto_iot.superadmin.RecyclerView.ListaUsuariosAdapter;
 import com.example.proyecto_iot.superadmin.RecyclerView.RepartidorSA;
-import com.example.proyecto_iot.superadmin.RecyclerView.SolicitudesRepartidoresAdapter;
-import com.example.proyecto_iot.superadmin.RecyclerView.UsuarioSA;
+import com.example.proyecto_iot.superadmin.RecyclerView.RepartidorAdapterSA;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
@@ -31,7 +23,7 @@ public class solicitudes_repartidores_superadmin extends AppCompatActivity {
 
     private BottomNavigationView bottomNavigationView;
     private RecyclerView recyclerViewSolicitudesRepartidores;
-    private SolicitudesRepartidoresAdapter adapter;
+    private RepartidorAdapterSA adapter;
     private List<RepartidorSA> listaSolicitudes;
 
     @Override
@@ -63,7 +55,7 @@ public class solicitudes_repartidores_superadmin extends AppCompatActivity {
         listaSolicitudes.add(new RepartidorSA("Irene", "Iglesias", "29 / 09 / 2024"));
         listaSolicitudes.add(new RepartidorSA("Jorge", "Juarez", "28 / 09 / 2024"));
 
-        adapter = new SolicitudesRepartidoresAdapter(listaSolicitudes);
+        adapter = new RepartidorAdapterSA(listaSolicitudes);
         recyclerViewSolicitudesRepartidores.setAdapter(adapter);
         //----------------------------------------------------------------------------
 

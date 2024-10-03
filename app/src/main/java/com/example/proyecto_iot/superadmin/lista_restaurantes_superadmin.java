@@ -11,14 +11,26 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.proyecto_iot.R;
+import com.example.proyecto_iot.superadmin.RecyclerView.LogAdapterSA;
+import com.example.proyecto_iot.superadmin.RecyclerView.LogSA;
+import com.example.proyecto_iot.superadmin.RecyclerView.RestauranteAdapterSA;
+import com.example.proyecto_iot.superadmin.RecyclerView.RestauranteSA;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class lista_restaurantes_superadmin extends AppCompatActivity {
 
     private BottomNavigationView bottomNavigationView;
+    private RecyclerView recyclerViewRestaurantesReportes;
+    private RestauranteAdapterSA adapter;
+    private List<RestauranteSA> listaRestaurante;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +46,23 @@ public class lista_restaurantes_superadmin extends AppCompatActivity {
         //----------------------------------------------------------------------------
 
         //Gestion del Recycler View
+        recyclerViewRestaurantesReportes = findViewById(R.id.recyclerViewListaRestaurantesSA);
+        recyclerViewRestaurantesReportes.setLayoutManager(new LinearLayoutManager(this));
 
+        listaRestaurante = new ArrayList<>();
+        listaRestaurante.add(new RestauranteSA("Huaca Pucllana"));
+        listaRestaurante.add(new RestauranteSA("Cala"));
+        listaRestaurante.add(new RestauranteSA("Costanera 700"));
+        listaRestaurante.add(new RestauranteSA("El Mercado"));
+        listaRestaurante.add(new RestauranteSA("Malabar"));
+        listaRestaurante.add(new RestauranteSA("Mayta"));
+        listaRestaurante.add(new RestauranteSA("Amoramar"));
+        listaRestaurante.add(new RestauranteSA("La Picantería"));
+        listaRestaurante.add(new RestauranteSA("Siete Sopas"));
+        listaRestaurante.add(new RestauranteSA("Segundo Muelle"));
+
+        adapter = new RestauranteAdapterSA(listaRestaurante);
+        recyclerViewRestaurantesReportes.setAdapter(adapter);
         //----------------------------------------------------------------------------
 
         //Gestion de la bottom navigation bar

@@ -16,14 +16,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.repartidor.RecyclerView.PedidoRecoger;
 import com.example.proyecto_iot.repartidor.RecyclerView.PedidosRecogerAdapter;
-import com.example.proyecto_iot.superadmin.RecyclerView.ListaUsuariosAdapter;
-import com.example.proyecto_iot.superadmin.RecyclerView.UsuarioSA;
-import com.example.proyecto_iot.superadmin.gestion_reportes_superadmin;
-import com.example.proyecto_iot.superadmin.gestion_usuarios_superadmin;
-import com.example.proyecto_iot.superadmin.lista_usuarios_superadmin;
-import com.example.proyecto_iot.superadmin.registro_nuevoadmin_superadmin;
-import com.example.proyecto_iot.superadmin.solicitudes_repartidores_superadmin;
-import com.example.proyecto_iot.superadmin.ver_logs_superadmin;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
@@ -77,12 +69,12 @@ public class InicioRepartidorActivity extends AppCompatActivity {
         recyclerViewListaPedidosRecoger = findViewById(R.id.recyclerViewListaPedidosRecoger);
         recyclerViewListaPedidosRecoger.setLayoutManager(new LinearLayoutManager(this));
         listaPedidos = new ArrayList<>();
-        listaPedidos.add(new PedidoRecoger("1 pedido a","Av. de los Precursores 281, San Miguel"));
-        listaPedidos.add(new PedidoRecoger("1 pedido a","Av. Simon Bolivar 1486, Pueblo libre"));
-        listaPedidos.add(new PedidoRecoger("1 pedido a","Av. Universitaria 456, San Miguel"));
-        listaPedidos.add(new PedidoRecoger("1 pedido a","Av. Venezuela 789, Cercado de Lima"));
-        listaPedidos.add(new PedidoRecoger("1 pedido a","Av. Mariano Cornejo 1434, Pueblo libre"));
-        listaPedidos.add(new PedidoRecoger("1 pedido a","Av. La marina 4596, San Miguel"));
+        listaPedidos.add(new PedidoRecoger("El Tío Bigote","1 pedido a","Av. de los Precursores 281, San Miguel",R.drawable.tio_bigote));
+        listaPedidos.add(new PedidoRecoger("Pizza Party","1 pedido a","Av. Simon Bolivar 1486, Pueblo libre",R.drawable.pizzaparty));
+        listaPedidos.add(new PedidoRecoger("El Tío Bigote","1 pedido a","Av. Universitaria 456, San Miguel",R.drawable.tio_bigote));
+        listaPedidos.add(new PedidoRecoger("Pizza Party","1 pedido a","Av. Venezuela 789, Cercado de Lima",R.drawable.pizzaparty));
+        listaPedidos.add(new PedidoRecoger("El Tío Bigote","1 pedido a","Av. Mariano Cornejo 1434, Pueblo libre",R.drawable.tio_bigote));
+        listaPedidos.add(new PedidoRecoger("Pizza Party","1 pedido a","Av. La marina 4596, San Miguel",R.drawable.pizzaparty));
 
         adapter = new PedidosRecogerAdapter(listaPedidos);
         recyclerViewListaPedidosRecoger.setAdapter(adapter);

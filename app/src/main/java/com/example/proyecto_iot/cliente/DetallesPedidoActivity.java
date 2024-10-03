@@ -2,16 +2,21 @@ package com.example.proyecto_iot.cliente;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.cliente.RecyclerView.Producto;
 import com.example.proyecto_iot.cliente.RecyclerView.ProductoDetallesAdapter;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,6 +69,30 @@ public class DetallesPedidoActivity extends AppCompatActivity {
                 // Navegar a la vista de Todos los Productos
                 Intent intent = new Intent(DetallesPedidoActivity.this, TodosLosProductosActivity.class);
                 startActivity(intent);
+            }
+        });
+
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int id = item.getItemId();
+
+                if (id == R.id.nav_restaurantes) {
+                        startActivity(new Intent(DetallesPedidoActivity.this, InicioClienteActivity.class));
+                    return true;
+                } else if (id == R.id.nav_carrito) {
+                    startActivity(new Intent(DetallesPedidoActivity.this, CarritoClienteActivity.class));
+                    return true;
+                } else if (id == R.id.navigation_ordenes) {
+                    startActivity(new Intent(DetallesPedidoActivity.this, HistorialPedidosActivity.class));
+                    return true;
+                } else if (id == R.id.nav_perfil) {
+                    startActivity(new Intent(DetallesPedidoActivity.this, PerfilClienteActivity.class));
+                    return true;
+                }
+
+                return false;
             }
         });
     }

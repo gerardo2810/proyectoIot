@@ -12,23 +12,23 @@ import com.example.proyecto_iot.R;
 
 import java.util.List;
 
-public class SolicitudesRepartidoresAdapter extends RecyclerView.Adapter<SolicitudesRepartidoresAdapter.RepartidorSAViewHolder> {
+public class RepartidorAdapterSA extends RecyclerView.Adapter<RepartidorAdapterSA.RepartidorSAViewHolder> {
 
     private List<RepartidorSA> repartidores;
 
-    public SolicitudesRepartidoresAdapter(List<RepartidorSA> repartidores) {
+    public RepartidorAdapterSA(List<RepartidorSA> repartidores) {
         this.repartidores = repartidores;
     }
 
     @NonNull
     @Override
-    public SolicitudesRepartidoresAdapter.RepartidorSAViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public RepartidorAdapterSA.RepartidorSAViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.superadmin_item_repartidores, parent, false);
-        return new SolicitudesRepartidoresAdapter.RepartidorSAViewHolder(view);
+        return new RepartidorAdapterSA.RepartidorSAViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull SolicitudesRepartidoresAdapter.RepartidorSAViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RepartidorAdapterSA.RepartidorSAViewHolder holder, int position) {
         RepartidorSA repartidor = repartidores.get(position);
         String nombre_completo = repartidor.getNombre() + ' ' + repartidor.getApellido();
 

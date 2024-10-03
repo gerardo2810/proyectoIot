@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/nav_restaurantes"
+        android:icon="@drawable/baseline_restaurant_menu_24"
+        android:title="Restaurantes"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/nav_carrito"
+        android:icon="@drawable/baseline_shopping_cart_24"
+        android:title="Carrito"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/navigation_ordenes"
+        android:icon="@drawable/histoial"
+        android:title="Pedidos"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/nav_perfil"
+        android:icon="@drawable/baseline_person_24"
+        android:title="Perfil"
+        app:showAsAction="ifRoom" />
+</menu>

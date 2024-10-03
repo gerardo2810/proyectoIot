@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.proyecto_iot.R;
-import com.example.proyecto_iot.superadmin.RecyclerView.ListaUsuariosAdapter;
+import com.example.proyecto_iot.superadmin.RecyclerView.UsuarioAdapterSA;
 import com.example.proyecto_iot.superadmin.RecyclerView.UsuarioSA;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
@@ -25,7 +25,7 @@ public class lista_usuarios_superadmin extends AppCompatActivity {
 
     private BottomNavigationView bottomNavigationView;
     private RecyclerView recyclerViewListaUsuarios;
-    private ListaUsuariosAdapter adapter;
+    private UsuarioAdapterSA adapter;
     private List<UsuarioSA> listaUsuarios;
 
     @Override
@@ -81,7 +81,7 @@ public class lista_usuarios_superadmin extends AppCompatActivity {
         listaUsuarios.add(new UsuarioSA("Tomas", "Torres", "Administrador", "Inactivo"));
         listaUsuarios.add(new UsuarioSA("Ulises", "Uribe", "Repartidor", "Activo"));
 
-        adapter = new ListaUsuariosAdapter(listaUsuarios);
+        adapter = new UsuarioAdapterSA(listaUsuarios);
         recyclerViewListaUsuarios.setAdapter(adapter);
         //----------------------------------------------------------------------------
 

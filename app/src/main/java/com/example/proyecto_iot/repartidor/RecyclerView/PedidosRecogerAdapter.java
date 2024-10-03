@@ -39,10 +39,14 @@ public class PedidosRecogerAdapter extends RecyclerView.Adapter<PedidosRecogerAd
         PedidoRecoger pedidoRecoger = listaPedidosRecoger.get(position);
         holder.pedidoRecoger = pedidoRecoger;
 
+        ImageView imageViewRestaurante = holder.itemView.findViewById(R.id.imagen_restaurante);
+        imageViewRestaurante.setImageResource(pedidoRecoger.getImageResourceId());
+        TextView textViewRestaurante = holder.itemView.findViewById(R.id.nombre_restaurante);
+        textViewRestaurante.setText(pedidoRecoger.getNombreRestaurante());
         TextView textViewCantidad = holder.itemView.findViewById(R.id.cantidad_pedido);
         textViewCantidad.setText(pedidoRecoger.getCantidad());
-        TextView textViewDirección = holder.itemView.findViewById(R.id.direccion_pedido);
-        textViewDirección.setText(pedidoRecoger.getDireccion());
+        TextView textViewDireccion = holder.itemView.findViewById(R.id.direccion_pedido);
+        textViewDireccion.setText(pedidoRecoger.getDireccion());
 
     }
 

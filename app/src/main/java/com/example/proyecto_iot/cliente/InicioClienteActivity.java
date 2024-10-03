@@ -2,9 +2,12 @@ package com.example.proyecto_iot.cliente;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,6 +17,8 @@ import com.example.proyecto_iot.admin_restaurante.RecyclerView.Categoria;
 import com.example.proyecto_iot.cliente.RecyclerView.CategoriaAdapter;
 import com.example.proyecto_iot.cliente.RecyclerView.Restaurante;
 import com.example.proyecto_iot.cliente.RecyclerView.RestauranteAdapter;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,12 +38,10 @@ public class InicioClienteActivity extends AppCompatActivity {
     private List<Restaurante> popularesList;
     private List<Restaurante> favoritosList;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inicio_cliente);
-
 
         // Inicializar RecyclerView de categorías
         recyclerCategories = findViewById(R.id.recycler_categories);
@@ -49,7 +52,6 @@ public class InicioClienteActivity extends AppCompatActivity {
         categoryAdapter = new CategoriaAdapter(getCategoryList(), this);
         recyclerCategories.setAdapter(categoryAdapter);
 
-
         // Inicializar RecyclerView de favoritos
         recyclerFavoritos = findViewById(R.id.recycler_favoritos);
         LinearLayoutManager layoutManager1 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
@@ -58,7 +60,6 @@ public class InicioClienteActivity extends AppCompatActivity {
         // Asignar adaptador para las favoritos
         favoritosAdapter = new RestauranteAdapter(this, getFavoritosList());
         recyclerFavoritos.setAdapter(favoritosAdapter);
-
 
         // Inicializar RecyclerView de populares
         recyclerPopulares = findViewById(R.id.recycler_populares);
@@ -69,71 +70,48 @@ public class InicioClienteActivity extends AppCompatActivity {
         popularesAdapter = new RestauranteAdapter(this, getPopularesList());
         recyclerPopulares.setAdapter(popularesAdapter);
 
-
         // Inicializar RecyclerView
         recyclerBestOption = findViewById(R.id.recycler_best_option);
         recyclerBestOption.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
         // Inicializar lista de opciones y adaptador
         bestOptionList = new ArrayList<>();
-        bestOptionList.add(new Restaurante("La Lucha", 3.49, "Desayunos", "San Miguel",R.drawable.mlalucha));
-        bestOptionList.add(new Restaurante("Pinkberry", 3.49, "Heladería", "San Miguel",R.drawable.mpinkberry));
+        bestOptionList.add(new Restaurante("La Lucha", 3.49, "Desayunos", "San Miguel", R.drawable.mlalucha));
+        bestOptionList.add(new Restaurante("Pinkberry", 3.49, "Heladería", "San Miguel", R.drawable.mpinkberry));
 
         bestOptionAdapter = new RestauranteAdapter(this, bestOptionList);
         recyclerBestOption.setAdapter(bestOptionAdapter);
 
-        // Listener para el ícono de perfil en el header
-        ImageView iconoPerfil = findViewById(R.id.icono_perfil);
-        iconoPerfil.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(InicioClienteActivity.this, PerfilClienteActivity.class);
-                startActivity(intent);
-            }
-        });
+        // Inicializar BottomNavigationView
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
 
-        // Listener para el ícono del carrito en el header
-        ImageView iconoCarrito = findViewById(R.id.icono_carrito);
-        iconoCarrito.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(InicioClienteActivity.this, CarritoClienteActivity.class);
-                startActivity(intent);
-            }
-        });
+        // Marcar el ítem de "Restaurantes" como seleccionado
+        bottomNavigationView.setSelectedItemId(R.id.nav_restaurantes);
 
-        // Listeners para la barra de navegación
-        // Icono de restaurantes (irá a la misma vista de inicio)
-        LinearLayout iconoRestaurantes = findViewById(R.id.nav_restaurantes);
-        iconoRestaurantes.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(InicioClienteActivity.this, InicioClienteActivity.class);
-                startActivity(intent);
-            }
-        });
+        // Configurar listener para la navegación
+            bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                    int id = item.getItemId();
 
-        // Icono del carrito en la barra de navegación
-        LinearLayout iconoCarritoNav = findViewById(R.id.nav_carrito);
-        iconoCarritoNav.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(InicioClienteActivity.this, CarritoClienteActivity.class);
-                startActivity(intent);
-            }
-        });
+                    if (id == R.id.nav_restaurantes) {
+                        // Si ya está en la actividad de Restaurantes, no hacer nada
+                        return true;
+                    } else if (id == R.id.nav_carrito) {
+                        startActivity(new Intent(InicioClienteActivity.this, CarritoClienteActivity.class));
+                        return true;
+                    } else if (id == R.id.navigation_ordenes) {
+                        startActivity(new Intent(InicioClienteActivity.this, HistorialPedidosActivity.class));
+                        return true;
+                    } else if (id == R.id.nav_perfil) {
+                        startActivity(new Intent(InicioClienteActivity.this, PerfilClienteActivity.class));
+                        return true;
+                    }
 
-        // Icono de perfil en la barra de navegación
-        LinearLayout iconoPerfilNav = findViewById(R.id.nav_perfil);
-        iconoPerfilNav.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(InicioClienteActivity.this, PerfilClienteActivity.class);
-                startActivity(intent);
-            }
-        });
+                    return false;
+                }
+            });
     }
-
 
     // Método para obtener la lista de categorías
     private List<Categoria> getCategoryList() {
@@ -151,27 +129,25 @@ public class InicioClienteActivity extends AppCompatActivity {
         return categoryList;
     }
 
-
     private List<Restaurante> getFavoritosList() {
         List<Restaurante> favoritosList = new ArrayList<>();
-        favoritosList.add(new Restaurante("La Lucha", 3.49, "Desayunos", "San Miguel",R.drawable.mlalucha));
-        favoritosList.add(new Restaurante("Pinkberry", 3.49, "Heladería", "San Miguel",R.drawable.mpinkberry));
-        favoritosList.add(new Restaurante("Taco Bell", 2.50, "Comida mexicana", "San Miguel",R.drawable.mtacobell));
-        favoritosList.add(new Restaurante("Popeyes", 1.20, "Pollos", "San Miguel",R.drawable.mpopeyes));
-        favoritosList.add(new Restaurante("EDO Sushi Bar", 3.49, "Sushi", "San Miguel",R.drawable.medo));
-        favoritosList.add(new Restaurante("Mediterráneo", 3.49, "Pollos", "San Miguel",R.drawable.mmediterraneo));
+        favoritosList.add(new Restaurante("La Lucha", 3.49, "Desayunos", "San Miguel", R.drawable.mlalucha));
+        favoritosList.add(new Restaurante("Pinkberry", 3.49, "Heladería", "San Miguel", R.drawable.mpinkberry));
+        favoritosList.add(new Restaurante("Taco Bell", 2.50, "Comida mexicana", "San Miguel", R.drawable.mtacobell));
+        favoritosList.add(new Restaurante("Popeyes", 1.20, "Pollos", "San Miguel", R.drawable.mpopeyes));
+        favoritosList.add(new Restaurante("EDO Sushi Bar", 3.49, "Sushi", "San Miguel", R.drawable.medo));
+        favoritosList.add(new Restaurante("Mediterráneo", 3.49, "Pollos", "San Miguel", R.drawable.mmediterraneo));
         return favoritosList;
     }
 
-
     private List<Restaurante> getPopularesList() {
         List<Restaurante> popularesList = new ArrayList<>();
-        popularesList.add(new Restaurante("Papa John's", 3.49, "Pizzas", "San Miguel",R.drawable.mpapajhons));
-        popularesList.add(new Restaurante("Bembos", 1.39, "Hamburguesas", "San Miguel",R.drawable.mbembos));
-        popularesList.add(new Restaurante("Chinawok", 2.39, "Chifa", "San Miguel",R.drawable.mchinawok));
-        popularesList.add(new Restaurante("Don Belisario", 4.49, "Pollos", "San Miguel",R.drawable.mdonbelisario));
-        popularesList.add(new Restaurante("Santoku Sushi Bar", 2.79, "Sushi", "San Miguel",R.drawable.msantoku));
-        popularesList.add(new Restaurante("Wing House", 1.49, "Alitas", "San Miguel",R.drawable.mwinhouse));
+        popularesList.add(new Restaurante("Papa John's", 3.49, "Pizzas", "San Miguel", R.drawable.mpapajhons));
+        popularesList.add(new Restaurante("Bembos", 1.39, "Hamburguesas", "San Miguel", R.drawable.mbembos));
+        popularesList.add(new Restaurante("Chinawok", 2.39, "Chifa", "San Miguel", R.drawable.mchinawok));
+        popularesList.add(new Restaurante("Don Belisario", 4.49, "Pollos", "San Miguel", R.drawable.mdonbelisario));
+        popularesList.add(new Restaurante("Santoku Sushi Bar", 2.79, "Sushi", "San Miguel", R.drawable.msantoku));
+        popularesList.add(new Restaurante("Wing House", 1.49, "Alitas", "San Miguel", R.drawable.mwinhouse));
         return popularesList;
     }
 }

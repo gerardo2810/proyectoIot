@@ -36,6 +36,8 @@ public class DetallesPedidoActivity extends AppCompatActivity {
         productoList.add(new Producto("Pollo a la brasa", "Con papas fritas", 12.00, 15));
         productoList.add(new Producto("Pollo a la brasa", "Con papas fritas", 12.00, 15));
 
+        // Recibir el ID del pedido desde el intent
+        int pedidoId = getIntent().getIntExtra("pedido_id", 1);
 
         // Configurar el adaptador
         adapter = new ProductoDetallesAdapter(productoList);

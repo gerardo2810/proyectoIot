@@ -13,6 +13,27 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
+<<<<<<< Updated upstream
+=======
+<<<<<<< HEAD
+      <SelectionState runConfigName="HistorialPedidosActivity">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="InicioClienteActivity">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="ListaRestaurantesCategoriasClienteActivity">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="PerfilRestauranteActivity">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="RealizarPedidoActivity">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+=======
+>>>>>>> 89393db138b16894b3abdf566f51c6cbbc7d5d2a
+>>>>>>> Stashed changes
     </selectionStates>
   </component>
 </project>

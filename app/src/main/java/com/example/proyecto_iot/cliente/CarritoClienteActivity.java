@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -53,6 +54,29 @@ public class CarritoClienteActivity extends AppCompatActivity implements Product
             productos.clear();
             productoCarritoAdapter.notifyDataSetChanged();
             updateSubtotal();
+        });
+
+        // Configurar la flecha de retroceso
+        ImageView backArrow = findViewById(R.id.back_arrow);
+        backArrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Navegar a la vista de Historial de Pedidos
+                Intent intent = new Intent(CarritoClienteActivity.this, PerfilRestauranteActivity.class);
+                startActivity(intent);
+                finish(); // Finaliza la actividad actual para no volver a ella con el botón de retroceso
+            }
+        });
+
+        // Configurar el botón "Ir a pagar"
+        Button payButton = findViewById(R.id.pay_button);
+        payButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Navegar a la actividad RealizarPedidoActivity
+                Intent intent = new Intent(CarritoClienteActivity.this, RealizarPedidoActivity.class);
+                startActivity(intent);
+            }
         });
     }
 

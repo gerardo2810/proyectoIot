@@ -6,6 +6,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".cliente.PerfilClienteActivity">
+    <!-- Contenedor circular para la flecha -->
+    <!--FrameLayout
+        android:id="@+id/back_arrow_container"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_margin="16dp"
+        android:background="@drawable/circle_shape"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:id="@+id/back_arrow"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/baseline_arrow_back_ios_24"
+            android:layout_gravity="center"
+            android:paddingStart="5dp"/>
+    </FrameLayout-->
 
     <!-- Card para los datos -->
     <androidx.cardview.widget.CardView

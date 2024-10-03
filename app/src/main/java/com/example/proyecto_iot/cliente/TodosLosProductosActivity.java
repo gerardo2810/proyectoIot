@@ -59,7 +59,7 @@ public class TodosLosProductosActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Navegar a la vista de Historial de Pedidos
-                Intent intent = new Intent(TodosLosProductosActivity.this, HistorialPedidosActivity.class);
+                Intent intent = new Intent(TodosLosProductosActivity.this, DetallesPedidoActivity.class);
                 startActivity(intent);
                 finish(); // Finaliza la actividad actual para no volver a ella con el botón de retroceso
             }

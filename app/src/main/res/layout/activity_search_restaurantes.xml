@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="#FFFFFF">
+
+    <!-- Header con la flecha de retroceso -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <!-- Flecha de retroceso -->
+        <ImageView
+            android:id="@+id/back_arrow"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/baseline_arrow_back_ios_24"
+            android:contentDescription="Retroceso"
+            android:layout_marginEnd="12dp"/>
+
+        <!-- Cuadro de búsqueda con tamaño fijo -->
+        <EditText
+            android:id="@+id/search_input"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:hint="Buscar restaurante"
+            android:drawableEnd="@drawable/baseline_search_24"
+            android:paddingHorizontal="12dp"
+            android:background="@drawable/search_background"
+            android:singleLine="true"
+            android:maxLines="1"/>
+
+        <!-- Botón para limpiar búsqueda -->
+        <ImageView
+            android:id="@+id/clear_search"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/baseline_delete_24"
+            android:contentDescription="Limpiar búsqueda"
+            android:layout_marginStart="12dp"/>
+    </LinearLayout>
+
+    <!-- Texto que indica lo que se está buscando (opcional) -->
+    <TextView
+        android:id="@+id/searching_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="You're searching for..."
+        android:textSize="14sp"
+        android:textColor="#888888"
+        android:layout_marginTop="8dp"/>
+
+    <!-- RecyclerView para mostrar los restaurantes filtrados -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_search_restaurantes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"/>
+
+</LinearLayout>

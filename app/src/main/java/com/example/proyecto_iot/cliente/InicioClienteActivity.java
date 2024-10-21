@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -37,11 +38,24 @@ public class InicioClienteActivity extends AppCompatActivity {
     private List<Restaurante> bestOptionList;
     private List<Restaurante> popularesList;
     private List<Restaurante> favoritosList;
+    private EditText orderSearch; // El cuadro de búsqueda
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inicio_cliente);
+        // Enlazar el EditText de búsqueda
+        orderSearch = findViewById(R.id.order_search);
+
+        // Configurar un listener para que, al hacer clic, abra la actividad de búsqueda
+        orderSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Navegar a la actividad de búsqueda
+                Intent intent = new Intent(InicioClienteActivity.this, SearchRestaurantesActivity.class);
+                startActivity(intent);
+            }
+        });
 
         // Inicializar RecyclerView de categorías
         recyclerCategories = findViewById(R.id.recycler_categories);
@@ -51,7 +65,6 @@ public class InicioClienteActivity extends AppCompatActivity {
         // Asignar adaptador para las categorías
         categoryAdapter = new CategoriaAdapter(getCategoryList(), this);
         recyclerCategories.setAdapter(categoryAdapter);
-
         // Inicializar RecyclerView de favoritos
         recyclerFavoritos = findViewById(R.id.recycler_favoritos);
         LinearLayoutManager layoutManager1 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);

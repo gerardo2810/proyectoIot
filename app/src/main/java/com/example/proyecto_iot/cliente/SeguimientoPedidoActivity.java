@@ -167,9 +167,6 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
         estadoActual++;
     }
 
-
-
-
     @Override
     protected void onDestroy() {
         super.onDestroy();

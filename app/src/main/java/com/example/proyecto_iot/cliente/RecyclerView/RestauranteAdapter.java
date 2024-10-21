@@ -20,6 +20,12 @@ public class RestauranteAdapter extends RecyclerView.Adapter<RestauranteAdapter.
     private Context context;
     private List<Restaurante> bestOptionList;
 
+    // Método para actualizar la lista filtrada
+    public void updateList(List<Restaurante> newList) {
+        bestOptionList = newList;
+        notifyDataSetChanged(); // Notifica al adaptador que los datos han cambiado
+    }
+
     public RestauranteAdapter(Context context, List<Restaurante> bestOptionList) {
         this.context = context;
         this.bestOptionList = bestOptionList;

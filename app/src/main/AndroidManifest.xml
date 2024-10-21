@@ -13,6 +13,9 @@
         android:theme="@style/Theme.Proyecto_Iot"
         tools:targetApi="31">
         <activity
+            android:name=".cliente.SearchRestaurantesActivity"
+            android:exported="false" />
+        <activity
             android:name=".cliente.VerMasProductosClienteActivity"
             android:exported="true" />
         <activity
@@ -50,7 +53,7 @@
             android:exported="true" />
         <activity
             android:name=".superadmin.gestion_usuarios_superadmin"
-            android:exported="true"></activity>
+            android:exported="true" />
         <activity
             android:name=".superadmin.gestion_reportes_superadmin"
             android:exported="true" />
@@ -62,7 +65,7 @@
             android:exported="true" />
         <activity
             android:name=".superadmin.reportes_recibidos_superadmin"
-            android:exported="true"></activity>
+            android:exported="true" />
         <activity
             android:name=".superadmin.ver_logs_superadmin"
             android:exported="true" />
@@ -126,8 +129,6 @@
         <activity
             android:name=".admin_restaurante.MasDetallesPedidoActivity"
             android:exported="true" />
-
-
         <activity
             android:name=".repartidor.RegistroRepartidorActivity"
             android:exported="true" />
@@ -155,7 +156,6 @@
         <activity
             android:name=".repartidor.PerfilRepartidorActivity"
             android:exported="true" />
-
         <activity
             android:name=".LoginActivity"
             android:exported="true" />

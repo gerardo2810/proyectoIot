@@ -59,60 +59,56 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
         qrButton = findViewById(R.id.qr_button);
 
         // Enlazar el layout donde se mostrarán los estados
-        layoutEstados = findViewById(R.id.layout_estados);  // Agregar en tu XML un LinearLayout con este ID para los estados
+        layoutEstados = findViewById(R.id.layout_estados);
+
+        // Ocultar todos los estados excepto el primero (Recibido)
+        findViewById(R.id.contenedor_preparacion).setVisibility(View.GONE);
+        findViewById(R.id.contenedor_camino).setVisibility(View.GONE);
+        findViewById(R.id.contenedor_entregado).setVisibility(View.GONE);
+        findViewById(R.id.linea_1).setVisibility(View.GONE);
+        findViewById(R.id.linea_2).setVisibility(View.GONE);
+        findViewById(R.id.linea_3).setVisibility(View.GONE);
 
         // Iniciar la actualización de los estados cada 2 minutos
         iniciarTrackingEstados();
 
         // Listener para la flecha de retroceso - Dirige a "RealizarPedidoActivity"
-        backArrow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(SeguimientoPedidoActivity.this, RealizarPedidoActivity.class);
-                startActivity(intent);
-            }
+        backArrow.setOnClickListener(view -> {
+            Intent intent = new Intent(SeguimientoPedidoActivity.this, RealizarPedidoActivity.class);
+            startActivity(intent);
         });
 
         // Listener para el botón de "Cancelar Órden" - Dirige a "InicioClienteActivity"
-        cancelOrder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(SeguimientoPedidoActivity.this, InicioClienteActivity.class);
-                startActivity(intent);
-            }
+        cancelOrder.setOnClickListener(view -> {
+            Intent intent = new Intent(SeguimientoPedidoActivity.this, InicioClienteActivity.class);
+            startActivity(intent);
         });
 
         // Listener para el botón de QR - Dirige a "SeguimientoPedidoActivity"
-        qrButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(SeguimientoPedidoActivity.this, SeguimientoPedidoActivity.class);
-                startActivity(intent);
-            }
+        qrButton.setOnClickListener(view -> {
+            Intent intent = new Intent(SeguimientoPedidoActivity.this, SeguimientoPedidoActivity.class);
+            startActivity(intent);
         });
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
-        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                int id = item.getItemId();
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
 
-                if (id == R.id.nav_restaurantes) {
-                    startActivity(new Intent(SeguimientoPedidoActivity.this, InicioClienteActivity.class));
-                    return true;
-                } else if (id == R.id.nav_carrito) {
-                    startActivity(new Intent(SeguimientoPedidoActivity.this, CarritoClienteActivity.class));
-                    return true;
-                } else if (id == R.id.navigation_ordenes) {
-                    startActivity(new Intent(SeguimientoPedidoActivity.this, HistorialPedidosActivity.class));
-                    return true;
-                } else if (id == R.id.nav_perfil) {
-                    startActivity(new Intent(SeguimientoPedidoActivity.this, PerfilClienteActivity.class));
-                    return true;
-                }
-
-                return false;
+            if (id == R.id.nav_restaurantes) {
+                startActivity(new Intent(SeguimientoPedidoActivity.this, InicioClienteActivity.class));
+                return true;
+            } else if (id == R.id.nav_carrito) {
+                startActivity(new Intent(SeguimientoPedidoActivity.this, CarritoClienteActivity.class));
+                return true;
+            } else if (id == R.id.navigation_ordenes) {
+                startActivity(new Intent(SeguimientoPedidoActivity.this, HistorialPedidosActivity.class));
+                return true;
+            } else if (id == R.id.nav_perfil) {
+                startActivity(new Intent(SeguimientoPedidoActivity.this, PerfilClienteActivity.class));
+                return true;
             }
+
+            return false;
         });
     }
 
@@ -150,14 +146,17 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
 
         // Mostrar el siguiente estado y la línea correspondiente
         if (estadoActual == 0) {
+            // Mostrar solo el estado "Recibido" al inicio (esto ya es visible desde el layout)
+            // No hacer nada en este caso
+        } else if (estadoActual == 1) {
             // Mostrar la línea 1 y el estado "En preparación" después de 2 minutos
             findViewById(R.id.linea_1).setVisibility(View.VISIBLE);
             findViewById(R.id.contenedor_preparacion).setVisibility(View.VISIBLE);
-        } else if (estadoActual == 1) {
+        } else if (estadoActual == 2) {
             // Mostrar la línea 2 y el estado "En camino" después de 2 minutos
             findViewById(R.id.linea_2).setVisibility(View.VISIBLE);
             findViewById(R.id.contenedor_camino).setVisibility(View.VISIBLE);
-        } else if (estadoActual == 2) {
+        } else if (estadoActual == 3) {
             // Mostrar la línea 3 y el estado "Entregado" después de 2 minutos
             findViewById(R.id.linea_3).setVisibility(View.VISIBLE);
             findViewById(R.id.contenedor_entregado).setVisibility(View.VISIBLE);

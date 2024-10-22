@@ -2,6 +2,7 @@ package com.example.proyecto_iot.cliente.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,20 +47,17 @@ public class CategoriaAdapter extends RecyclerView.Adapter<CategoriaAdapter.Cate
 
         // Evento al hacer clic en la categoría
         holder.itemView.setOnClickListener(v -> {
-            // Acción para la categoría seleccionada
-            if (category.getName().equals("Nueva categoría")) {
-                // Abrir actividad para agregar una nueva categoría
-                Intent intent = new Intent(context, AgregarCategoriaActivity.class);
-                context.startActivity(intent);
-            }
-        });
+            // Verificar el nombre de la categoría antes de pasarla
+            Log.d("CategoriaAdapter", "Categoría seleccionada: " + category.getName());
 
-        // Acción del botón editar
-        holder.linearLayout.setOnClickListener(v -> {
+            // Pasar la categoría seleccionada a la nueva actividad
             Intent intent = new Intent(context, ListaRestaurantesCategoriasClienteActivity.class);
+            intent.putExtra("selectedCategory", category.getName()); // Pasar la categoría seleccionada
             context.startActivity(intent);
         });
     }
+
+
 
     @Override
     public int getItemCount() {

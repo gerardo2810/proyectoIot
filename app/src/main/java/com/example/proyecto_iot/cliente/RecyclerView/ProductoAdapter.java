@@ -7,25 +7,26 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import com.example.proyecto_iot.R;
-import com.example.proyecto_iot.admin_restaurante.EditarProductoActivity;
-import com.example.proyecto_iot.cliente.ListaRestaurantesCategoriasClienteActivity;
-import com.example.proyecto_iot.cliente.PerfilRestauranteActivity;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.proyecto_iot.R;
+import com.example.proyecto_iot.cliente.PerfilRestauranteActivity;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.ProductoViewHolder> {
 
     private List<Producto> productos;
+    private List<Producto> productosListFull;  // Lista completa para restaurar productos
     private Context context;
 
     public ProductoAdapter(List<Producto> productos) {
         this.productos = productos;
+        this.productosListFull = new ArrayList<>(productos); // Copia de la lista original
     }
 
     @NonNull
@@ -68,6 +69,22 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.Produc
         return productos.size();
     }
 
+    // Método para filtrar la lista de productos
+    public void filterList(String query) {
+        if (query.isEmpty()) {
+            productos = new ArrayList<>(productosListFull); // Restaurar la lista completa
+        } else {
+            List<Producto> filteredList = new ArrayList<>();
+            for (Producto producto : productosListFull) {
+                if (producto.getNombre().toLowerCase().contains(query.toLowerCase())) {
+                    filteredList.add(producto); // Agregar productos que coincidan con la búsqueda
+                }
+            }
+            productos = filteredList;
+        }
+        notifyDataSetChanged(); // Actualizar la vista del RecyclerView
+    }
+
     public static class ProductoViewHolder extends RecyclerView.ViewHolder {
         TextView productTitle, productDescription, productPrice, textQuantity;
         Button  buttonAddProduct;
@@ -86,4 +103,3 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.Produc
         }
     }
 }
-

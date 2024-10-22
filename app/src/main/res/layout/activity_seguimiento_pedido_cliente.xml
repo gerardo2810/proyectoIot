@@ -299,45 +299,47 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:padding="4dp">
 
-        <!-- Botón "Detalle de Orden" con fondo blanco -->
+        <!-- Botón "Detalle de Orden" -->
         <LinearLayout
+            android:id="@+id/btn_detalle_orden"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="8dp"
+        android:background="@drawable/rounded_background_white"
+        android:layout_marginEnd="4dp">
+
+        <TextView
+            android:id="@+id/tv_detalle_orden"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:padding="8dp"
-            android:background="@drawable/rounded_background_white"
-            android:layout_marginEnd="4dp">
+            android:text="Detalle de Orden"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#000000" />
+    </LinearLayout>
 
-            <TextView
-                android:id="@+id/tv_detalle_orden"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Detalle de Orden"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="#000000" />
-        </LinearLayout>
+    <!-- Botón "Verificación de Envío" -->
+    <LinearLayout
+        android:id="@+id/btn_verificacion_envio"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="8dp"
+    android:background="@drawable/rounded_background_grey"
+    android:layout_marginStart="4dp">
 
-        <!-- Botón "Verificación de Envío" dentro de un layout para mantener la alineación -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:padding="8dp"
-            android:layout_marginStart="4dp">
-
-
-            <TextView
-                android:id="@+id/tv_verificacion_envio"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Verificación de envío"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="#000000" />
-        </LinearLayout>
+    <TextView
+        android:id="@+id/tv_verificacion_envio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Verificación de envío"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="#000000" />
+</LinearLayout>
     </LinearLayout>
 
 
@@ -520,6 +522,48 @@
             </LinearLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/qr_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:cardCornerRadius="12dp"
+        app:cardBackgroundColor="#D3D3D3"
+        app:layout_constraintTop_toBottomOf="@id/detalles"
+
+        android:layout_gravity="center">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="16dp">
+
+            <!-- Texto que aparece encima del código QR -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Muestra tu QR a tu repartidor para que te pueda entregar tu orden y asegurarnos que la entrega fue exitosa"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:textColor="#000000"
+                android:layout_marginBottom="16dp"
+                android:textAlignment="center" />
+
+            <!-- Imagen del código QR -->
+            <ImageView
+                android:id="@+id/qr_image"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:src="@drawable/placeholder"
+                android:scaleType="fitCenter"
+                android:contentDescription="QR Code" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
 
     <!-- Nueva sección de pago con código QR -->
     <LinearLayout

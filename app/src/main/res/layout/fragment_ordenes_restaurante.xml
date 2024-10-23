@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -53,22 +54,21 @@
 
     <!-- Título de la página -->
 
-    <!-- Cuadro de búsqueda -->
-
     <!-- Selector de fecha -->
 
     <TextView
         android:id="@+id/tv_historial_titulo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:text="Historial de órdenes"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:paddingBottom="5dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/top_bar_card"
-        app:layout_constraintVertical_bias="0.031" />
+        app:layout_constraintTop_toBottomOf="@+id/top_bar_card" />
 
     <LinearLayout
         android:id="@+id/date_selector"
@@ -81,7 +81,6 @@
         android:layout_marginTop="16dp">
 
         <!-- Icono de calendario -->
-
         <!-- Texto de la fecha -->
     </LinearLayout>
 
@@ -91,44 +90,44 @@
 
     <androidx.appcompat.widget.SearchView
         android:id="@+id/sv_search_order"
-        android:layout_width="331dp"
-        android:layout_height="41dp"
+        android:layout_width="383dp"
+        android:layout_height="52dp"
         android:layout_marginTop="16dp"
         android:background="@drawable/search_background"
         android:padding="8dp"
         android:queryHint="Por N° de orden"
         app:iconifiedByDefault="false"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_fecha"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_fecha" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_orders_list"
-        android:layout_width="357dp"
-        android:layout_height="581dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
         android:layout_marginTop="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.489"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/sv_search_order"
-        app:layout_constraintVertical_bias="0.26" />
+        app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Fecha seleccionada -->
+
+    <!-- Icono de calendario -->
 
     <TextView
         android:id="@+id/tv_fecha"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="136dp"
         android:background="@drawable/rounded_background"
         android:padding="8dp"
         android:text="Fecha: 04/09/2024"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/imageView2"
-        app:layout_constraintHorizontal_bias="0.907"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.184" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/imageView2"
@@ -139,5 +138,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/tv_fecha"
         app:srcCompat="@drawable/calendariopng" />
+
+    <!-- BottomNavigationView para cambiar entre fragments principales -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/green_light_2"
+        app:itemBackground="@drawable/superadmin_nav_ripple"
+        app:labelVisibilityMode="labeled"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/restaurante_navigation_bar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

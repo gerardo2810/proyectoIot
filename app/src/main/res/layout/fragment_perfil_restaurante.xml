@@ -71,13 +71,14 @@
 
     <LinearLayout
         android:id="@+id/linearLayout3"
-        android:layout_width="375dp"
+        android:layout_width="match_parent"
         android:layout_height="600dp"
 
-        android:layout_marginTop="96dp"
+        android:layout_marginTop="80dp"
         android:orientation="vertical"
         android:padding="16dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/top_bar_card">
 
@@ -92,7 +93,7 @@
 
         <LinearLayout
             android:id="@+id/edit_personal_info"
-            android:layout_width="339dp"
+            android:layout_width="match_parent"
             android:layout_height="56dp"
             android:background="@drawable/border_perfil"
             android:gravity="center_vertical"
@@ -106,7 +107,7 @@
                 android:src="@drawable/user" />
 
             <TextView
-                android:layout_width="194dp"
+                android:layout_width="264dp"
                 android:layout_height="wrap_content"
                 android:text="Editar datos personales"
                 android:textSize="14sp"
@@ -115,6 +116,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:layout_weight="1"
                 android:src="@drawable/baseline_arrow_forward_ios_24" />
         </LinearLayout>
@@ -123,7 +125,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="20dp"
             android:text="Información del restaurante"
             android:textColor="@color/purple"
             android:textStyle="bold" />
@@ -152,7 +154,7 @@
                 android:src="@drawable/iconrespng" />
 
             <TextView
-                android:layout_width="191dp"
+                android:layout_width="278dp"
                 android:layout_height="wrap_content"
                 android:text="Editar datos del restaurante"
                 android:textStyle="bold" />
@@ -185,7 +187,7 @@
                 android:src="@drawable/iconhour" />
 
             <TextView
-                android:layout_width="190dp"
+                android:layout_width="274dp"
                 android:layout_height="wrap_content"
                 android:text="Horarios del restaurante"
                 android:textStyle="bold" />
@@ -201,7 +203,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="20dp"
             android:text="Configuración"
             android:textColor="@color/purple"
             android:textStyle="bold" />
@@ -225,7 +227,7 @@
                 android:src="@drawable/helpicon" />
 
             <TextView
-                android:layout_width="186dp"
+                android:layout_width="271dp"
                 android:layout_height="wrap_content"
                 android:text="Ayuda en línea"
                 android:textStyle="bold" />
@@ -257,7 +259,7 @@
                 android:src="@drawable/salir" />
 
             <TextView
-                android:layout_width="188dp"
+                android:layout_width="276dp"
                 android:layout_height="wrap_content"
                 android:text="Cerrar sesión"
                 android:textStyle="bold" />

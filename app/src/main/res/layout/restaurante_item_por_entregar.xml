@@ -2,24 +2,23 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingBottom="12dp">
 
     <LinearLayout
         android:id="@+id/newpedido2"
-        android:layout_width="353dp"
-        android:layout_height="106dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:background="@drawable/border_pedido"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.081">
+        app:layout_constraintVertical_bias="0.341">
 
         <!-- Imagen circular -->
         <ImageView
@@ -72,8 +71,8 @@
 
             <!-- Flecha hacia la derecha -->
             <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
                 android:layout_gravity="end"
                 android:paddingEnd="10dp"
                 android:src="@drawable/baseline_arrow_forward_ios_24"

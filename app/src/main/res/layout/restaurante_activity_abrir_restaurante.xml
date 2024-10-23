@@ -77,80 +77,48 @@
 
     <!-- Bottom Navigation -->
 
+
     <TextView
         android:id="@+id/open_restaurant_message"
-        android:layout_width="298dp"
-        android:layout_height="74dp"
+        android:layout_width="372dp"
+        android:layout_height="113dp"
         android:gravity="center"
         android:text="¡Abre tu restaurante para empezar a recibir los pedidos!"
         android:textColor="@color/white"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/view5"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/top_bar_card"
-        app:layout_constraintVertical_bias="0.799" />
+        app:layout_constraintTop_toBottomOf="@+id/status_button"
+        app:layout_constraintVertical_bias="0.926" />
 
     <Button
         android:id="@+id/open_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="295dp"
+        android:layout_height="55dp"
+        android:layout_marginBottom="16dp"
         android:backgroundTint="@color/green_normal"
         android:paddingStart="24dp"
         android:paddingEnd="24dp"
         android:text="ABRIR RESTAURANTE"
         android:textColor="@android:color/white"
-        app:layout_constraintBottom_toTopOf="@+id/view5"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/open_restaurant_message"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/open_restaurant_message"
-        app:layout_constraintVertical_bias="0.45" />
-
-    <View
-        android:id="@+id/view5"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="32dp"
-        android:background="#8E8E8E"
-        app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
-        app:layout_constraintTop_toTopOf="@id/bottom_navigation"
-        app:layout_constraintVertical_bias="0.0"
-        tools:layout_editor_absoluteX="-7dp" />
-
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_navigation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/green_light_2"
-        app:itemBackground="@drawable/superadmin_nav_ripple"
-        app:labelVisibilityMode="labeled"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/restaurante_navigation_bar" >
-
-        <View
-            android:id="@+id/view"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="-5dp"
-            android:background="#8E8E8E" />
-    </com.google.android.material.bottomnavigation.BottomNavigationView>
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/status_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="253dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="24dp"
         android:backgroundTint="@android:color/holo_red_dark"
-        android:drawableEnd="@drawable/baseline_calendar_month_24"
         android:text="RESTAURANTE CERRADO"
         android:textColor="@android:color/white"
-        app:layout_constraintBottom_toTopOf="@+id/view5"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/top_bar_card"
-        app:layout_constraintVertical_bias="0.035" />
+        app:layout_constraintTop_toBottomOf="@+id/top_bar_card" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

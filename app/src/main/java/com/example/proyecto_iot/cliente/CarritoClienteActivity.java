@@ -39,11 +39,13 @@ public class CarritoClienteActivity extends AppCompatActivity implements Product
         recyclerViewCarrito = findViewById(R.id.recycler_carrito);
         recyclerViewCarrito.setLayoutManager(new LinearLayoutManager(this));
 
-        productos = new ArrayList<>();
-        productos.add(new Producto("Pavo a la leña", "Con tártara de la casa", 15.00, 1, R.drawable.lalucha_inicio));
-        productos.add(new Producto("Pollo a la brasa", "Con papas fritas", 20.00, 2, R.drawable.pollo));
-        productos.add(new Producto("Hamburguesa", "Con papas y gaseosa", 12.00, 1, R.drawable.plato1));
+        // Recibir productos del carrito desde PerfilRestauranteActivity
+        productos = (List<Producto>) getIntent().getSerializableExtra("carrito");
 
+        // Si no hay productos en el carrito, inicializamos la lista vacía
+        if (productos == null) {
+            productos = new ArrayList<>();
+        }
 
         productoCarritoAdapter = new ProductoCarritoAdapter(productos, this);
         recyclerViewCarrito.setAdapter(productoCarritoAdapter);
@@ -56,9 +58,10 @@ public class CarritoClienteActivity extends AppCompatActivity implements Product
         // Listener para vaciar el carrito
         TextView clearCart = findViewById(R.id.clear_cart);
         clearCart.setOnClickListener(v -> {
-            productos.clear();
-            productoCarritoAdapter.notifyDataSetChanged();
-            updateSubtotal();
+            productos.clear();  // Limpiar lista de productos
+            productoCarritoAdapter.notifyDataSetChanged();  // Actualizar el RecyclerView
+            updateSubtotal();  // Actualizar subtotal a 0
+            payButton.setVisibility(View.GONE);  // Ocultar el botón de pago
         });
 
         // Configurar la flecha de retroceso
@@ -66,15 +69,14 @@ public class CarritoClienteActivity extends AppCompatActivity implements Product
         backArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Navegar a la vista de Historial de Pedidos
+                // Navegar a la vista de PerfilRestauranteActivity
                 Intent intent = new Intent(CarritoClienteActivity.this, PerfilRestauranteActivity.class);
                 startActivity(intent);
-                finish(); // Finaliza la actividad actual para no volver a ella con el botón de retroceso
+                finish(); // Finaliza la actividad actual
             }
         });
 
         // Configurar el botón "Ir a pagar"
-        Button payButton = findViewById(R.id.pay_button);
         payButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -83,6 +85,7 @@ public class CarritoClienteActivity extends AppCompatActivity implements Product
                 startActivity(intent);
             }
         });
+
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
@@ -90,7 +93,7 @@ public class CarritoClienteActivity extends AppCompatActivity implements Product
                 int id = item.getItemId();
 
                 if (id == R.id.nav_restaurantes) {
-                        startActivity(new Intent(CarritoClienteActivity.this, InicioClienteActivity.class));
+                    startActivity(new Intent(CarritoClienteActivity.this, InicioClienteActivity.class));
                     return true;
                 } else if (id == R.id.nav_carrito) {
                     return true;
@@ -115,11 +118,18 @@ public class CarritoClienteActivity extends AppCompatActivity implements Product
         }
         NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("es", "PE"));
         subtotalTextView.setText(currencyFormat.format(subtotal));
+
+        // Ocultar el botón "Ir a pagar" si el carrito está vacío
+        if (subtotal == 0) {
+            payButton.setVisibility(View.GONE);
+        } else {
+            payButton.setVisibility(View.VISIBLE);
+        }
     }
 
     // Este método se llama cada vez que se actualiza un producto
     @Override
     public void onProductUpdated() {
-        updateSubtotal();
+        updateSubtotal();  // Recalcular el subtotal cuando un producto cambie
     }
 }

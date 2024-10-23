@@ -5,8 +5,10 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView; // Importar para mostrar la cantidad en el icono del carrito
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,6 +28,10 @@ public class PerfilRestauranteActivity extends AppCompatActivity {
 
     private ProductoAdapter adapter;
     private List<Producto> productosList;
+    private List<Producto> carritoList = new ArrayList<>(); // Lista para almacenar productos añadidos al carrito
+    private TextView carritoCantidadTextView; // Muestra la cantidad total en el icono del carrito
+    private ImageView carritoIcon; // Icono del carrito
+    private int totalCantidadCarrito = 0; // Contador de productos en el carrito
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,14 +44,28 @@ public class PerfilRestauranteActivity extends AppCompatActivity {
 
         // Crear la lista de productos
         productosList = new ArrayList<>();
-        productosList.add(new Producto("Pavo a la leña", "Con tártara de la casa", 15.00,1,R.drawable.lalucha_inicio));
-        productosList.add(new Producto("Hamburguesa", "Con papas fritas", 10.00,1,R.drawable.lalucha_inicio));
-        productosList.add(new Producto("Pizza", "Con salsa napolitana", 20.00,1,R.drawable.lalucha_inicio));
+        productosList.add(new Producto("Pavo a la leña", "Con tártara de la casa", 15.00, 1, R.drawable.lalucha_inicio));
+        productosList.add(new Producto("Hamburguesa", "Con papas fritas", 10.00, 1, R.drawable.lalucha_inicio));
+        productosList.add(new Producto("Pizza", "Con salsa napolitana", 20.00, 1, R.drawable.lalucha_inicio));
         // Añadir más productos aquí
 
         // Crear el adaptador y establecerlo en el RecyclerView
-        adapter = new ProductoAdapter(productosList);
+        adapter = new ProductoAdapter(productosList, this::agregarProductoAlCarrito);
         recyclerProductos.setAdapter(adapter);
+
+        // Inicializar el TextView que muestra la cantidad total en el carrito
+        carritoCantidadTextView = findViewById(R.id.cart_count);
+
+        // Inicializar el icono del carrito
+        carritoIcon = findViewById(R.id.shopping_cart); // Asumimos que el id es 'cart_icon' en el XML
+        carritoIcon.setVisibility(View.GONE); // Ocultar inicialmente el icono del carrito
+
+        // Listener para el icono del carrito, que abre la  actividad del carrito
+        carritoIcon.setOnClickListener(view -> {
+            Intent intent = new Intent(PerfilRestauranteActivity.this, CarritoClienteActivity.class);
+            intent.putExtra("carrito", new ArrayList<>(carritoList)); // Pasar la lista del carrito
+            startActivity(intent);
+        });
 
         // Buscar el campo de búsqueda
         EditText searchText = findViewById(R.id.search_text);
@@ -88,7 +108,10 @@ public class PerfilRestauranteActivity extends AppCompatActivity {
                     startActivity(new Intent(PerfilRestauranteActivity.this, InicioClienteActivity.class));
                     return true;
                 } else if (id == R.id.nav_carrito) {
-                    startActivity(new Intent(PerfilRestauranteActivity.this, CarritoClienteActivity.class));
+                    // Pasar los productos del carrito a CarritoClienteActivity
+                    Intent intent = new Intent(PerfilRestauranteActivity.this, CarritoClienteActivity.class);
+                    intent.putExtra("carrito", new ArrayList<>(carritoList)); // Pasar la lista del carrito
+                    startActivity(intent);
                     return true;
                 } else if (id == R.id.navigation_ordenes) {
                     startActivity(new Intent(PerfilRestauranteActivity.this, HistorialPedidosActivity.class));
@@ -101,5 +124,41 @@ public class PerfilRestauranteActivity extends AppCompatActivity {
                 return false;
             }
         });
+    }
+
+    // Método para agregar productos al carrito
+    private void agregarProductoAlCarrito(Producto producto, int cantidad) {
+        // Verificar si el producto ya está en el carrito
+        boolean productoExistente = false;
+        for (Producto p : carritoList) {
+            if (p.getNombre().equals(producto.getNombre())) {
+                // Si el producto ya está en el carrito, actualizar la cantidad
+                p.setCantidad(p.getCantidad() + cantidad);
+                productoExistente = true;
+                break;
+            }
+        }
+
+        // Si el producto no está en el carrito, añadirlo
+        if (!productoExistente) {
+            producto.setCantidad(cantidad); // Establecer la cantidad seleccionada
+            carritoList.add(producto);
+        }
+
+        // Actualizar el contador total del carrito
+        totalCantidadCarrito += cantidad;
+        actualizarCarritoCantidad();
+    }
+
+    // Método para actualizar el TextView del carrito con la cantidad total y mostrar el icono
+    private void actualizarCarritoCantidad() {
+        if (totalCantidadCarrito > 0) {
+            carritoIcon.setVisibility(View.VISIBLE); // Mostrar el icono del carrito
+            carritoCantidadTextView.setVisibility(View.VISIBLE);
+            carritoCantidadTextView.setText(String.valueOf(totalCantidadCarrito));
+        } else {
+            carritoIcon.setVisibility(View.GONE); // Ocultar el icono del carrito si no hay productos
+            carritoCantidadTextView.setVisibility(View.GONE);
+        }
     }
 }

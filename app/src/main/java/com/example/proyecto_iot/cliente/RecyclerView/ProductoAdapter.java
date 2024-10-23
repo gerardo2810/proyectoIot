@@ -23,10 +23,13 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.Produc
     private List<Producto> productos;
     private List<Producto> productosListFull;  // Lista completa para restaurar productos
     private Context context;
+    private OnProductoAñadidoListener listener; // Listener para notificar a la actividad
 
-    public ProductoAdapter(List<Producto> productos) {
+    // Constructor actualizado para recibir el listener
+    public ProductoAdapter(List<Producto> productos, OnProductoAñadidoListener listener) {
         this.productos = productos;
         this.productosListFull = new ArrayList<>(productos); // Copia de la lista original
+        this.listener = listener; // Inicializamos el listener
     }
 
     @NonNull
@@ -57,6 +60,12 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.Produc
             }
         });
 
+        // Lógica para añadir el producto al carrito
+        holder.buttonAddProduct.setOnClickListener(view -> {
+            int cantidadSeleccionada = producto.getCantidad(); // Obtener la cantidad seleccionada
+            listener.onProductoAñadido(producto, cantidadSeleccionada); // Notificar a la actividad
+        });
+
         // Acción del clic para abrir la actividad del restaurante
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, PerfilRestauranteActivity.class);
@@ -85,9 +94,10 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.Produc
         notifyDataSetChanged(); // Actualizar la vista del RecyclerView
     }
 
+    // ViewHolder que mantiene las referencias a los elementos de cada item de producto
     public static class ProductoViewHolder extends RecyclerView.ViewHolder {
         TextView productTitle, productDescription, productPrice, textQuantity;
-        Button  buttonAddProduct;
+        Button buttonAddProduct;
         ImageView buttonIncrease, buttonDecrease, productImage;
 
         public ProductoViewHolder(@NonNull View itemView) {
@@ -96,10 +106,15 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.Produc
             productDescription = itemView.findViewById(R.id.product_description);
             productPrice = itemView.findViewById(R.id.product_price);
             textQuantity = itemView.findViewById(R.id.quantity);
-            buttonIncrease =itemView.findViewById(R.id.increase_quantity);
+            buttonIncrease = itemView.findViewById(R.id.increase_quantity);
             buttonDecrease = itemView.findViewById(R.id.decrease_quantity);
             buttonAddProduct = itemView.findViewById(R.id.add_button);
             productImage = itemView.findViewById(R.id.product_image);
         }
+    }
+
+    // Definir la interfaz del listener para manejar la acción de añadir productos al carrito
+    public interface OnProductoAñadidoListener {
+        void onProductoAñadido(Producto producto, int cantidad);
     }
 }

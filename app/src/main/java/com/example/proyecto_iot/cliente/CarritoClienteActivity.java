@@ -39,6 +39,7 @@ public class CarritoClienteActivity extends AppCompatActivity implements Product
         recyclerViewCarrito = findViewById(R.id.recycler_carrito);
         recyclerViewCarrito.setLayoutManager(new LinearLayoutManager(this));
 
+
         // Recibir productos del carrito desde PerfilRestauranteActivity
         productos = (List<Producto>) getIntent().getSerializableExtra("carrito");
 
@@ -80,11 +81,15 @@ public class CarritoClienteActivity extends AppCompatActivity implements Product
         payButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Almacenar la lista de productos seleccionados en el Singleton
+                CarritoSingleton.getInstance().setProductos(new ArrayList<>(productos));
+
                 // Navegar a la actividad RealizarPedidoActivity
                 Intent intent = new Intent(CarritoClienteActivity.this, RealizarPedidoActivity.class);
                 startActivity(intent);
             }
         });
+
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {

@@ -97,7 +97,7 @@
             android:id="@+id/products_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Productos - 4"
+            android:text="Productos - 1"
             android:textSize="14sp"
             android:textStyle="bold"
             android:textColor="#888888" />

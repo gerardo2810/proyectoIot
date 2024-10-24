@@ -5,11 +5,13 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView; // Importar para actualizar el número de productos
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.cliente.RecyclerView.Producto;
 import com.example.proyecto_iot.cliente.RecyclerView.ProductoCarritoAdapter;
@@ -34,23 +36,29 @@ public class VerMasProductosClienteActivity extends AppCompatActivity implements
         recyclerView = findViewById(R.id.recycler_carrito);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Inicializar la lista de productos
-        productoList = new ArrayList<>();
-        productoList.add(new Producto("Pavo a la leña", "Con tártara de la casa", 15.00, 1,R.drawable.lalucha_inicio));
-        productoList.add(new Producto("Pollo a la brasa", "Acompañado de papas fritas", 20.00, 2,R.drawable.lalucha_inicio));
-        productoList.add(new Producto("Hamburguesa", "Con papas y gaseosa", 12.00, 1,R.drawable.lalucha_inicio));
+        // Obtener la lista de productos desde el Singleton
+        productoList = CarritoSingleton.getInstance().getProductos();
 
-        // Configurar el adaptador
+        // Verificar si la lista es nula, si lo es, inicializarla como una lista vacía
+        if (productoList == null) {
+            productoList = new ArrayList<>();
+        }
+
+        // ** Contar los productos distintos y actualizar el TextView **
+        TextView productsCountTextView = findViewById(R.id.products_count); // Asegúrate de que este ID coincide con tu XML
+        int productosDistintos = productoList.size(); // Esto cuenta cuántos productos distintos hay
+        productsCountTextView.setText("Productos - " + productosDistintos); // Actualiza el TextView
+
+        // Configurar el adaptador con la lista de productos recibida
         adapter = new ProductoCarritoAdapter(productoList, this);
         recyclerView.setAdapter(adapter);
 
-
-// Configurar la flecha de retroceso
+        // Configurar la flecha de retroceso
         ImageView backArrow = findViewById(R.id.back_arrow);
         backArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Navegar a la vista de Historial de Pedidos
+                // Navegar a la vista de Realizar Pedido
                 Intent intent = new Intent(VerMasProductosClienteActivity.this, RealizarPedidoActivity.class);
                 startActivity(intent);
                 finish(); // Finaliza la actividad actual para no volver a ella con el botón de retroceso
@@ -80,11 +88,14 @@ public class VerMasProductosClienteActivity extends AppCompatActivity implements
                 return false;
             }
         });
-
     }
 
     @Override
     public void onProductUpdated() {
-        // Aquí puedes actualizar la UI cuando un producto se actualice, por ejemplo, recalcular el total del carrito
+        // Este método se llama cuando el adaptador notifica un cambio en los productos.
+        // Aquí puedes actualizar cualquier lógica de UI, como el subtotal o refrescar el RecyclerView si es necesario.
+
+        // Actualizar el adaptador en caso de que necesites reflejar los cambios en la interfaz
+        adapter.notifyDataSetChanged();
     }
 }

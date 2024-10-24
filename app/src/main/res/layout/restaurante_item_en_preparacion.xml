@@ -43,6 +43,15 @@
                 android:textSize="16sp" />
 
             <TextView
+                android:id="@+id/cliente"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nombre"
+                android:textColor="@color/md_theme_onTertiaryFixedVariant"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <TextView
                 android:id="@+id/cant_productos"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -59,11 +68,9 @@
                 android:text="Ver más detalles"
                 android:textColor="#888888"
                 android:textSize="12sp" />
-
         </LinearLayout>
 
         <!-- Cronómetro de tiempo -->
-
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -91,11 +98,7 @@
                 android:text="Listo para entregar"
                 android:textColor="@android:color/white"
                 android:textSize="11sp" />
-
         </LinearLayout>
 
-        <!-- Botón "Listo para entregar" -->
     </LinearLayout>
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

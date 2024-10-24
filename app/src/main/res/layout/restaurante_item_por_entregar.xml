@@ -43,6 +43,15 @@
                 android:textSize="16sp" />
 
             <TextView
+                android:id="@+id/cliente"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nombre"
+                android:textColor="@color/md_theme_onTertiaryFixedVariant"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <TextView
                 android:id="@+id/cant_productos"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

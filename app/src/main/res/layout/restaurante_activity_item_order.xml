@@ -14,6 +14,7 @@
         android:background="@drawable/border_pedido"
         android:gravity="center_vertical"
         android:orientation="horizontal"
+        android:backgroundTint="@color/md_theme_surfaceContainer_highContrast"
         android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -24,8 +25,8 @@
         <!-- Icono de pedido -->
         <ImageView
             android:id="@+id/iv_order_icon"
-            android:layout_width="66dp"
-            android:layout_height="73dp"
+            android:layout_width="52dp"
+            android:layout_height="61dp"
             android:paddingRight="10dp"
             android:src="@drawable/histoial"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -34,13 +35,13 @@
 
         <!-- Información de la orden -->
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="240dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@id/iv_order_icon"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
+            app:layout_constraintTop_toTopOf="parent">
 
             <!-- ID del pedido -->
 
@@ -88,7 +89,7 @@
         <!-- Flecha para más detalles -->
 
         <LinearLayout
-            android:layout_width="137dp"
+            android:layout_width="118dp"
             android:layout_height="71dp"
             android:orientation="vertical">
 
@@ -103,6 +104,7 @@
                 android:textAlignment="center"
                 android:textAllCaps="true"
                 android:textColor="@color/black"
+                android:textSize="12sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

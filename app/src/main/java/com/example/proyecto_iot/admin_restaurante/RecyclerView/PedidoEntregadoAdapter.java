@@ -41,6 +41,7 @@ public class PedidoEntregadoAdapter extends RecyclerView.Adapter<PedidoEntregado
         holder.tvPedidoName.setText(pedido.getOrderId());
         holder.tvPedidoCantidad.setText(pedido.getCantidad());
         holder.tvRepartidor.setText(pedido.getRepartidor());
+        holder.tvPedidoCliente.setText(pedido.getCliente());
         // Evento al hacer clic en la categoría
 
 
@@ -75,12 +76,14 @@ public class PedidoEntregadoAdapter extends RecyclerView.Adapter<PedidoEntregado
         TextView tvPedidoCantidad;
         TextView tvRepartidor;
         LinearLayout linearLayout;
+        TextView tvPedidoCliente;
 
         public PedidoEntregadoViewHolder(@NonNull View itemView) {
             super(itemView);
             tvPedidoName = itemView.findViewById(R.id.id_new_pedido);
             tvPedidoCantidad = itemView.findViewById(R.id.cant_productos);
             tvRepartidor = itemView.findViewById(R.id.repartidor);
+            tvPedidoCliente = itemView.findViewById(R.id.cliente);
             linearLayout = itemView.findViewById(R.id.newpedido2);
         }
     }

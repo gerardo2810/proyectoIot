@@ -117,12 +117,12 @@ public class PorAceptarFragment extends Fragment {
                 sendNotification(newOrder);
 
                 // Ejecutar el runnable cada minuto (60000ms)
-                handler.postDelayed(this, 60000);
+                handler.postDelayed(this, 40000);
             }
         };
 
         // Iniciar el runnable
-        handler.postDelayed(runnable, 60000);
+        handler.postDelayed(runnable, 40000);
 
         return view;
     }

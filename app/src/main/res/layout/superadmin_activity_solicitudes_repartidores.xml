@@ -52,7 +52,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="45dp"
         android:text="Solicitudes de Repartidores"
-        android:textColor="#000000"
+        android:textColor="@color/purple"
         android:textSize="22sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"

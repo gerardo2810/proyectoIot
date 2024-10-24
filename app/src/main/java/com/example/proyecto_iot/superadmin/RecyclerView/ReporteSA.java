@@ -5,11 +5,13 @@ public class ReporteSA {
     private String nombre_restaurante;
     private String admin_restaurante;
     private String fecha;
+    private String tipo_reporte;
 
-    public ReporteSA(String nombre_restaurante, String admin_restaurante, String fecha) {
+    public ReporteSA(String nombre_restaurante, String admin_restaurante, String fecha, String tipo_reporte) {
         this.nombre_restaurante = nombre_restaurante;
         this.admin_restaurante = admin_restaurante;
         this.fecha = fecha;
+        this.tipo_reporte = tipo_reporte;
     }
 
     public String getNombre_restaurante() {
@@ -22,5 +24,9 @@ public class ReporteSA {
 
     public String getFecha() {
         return fecha;
+    }
+
+    public String getTipo_reporte() {
+        return tipo_reporte;
     }
 }

@@ -3,6 +3,7 @@ package com.example.proyecto_iot.superadmin.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -34,6 +35,13 @@ public class ReporteAdapterSA extends RecyclerView.Adapter<ReporteAdapterSA.Repo
         holder.textViewNombreRestaurante.setText(reporte.getNombre_restaurante());
         holder.textViewAdminRestaurante.setText(reporte.getAdmin_restaurante());
         holder.textViewFechaReporte.setText(reporte.getFecha());
+
+        // Cambiar la imagen según el tipo de reporte
+        if (reporte.getTipo_reporte().equals("Por Usuarios")) {
+            holder.imageViewTipoReporte.setImageResource(R.drawable.usuarios);
+        } else if (reporte.getTipo_reporte().equals("Por Plato")) {
+            holder.imageViewTipoReporte.setImageResource(R.drawable.platos_sa);
+        }
     }
 
     @Override
@@ -43,12 +51,14 @@ public class ReporteAdapterSA extends RecyclerView.Adapter<ReporteAdapterSA.Repo
 
     public static class ReporteSAViewHolder extends RecyclerView.ViewHolder {
         TextView textViewNombreRestaurante, textViewAdminRestaurante, textViewFechaReporte;
+        ImageView imageViewTipoReporte;
 
         public ReporteSAViewHolder(@NonNull View itemView) {
             super(itemView);
             textViewNombreRestaurante = itemView.findViewById(R.id.textViewNombreRestaurante);
             textViewAdminRestaurante = itemView.findViewById(R.id.textViewAdminRestaurante);
             textViewFechaReporte = itemView.findViewById(R.id.textViewFechaReporte);
+            imageViewTipoReporte = itemView.findViewById(R.id.imageViewTipoReporte);
         }
     }
 

@@ -19,7 +19,7 @@ public class editar_perfil_superadmin extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.editar_perfil_superadmin);
+        setContentView(R.layout.superadmin_editar_perfil);
 
         //Volver una pantalla atras
         LinearLayout regresar = findViewById(R.id.header_layout);

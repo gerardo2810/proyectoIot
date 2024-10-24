@@ -67,7 +67,7 @@ public class lista_restaurantes_superadmin extends AppCompatActivity {
 
         //Gestion de la bottom navigation bar
         bottomNavigationView = findViewById(R.id.bottom_navigation);
-        int selectedItemId = getIntent().getIntExtra("SELECTED_ITEM_ID", R.id.navigation_usuarios);
+        int selectedItemId = getIntent().getIntExtra("SELECTED_ITEM_ID", R.id.navigation_reportes);
         bottomNavigationView.setSelectedItemId(selectedItemId);
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override

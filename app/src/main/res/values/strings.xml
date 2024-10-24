@@ -30,8 +30,9 @@
     </string-array>
     <string-array name="superadmin_lista_restaurante">
         <item>-Seleccionar-</item>
-        <item>Pizza hut</item>
+        <item>Astrid y Gaston</item>
         <item>KFC</item>
+        <item>Pizza Hut</item>
         <item>Papa Johns</item>
         <item>Pardos Chicken</item>
     </string-array>

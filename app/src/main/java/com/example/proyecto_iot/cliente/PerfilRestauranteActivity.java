@@ -57,10 +57,10 @@ public class PerfilRestauranteActivity extends AppCompatActivity {
         carritoCantidadTextView = findViewById(R.id.cart_count);
 
         // Inicializar el icono del carrito
-        carritoIcon = findViewById(R.id.shopping_cart); // Asumimos que el id es 'cart_icon' en el XML
+        carritoIcon = findViewById(R.id.shopping_cart); // Asumimos que el id es 'shopping_cart' en el XML
         carritoIcon.setVisibility(View.GONE); // Ocultar inicialmente el icono del carrito
 
-        // Listener para el icono del carrito, que abre la  actividad del carrito
+        // Listener para el icono del carrito, que abre la actividad del carrito
         carritoIcon.setOnClickListener(view -> {
             Intent intent = new Intent(PerfilRestauranteActivity.this, CarritoClienteActivity.class);
             intent.putExtra("carrito", new ArrayList<>(carritoList)); // Pasar la lista del carrito
@@ -108,7 +108,6 @@ public class PerfilRestauranteActivity extends AppCompatActivity {
                     startActivity(new Intent(PerfilRestauranteActivity.this, InicioClienteActivity.class));
                     return true;
                 } else if (id == R.id.nav_carrito) {
-                    // Pasar los productos del carrito a CarritoClienteActivity
                     Intent intent = new Intent(PerfilRestauranteActivity.this, CarritoClienteActivity.class);
                     intent.putExtra("carrito", new ArrayList<>(carritoList)); // Pasar la lista del carrito
                     startActivity(intent);
@@ -154,11 +153,11 @@ public class PerfilRestauranteActivity extends AppCompatActivity {
     private void actualizarCarritoCantidad() {
         if (totalCantidadCarrito > 0) {
             carritoIcon.setVisibility(View.VISIBLE); // Mostrar el icono del carrito
-            carritoCantidadTextView.setVisibility(View.VISIBLE);
+            carritoCantidadTextView.setVisibility(View.VISIBLE); // Mostrar el número en el círculo
             carritoCantidadTextView.setText(String.valueOf(totalCantidadCarrito));
         } else {
             carritoIcon.setVisibility(View.GONE); // Ocultar el icono del carrito si no hay productos
-            carritoCantidadTextView.setVisibility(View.GONE);
+            carritoCantidadTextView.setVisibility(View.GONE); // Ocultar el número en el círculo
         }
     }
 }

@@ -27,8 +27,8 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_orders_list"
         android:layout_width="match_parent"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
+        android:paddingLeft="30dp"
+        android:paddingRight="30dp"
         android:layout_height="806dp"
         android:layout_marginTop="20dp"
         app:layout_constraintBottom_toBottomOf="parent"

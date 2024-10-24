@@ -113,19 +113,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/recycler_categories" />
 
+    <!-- BottomNavigationView para cambiar entre fragments principales -->
+
     <Button
         android:id="@+id/btn_add_product"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="20dp"
         android:text="+ Agregar nuevo producto"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.035"
+        app:layout_constraintHorizontal_bias="0.08"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/search_bar" />
 
-    <!-- BottomNavigationView para cambiar entre fragments principales -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_products"
         android:layout_width="0dp"

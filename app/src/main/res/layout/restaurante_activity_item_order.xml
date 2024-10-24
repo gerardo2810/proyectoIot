@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="16dp"
     android:background="@drawable/border_pedido"
-    android:backgroundTint="#E8EAF6"
+    android:backgroundTint="#E8F5E9"
     android:layout_marginBottom="8dp">
 
     <!-- Icono de pedido -->

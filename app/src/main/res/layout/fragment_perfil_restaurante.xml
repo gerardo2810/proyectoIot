@@ -92,7 +92,7 @@
             android:layout_marginBottom="8dp"
             android:text="Información personal"
             android:textColor="@color/purple"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
         <LinearLayout
@@ -114,7 +114,7 @@
                 android:layout_width="264dp"
                 android:layout_height="wrap_content"
                 android:text="Editar datos personales"
-                android:textSize="20sp"
+                android:textSize="16sp"
                 android:textStyle="bold" />
 
             <ImageView
@@ -132,7 +132,7 @@
             android:layout_marginTop="20dp"
             android:text="Información del restaurante"
             android:textColor="@color/purple"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
         <Space
@@ -162,7 +162,7 @@
                 android:layout_width="278dp"
                 android:layout_height="wrap_content"
                 android:text="Editar datos del restaurante"
-                android:textSize="20sp"
+                android:textSize="16sp"
                 android:textStyle="bold" />
 
             <ImageView
@@ -196,7 +196,7 @@
                 android:layout_width="274dp"
                 android:layout_height="wrap_content"
                 android:text="Horarios del restaurante"
-                android:textSize="20sp"
+                android:textSize="16sp"
                 android:textStyle="bold" />
 
             <ImageView
@@ -213,7 +213,7 @@
             android:layout_marginTop="20dp"
             android:text="Configuración"
             android:textColor="@color/purple"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
         <Space
@@ -238,7 +238,7 @@
                 android:layout_width="271dp"
                 android:layout_height="wrap_content"
                 android:text="Ayuda en línea"
-                android:textSize="20sp"
+                android:textSize="16sp"
                 android:textStyle="bold" />
 
             <ImageView
@@ -271,7 +271,7 @@
                 android:layout_width="276dp"
                 android:layout_height="wrap_content"
                 android:text="Cerrar sesión"
-                android:textSize="20sp"
+                android:textSize="16sp"
                 android:textStyle="bold" />
 
             <ImageView

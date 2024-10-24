@@ -26,8 +26,8 @@
 
             <TextView
                 android:id="@+id/tv_nombre_usuario"
-                android:layout_width="259dp"
-                android:layout_height="wrap_content"
+                android:layout_width="319dp"
+                android:layout_height="match_parent"
                 android:text="Chaufa Especial"
                 android:textSize="18sp"
                 android:textStyle="bold" />

@@ -61,12 +61,12 @@ public class HistorialRepartidorActivity extends AppCompatActivity {
         recyclerViewListaGanancias = findViewById(R.id.recyclerViewListaGanacias);
         recyclerViewListaGanancias.setLayoutManager(new LinearLayoutManager(this));
         listaGananciasDia = new ArrayList<>();
-        listaGananciasDia.add(new GananciaxDia("Fecha: 15/06/2024","Restaurante: El Tío Bigote","Ganancia: S/. 10.00","S/. 20.00"));
-        listaGananciasDia.add(new GananciaxDia("Fecha: 16/06/2024","Restaurante: El Tío Bigote","Ganancia: S/. 10.00","S/. 20.00"));
-        listaGananciasDia.add(new GananciaxDia("Fecha: 17/06/2024","Restaurante: Pizza Party","Ganancia: S/. 10.00","S/. 20.00"));
-        listaGananciasDia.add(new GananciaxDia("Fecha: 18/06/2024","Restaurante: Pizza Party","Ganancia: S/. 10.00","S/. 20.00"));
-        listaGananciasDia.add(new GananciaxDia("Fecha: 19/06/2024","Restaurante: Miguelón","Ganancia: S/. 10.00","S/. 20.00"));
-        listaGananciasDia.add(new GananciaxDia("Fecha: 20/06/2024","Restaurante: Miguelón","Ganancia: S/. 10.00","S/. 20.00"));
+        listaGananciasDia.add(new GananciaxDia("Fecha: 20/06/2024","Restaurante: El Tío Bigote","Ganancia: S/. 10.00","S/. 10.00"));
+        listaGananciasDia.add(new GananciaxDia("Fecha: 19/06/2024","Restaurante: El Tío Bigote","Ganancia: S/. 10.00","S/. 10.00"));
+        listaGananciasDia.add(new GananciaxDia("Fecha: 18/06/2024","Restaurante: Pizza Party","Ganancia: S/. 10.00","S/. 10.00"));
+        listaGananciasDia.add(new GananciaxDia("Fecha: 17/06/2024","Restaurante: Pizza Party","Ganancia: S/. 10.00","S/. 10.00"));
+        listaGananciasDia.add(new GananciaxDia("Fecha: 16/06/2024","Restaurante: Miguelón","Ganancia: S/. 10.00","S/. 10.00"));
+        listaGananciasDia.add(new GananciaxDia("Fecha: 15/06/2024","Restaurante: Miguelón","Ganancia: S/. 10.00","S/. 10.00"));
 
         adapter = new GananciasDiaAdapter(listaGananciasDia);
         recyclerViewListaGanancias.setAdapter(adapter);

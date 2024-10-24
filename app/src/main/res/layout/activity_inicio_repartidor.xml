@@ -88,8 +88,34 @@
             android:textSize="16sp"/>
 
     </LinearLayout>
+    <LinearLayout
+        android:id="@+id/regresar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ubicacion"
+        android:gravity="center">
 
-    <!-- Divider Line -->
+        <!-- Ícono de Ubicación -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="30dp"
+            android:text="Pedido en progreso"
+            android:textColor="#000000"
+            android:textSize="18sp"/>
+        <Button
+            android:id="@+id/buttonRegresar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/md_theme_onTertiaryFixed"
+            android:text="Regresar"
+            android:textSize="18sp"/>
+
+    </LinearLayout>
+
 
     <TextView
         android:id="@+id/textView3"
@@ -101,7 +127,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.25"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/ubicacion" />
+        app:layout_constraintTop_toBottomOf="@+id/regresar" />
 
 
 

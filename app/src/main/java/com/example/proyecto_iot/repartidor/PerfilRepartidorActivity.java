@@ -3,11 +3,13 @@ package com.example.proyecto_iot.repartidor;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.proyecto_iot.R;
+import com.example.proyecto_iot.admin_restaurante.EditPersonalInfoActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
@@ -19,6 +21,14 @@ public class PerfilRepartidorActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_perfil_repartidor);
+
+        // Enlazar los botones para editar datos personales
+        LinearLayout personalInfoLayout = findViewById(R.id.edit_personal_info);
+
+        personalInfoLayout.setOnClickListener(v -> {
+            Intent intent = new Intent(this, EditarPerfilRepartidorActivity.class);
+            startActivity(intent);
+        });
 
         //Gestion de la bottom navigation bar
         bottomNavigationView = findViewById(R.id.bottom_navigation);

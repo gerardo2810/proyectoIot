@@ -57,6 +57,12 @@
             android:name=".cliente.PerfilClienteActivity"
             android:exported="true" />
         <activity
+            android:name=".superadmin.perfil_superadmin"
+            android:exported="false" />
+        <activity
+            android:name=".superadmin.editar_perfil_superadmin"
+            android:exported="false" />
+        <activity
             android:name=".superadmin.gestion_usuarios_superadmin"
             android:exported="true" />
         <activity

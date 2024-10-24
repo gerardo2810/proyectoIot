@@ -3,9 +3,11 @@ package com.example.proyecto_iot.repartidor;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
@@ -33,6 +35,21 @@ public class InicioRepartidorActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inicio_repartidor);
+
+        Button volverBtn = findViewById(R.id.buttonRegresar);
+        volverBtn.setOnClickListener(v -> {
+            SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+            String ultimaVista = prefs.getString("ultima_vista", "InicioRepartidorActivity"); // Por defecto, si no hay nada guardado, ir a activityInicio.
+
+            // Redirigir a la última vista donde se quedó el usuario
+            try {
+                Class<?> clase = Class.forName("com.example.proyecto_iot.repartidor." + ultimaVista); // Asegúrate de que el paquete sea correcto
+                Intent intent = new Intent(InicioRepartidorActivity.this, clase);
+                startActivity(intent);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        });
 
         //----------------------------------------------------------------------------
         Intent intent = getIntent();

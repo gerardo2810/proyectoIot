@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -59,7 +60,7 @@ public class PedidosRecogerAdapter extends RecyclerView.Adapter<PedidosRecogerAd
         PedidoRecoger pedidoRecoger;
         public PedidoRecogerViewHolder(@NonNull View itemView) {
             super(itemView);
-            ImageView arrowIcon = itemView.findViewById(R.id.arrow_icon_1);
+            LinearLayout arrowIcon = itemView.findViewById(R.id.linealPedidos);
             arrowIcon.setOnClickListener(v -> {
                 context = itemView.getContext();
                 Intent intent = new Intent(context, NuevoPedidoActivity.class);

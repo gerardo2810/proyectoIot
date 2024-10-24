@@ -199,7 +199,6 @@
         android:layout_height="57dp"
         android:layout_marginBottom="16dp"
         android:backgroundTint="@color/md_theme_onTertiaryFixed"
-        android:onClick="abrirPagRecojo1"
         android:text="Tomar pedido"
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"

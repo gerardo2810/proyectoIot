@@ -4,95 +4,125 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:padding="16dp"
-    android:background="@drawable/border_pedido"
-    android:backgroundTint="#E8F5E9"
+    android:paddingBottom="10dp"
     android:layout_marginBottom="8dp">
 
-    <!-- Icono de pedido -->
-    <ImageView
-        android:id="@+id/iv_order_icon"
-        android:layout_width="59dp"
-        android:layout_height="62dp"
-        android:paddingRight="10dp"
-        android:src="@drawable/histoial"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <!-- Información de la orden -->
     <LinearLayout
+        android:id="@+id/newpedido1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        app:layout_constraintStart_toEndOf="@id/iv_order_icon"
+        android:background="@drawable/border_pedido"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintVertical_bias="0.341">
 
-        <!-- ID del pedido -->
-        <TextView
-            android:id="@+id/tv_order_id"
-            android:layout_width="wrap_content"
+        <!-- Icono de pedido -->
+        <ImageView
+            android:id="@+id/iv_order_icon"
+            android:layout_width="66dp"
+            android:layout_height="73dp"
+            android:paddingRight="10dp"
+            android:src="@drawable/histoial"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Información de la orden -->
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="#BBDEFB"
-            android:text="ID 0000012"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:layout_weight="1"
+            android:orientation="vertical"
+            app:layout_constraintStart_toEndOf="@id/iv_order_icon"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <!-- ID del pedido -->
+
+            <TextView
+                android:id="@+id/tv_order_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#BBDEFB"
+                android:text="ID 0000012"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
 
-        <TextView
-            android:id="@+id/tv_order_cliente"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Ana Maria"
-            android:textColor="@color/md_theme_tertiary_highContrast"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            <TextView
+                android:id="@+id/tv_order_cliente"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ana Maria"
+                android:textColor="@color/md_theme_tertiary_highContrast"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
-        <!-- Dirección -->
-        <TextView
-            android:id="@+id/tv_order_address"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="El Molle # 156 B"
-            android:textColor="#888888"
-            android:textSize="16sp" />
+            <!-- Dirección -->
+            <TextView
+                android:id="@+id/tv_order_address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="El Molle # 156 B"
+                android:textColor="#888888"
+                android:textSize="16sp" />
 
-        <!-- Precio -->
-        <TextView
-            android:id="@+id/tv_order_price"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="S/ 106.00"
-            android:textColor="@android:color/black"
-            android:textSize="16sp" />
+            <!-- Precio -->
+            <TextView
+                android:id="@+id/tv_order_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="S/ 106.00"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <!-- Estado del pedido -->
+
+        <!-- Flecha para más detalles -->
+
+        <LinearLayout
+            android:layout_width="137dp"
+            android:layout_height="71dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_order_status"
+                android:layout_width="135dp"
+                android:layout_height="33dp"
+                android:layout_gravity="center"
+                android:background="@drawable/border_editar_info"
+                android:padding="7dp"
+                android:text="EN CAMINO"
+                android:textAlignment="center"
+                android:textAllCaps="true"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/iv_order_details"
+                android:layout_width="41dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:paddingTop="10dp"
+                android:src="@drawable/baseline_arrow_forward_ios_24"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:tint="@android:color/black" />
+
+        </LinearLayout>
+
+
     </LinearLayout>
 
-    <!-- Estado del pedido -->
-    <TextView
-        android:id="@+id/tv_order_status"
-        android:layout_width="135dp"
-        android:layout_height="33dp"
-        android:background="@drawable/border_editar_info"
-        android:padding="7dp"
-        android:text="EN CAMINO"
-        android:textAlignment="center"
-        android:textAllCaps="true"
-        android:textColor="@color/black"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Flecha para más detalles -->
-    <ImageView
-        android:id="@+id/iv_order_details"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:src="@drawable/baseline_arrow_forward_ios_24"
-        app:tint="@android:color/black"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

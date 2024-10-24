@@ -83,10 +83,10 @@ public class EnPreparacionFragment extends Fragment {
 
         // Crear la lista de órdenes
         pedidoList = new ArrayList<>();
-        pedidoList.add(new Pedido("#004","3 productos", "S/155.00", "20 min", "Repartidor Asignado"));
-        pedidoList.add(new Pedido("#005","3 productos", "S/205.00", "10 min", "Repartidor Asignado"));
-        pedidoList.add(new Pedido("#006","4 productos", "S/380.00", "18 min", "Repartidor Asignado"));
-        pedidoList.add(new Pedido("#007","7 productos", "S/555.00", "35 min", "Repartidor Asignado"));
+        pedidoList.add(new Pedido("Juan Lopez", "#004","3 productos", "S/155.00", "20 min", "Repartidor Asignado"));
+        pedidoList.add(new Pedido("María Campos","#005","3 productos", "S/205.00", "10 min", "Repartidor Asignado"));
+        pedidoList.add(new Pedido("Mar Silou","#006","4 productos", "S/380.00", "18 min", "Repartidor Asignado"));
+        pedidoList.add(new Pedido("Lucas Perez","#007","7 productos", "S/555.00", "35 min", "Repartidor Asignado"));
 
         // Configurar el adaptador
         pedidoPreparadoAdapter = new PedidoPreparadoAdapter(pedidoList,getContext());

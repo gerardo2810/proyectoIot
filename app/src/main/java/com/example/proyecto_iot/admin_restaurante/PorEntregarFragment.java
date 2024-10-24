@@ -83,10 +83,10 @@ public class PorEntregarFragment extends Fragment {
 
         // Crear la lista de órdenes
         pedidoList = new ArrayList<>();
-        pedidoList.add(new Pedido("#004","3 productos", "S/155.00", "20 min", "Repartidor Asignado"));
-        pedidoList.add(new Pedido("#005","3 productos", "S/205.00", "10 min", "Sin Repartidor"));
-        pedidoList.add(new Pedido("#006","4 productos", "S/380.00", "18 min", "Sin Repartidor"));
-        pedidoList.add(new Pedido("#007","7 productos", "S/555.00", "35 min", "Repartidor Asignado"));
+        pedidoList.add(new Pedido("María Lopez","#004","3 productos", "S/155.00", "20 min", "Repartidor Asignado"));
+        pedidoList.add(new Pedido("Carlos Gomez","#005","3 productos", "S/205.00", "10 min", "Sin Repartidor"));
+        pedidoList.add(new Pedido("Andrea Lomeli","#006","4 productos", "S/380.00", "18 min", "Sin Repartidor"));
+        pedidoList.add(new Pedido("Carlos Rios","#007","7 productos", "S/555.00", "35 min", "Repartidor Asignado"));
 
         // Configurar el adaptador
         pedidoEntregadoAdapter = new PedidoEntregadoAdapter(pedidoList,getContext());

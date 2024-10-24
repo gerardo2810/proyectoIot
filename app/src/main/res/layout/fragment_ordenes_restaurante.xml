@@ -90,8 +90,8 @@
 
     <androidx.appcompat.widget.SearchView
         android:id="@+id/sv_search_order"
-        android:layout_width="374dp"
-        android:layout_height="43dp"
+        android:layout_width="369dp"
+        android:layout_height="49dp"
         android:layout_marginTop="16dp"
         android:background="@drawable/search_background"
         android:padding="8dp"

@@ -1,13 +1,15 @@
 package com.example.proyecto_iot.admin_restaurante.RecyclerView;
 
 public class Pedido {
+    private String cliente;
     private String orderId;
     private String cantidad;
     private String precio;
     private String tiempo;
     private String repartidor;
 
-    public Pedido(String orderId, String cantidad, String precio, String tiempo, String repartidor) {
+    public Pedido(String cliente, String orderId, String cantidad, String precio, String tiempo, String repartidor) {
+        this.cliente = cliente;
         this.orderId = orderId;
         this.cantidad = cantidad;
         this.precio = precio;
@@ -53,5 +55,13 @@ public class Pedido {
 
     public void setRepartidor(String repartidor) {
         this.repartidor = repartidor;
+    }
+
+    public String getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(String cliente) {
+        this.cliente = cliente;
     }
 }

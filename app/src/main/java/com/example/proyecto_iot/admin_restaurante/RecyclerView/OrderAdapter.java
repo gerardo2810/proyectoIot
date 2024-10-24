@@ -43,6 +43,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         holder.tvOrderAddress.setText(order.getDireccion());
         holder.tvOrderPrice.setText(order.getPrecio());
         holder.tvOrderStatus.setText(order.getEstado());
+        holder.tvOrderCliente.setText(order.getCliente());
 
         // Cambiar el color de fondo dependiendo del estado de la orden
         switch (order.getEstado()) {
@@ -83,7 +84,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
     }
 
     public static class OrderViewHolder extends RecyclerView.ViewHolder {
-        TextView tvOrderId, tvOrderAddress, tvOrderPrice, tvOrderStatus;
+        TextView tvOrderId, tvOrderAddress, tvOrderPrice, tvOrderStatus, tvOrderCliente;
         ImageView ivOrderDetails;
 
         public OrderViewHolder(@NonNull View itemView) {
@@ -93,6 +94,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
             tvOrderPrice = itemView.findViewById(R.id.tv_order_price);
             tvOrderStatus = itemView.findViewById(R.id.tv_order_status);
             ivOrderDetails = itemView.findViewById(R.id.iv_order_details);
+            tvOrderCliente = itemView.findViewById(R.id.tv_order_cliente);
         }
 
     }

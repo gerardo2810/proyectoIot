@@ -2,11 +2,14 @@ package com.example.proyecto_iot.admin_restaurante.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -45,6 +48,28 @@ public class PedidoEntregadoAdapter extends RecyclerView.Adapter<PedidoEntregado
         // Evento al hacer clic en la categoría
 
 
+        // Si el estado del repartidor es "Repartidor Asignado", habilitar el botón
+        if (pedido.getRepartidor().equalsIgnoreCase("Repartidor Asignado")) {
+            holder.btnReadyToDeliver.setEnabled(true);
+            holder.btnReadyToDeliver.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.colorHabilitado)));
+        } else {
+            holder.btnReadyToDeliver.setEnabled(false);
+            holder.btnReadyToDeliver.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.colorInhabilitado)));
+        }
+
+        // Configurar la acción del botón "Pedido Entregado"
+        holder.btnReadyToDeliver.setOnClickListener(v -> {
+            // Eliminar el pedido de la lista y notificar al adaptador
+            pedidoList.remove(position);
+            notifyItemRemoved(position);
+            notifyItemRangeChanged(position, pedidoList.size());
+
+            // Mostrar un mensaje
+            Toast.makeText(context, "Pedido entregado", Toast.LENGTH_SHORT).show();
+        });
+
+
+
         switch (pedido.getRepartidor()) {
             case "Repartidor Asignado":
                 holder.tvRepartidor.setTextColor(ContextCompat.getColor(context, R.color.con_repartidor));
@@ -77,6 +102,7 @@ public class PedidoEntregadoAdapter extends RecyclerView.Adapter<PedidoEntregado
         TextView tvRepartidor;
         LinearLayout linearLayout;
         TextView tvPedidoCliente;
+        Button btnReadyToDeliver;
 
         public PedidoEntregadoViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -85,6 +111,7 @@ public class PedidoEntregadoAdapter extends RecyclerView.Adapter<PedidoEntregado
             tvRepartidor = itemView.findViewById(R.id.repartidor);
             tvPedidoCliente = itemView.findViewById(R.id.cliente);
             linearLayout = itemView.findViewById(R.id.newpedido2);
+            btnReadyToDeliver = itemView.findViewById(R.id.btn_ready_to_deliver);
         }
     }
 }

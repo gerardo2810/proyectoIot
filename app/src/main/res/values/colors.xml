@@ -167,4 +167,7 @@
 
     <color name="con_repartidor">#669800</color>
     <color name="sin_repartidor">#FD4444</color>
+
+    <color name="colorHabilitado">#6A1B9A</color>
+    <color name="colorInhabilitado">#D3D3D3</color>
 </resources>

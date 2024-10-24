@@ -19,10 +19,10 @@ public class DetalleOrdenActivity extends AppCompatActivity {
         // Obtener los datos del Intent
         String estado = getIntent().getStringExtra("estado");
         String idPedido = getIntent().getStringExtra("orderId");
-        String date = getIntent().getStringExtra("direccion");
+        String date = getIntent().getStringExtra("date");
         String cliente = getIntent().getStringExtra("cliente");
         String direccion = getIntent().getStringExtra("direccion");
-        String precio = getIntent().getStringExtra("direccion");
+        String precio = getIntent().getStringExtra("precio");
         String repartidor = getIntent().getStringExtra("repartidor");
 
         // Obtener referencias a las vistas
@@ -40,7 +40,7 @@ public class DetalleOrdenActivity extends AppCompatActivity {
         tvDate.setText(date);
         tvCliente.setText(cliente);
         tvDireccion.setText(direccion);
-        tvPrecio.setText(precio);
+        tvPrecio.setText("S/ " + precio);
         tvRepartidor.setText(repartidor);
 
 

@@ -1,8 +1,10 @@
 package com.example.proyecto_iot.admin_restaurante;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,6 +28,15 @@ public class EditRestaurantInfoActivity extends AppCompatActivity {
             String restaurantName = etRestaurantName.getText().toString();
             // Guardar en base de datos o enviar a backend
             Toast.makeText(this, "Datos del restaurante guardados", Toast.LENGTH_SHORT).show();
+        });
+
+        ImageView backButton = findViewById(R.id.back_button);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Termina esta actividad para volver a la anterior
+                finish();
+            }
         });
     }
 }

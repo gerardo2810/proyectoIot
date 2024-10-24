@@ -53,17 +53,6 @@
     </androidx.cardview.widget.CardView>
 
     <!-- ImageButton para regresar -->
-    <ImageButton
-        android:id="@+id/back_button"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="28dp"
-        android:layout_marginTop="12dp"
-        android:background="@android:color/transparent"
-        android:contentDescription="Back"
-        android:src="@drawable/baseline_arrow_back_ios_24"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/top_bar_card" />
 
     <!-- ScrollView para hacer scroll en el contenido -->
     <ScrollView
@@ -83,14 +72,23 @@
             android:orientation="vertical"
             android:padding="16dp">
 
+            <ImageButton
+                android:id="@+id/back_button"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="12dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="Back"
+                android:src="@drawable/baseline_arrow_back_ios_24" />
+
             <TextView
                 android:id="@+id/tv_historial_titulo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="15dp"
+
                 android:paddingBottom="25dp"
-                android:paddingTop="20dp"
                 android:text="AGREGAR NUEVO PRODUCTO"
                 android:textSize="18sp"
                 android:textStyle="bold" />

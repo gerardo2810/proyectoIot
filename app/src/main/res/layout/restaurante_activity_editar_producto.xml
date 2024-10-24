@@ -52,17 +52,6 @@
 
     </androidx.cardview.widget.CardView>
 
-    <ImageButton
-        android:id="@+id/back_button"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="28dp"
-        android:layout_marginTop="12dp"
-        android:background="@android:color/transparent"
-        android:contentDescription="Back"
-        android:src="@drawable/baseline_arrow_back_ios_24"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/top_bar_card" />
     <!-- BottomNavigationView para cambiar entre fragments principales -->
 
     <ScrollView
@@ -82,14 +71,22 @@
             android:orientation="vertical"
             android:padding="16dp">
 
+            <ImageButton
+                android:id="@+id/back_button"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="12dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="Back"
+                android:src="@drawable/baseline_arrow_back_ios_24" />
+
             <TextView
                 android:id="@+id/tv_historial_titulo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="15dp"
                 android:paddingBottom="25dp"
-                android:paddingTop="20dp"
                 android:text="EDITAR PRODUCTO"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -278,18 +275,5 @@
 
     </ScrollView>
 
-
-
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_navigation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/green_light_2"
-        app:itemBackground="@drawable/superadmin_nav_ripple"
-        app:labelVisibilityMode="labeled"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/restaurante_navigation_bar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

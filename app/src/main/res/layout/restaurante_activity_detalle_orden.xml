@@ -127,6 +127,7 @@
             android:layout_width="match_parent"
             android:layout_height="47dp"
             android:layout_marginTop="10dp"
+            android:paddingRight="15dp"
             android:layout_marginBottom="15dp"
             android:background="@drawable/border_info"
             android:orientation="horizontal">
@@ -150,6 +151,7 @@
                 android:layout_weight="1"
                 android:background="#FFF3E0"
                 android:text="ID"
+                android:textAlignment="center"
                 android:textColor="#000000"
                 android:textSize="18sp" />
         </LinearLayout>
@@ -157,6 +159,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="45dp"
+            android:paddingRight="15dp"
             android:layout_marginBottom="15dp"
             android:background="@drawable/border_info"
             android:orientation="horizontal">
@@ -180,13 +183,15 @@
                 android:layout_weight="1"
                 android:background="#FFF3E0"
                 android:text="Date"
+                android:textAlignment="center"
                 android:textColor="#000000"
-                android:textSize="18sp" />
+                android:textSize="16sp" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="46dp"
+            android:paddingRight="15dp"
             android:layout_marginBottom="15dp"
             android:background="@drawable/border_info"
             android:orientation="horizontal">
@@ -210,6 +215,7 @@
                 android:layout_weight="1"
                 android:background="#FFF3E0"
                 android:text="Cliente"
+                android:textAlignment="center"
                 android:textColor="#000000"
                 android:textSize="18sp" />
         </LinearLayout>
@@ -217,6 +223,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="47dp"
+            android:paddingRight="15dp"
             android:layout_marginBottom="15dp"
             android:background="@drawable/border_info"
             android:orientation="horizontal">
@@ -240,6 +247,7 @@
                 android:layout_weight="1"
                 android:background="#FFF3E0"
                 android:text="Direccion"
+                android:textAlignment="center"
                 android:textColor="#000000"
                 android:textSize="18sp" />
         </LinearLayout>
@@ -247,6 +255,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="46dp"
+            android:paddingRight="15dp"
             android:layout_marginBottom="15dp"
             android:background="@drawable/border_info"
             android:orientation="horizontal">
@@ -270,6 +279,7 @@
                 android:layout_weight="1"
                 android:background="#FFF3E0"
                 android:text="Total"
+                android:textAlignment="center"
                 android:textColor="#000000"
                 android:textSize="18sp" />
         </LinearLayout>
@@ -277,6 +287,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="48dp"
+            android:paddingRight="15dp"
             android:layout_marginBottom="15dp"
             android:background="@drawable/border_info"
             android:orientation="horizontal">
@@ -300,6 +311,7 @@
                 android:layout_weight="1"
                 android:background="#FFF3E0"
                 android:text="Repartidor"
+                android:textAlignment="center"
                 android:textColor="#000000"
                 android:textSize="18sp" />
         </LinearLayout>

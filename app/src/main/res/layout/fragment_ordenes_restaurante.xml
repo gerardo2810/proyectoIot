@@ -88,16 +88,18 @@
 
     <!-- Lista de órdenes -->
 
-    <androidx.appcompat.widget.SearchView
-        android:id="@+id/sv_search_order"
-        android:layout_width="369dp"
+    <!-- EditText para búsqueda de orden -->
+    <EditText
+        android:id="@+id/order_search"
+        android:layout_width="341dp"
         android:layout_height="49dp"
-        android:layout_marginTop="16dp"
+        android:layout_margin="16dp"
         android:background="@drawable/search_background"
-        android:padding="8dp"
-        android:queryHint="Por N° de orden"
-        app:iconifiedByDefault="false"
+        android:drawableEnd="@drawable/baseline_search_24"
+        android:hint="Por N° de orden"
+        android:padding="12dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_fecha" />
 
@@ -111,7 +113,7 @@
         app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/sv_search_order" />
+        app:layout_constraintTop_toBottomOf="@id/order_search" />
 
     <!-- Fecha seleccionada -->
 

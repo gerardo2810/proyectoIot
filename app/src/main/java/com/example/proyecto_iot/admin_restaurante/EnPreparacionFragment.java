@@ -20,9 +20,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.admin_restaurante.RecyclerView.Pedido;
@@ -42,41 +46,22 @@ public class EnPreparacionFragment extends Fragment {
     private RecyclerView rv_orders_list;
     private PedidoPreparadoAdapter pedidoPreparadoAdapter;
     private List<Pedido> pedidoList;
+    private List<Pedido> filteredList; // Lista filtrada
+    private EditText orderSearch;
 
     private Handler handler = new Handler(Looper.getMainLooper());
     private static final String CHANNEL_ID = "preparation_complete_channel";
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     public EnPreparacionFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment EnPreparacionFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static EnPreparacionFragment newInstance(String param1, String param2) {
         EnPreparacionFragment fragment = new EnPreparacionFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
-
 
     @Nullable
     @Override
@@ -88,6 +73,9 @@ public class EnPreparacionFragment extends Fragment {
         rv_orders_list = view.findViewById(R.id.rv_orders_list);
         rv_orders_list.setLayoutManager(new LinearLayoutManager(getContext()));
 
+        // Configurar el EditText para búsqueda
+        orderSearch = view.findViewById(R.id.order_search);
+
         // Crear la lista de órdenes
         pedidoList = new ArrayList<>();
         pedidoList.add(new Pedido("Juan Lopez", "#004", "3 productos", "S/155.00", "1", "Repartidor Asignado"));
@@ -95,19 +83,62 @@ public class EnPreparacionFragment extends Fragment {
         pedidoList.add(new Pedido("Mar Silou", "#006", "4 productos", "S/380.00", "3", "Repartidor Asignado"));
         pedidoList.add(new Pedido("Lucas Perez", "#007", "7 productos", "S/555.00", "18", "Repartidor Asignado"));
 
-        // Configurar el adaptador
-        pedidoPreparadoAdapter = new PedidoPreparadoAdapter(pedidoList, getContext(), this::removeOrder);
+        // Inicializar la lista filtrada con la lista original
+        filteredList = new ArrayList<>(pedidoList);
+
+        // Configurar el adaptador con la lista filtrada
+        pedidoPreparadoAdapter = new PedidoPreparadoAdapter(filteredList, getContext(), this::removeOrder);
         rv_orders_list.setAdapter(pedidoPreparadoAdapter);
+
+        // Configurar el buscador
+        orderSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // No se necesita hacer nada aquí
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                filterOrders(s.toString()); // Llamar al método que filtra la lista
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                // No se necesita hacer nada aquí
+            }
+        });
 
         return view;
     }
 
     // Método para eliminar el pedido cuando se hace clic en "Listo para entregar"
     private void removeOrder(Pedido pedido) {
-        int position = pedidoList.indexOf(pedido);
+        int position = filteredList.indexOf(pedido);
         if (position != -1) {
-            pedidoList.remove(position);
+            filteredList.remove(position);
             pedidoPreparadoAdapter.notifyItemRemoved(position);
         }
+    }
+
+    // Método para filtrar las órdenes
+    private void filterOrders(String query) {
+        filteredList.clear();
+        if (query.isEmpty()) {
+            // Si no hay texto en la búsqueda, mostrar todas las órdenes
+            filteredList.addAll(pedidoList);
+        } else {
+            for (Pedido pedido : pedidoList) {
+                if (pedido.getOrderId().toLowerCase().contains(query.toLowerCase())) {
+                    filteredList.add(pedido);
+                }
+            }
+        }
+
+        if (filteredList.isEmpty()) {
+            // Mostrar un Toast si no se encontraron resultados
+            Toast.makeText(getContext(), "No se encontraron resultados", Toast.LENGTH_SHORT).show();
+        }
+
+        pedidoPreparadoAdapter.notifyDataSetChanged(); // Notificar al adaptador sobre el cambio
     }
 }

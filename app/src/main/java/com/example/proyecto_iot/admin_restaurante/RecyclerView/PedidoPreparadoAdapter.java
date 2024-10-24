@@ -26,6 +26,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.proyecto_iot.MainActivity;
 import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.admin_restaurante.EnPreparacionFragment;
+import com.example.proyecto_iot.admin_restaurante.InicioRestauranteActivity;
 import com.example.proyecto_iot.admin_restaurante.MasDetallesPedidoActivity;
 import com.example.proyecto_iot.admin_restaurante.PedidoDetallesActivity;
 
@@ -63,26 +64,34 @@ public class PedidoPreparadoAdapter extends RecyclerView.Adapter<PedidoPreparado
         holder.cliente.setText(pedido.getCliente());
         holder.cant_productos.setText(pedido.getCantidad());
 
-        // Convertir el tiempo en milisegundos para el temporizador
-        int timeInMinutes = Integer.parseInt(pedido.getTiempo());
-        long timeInMillis = timeInMinutes * 60 * 1000;
 
-        // Crear el temporizador
-        new CountDownTimer(timeInMillis, 1000) {
-            public void onTick(long millisUntilFinished) {
-                // Actualizar el TextView del temporizador
-                long minutes = millisUntilFinished / (60 * 1000);
-                long seconds = (millisUntilFinished / 1000) % 60;
-                String timeFormatted = String.format("%02d:%02d", minutes, seconds);
-                holder.time_remaining.setText(timeFormatted);
-            }
+        // Si el pedido ya está listo, no reiniciar el temporizador
+        if (pedido.isReady()) {
+            holder.time_remaining.setText("¡Listo!");
+        } else {
+            // Convertir el tiempo en milisegundos para el temporizador
+            int timeInMinutes = Integer.parseInt(pedido.getTiempo());
+            long timeInMillis = timeInMinutes * 60 * 1000;
 
-            public void onFinish() {
-                holder.time_remaining.setText("¡Listo!");
-                // Mostrar la notificación cuando el tiempo de preparación se cumpla
-                sendNotification(pedido);
-            }
-        }.start();
+            // Crear el temporizador
+            new CountDownTimer(timeInMillis, 1000) {
+                public void onTick(long millisUntilFinished) {
+                    // Actualizar el TextView del temporizador
+                    long minutes = millisUntilFinished / (60 * 1000);
+                    long seconds = (millisUntilFinished / 1000) % 60;
+                    String timeFormatted = String.format("%02d:%02d", minutes, seconds);
+                    holder.time_remaining.setText(timeFormatted);
+                }
+
+                public void onFinish() {
+                    holder.time_remaining.setText("¡Listo!");
+                    // Marcar el pedido como listo
+                    pedido.setReady(true);
+                    // Mostrar la notificación cuando el tiempo de preparación se cumpla
+                    sendNotification(pedido);
+                }
+            }.start();
+        }
 
         // Configurar el botón "Listo para entregar"
         holder.btn_ready_to_deliver.setOnClickListener(v -> {
@@ -110,7 +119,7 @@ public class PedidoPreparadoAdapter extends RecyclerView.Adapter<PedidoPreparado
 
     // Método para enviar la notificación
     private void sendNotification(Pedido pedido) {
-        Intent intent = new Intent(context, EnPreparacionFragment.class); // Cambiar a la actividad deseada
+        Intent intent = new Intent(context, InicioRestauranteActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 

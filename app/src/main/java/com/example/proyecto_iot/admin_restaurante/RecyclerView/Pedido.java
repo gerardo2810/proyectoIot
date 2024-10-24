@@ -7,6 +7,7 @@ public class Pedido {
     private String precio;
     private String tiempo;
     private String repartidor;
+    private boolean isReady;
 
     public Pedido(String cliente, String orderId, String cantidad, String precio, String tiempo, String repartidor) {
         this.cliente = cliente;
@@ -15,6 +16,7 @@ public class Pedido {
         this.precio = precio;
         this.tiempo = tiempo;
         this.repartidor = repartidor;
+        this.isReady = false;
     }
 
     public String getOrderId() {
@@ -63,5 +65,13 @@ public class Pedido {
 
     public void setCliente(String cliente) {
         this.cliente = cliente;
+    }
+
+    public boolean isReady() {
+        return isReady;
+    }
+
+    public void setReady(boolean ready) {
+        isReady = ready;
     }
 }

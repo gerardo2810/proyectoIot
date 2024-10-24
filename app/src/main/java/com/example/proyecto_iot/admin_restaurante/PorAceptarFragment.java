@@ -21,9 +21,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.example.proyecto_iot.MainActivity;
@@ -49,6 +52,8 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.widget.Toast;
+
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
@@ -57,6 +62,8 @@ public class PorAceptarFragment extends Fragment {
     private RecyclerView rv_orders_list;
     private PedidoAdapter pedidoAdapter;
     private List<Pedido> pedidoList;
+    private List<Pedido> filteredList; // Lista filtrada
+    private EditText orderSearch; // Campo de búsqueda
     private Handler handler;
     private Runnable runnable;
     private int orderCount = 7;
@@ -86,6 +93,9 @@ public class PorAceptarFragment extends Fragment {
         rv_orders_list = view.findViewById(R.id.rv_orders_list);
         rv_orders_list.setLayoutManager(new LinearLayoutManager(getContext()));
 
+        // Configurar el EditText para búsqueda
+        orderSearch = view.findViewById(R.id.order_search);
+
         // Crear la lista de órdenes inicial
         pedidoList = new ArrayList<>();
         pedidoList.add(new Pedido("Juan Lopez","#007", "2 productos", "S/45.00", "20 min", "Repartidor Asignado"));
@@ -96,9 +106,11 @@ public class PorAceptarFragment extends Fragment {
         pedidoList.add(new Pedido("Camila Sanchez","#002", "4 productos", "S/380.00", "18 min", "Repartidor Asignado"));
         pedidoList.add(new Pedido("Juan Lopez","#001", "7 productos", "S/555.00", "35 min", "Repartidor Asignado"));
 
-        // Configurar el adaptador
-        pedidoAdapter = new PedidoAdapter(pedidoList, getContext());
-        rv_orders_list.setLayoutManager(new LinearLayoutManager(getContext()));
+        // Inicializar la lista filtrada con la lista original
+        filteredList = new ArrayList<>(pedidoList);
+
+        // Configurar el adaptador con la lista filtrada
+        pedidoAdapter = new PedidoAdapter(filteredList, getContext());
         rv_orders_list.setAdapter(pedidoAdapter);
 
         // Configurar el Handler para añadir órdenes cada minuto
@@ -108,8 +120,9 @@ public class PorAceptarFragment extends Fragment {
             public void run() {
                 // Agregar una nueva orden
                 orderCount++;
-                Pedido newOrder = new Pedido("Matias Cordova","#00" + orderCount, "1 producto", "S/100.00", "25 min", "Repartidor Asignado");
+                Pedido newOrder = new Pedido("Matias Cordova", "#00" + orderCount, "1 producto", "S/100.00", "25 min", "Repartidor Asignado");
                 pedidoList.add(0, newOrder);
+                filteredList.add(0, newOrder);
                 pedidoAdapter.notifyItemInserted(0);
                 rv_orders_list.scrollToPosition(0);
 
@@ -124,6 +137,24 @@ public class PorAceptarFragment extends Fragment {
         // Iniciar el runnable
         handler.postDelayed(runnable, 40000);
 
+        // Configurar el buscador
+        orderSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // No se necesita hacer nada aquí
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                filterOrders(s.toString()); // Llamar al método que filtra la lista
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                // No se necesita hacer nada aquí
+            }
+        });
+
         return view;
     }
 
@@ -131,6 +162,28 @@ public class PorAceptarFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         handler.removeCallbacks(runnable);
+    }
+
+    // Método para filtrar las órdenes
+    private void filterOrders(String query) {
+        filteredList.clear();
+        if (query.isEmpty()) {
+            // Si no hay texto en la búsqueda, mostrar todas las órdenes
+            filteredList.addAll(pedidoList);
+        } else {
+            for (Pedido pedido : pedidoList) {
+                if (pedido.getOrderId().toLowerCase().contains(query.toLowerCase())) {
+                    filteredList.add(pedido);
+                }
+            }
+        }
+
+        if (filteredList.isEmpty()) {
+            // Mostrar un Toast si no se encontraron resultados
+            Toast.makeText(getContext(), "No se encontraron resultados", Toast.LENGTH_SHORT).show();
+        }
+
+        pedidoAdapter.notifyDataSetChanged(); // Notificar al adaptador sobre el cambio
     }
 
     // Crear el canal de notificaciones (solo para Android 8+)
@@ -149,7 +202,7 @@ public class PorAceptarFragment extends Fragment {
     // Método para enviar notificación
     private void sendNotification(Pedido pedido) {
         // Crear la intención para cuando el usuario haga clic en la notificación
-        Intent intent = new Intent(requireContext(), PorAceptarFragment.class);
+        Intent intent = new Intent(requireContext(), InicioRestauranteActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
         // Agregar FLAG_IMMUTABLE
@@ -172,7 +225,6 @@ public class PorAceptarFragment extends Fragment {
         // Mostrar la notificación
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(requireContext());
         if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            // Solicitar permisos si no están otorgados
             return;
         }
         notificationManager.notify(orderCount, builder.build());

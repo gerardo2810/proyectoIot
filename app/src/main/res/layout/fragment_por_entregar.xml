@@ -11,9 +11,10 @@
     <!-- EditText para búsqueda de orden -->
     <EditText
         android:id="@+id/order_search"
-        android:layout_width="0dp"
-        android:layout_height="52dp"
+        android:layout_width="341dp"
+        android:layout_height="49dp"
         android:layout_margin="16dp"
+        android:layout_marginTop="16dp"
         android:background="@drawable/search_background"
         android:drawableEnd="@drawable/baseline_search_24"
         android:hint="Por N° de orden"

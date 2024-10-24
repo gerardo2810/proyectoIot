@@ -9,10 +9,13 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 
 import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.admin_restaurante.RecyclerView.Categoria;
@@ -23,56 +26,15 @@ import com.example.proyecto_iot.admin_restaurante.RecyclerView.ProductoAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link CartaRestauranteFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class CartaRestauranteFragment extends Fragment {
 
     private RecyclerView recyclerCategories, recyclerProducts;
     private CategoriaAdapter categoryAdapter;
     private ProductoAdapter productAdapter;
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public CartaRestauranteFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment CartaRestauranteFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static CartaRestauranteFragment newInstance(String param1, String param2) {
-        CartaRestauranteFragment fragment = new CartaRestauranteFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
+    private List<Producto> productList; // Lista completa de productos
+    private List<Producto> filteredProductList; // Lista filtrada
+    private EditText searchBar; // Barra de búsqueda
 
     @Nullable
     @Override
@@ -85,8 +47,12 @@ public class CartaRestauranteFragment extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         recyclerCategories.setLayoutManager(layoutManager);
 
-        // Asignar adaptador para las categorías
-        categoryAdapter = new CategoriaAdapter(getCategoryList(), getContext());
+        // Inicializar la lista completa de productos y la lista filtrada
+        productList = getProductList();
+        filteredProductList = new ArrayList<>(productList); // Inicialmente muestra todos los productos
+
+        // Asignar adaptador para las categorías y configurar el listener
+        categoryAdapter = new CategoriaAdapter(getCategoryList(), getContext(), this::filterByCategory);
         recyclerCategories.setAdapter(categoryAdapter);
 
         // Inicializar RecyclerView de productos
@@ -94,7 +60,7 @@ public class CartaRestauranteFragment extends Fragment {
         recyclerProducts.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // Asignar adaptador para los productos
-        productAdapter = new ProductoAdapter(getProductList(), getContext());
+        productAdapter = new ProductoAdapter(filteredProductList, getContext());
         recyclerProducts.setAdapter(productAdapter);
 
         // Botón para agregar nuevo producto
@@ -104,12 +70,55 @@ public class CartaRestauranteFragment extends Fragment {
             startActivity(intent);
         });
 
+        // Configurar la barra de búsqueda
+        searchBar = view.findViewById(R.id.search_bar);
+        searchBar.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                // Filtrar productos por el texto ingresado en la búsqueda
+                filterBySearch(charSequence.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {}
+        });
+
         return view; // Devolver la vista inflada
+    }
+
+    // Método para filtrar productos por categoría
+    private void filterByCategory(String category) {
+        filteredProductList.clear(); // Limpiar la lista filtrada
+        if (category.equals("Todas")) {
+            filteredProductList.addAll(productList); // Mostrar todos los productos si la categoría es "Todas"
+        } else {
+            for (Producto producto : productList) {
+                if (producto.getCategoria().equalsIgnoreCase(category)) {
+                    filteredProductList.add(producto); // Agregar productos que coincidan con la categoría
+                }
+            }
+        }
+        productAdapter.notifyDataSetChanged(); // Notificar al adaptador sobre los cambios
+    }
+
+    // Método para filtrar productos por búsqueda
+    private void filterBySearch(String query) {
+        filteredProductList.clear(); // Limpiar la lista filtrada
+        for (Producto producto : productList) {
+            if (producto.getName().toLowerCase().contains(query.toLowerCase())) {
+                filteredProductList.add(producto); // Agregar productos que coincidan con la búsqueda
+            }
+        }
+        productAdapter.notifyDataSetChanged(); // Notificar al adaptador sobre los cambios
     }
 
     // Método para obtener la lista de categorías
     private List<Categoria> getCategoryList() {
         List<Categoria> categoryList = new ArrayList<>();
+        categoryList.add(new Categoria("Todas", R.drawable.alllogo)); // Opción para mostrar todas las categorías
         categoryList.add(new Categoria("Entradas", R.drawable.salad));
         categoryList.add(new Categoria("Tallarines", R.drawable.pasta));
         categoryList.add(new Categoria("Pescados", R.drawable.fish));
@@ -123,11 +132,17 @@ public class CartaRestauranteFragment extends Fragment {
     // Método para obtener la lista de productos
     private List<Producto> getProductList() {
         List<Producto> productList = new ArrayList<>();
-        productList.add(new Producto("1", "Langostinos Tempura 'Pop Corn'", "",10, 45.50, true, R.drawable.plato));
-        productList.add(new Producto("2", "Chaufa Especial", "",5,  38.00, true, R.drawable.plato2));
-        productList.add(new Producto("3", "Salmon Al Curry", "", 7, 35.00, false, R.drawable.plato3));
-        productList.add(new Producto("4", "Mongolian Beef", "",20, 69.50, true, R.drawable.plato4));
-        productList.add(new Producto("5", "KAM LU Wantan", "",30, 63.50, true, R.drawable.plato5));
+        productList.add(new Producto("1", "Langostinos Tempura 'Pop Corn'", "", "Entradas", 10, 45.50, true, R.drawable.plato));
+        productList.add(new Producto("2", "Shanghai Hot Wings", "", "Entradas", 10, 39.00, true, R.drawable.plato));
+        productList.add(new Producto("3", "Classic Wantan", "", "Entradas", 10, 32.00, true, R.drawable.plato));
+        productList.add(new Producto("4", "Chaufa Especial", "", "Arroces", 5, 38.00, true, R.drawable.plato2));
+        productList.add(new Producto("5", "Arroz Meloso Mixto", "", "Arroces", 5, 42.00, true, R.drawable.plato2));
+        productList.add(new Producto("6", "Salmon Al Curry", "", "Pescados", 7, 35.00, false, R.drawable.plato3));
+        productList.add(new Producto("7", "Pesacado Imperial", "", "Pescados", 7, 35.00, false, R.drawable.plato3));
+        productList.add(new Producto("8", "Mongolian Beef", "", "Carnes", 20, 69.50, true, R.drawable.plato4));
+        productList.add(new Producto("9", "Pollo con nueces", "", "Carnes", 20, 49.50, true, R.drawable.plato4));
+        productList.add(new Producto("10", "KAM LU Wantan", "", "Especiales", 30, 63.50, true, R.drawable.plato5));
         return productList;
     }
 }
+

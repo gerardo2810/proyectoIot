@@ -16,14 +16,20 @@ import com.example.proyecto_iot.admin_restaurante.AgregarCategoriaActivity;
 
 import java.util.List;
 
-public class CategoriaAdapter extends RecyclerView.Adapter<CategoriaAdapter.CategoriaViewHolder>{
+public class CategoriaAdapter extends RecyclerView.Adapter<CategoriaAdapter.CategoriaViewHolder> {
 
     private List<Categoria> categoryList;
     private Context context;
+    private OnCategoryClickListener listener;
 
-    public CategoriaAdapter(List<Categoria> categoryList, Context context) {
-        this.categoryList = categoryList;
+    public interface OnCategoryClickListener {
+        void onCategoryClick(String category);
+    }
+
+    public CategoriaAdapter(List<Categoria> categorias, Context context, OnCategoryClickListener listener) {
+        this.categoryList = categorias;
         this.context = context;
+        this.listener = listener;
     }
 
     @NonNull
@@ -36,17 +42,13 @@ public class CategoriaAdapter extends RecyclerView.Adapter<CategoriaAdapter.Cate
     @Override
     public void onBindViewHolder(@NonNull CategoriaViewHolder holder, int position) {
         Categoria category = categoryList.get(position);
-        holder.tvCategoryName.setText(category.getName());
-        holder.imgCategory.setImageResource(category.getImageResId());
+        holder.nombreCategoria.setText(category.getName());
+        holder.imageCategoria.setImageResource(category.getImageResId());
 
         // Evento al hacer clic en la categoría
         holder.itemView.setOnClickListener(v -> {
-            // Acción para la categoría seleccionada
-            if (category.getName().equals("Nueva categoría")) {
-                // Abrir actividad para agregar una nueva categoría
-                Intent intent = new Intent(context, AgregarCategoriaActivity.class);
-                context.startActivity(intent);
-            }
+            // Llamar al listener para notificar que se seleccionó una categoría
+            listener.onCategoryClick(category.getName());
         });
     }
 
@@ -55,14 +57,15 @@ public class CategoriaAdapter extends RecyclerView.Adapter<CategoriaAdapter.Cate
         return categoryList.size();
     }
 
-    public static class CategoriaViewHolder extends RecyclerView.ViewHolder {
-        ImageView imgCategory;
-        TextView tvCategoryName;
+    static class CategoriaViewHolder extends RecyclerView.ViewHolder {
+
+        ImageView imageCategoria;
+        TextView nombreCategoria;
 
         public CategoriaViewHolder(@NonNull View itemView) {
             super(itemView);
-            imgCategory = itemView.findViewById(R.id.img_category);
-            tvCategoryName = itemView.findViewById(R.id.tv_category_name);
+            imageCategoria = itemView.findViewById(R.id.img_category);
+            nombreCategoria = itemView.findViewById(R.id.tv_category_name);
         }
     }
 }

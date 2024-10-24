@@ -5,18 +5,28 @@ public class Producto {
     private String name;
     private String descripcion;
     private int stock;
+    private String categoria;
     private double price;
     private boolean isActive;
     private int imageResId; // ID del recurso de la imagen del producto
 
-    public Producto(String id, String name, String descripcion, int stock, double price, boolean isActive, int imageResId) {
+    public Producto(String id, String name, String descripcion, String categoria, int stock, double price, boolean isActive, int imageResId) {
         this.id = id;
         this.name = name;
         this.descripcion = descripcion;
+        this.categoria = categoria;
         this.stock = stock;
         this.price = price;
         this.isActive = isActive;
         this.imageResId = imageResId;
+    }
+
+    public String getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
     }
 
     public String getId() {

@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#B7E0DC"
+    android:background="@drawable/fondo1"
     tools:context=".admin_restaurante.AbrirRestauranteActivity">
 
     <!-- Card para nombre del restaurante -->
@@ -77,8 +77,8 @@
 
     <ImageView
         android:id="@+id/imageView6"
-        android:layout_width="453dp"
-        android:layout_height="377dp"
+        android:layout_width="476dp"
+        android:layout_height="381dp"
         android:padding="30dp"
         app:layout_constraintBottom_toTopOf="@+id/open_button"
         app:layout_constraintEnd_toEndOf="parent"

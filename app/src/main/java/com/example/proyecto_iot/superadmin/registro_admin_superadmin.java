@@ -9,19 +9,15 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.example.proyecto_iot.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
-public class registro_nuevoadmin_superadmin extends AppCompatActivity {
+public class registro_admin_superadmin extends AppCompatActivity {
 
     private BottomNavigationView bottomNavigationView;
     private Spinner spinnerTipoAdmin;
@@ -34,7 +30,7 @@ public class registro_nuevoadmin_superadmin extends AppCompatActivity {
         //Volver una pantalla atras
         ImageView arrowIcon = findViewById(R.id.arrow_back_icon);
         arrowIcon.setOnClickListener(v -> {
-            Intent intent = new Intent(registro_nuevoadmin_superadmin.this, gestion_usuarios_superadmin.class);
+            Intent intent = new Intent(registro_admin_superadmin.this, gestion_usuarios_superadmin.class);
             startActivity(intent);
         });
         //----------------------------------------------------------------------------
@@ -60,9 +56,9 @@ public class registro_nuevoadmin_superadmin extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 Intent intent = null;
                 if (item.getItemId() == R.id.navigation_usuarios) {
-                    intent = new Intent(registro_nuevoadmin_superadmin.this, gestion_usuarios_superadmin.class);
+                    intent = new Intent(registro_admin_superadmin.this, gestion_usuarios_superadmin.class);
                 } else if (item.getItemId() == R.id.navigation_reportes) {
-                    intent = new Intent(registro_nuevoadmin_superadmin.this, gestion_reportes_superadmin.class);
+                    intent = new Intent(registro_admin_superadmin.this, gestion_reportes_superadmin.class);
                 }
                 if (intent != null) {
                     intent.putExtra("SELECTED_ITEM_ID", item.getItemId());
@@ -85,7 +81,7 @@ public class registro_nuevoadmin_superadmin extends AppCompatActivity {
         } else if (tipoSeleccionado.equals("Existente")) {
             mostrarDialogRestaurante();
         } else if (tipoSeleccionado.equals("Nuevo")) {
-            Intent intent = new Intent(registro_nuevoadmin_superadmin.this, gestion_reportes_superadmin.class);
+            Intent intent = new Intent(registro_admin_superadmin.this, registro_restaurante_superadmin.class);
             startActivity(intent);
         }
     }
@@ -111,7 +107,7 @@ public class registro_nuevoadmin_superadmin extends AppCompatActivity {
             } else {
                 Toast.makeText(this, "Administrador creado con éxito para " + restauranteSeleccionado, Toast.LENGTH_SHORT).show();
                 // Redirigir a otra actividad
-                Intent intent = new Intent(registro_nuevoadmin_superadmin.this, gestion_usuarios_superadmin.class); // Cambia "OtraActividad" por tu actividad deseada
+                Intent intent = new Intent(registro_admin_superadmin.this, gestion_usuarios_superadmin.class); // Cambia "OtraActividad" por tu actividad deseada
                 startActivity(intent);
             }
         });

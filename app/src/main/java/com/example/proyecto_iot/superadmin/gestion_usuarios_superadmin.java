@@ -3,7 +3,6 @@ package com.example.proyecto_iot.superadmin;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
@@ -33,7 +32,7 @@ public class gestion_usuarios_superadmin extends AppCompatActivity {
                 if (finalI == 1) {
                     intent = new Intent(gestion_usuarios_superadmin.this, lista_usuarios_superadmin.class);
                 } else if (finalI == 2) {
-                    intent = new Intent(gestion_usuarios_superadmin.this, registro_nuevoadmin_superadmin.class);
+                    intent = new Intent(gestion_usuarios_superadmin.this, registro_admin_superadmin.class);
                 } else if (finalI == 3) {
                     intent = new Intent(gestion_usuarios_superadmin.this, solicitudes_repartidores_superadmin.class);
                 } else if (finalI == 4) {

@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -85,7 +85,10 @@
             android:name=".superadmin.solicitudes_repartidores_superadmin"
             android:exported="true" />
         <activity
-            android:name=".superadmin.registro_nuevoadmin_superadmin"
+            android:name=".superadmin.registro_admin_superadmin"
+            android:exported="true" />
+        <activity
+            android:name=".superadmin.registro_restaurante_superadmin"
             android:exported="true" />
         <activity
             android:name=".superadmin.info_solitud_repartidor_superadmin"

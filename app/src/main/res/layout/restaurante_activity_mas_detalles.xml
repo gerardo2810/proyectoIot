@@ -53,69 +53,24 @@
 
     </androidx.cardview.widget.CardView>
 
-    <!-- Estado del restaurante -->
-    <LinearLayout
-        android:id="@+id/status_layout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@id/top_bar_card"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:gravity="center">
-
-        <Button
-            android:id="@+id/status_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/green"
-            android:drawableEnd="@drawable/baseline_calendar_month_24"
-            android:text="RESTAURANTE ABIERTO"
-            android:textColor="@android:color/white" />
-
-    </LinearLayout>
-
-
-
-
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_navigation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/green_light_2"
-        app:itemBackground="@drawable/superadmin_nav_ripple"
-        app:labelVisibilityMode="labeled"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/restaurante_navigation_bar" >
-
-        <View
-            android:id="@+id/view"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="-5dp"
-            android:background="#8E8E8E" />
-    </com.google.android.material.bottomnavigation.BottomNavigationView>
-
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="395dp"
-        android:layout_height="516dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="28dp"
         android:padding="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
+        android:paddingLeft="30dp"
+        android:paddingRight="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.533"
+        app:layout_constraintHorizontal_bias="0.506"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/status_layout"
-        app:layout_constraintVertical_bias="0.15">
+        app:layout_constraintTop_toBottomOf="@+id/top_bar_card">
 
         <LinearLayout
             android:id="@+id/header_layout"
-            android:layout_width="375dp"
-            android:layout_height="52dp"
-            android:background="#FFFFFF"
+            android:layout_width="462dp"
+            android:layout_height="62dp"
             android:gravity="center_vertical"
             android:minHeight="56dp"
             android:orientation="horizontal"
@@ -127,7 +82,7 @@
             <!-- Flecha de retroceso más pequeña -->
             <ImageView
                 android:id="@+id/back_poraceptar"
-                android:layout_width="44dp"
+                android:layout_width="wrap_content"
                 android:layout_height="34dp"
                 android:contentDescription="Volver"
                 android:padding="8dp"
@@ -135,41 +90,41 @@
 
             <!-- Texto centrado usando un margin en el TextView -->
             <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_width="341dp"
+                android:layout_height="40dp"
                 android:layout_weight="1"
+                android:background="@color/md_theme_inversePrimary_highContrast"
                 android:gravity="center"
                 android:text="Detalles de la orden"
                 android:textColor="#000000"
-                android:textSize="16sp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
         </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="-5dp"
-            android:background="#8E8E8E"
-            tools:ignore="MissingConstraints" />
 
         <TextView
             android:id="@+id/tv_pedido_numero"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="68dp"
+            android:layout_marginTop="88dp"
             android:text="Pedido N° 002"
             android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <!-- Lista de productos -->
+
+        <!-- Línea divisora -->
+
+        <!-- Costo total -->
+
         <LinearLayout
             android:id="@+id/layout_tiempo_controles"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:layout_marginEnd="12dp"
+            android:layout_marginEnd="28dp"
             android:gravity="center"
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
@@ -211,7 +166,7 @@
             android:layout_width="205dp"
             android:layout_height="35dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="12dp"
             android:text="Tiempo aproximado de preparación: 30 min"
             android:textColor="#FF0000"
             android:textSize="14sp"
@@ -223,9 +178,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="24dp"
             android:text="Detalles del pedido"
-            android:textSize="16sp"
+            android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_tiempo_preparacion" />
@@ -233,8 +188,8 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="4dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="12dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             app:layout_constraintStart_toStartOf="parent"
@@ -254,14 +209,8 @@
                 android:layout_height="wrap_content"
                 android:text="El molle # 156 B"
                 android:textColor="@android:color/black"
-                android:textSize="14sp" />
+                android:textSize="16sp" />
         </LinearLayout>
-
-        <!-- Lista de productos -->
-
-        <!-- Línea divisora -->
-
-        <!-- Costo total -->
 
         <TextView
             android:id="@+id/tv_precio_total"
@@ -269,7 +218,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="12dp"
             android:text="S/ 106.00"
-            android:textSize="14sp"
+            android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/layout_lista_productos" />
@@ -281,9 +230,10 @@
             android:layout_marginTop="140dp"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.298"
-            tools:layout_editor_absoluteX="3dp">
+            app:layout_constraintVertical_bias="0.298">
 
             <!-- Producto 1 -->
 
@@ -311,14 +261,14 @@
                     android:layout_weight="1"
                     android:text="1 x Chaufa especial"
                     android:textColor="@android:color/black"
-                    android:textSize="14sp" />
+                    android:textSize="16sp" />
 
                 <!-- Precio del producto -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="S/ 38.00"
-                    android:textSize="14sp"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -343,14 +293,14 @@
                     android:layout_weight="1"
                     android:text="1 x Salmon al curry"
                     android:textColor="@android:color/black"
-                    android:textSize="14sp" />
+                    android:textSize="16sp" />
 
                 <!-- Precio del producto -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="S/ 68.00"
-                    android:textSize="14sp"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -368,7 +318,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Costo Total"
-            android:textSize="14sp"
+            android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/layout_lista_productos" />

@@ -6,6 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="16dp"
     android:background="@drawable/border_pedido"
+    android:backgroundTint="#E8EAF6"
     android:layout_marginBottom="8dp">
 
     <!-- Icono de pedido -->
@@ -34,8 +35,19 @@
             android:id="@+id/tv_order_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="#BBDEFB"
             android:text="ID 0000012"
-            android:textSize="20sp"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+
+        <TextView
+            android:id="@+id/tv_order_cliente"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ana Maria"
+            android:textColor="@color/md_theme_tertiary_highContrast"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <!-- Dirección -->

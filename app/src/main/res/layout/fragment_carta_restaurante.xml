@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -52,112 +53,103 @@
     </androidx.cardview.widget.CardView>
 
     <!-- Título de la página -->
-
-    <!-- Cuadro de búsqueda -->
-
-    <!-- Selector de fecha -->
-
     <TextView
         android:id="@+id/tv_historial_titulo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="MENÚ"
-        android:textSize="18sp"
+        android:paddingTop="20dp"
+        android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/top_bar_card"
         app:layout_constraintVertical_bias="0.031" />
 
-    <LinearLayout
-        android:id="@+id/date_selector"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_historial_titulo"
-        android:layout_marginTop="16dp">
-
-        <!-- Icono de calendario -->
-
-        <!-- Texto de la fecha -->
-    </LinearLayout>
+    <!-- Texto de categorías -->
 
     <!-- Carrusel de categorías -->
-
-    <!-- Barra de búsqueda -->
-
     <TextView
         android:id="@+id/textView12"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="Categorías"
-        android:textSize="18sp"
+        android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.123"
+        app:layout_constraintHorizontal_bias="0.051"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_historial_titulo" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_categories"
-        android:layout_width="382dp"
-        android:layout_height="128dp"
+        android:layout_width="0dp"
+        android:layout_height="117dp"
         android:orientation="horizontal"
+        android:paddingLeft="15dp"
         android:scrollbars="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView12" />
 
-    <!-- Botón para agregar un nuevo producto -->
-
-    <!-- RecyclerView para listar productos -->
-
-
     <!-- Barra de búsqueda -->
 
-    <!-- Lista de órdenes -->
+    <!-- Botón para agregar un nuevo producto -->
+
+    <!-- Lista de productos -->
 
     <EditText
         android:id="@+id/search_bar"
-        android:layout_width="255dp"
+        android:layout_width="262dp"
         android:layout_height="43dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
         android:background="@drawable/border_layout_combobox"
         android:drawableLeft="@android:drawable/ic_menu_search"
-        android:hint="Buscar por producto o topping"
+        android:hint="Buscar producto"
         android:padding="8dp"
         android:textSize="14sp"
-        app:layout_constraintBottom_toTopOf="@+id/recycler_products"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.897"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recycler_categories"
-        app:layout_constraintVertical_bias="0.094" />
+        app:layout_constraintTop_toBottomOf="@+id/recycler_categories" />
 
     <Button
         android:id="@+id/btn_add_product"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
+        android:layout_marginTop="8dp"
         android:text="+ Agregar nuevo producto"
-        app:layout_constraintBottom_toTopOf="@+id/recycler_products"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.086"
+        app:layout_constraintHorizontal_bias="0.035"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/search_bar"
-        app:layout_constraintVertical_bias="0.76" />
+        app:layout_constraintTop_toBottomOf="@+id/search_bar" />
 
+    <!-- BottomNavigationView para cambiar entre fragments principales -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_products"
-        android:layout_width="374dp"
-        android:layout_height="424dp"
-        android:layout_marginTop="140dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.487"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recycler_categories" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_add_product"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/green_light_2"
+        app:itemBackground="@drawable/superadmin_nav_ripple"
+        app:labelVisibilityMode="labeled"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/restaurante_navigation_bar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

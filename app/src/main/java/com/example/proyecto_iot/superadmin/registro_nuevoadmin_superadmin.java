@@ -4,11 +4,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -21,6 +24,7 @@ import com.google.android.material.navigation.NavigationBarView;
 public class registro_nuevoadmin_superadmin extends AppCompatActivity {
 
     private BottomNavigationView bottomNavigationView;
+    private Spinner spinnerTipoAdmin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,12 +39,15 @@ public class registro_nuevoadmin_superadmin extends AppCompatActivity {
         });
         //----------------------------------------------------------------------------
 
-        //Gestion de spinners
-        Spinner spinner = findViewById(R.id.spinnerTipoAdmin);
+        //Gestion del Formulario
+        spinnerTipoAdmin = findViewById(R.id.spinnerTipoAdmin);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.superadmin_lista_tipoRegistro, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
+        spinnerTipoAdmin.setAdapter(adapter);
+
+        Button btnRegistrar = findViewById(R.id.btnRegistrar);
+        btnRegistrar.setOnClickListener(v -> registrarAdministrador());
         //----------------------------------------------------------------------------
 
 
@@ -68,5 +75,50 @@ public class registro_nuevoadmin_superadmin extends AppCompatActivity {
         });
         //----------------------------------------------------------------------------
 
+    }
+
+    private void registrarAdministrador() {
+        String tipoSeleccionado = spinnerTipoAdmin.getSelectedItem().toString();
+
+        if (tipoSeleccionado.equals("-Seleccionar-")) {
+            Toast.makeText(this, "Debe seleccionar una opción", Toast.LENGTH_SHORT).show();
+        } else if (tipoSeleccionado.equals("Existente")) {
+            mostrarDialogRestaurante();
+        } else if (tipoSeleccionado.equals("Nuevo")) {
+            Intent intent = new Intent(registro_nuevoadmin_superadmin.this, gestion_reportes_superadmin.class);
+            startActivity(intent);
+        }
+    }
+
+    private void mostrarDialogRestaurante() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Elija el restaurante al que pertenecerá el administrador:");
+
+        // Crear el spinner para el diálogo
+        Spinner spinnerRestaurante = new Spinner(this);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.superadmin_lista_restaurante, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerRestaurante.setAdapter(adapter);
+
+        // Agregar el spinner al diálogo
+        builder.setView(spinnerRestaurante);
+
+        builder.setPositiveButton("OK", (dialog, which) -> {
+            String restauranteSeleccionado = spinnerRestaurante.getSelectedItem().toString();
+            if (restauranteSeleccionado.equals("-Seleccionar-")) {
+                Toast.makeText(this, "Debe elegir un restaurante", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Administrador creado con éxito para " + restauranteSeleccionado, Toast.LENGTH_SHORT).show();
+                // Redirigir a otra actividad
+                Intent intent = new Intent(registro_nuevoadmin_superadmin.this, gestion_usuarios_superadmin.class); // Cambia "OtraActividad" por tu actividad deseada
+                startActivity(intent);
+            }
+        });
+
+        builder.setNegativeButton("Cancelar", (dialog, which) -> dialog.dismiss());
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 }

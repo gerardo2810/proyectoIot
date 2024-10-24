@@ -49,8 +49,22 @@
                 android:textSize="14sp" />
         </LinearLayout>
 
+
+
     </androidx.cardview.widget.CardView>
     <!-- activity_detalle_plato.xml -->
+
+    <ImageButton
+        android:id="@+id/back_button"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="12dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="Back"
+        android:src="@drawable/baseline_arrow_back_ios_24"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/top_bar_card" />
 
     <TextView
         android:id="@+id/textView4"
@@ -68,9 +82,12 @@
 
     <LinearLayout
         android:id="@+id/linearLayout14"
-        android:layout_width="321dp"
-        android:layout_height="331dp"
+        android:layout_width="354dp"
+        android:background="#FFF8E1"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
         android:layout_marginTop="1dp"
+        android:layout_marginRight="30dp"
         android:orientation="vertical"
         android:padding="10dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -83,6 +100,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="15dp"
+            android:background="@drawable/border_info"
             android:orientation="horizontal">
 
             <TextView
@@ -101,6 +119,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Nombre"
+                android:layout_gravity="center"
                 android:textColor="#000000"
                 android:textSize="16sp" />
         </LinearLayout>
@@ -109,6 +128,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="15dp"
+            android:background="@drawable/border_info"
             android:orientation="horizontal">
 
             <TextView
@@ -135,6 +155,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="15dp"
+            android:background="@drawable/border_info"
             android:orientation="horizontal">
 
             <TextView
@@ -161,6 +182,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="15dp"
+            android:background="@drawable/border_info"
             android:orientation="horizontal">
 
             <TextView
@@ -187,6 +209,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="15dp"
+            android:background="@drawable/border_info"
             android:orientation="horizontal">
 
             <TextView
@@ -213,6 +236,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="15dp"
+            android:background="@drawable/border_info"
             android:orientation="horizontal">
 
             <TextView
@@ -230,6 +254,7 @@
                 android:layout_width="90dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:layout_gravity="center"
                 android:text="Cantidad de pedidos"
                 android:textColor="#000000"
                 android:textSize="16sp" />
@@ -239,6 +264,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="15dp"
+            android:background="@drawable/border_info"
             android:orientation="horizontal">
 
             <TextView
@@ -263,23 +289,11 @@
 
     </LinearLayout>
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_navigation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/green_light_2"
-        app:itemBackground="@drawable/superadmin_nav_ripple"
-        app:labelVisibilityMode="labeled"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/restaurante_navigation_bar" />
-
     <ImageView
         android:id="@+id/iv_imagen_usuario"
         android:layout_width="219dp"
         android:layout_height="190dp"
-        android:layout_marginTop="56dp"
+        android:layout_marginTop="96dp"
         android:background="@drawable/user"
         android:scaleType="centerCrop"
         app:layout_constraintEnd_toEndOf="parent"

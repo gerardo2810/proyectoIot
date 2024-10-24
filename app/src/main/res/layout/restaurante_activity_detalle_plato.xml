@@ -76,17 +76,21 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.853" />
+        app:layout_constraintVertical_bias="0.835" />
 
     <LinearLayout
         android:id="@+id/linearLayout14"
-        android:layout_width="351dp"
-        android:layout_height="432dp"
-        android:layout_marginTop="12dp"
+        android:layout_width="410dp"
+        android:layout_height="274dp"
+        android:layout_marginTop="36dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:background="#FFFDE7"
         android:orientation="vertical"
         android:padding="16dp"
+        android:paddingRight="20dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.492"
+        app:layout_constraintHorizontal_bias="0.485"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/iv_imagen_plato">
 
@@ -115,6 +119,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             android:layout_marginBottom="15dp"
+            android:background="@drawable/border_info"
             android:orientation="horizontal">
 
             <TextView
@@ -141,6 +146,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="15dp"
+            android:background="@drawable/border_info"
             android:orientation="horizontal">
 
             <TextView
@@ -167,6 +173,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="15dp"
+            android:background="@drawable/border_info"
             android:orientation="horizontal">
 
             <TextView
@@ -193,6 +200,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="15dp"
+            android:background="@drawable/border_info"
             android:orientation="horizontal">
 
             <TextView
@@ -221,7 +229,7 @@
         android:id="@+id/iv_imagen_plato"
         android:layout_width="377dp"
         android:layout_height="175dp"
-        android:layout_marginTop="116dp"
+        android:layout_marginTop="108dp"
         android:background="@drawable/mongolianbeef"
         android:scaleType="centerCrop"
         app:layout_constraintEnd_toEndOf="parent"

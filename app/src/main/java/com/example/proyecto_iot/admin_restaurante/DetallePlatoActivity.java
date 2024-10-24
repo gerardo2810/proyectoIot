@@ -2,6 +2,7 @@ package com.example.proyecto_iot.admin_restaurante;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -41,5 +42,13 @@ public class DetallePlatoActivity extends AppCompatActivity {
         tvCantidadVendida.setText(cantVendida);
         tvGanancia.setText(ganancia);
         ivImagenPlato.setImageResource(Integer.parseInt(imageResId));
+
+        ImageView backButton = findViewById(R.id.back_button);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 }

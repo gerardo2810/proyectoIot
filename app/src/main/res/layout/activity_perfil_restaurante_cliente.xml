@@ -165,14 +165,15 @@
                         android:maxLines="1" />
 
                     <TextView
+                        android:id="@+id/delivery_price"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="S/.3.49"
-                        android:textSize="14sp"
-                        android:textColor="#888"
-                        android:gravity="end"
-                        android:layout_gravity="end"
-                        android:paddingEnd="59dp" />
+                        android:text="S/. 0.00"
+                    android:textSize="14sp"
+                    android:textColor="#888"
+                    android:gravity="end"
+                    android:layout_gravity="end"
+                    android:paddingEnd="59dp" />
                 </LinearLayout>
 
                 <!-- Dirección con icono -->
@@ -194,9 +195,10 @@
                         android:maxLines="1" />
 
                     <TextView
+                        android:id="@+id/restaurant_address"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="San Miguel"
+                        android:text="Dirección"
                         android:textSize="14sp"
                         android:textColor="#888"
                         android:gravity="center" />
@@ -219,9 +221,10 @@
                         android:maxLines="1" />
 
                     <TextView
+                        android:id="@+id/restaurant_category"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="· Chifa"
+                        android:text="Tipo de comida"
                         android:textSize="14sp"
                         android:textColor="#888"
                         android:gravity="start"

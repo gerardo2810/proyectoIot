@@ -54,6 +54,13 @@ public class RestauranteAdapter extends RecyclerView.Adapter<RestauranteAdapter.
         // Acción del botón restaurante
         holder.linearLayout.setOnClickListener(v -> {
             Intent intent = new Intent(context, PerfilRestauranteActivity.class);
+
+            // Pasar los datos del restaurante seleccionado
+            intent.putExtra("nombre_restaurante", option.getNameTitlte());
+            intent.putExtra("categoria_restaurante", option.getCategory());
+            intent.putExtra("precio_delivery", option.getProductPrice());
+            intent.putExtra("direccion_restaurante", option.getLocation());
+
             context.startActivity(intent);
         });
 

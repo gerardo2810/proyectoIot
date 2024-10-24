@@ -38,6 +38,26 @@ public class PerfilRestauranteActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_perfil_restaurante_cliente);
 
+        // Obtener los datos del Intent
+        Intent intent = getIntent();
+        String nombreRestaurante = intent.getStringExtra("nombre_restaurante");
+        String categoriaRestaurante = intent.getStringExtra("categoria_restaurante");
+        double precioDelivery = intent.getDoubleExtra("precio_delivery", 0.0);
+        String direccionRestaurante = intent.getStringExtra("direccion_restaurante");
+
+        // Configurar los TextViews con los datos recibidos
+        TextView nombreTextView = findViewById(R.id.restaurant_name);
+        TextView categoriaTextView = findViewById(R.id.restaurant_category);
+        TextView deliveryTextView = findViewById(R.id.delivery_price);
+        TextView direccionTextView = findViewById(R.id.restaurant_address);
+
+        // Asignar los valores a los TextViews
+        nombreTextView.setText(nombreRestaurante);
+        categoriaTextView.setText(categoriaRestaurante);
+        deliveryTextView.setText(String.format("S/. %.2f", precioDelivery));
+        direccionTextView.setText(direccionRestaurante);
+
+
         // Configurar el RecyclerView
         RecyclerView recyclerProductos = findViewById(R.id.recycler_perfil_restaurante);
         recyclerProductos.setLayoutManager(new LinearLayoutManager(this));
@@ -62,9 +82,9 @@ public class PerfilRestauranteActivity extends AppCompatActivity {
 
         // Listener para el icono del carrito, que abre la actividad del carrito
         carritoIcon.setOnClickListener(view -> {
-            Intent intent = new Intent(PerfilRestauranteActivity.this, CarritoClienteActivity.class);
-            intent.putExtra("carrito", new ArrayList<>(carritoList)); // Pasar la lista del carrito
-            startActivity(intent);
+            Intent intent1 = new Intent(PerfilRestauranteActivity.this, CarritoClienteActivity.class);
+            intent1.putExtra("carrito", new ArrayList<>(carritoList)); // Pasar la lista del carrito
+            startActivity(intent1);
         });
 
         // Buscar el campo de búsqueda
@@ -92,8 +112,8 @@ public class PerfilRestauranteActivity extends AppCompatActivity {
         // Listener para el botón de retroceso que regresa a inicio_cliente
         ImageView backArrow = findViewById(R.id.back_arrow);
         backArrow.setOnClickListener(view -> {
-            Intent intent = new Intent(PerfilRestauranteActivity.this, InicioClienteActivity.class);
-            startActivity(intent);
+            Intent intent2 = new Intent(PerfilRestauranteActivity.this, InicioClienteActivity.class);
+            startActivity(intent2);
             finish(); // Cierra la actividad actual
         });
 

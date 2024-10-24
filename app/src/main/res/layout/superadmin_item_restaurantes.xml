@@ -5,57 +5,48 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <androidx.cardview.widget.CardView
+    <LinearLayout
         android:id="@+id/card_view_restaurante"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:layout_marginHorizontal="8dp"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="4dp"
+        android:background="@drawable/border_perfil"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="16dp">
 
+        <!-- Imagen circular -->
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/circle_shape"
+            android:src="@drawable/placeholder" />
+
+        <!-- Información de la solicitud -->
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:padding="16dp">
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-            <!-- Imagen circular -->
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginEnd="16dp"
-                android:background="@drawable/circle_shape"
-                android:src="@drawable/placeholder" />
-
-            <!-- Información de la solicitud -->
-            <LinearLayout
-                android:layout_width="0dp"
+            <TextView
+                android:id="@+id/textViewRestauranteVerReporte"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/textViewRestauranteVerReporte"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="NOMBRE DEL RESTAURANTE"
-                    android:textColor="#000000"
-                    android:textSize="16sp" />
-            </LinearLayout>
-
-            <!-- Flecha hacia la derecha -->
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/baseline_arrow_forward_ios_24"
-                android:tint="#888888" />
+                android:text="NOMBRE DEL RESTAURANTE"
+                android:textSize="16sp" />
         </LinearLayout>
 
-    </androidx.cardview.widget.CardView>
+        <!-- Flecha hacia la derecha -->
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/baseline_arrow_forward_ios_24"/>
+    </LinearLayout>
 
     <TextView
         android:id="@+id/textView1"

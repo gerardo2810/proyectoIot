@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -28,7 +29,7 @@ public class gestion_reportes_superadmin extends AppCompatActivity {
         //Gestion de los cardviews
         for (int i = 1; i <= 2; i++) {
             int arrowIconId = getResources().getIdentifier("arrow_icon_" + i, "id", getPackageName());
-            ImageView arrowIcon = findViewById(arrowIconId);
+            LinearLayout arrowIcon = findViewById(arrowIconId);
             final int finalI = i;
 
             arrowIcon.setOnClickListener(v -> {

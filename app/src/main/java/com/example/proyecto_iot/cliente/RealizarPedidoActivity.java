@@ -70,7 +70,7 @@ public class RealizarPedidoActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // Aquí puedes agregar la lógica de pago
                 // Por ejemplo, redirigir a una página de confirmación de pedido o procesamiento de pago
-                Intent intent = new Intent(RealizarPedidoActivity.this, SeguimientoPedidoActivity.class); // Crear esta actividad según la estructura de tu app
+                Intent intent = new Intent(RealizarPedidoActivity.this, PedidoAceptadoCliente.class); // Crear esta actividad según la estructura de tu app
                 startActivity(intent);
             }
         });

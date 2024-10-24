@@ -1,7 +1,13 @@
 package com.example.proyecto_iot.cliente;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,14 +26,16 @@ public class ListaRestaurantesCategoriasClienteActivity extends AppCompatActivit
     private RecyclerView recyclerView;
     private RestauranteAdapter restauranteAdapter;
     private List<Restaurante> restauranteList = new ArrayList<>(); // Asegúrate de inicializar la lista
+    private EditText searchText;
+    private String selectedCategory; // Declaro selectedCategory como variable global
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lista_restaurantes_categorias_cliente);
 
-        // Obtener la categoría seleccionada del Intent
-        String selectedCategory = getIntent().getStringExtra("selectedCategory");
+        // Obtener la categoría seleccionada del Intent y asignarla a la variable global
+        selectedCategory = getIntent().getStringExtra("selectedCategory");
 
         // Inicializar el RecyclerView
         recyclerView = findViewById(R.id.recycler_lista_restaurantes_categoria);
@@ -42,6 +50,37 @@ public class ListaRestaurantesCategoriasClienteActivity extends AppCompatActivit
         } else {
             Toast.makeText(this, "No se recibió ninguna categoría.", Toast.LENGTH_SHORT).show();
         }
+
+        // Lógica para el botón de retroceso (flecha)
+        ImageView backArrow = findViewById(R.id.back_arrow);
+        backArrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Intent para regresar a la vista de inicio
+                Intent intent = new Intent(ListaRestaurantesCategoriasClienteActivity.this, InicioClienteActivity.class);
+                startActivity(intent);
+                finish(); // Finaliza la actividad actual
+            }
+        });
+
+        // Inicializar el buscador
+        searchText = findViewById(R.id.search_text);
+        searchText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // No se necesita acción antes del cambio de texto
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                filterRestaurantsByName(s.toString()); // Filtrar los restaurantes por nombre
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                // No se necesita acción después del cambio de texto
+            }
+        });
     }
 
     // Método para filtrar los restaurantes por categoría
@@ -64,6 +103,23 @@ public class ListaRestaurantesCategoriasClienteActivity extends AppCompatActivit
             // Inicializar el adaptador si aún no está inicializado
             restauranteAdapter = new RestauranteAdapter(this, filteredList);
             recyclerView.setAdapter(restauranteAdapter);
+        }
+    }
+
+    // Método para filtrar los restaurantes por nombre dentro de la misma categoría
+    private void filterRestaurantsByName(String name) {
+        List<Restaurante> filteredList = new ArrayList<>();
+        for (Restaurante restaurante : restauranteList) {
+            // Filtrar solo los restaurantes que pertenezcan a la categoría seleccionada
+            if (restaurante.getCategory().equalsIgnoreCase(selectedCategory) &&
+                    restaurante.getNameTitlte().toLowerCase().contains(name.toLowerCase())) {
+                filteredList.add(restaurante);
+            }
+        }
+
+        // Actualizar el adaptador con la lista filtrada por nombre y categoría
+        if (restauranteAdapter != null) {
+            restauranteAdapter.updateList(filteredList);
         }
     }
 

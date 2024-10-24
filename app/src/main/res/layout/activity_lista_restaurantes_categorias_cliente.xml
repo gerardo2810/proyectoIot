@@ -6,6 +6,41 @@
     android:orientation="vertical"
     android:padding="16dp">
 
+    <!-- Contenedor circular para la flecha -->
+    <FrameLayout
+        android:id="@+id/back_arrow_container"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_margin="16dp"
+        android:background="@drawable/circle_shape">
+
+        <!-- Flecha centrada dentro del círculo -->
+        <ImageView
+            android:id="@+id/back_arrow"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/baseline_arrow_back_ios_24"
+            android:layout_gravity="center"
+            android:paddingStart="5dp"/>
+    </FrameLayout>
+
+    <!-- Barra de búsqueda -->
+    <LinearLayout
+        android:id="@+id/search_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="8dp">
+
+        <EditText
+            android:id="@+id/search_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="¿Qué es lo que quieres comer?"
+            android:padding="12dp"/>
+    </LinearLayout>
+
     <!-- RecyclerView para mostrar los restaurantes filtrados por categoría -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_lista_restaurantes_categoria"

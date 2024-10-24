@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".cliente.PedidoAceptadoCliente"
+    android:background="#00D19C"> <!-- Fondo verde claro -->
+
+    <!-- Flecha dentro de un círculo blanco (Header) -->
+    <RelativeLayout
+        android:id="@+id/back_circle_layout"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/circle_white_shape"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageButton
+            android:id="@+id/back_arrow"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/baseline_arrow_back_ios_24"
+        android:contentDescription="Flecha de volver"
+        android:layout_centerInParent="true"/>
+    </RelativeLayout>
+
+    <!-- Círculo con el check -->
+    <RelativeLayout
+        android:id="@+id/circle_layout"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="80dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/pedidoaceptado"
+        app:layout_constraintTop_toBottomOf="@id/back_circle_layout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:id="@+id/check_icon"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/baseline_check_circle_outline_24" /> <!-- Imagen del check -->
+    </RelativeLayout>
+
+    <!-- Sección inferior blanca con el texto -->
+    <LinearLayout
+        android:id="@+id/white_section"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:orientation="vertical"
+        android:padding="50dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/order_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="¡Gracias por tu pedido! 🙌"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:textColor="#000000"
+            android:layout_gravity="center" />
+
+        <TextView
+            android:id="@+id/sub_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="En unos segundos, verás su estado en tiempo real."
+            android:textSize="14sp"
+            android:gravity="center"
+            android:textColor="#000000"
+            android:layout_gravity="center"
+            android:paddingTop="8dp"/>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

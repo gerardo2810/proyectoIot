@@ -177,6 +177,16 @@
                         android:layout_height="45dp"
                         android:layout_marginTop="2dp"
                         android:text="Seleccionar foto"
+
+                        
+                        android:textSize="13sp" />
+
+                    <Button
+                        android:id="@+id/buttonUploadImage"
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:layout_marginTop="10dp"
+                        android:text="Registrar Restaurante"
                         android:textSize="13sp" />
 
                     <ImageView

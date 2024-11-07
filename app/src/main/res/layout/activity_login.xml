@@ -7,103 +7,18 @@
     android:background="@drawable/btn1"
     tools:context=".LoginActivity">
 
-    <ImageView
-        android:id="@+id/imageLogo"
-        android:layout_width="268dp"
-        android:layout_height="273dp"
-        android:layout_marginTop="48dp"
-        android:src="@drawable/logoapp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <EditText
-        android:id="@+id/emailEditText"
-        android:layout_width="358dp"
-        android:layout_height="48dp"
-        android:ems="10"
-        android:hint="Correo electrónico"
-        android:inputType="textEmailAddress"
-        android:textStyle="bold"
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/login_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
+        android:text="Login"
+        app:icon="@drawable/baseline_login_24"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.49"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.518" />
-
-    <EditText
-        android:id="@+id/passwordEditText"
-        android:layout_width="359dp"
-        android:layout_height="49dp"
-        android:layout_marginTop="140dp"
-        android:hint="Contraseña"
-        android:inputType="textPassword"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.511" />
-
-    <Button
-        android:id="@+id/loginButton"
-        android:layout_width="233dp"
-        android:layout_height="53dp"
-        android:layout_marginTop="60dp"
-        android:backgroundTint="#9F4CA3"
-        android:text="Ingresar"
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.715" />
-
-    <Button
-        android:id="@+id/signUpButton"
-        android:layout_width="292dp"
-        android:layout_height="43dp"
-        android:text="Quiero ser repartidor"
-        android:onClick="abrirPagRegistroRepartidor"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.493"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.935" />
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="155dp"
-        android:layout_height="18dp"
-        android:text="Regístrate ahora"
-        android:textAlignment="center"
-        android:textColor="#5252B3"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.842" />
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="155dp"
-        android:layout_height="18dp"
-        android:text="No tienes una cuenta"
-        android:textAlignment="center"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.81" />
-
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

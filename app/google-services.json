@@ -12,7 +12,12 @@
           "package_name": "com.example.proyecto_iot"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "631072194367-71a9ac83ka5a7l3ojmugr3utd5nt0anl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCXdDWL1rMjMSGlLyRhfAHXRKNoenSB-0c"
@@ -20,7 +25,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "631072194367-71a9ac83ka5a7l3ojmugr3utd5nt0anl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

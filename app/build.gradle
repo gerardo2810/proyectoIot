@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.proyecto_iot"
-        minSdk 26
+        minSdk 31
         targetSdk 34
         versionCode 1
         versionName "1.0"
@@ -56,6 +56,9 @@ dependencies {
     //Google Firebase
     implementation platform('com.google.firebase:firebase-bom:32.4.1')
     implementation("com.google.firebase:firebase-firestore")
+
+    //Google Firebase Auth
     implementation 'com.google.firebase:firebase-auth'
+    implementation 'com.firebaseui:firebase-ui-auth:7.2.0'
 
 }

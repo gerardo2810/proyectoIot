@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">Proyecto_Iot</string>
     <string name="chinawork_chifa">Chinawork-Chifa</string>
+
+    <string name="fui_sign_in_with_email">Ingresar con email</string>
+    <string name="fui_sign_in_with_google">Ingresar con Google</string>
+
     <string-array name="document_types">
         <item>Tipo de Documento de Identidad</item>
         <item>DNI</item>

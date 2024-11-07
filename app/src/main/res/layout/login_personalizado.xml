@@ -8,8 +8,8 @@
 
     <ImageView
         android:id="@+id/imageLogo"
-        android:layout_width="270dp"
-        android:layout_height="270dp"
+        android:layout_width="300dp"
+        android:layout_height="350dp"
         android:layout_marginTop="50dp"
         android:src="@drawable/logoapp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -18,73 +18,22 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-        android:id="@+id/emailEditText"
-        android:layout_width="358dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="10dp"
-        android:ems="10"
-        android:hint="Correo electrónico"
-        android:inputType="textEmailAddress"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.49"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageLogo" />
-
-    <EditText
-        android:id="@+id/passwordEditText"
-        android:layout_width="359dp"
-        android:layout_height="49dp"
-        android:layout_marginTop="5dp"
-        android:hint="Contraseña"
-        android:inputType="textPassword"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/emailEditText" />
-
-    <Button
-        android:id="@+id/loginButton"
-        android:layout_width="233dp"
-        android:layout_height="53dp"
-        android:layout_marginTop="10dp"
-        android:backgroundTint="#9F4CA3"
-        android:text="Ingresar"
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/passwordEditText" />
-
-    <Button
-        android:id="@+id/signUpButton"
-        android:layout_width="292dp"
-        android:layout_height="43dp"
-        android:layout_marginTop="20dp"
-        android:onClick="abrirPagRegistroRepartidor"
-        android:text="Quiero ser repartidor"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.493"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_login_mail" />
-
     <Button
         android:id="@+id/btn_login_google"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="Button"
+        android:layout_marginTop="50dp"
+        android:text="Ingresar por google"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/loginButton" />
+        app:layout_constraintTop_toBottomOf="@+id/imageLogo" />
 
     <Button
         android:id="@+id/btn_login_mail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:text="Button"
+        android:layout_marginTop="15dp"
+        android:text="Ingresar por correo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_login_google" />

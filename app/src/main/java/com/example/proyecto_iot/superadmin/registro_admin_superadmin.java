@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -21,6 +22,7 @@ public class registro_admin_superadmin extends AppCompatActivity {
 
     private BottomNavigationView bottomNavigationView;
     private Spinner spinnerTipoAdmin;
+    private EditText editTextDNI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +43,8 @@ public class registro_admin_superadmin extends AppCompatActivity {
                 R.array.superadmin_lista_tipoRegistro, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerTipoAdmin.setAdapter(adapter);
+
+        editTextDNI = findViewById(R.id.editTextDNI);
 
         Button btnRegistrar = findViewById(R.id.btnRegistrar);
         btnRegistrar.setOnClickListener(v -> registrarAdministrador());
@@ -81,8 +85,20 @@ public class registro_admin_superadmin extends AppCompatActivity {
         } else if (tipoSeleccionado.equals("Existente")) {
             mostrarDialogRestaurante();
         } else if (tipoSeleccionado.equals("Nuevo")) {
-            Intent intent = new Intent(registro_admin_superadmin.this, registro_restaurante_superadmin.class);
-            startActivity(intent);
+
+            String dniAdmin = editTextDNI.getText().toString();
+
+            if(dniAdmin.isEmpty()){
+                Toast.makeText(this, "Debe rellanar los datos", Toast.LENGTH_SHORT).show();
+            } else {
+                if (dniAdmin.length() == 8) {
+                    Intent intent = new Intent(registro_admin_superadmin.this, registro_restaurante_superadmin.class);
+                    intent.putExtra("dni_admin", dniAdmin);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(this, "El DNI debe tener 8 digitos", Toast.LENGTH_SHORT).show();
+                }
+            }
         }
     }
 

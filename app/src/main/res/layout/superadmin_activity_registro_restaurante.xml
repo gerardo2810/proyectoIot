@@ -101,7 +101,7 @@
 
                     <EditText
                         android:background="@drawable/border_editar_info"
-                        android:id="@+id/editTextNombre"
+                        android:id="@+id/editTextNombreRest"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textMultiLine"
@@ -137,7 +137,7 @@
 
                     <EditText
                         android:background="@drawable/border_editar_info"
-                        android:id="@+id/editTextApellidos"
+                        android:id="@+id/editTextDescripcionRest"
                         android:layout_width="match_parent"
                         android:layout_height="100dp"
                         android:inputType="textMultiLine"
@@ -182,7 +182,7 @@
                         android:textSize="13sp" />
 
                     <Button
-                        android:id="@+id/buttonUploadImage"
+                        android:id="@+id/buttonRegistrarRest"
                         android:layout_width="match_parent"
                         android:layout_height="45dp"
                         android:layout_marginTop="10dp"

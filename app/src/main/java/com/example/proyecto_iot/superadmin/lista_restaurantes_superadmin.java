@@ -21,6 +21,9 @@ import com.example.proyecto_iot.superadmin.RecyclerView.RestauranteAdapterSA;
 import com.example.proyecto_iot.superadmin.RecyclerView.RestauranteSA;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +33,6 @@ public class lista_restaurantes_superadmin extends AppCompatActivity {
     private BottomNavigationView bottomNavigationView;
     private RecyclerView recyclerViewRestaurantesReportes;
     private RestauranteAdapterSA adapter;
-    private List<RestauranteSA> listaRestaurante;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,20 +51,25 @@ public class lista_restaurantes_superadmin extends AppCompatActivity {
         recyclerViewRestaurantesReportes = findViewById(R.id.recyclerViewListaRestaurantesSA);
         recyclerViewRestaurantesReportes.setLayoutManager(new LinearLayoutManager(this));
 
-        listaRestaurante = new ArrayList<>();
-        listaRestaurante.add(new RestauranteSA("Huaca Pucllana"));
-        listaRestaurante.add(new RestauranteSA("Cala"));
-        listaRestaurante.add(new RestauranteSA("Costanera 700"));
-        listaRestaurante.add(new RestauranteSA("El Mercado"));
-        listaRestaurante.add(new RestauranteSA("Malabar"));
-        listaRestaurante.add(new RestauranteSA("Mayta"));
-        listaRestaurante.add(new RestauranteSA("Amoramar"));
-        listaRestaurante.add(new RestauranteSA("La Picantería"));
-        listaRestaurante.add(new RestauranteSA("Siete Sopas"));
-        listaRestaurante.add(new RestauranteSA("Segundo Muelle"));
-
+        List<RestauranteSA> listaRestaurante = new ArrayList<>();
         adapter = new RestauranteAdapterSA(listaRestaurante);
         recyclerViewRestaurantesReportes.setAdapter(adapter);
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        CollectionReference restaurantesRef = db.collection("restaurantes");
+        // Obtener los datos
+        restaurantesRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+                listaRestaurante.clear(); // Limpiar lista antes de agregar elementos
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    RestauranteSA restaurante = document.toObject(RestauranteSA.class);
+                    listaRestaurante.add(restaurante);
+                }
+                adapter.notifyDataSetChanged(); // Notificar al adaptador sobre los cambios
+            } else {
+                // Manejar el error si la tarea no fue exitosa
+            }
+        });
         //----------------------------------------------------------------------------
 
         //Gestion de la bottom navigation bar

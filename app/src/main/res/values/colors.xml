@@ -156,14 +156,29 @@
 
     <color name="green_dark">#062925</color>
     <color name="green_normal">#044a42</color>
-    <color name="green_light">#3a9188</color>
     <color name="green_light_2">#b8e1dd</color>
-
     <color name="order_delivered">#72CB90</color>
     <color name="order_in_preparation">#EA9595</color>
     <color name="order_on_the_way">#F4E661</color>
     <color name="order_in_store">#C5AAD6</color>
     <color name="default_order_background">#FFFFFF</color>
+    <color name="purple_500">#FF018786</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="EditTextBG">#EFEFEF</color>
+    <color name="lblPrimary">#E09722</color>
+    <color name="IconFocused">#E09722</color>
+    <color name="IconGray">#B5B5B5</color>
+    <color name="bgPrimary">#E09722</color>
+    <color name="btnPrimary">#E09722</color>
+    <color name="btnExit">#00BCD4</color>
+    <color name="graytint">#40434A</color>
+    <color name="googleColor">#DB4437</color>
+    <color name="facebookColor">#3B5998</color>
+    <color name="green_light">#52AFA5</color>
+    <color name="edit_color">#FF9800</color>
+    <color name="save_color">#4CAF50</color>
+    <color name="edit_mode_color">#FFFFFF</color> <!-- Color blanco -->
+    <color name="default_background_color">#E6EBED</color>
 
     <color name="con_repartidor">#669800</color>
     <color name="sin_repartidor">#FD4444</color>

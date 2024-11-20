@@ -4,137 +4,211 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.proyecto_iot.admin_restaurante.AbrirRestauranteActivity;
+import com.example.proyecto_iot.cliente.InicioClienteActivity;
+import com.example.proyecto_iot.repartidor.InicioRepartidorActivity;
 import com.example.proyecto_iot.repartidor.RegistroRepartidorActivity;
+import com.example.proyecto_iot.superadmin.gestion_usuarios_superadmin;
 import com.firebase.ui.auth.AuthMethodPickerLayout;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Arrays;
 import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
 
-    Button loginBtn;
-    private final static String TAG = "msg-test";
+    private static final int RC_SIGN_IN = 9001;
+    private FirebaseAuth mAuth;
+    private GoogleSignInClient mGoogleSignInClient;
+    private FirebaseFirestore db;
+
+    private EditText emailEditText;
+    private EditText passwordEditText;
+    private Button loginButton;
+    private TextView lblRegister;
+    private Button googleSignInButton, loginRepartidorButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_login1);
 
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
-        //verifica si el usuario ya se encuentra logueado
-        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-        if (currentUser != null) {
-            if (currentUser.isEmailVerified()) {
-                Log.d("msg-test", "Firebase uid: " + currentUser.getUid());
-                goToMainActivity();
-            }
+        emailEditText = findViewById(R.id.txtMail);
+        passwordEditText = findViewById(R.id.txtPasswordEditText);
+        loginButton = findViewById(R.id.btnLogin);
+        lblRegister = findViewById(R.id.lblRegister);
+        googleSignInButton = findViewById(R.id.btnGoogle);
+        loginRepartidorButton = findViewById(R.id.btnRegistrarRepartidor);
+
+        // Configurar Google Sign-In
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
+        loginButton.setEnabled(false);
+        emailEditText.addTextChangedListener(loginTextWatcher);
+        passwordEditText.addTextChangedListener(loginTextWatcher);
+
+        // Inicio de sesión con correo y contraseña
+        loginButton.setOnClickListener(v -> signInWithEmail(emailEditText.getText().toString(), passwordEditText.getText().toString()));
+
+        // Registro
+        lblRegister.setOnClickListener(v -> openRegisterActivity());
+
+        // Botón de inicio de sesión con Google
+        googleSignInButton.setOnClickListener(v -> signInWithGoogle());
+
+        loginRepartidorButton.setOnClickListener(v -> openRegisterRepartidorActivity());
+    }
+
+    private TextWatcher loginTextWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            String emailInput = emailEditText.getText().toString().trim();
+            String passwordInput = passwordEditText.getText().toString().trim();
+
+            loginButton.setEnabled(!emailInput.isEmpty() && !passwordInput.isEmpty());
         }
 
-        loginBtn = findViewById(R.id.login_btn);
+        @Override
+        public void afterTextChanged(Editable s) { }
+    };
 
-        loginBtn.setOnClickListener(view -> {
-
-            loginBtn.setEnabled(false);
-
-            List<AuthUI. IdpConfig> providers = Arrays.asList(
-                    new AuthUI.IdpConfig.EmailBuilder().build(),
-                    new AuthUI.IdpConfig.GoogleBuilder().build()
-            );
-
-            AuthMethodPickerLayout customLayout =
-                    new AuthMethodPickerLayout.Builder(R.layout.login_personalizado)
-                            .setGoogleButtonId(R.id.btn_login_google)
-                            .setEmailButtonId(R.id.btn_login_mail)
-                            .build();
-
-            //no hay sesión
-            Intent intent = AuthUI.getInstance()
-                    .createSignInIntentBuilder()
-                    .setIsSmartLockEnabled(false)
-                    .setAuthMethodPickerLayout(customLayout)
-                    .setAvailableProviders(providers)
-                    .build();
-
-            signInLauncher.launch(intent);
-        });
-
-    }
-
-    ActivityResultLauncher<Intent> signInLauncher = registerForActivityResult(
-            new FirebaseAuthUIActivityResultContract(),
-            result -> {
-                if (result.getResultCode() == RESULT_OK) {
-                    FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-
-                    FirebaseUser user = firebaseAuth.getCurrentUser();
-                    if (user != null) {
-
-                        Log.d(TAG, "Firebase uid: " + user.getUid() + "\n" +
-                                "Display name: " + user.getDisplayName() + "\n" +
-                                "Email: " + user.getEmail());
-
-                        user.reload().addOnCompleteListener(task -> {
-                            //Verificacion de email
-                            if (user.isEmailVerified()) {
-                                goToMainActivity();
-                            } else {
-                                user.sendEmailVerification().addOnCompleteListener(task2 -> {
-                                    Toast.makeText(LoginActivity.this,
-                                            "Se le ha enviado un correo para validar su cuenta",
-                                            Toast.LENGTH_LONG).show();
-                                });
-                            }
-
-                        });
-                    } else {
-                        Log.d(TAG, "user == null");
-                    }
-                } else {
-                    Log.d(TAG, "Canceló el Log-in");
-                }
-                loginBtn.setEnabled(true);
-            }
-    );
-
-    public void abrirPagRegistroRepartidor (View view) {
-        Intent intent = new Intent(this, RegistroRepartidorActivity.class);
+    public void openRegisterActivity() {
+        Intent intent = new Intent(this, RegisterActivity.class);
         startActivity(intent);
     }
-    public void mostrarAlerta(){
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-        alertDialog.setTitle("Registro Exitoso");
-        alertDialog.setMessage("¡Gracias por querer unirte al equipo!\n" +
-                "\n" +
-                "Esta información será validada por el administrador\n" +
-                "\n" +
-                "Pronto te llegará un correo para el acceso a tu cuenta");
-        alertDialog.setPositiveButton("Cerrar",
-                new DialogInterface.OnClickListener(){
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Log.d("msgAlerta","Positive");
-                    }
-                });
-        alertDialog.show();
+
+    public void openRegisterRepartidorActivity() {
+        Intent intent = new Intent(this, RegisterRepartidorActivity.class);
+        startActivity(intent);
     }
 
-    public void goToMainActivity() {
-        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+    private void signInWithEmail(String email, String password) {
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        checkIfNewUser(user);
+                    } else {
+                        Toast.makeText(LoginActivity.this, "Error en inicio de sesión", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void signInWithGoogle() {
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == RC_SIGN_IN) {
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            try {
+                GoogleSignInAccount account = task.getResult(ApiException.class);
+                firebaseAuthWithGoogle(account);
+            } catch (ApiException e) {
+                Toast.makeText(this, "Error en autenticación con Google", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
+        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        checkIfNewUser(user);
+                    } else {
+                        Toast.makeText(LoginActivity.this, "Error en autenticación con Google", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void checkIfNewUser(FirebaseUser user) {
+        String uid = user.getUid();
+        String email = user.getEmail();
+
+        db.collection("clientes").document(uid).get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                navigateToActivity(InicioClienteActivity.class);
+            } else {
+                checkOtherCollections(uid, email);
+            }
+        });
+    }
+
+    private void checkOtherCollections(String uid, String email) {
+        // Verificar repartidores
+        db.collection("repartidores").document(uid).get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                navigateToActivity(InicioRepartidorActivity.class);
+            } else {
+                // Verificar administradores
+                db.collection("administradores").document(uid).get().addOnSuccessListener(adminSnapshot -> {
+                    if (adminSnapshot.exists()) {
+                        navigateToActivity(AbrirRestauranteActivity.class);
+                    } else {
+                        // Verificar superadmin
+                        db.collection("superadmin").document(uid).get().addOnSuccessListener(superAdminSnapshot -> {
+                            if (superAdminSnapshot.exists()) {
+                                navigateToActivity(gestion_usuarios_superadmin.class);
+                            } else {
+                                // Usuario nuevo
+                                Intent intent = new Intent(LoginActivity.this, CompleteRegisterActivity.class);
+                                intent.putExtra("email", email);
+                                startActivity(intent);
+                                finish();
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    }
+
+    private void navigateToActivity(Class<?> targetActivity) {
+        Intent intent = new Intent(LoginActivity.this, targetActivity);
         startActivity(intent);
         finish();
     }
-
 }
+

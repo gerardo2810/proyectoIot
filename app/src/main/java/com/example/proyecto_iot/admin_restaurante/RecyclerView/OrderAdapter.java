@@ -2,6 +2,7 @@ package com.example.proyecto_iot.admin_restaurante.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,22 +46,21 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         holder.tvOrderStatus.setText(order.getEstado());
         holder.tvOrderCliente.setText(order.getCliente());
 
-        // Cambiar el color de fondo dependiendo del estado de la orden
         switch (order.getEstado()) {
             case "ENTREGADO":
-                holder.tvOrderStatus.setBackgroundColor(ContextCompat.getColor(context, R.color.order_delivered));
+                holder.tvOrderStatus.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.order_delivered)));
                 break;
             case "EN PREPARACIÓN":
-                holder.tvOrderStatus.setBackgroundColor(ContextCompat.getColor(context, R.color.order_in_preparation));
+                holder.tvOrderStatus.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.order_in_preparation)));
                 break;
             case "EN CAMINO":
-                holder.tvOrderStatus.setBackgroundColor(ContextCompat.getColor(context, R.color.order_on_the_way));
+                holder.tvOrderStatus.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.order_on_the_way)));
                 break;
             case "EN TIENDA":
-                holder.tvOrderStatus.setBackgroundColor(ContextCompat.getColor(context, R.color.order_in_store));
+                holder.tvOrderStatus.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.order_in_store)));
                 break;
             default:
-                holder.tvOrderStatus.setBackgroundColor(ContextCompat.getColor(context, R.color.default_order_background));
+                holder.tvOrderStatus.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.default_order_background)));
                 break;
         }
 

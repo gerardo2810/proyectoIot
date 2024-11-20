@@ -95,11 +95,12 @@
 
             <TextView
                 android:id="@+id/tv_order_status"
-                android:layout_width="135dp"
+                android:layout_width="match_parent"
                 android:layout_height="33dp"
                 android:layout_gravity="center"
                 android:background="@drawable/border_editar_info"
                 android:padding="7dp"
+                android:backgroundTint="@color/white"
                 android:text="EN CAMINO"
                 android:textAlignment="center"
                 android:textAllCaps="true"

@@ -113,10 +113,10 @@
 
                     <EditText
                         android:id="@+id/et_product_name"
-                        android:layout_width="188dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/border_editar_info"
-                        android:padding="10dp"
+                        android:padding="6dp"
                         android:text="Langostinos Tempura 'Pop Corn'" />
                 </LinearLayout>
 

@@ -30,7 +30,7 @@ public class EditRestaurantInfoActivity extends AppCompatActivity {
             Toast.makeText(this, "Datos del restaurante guardados", Toast.LENGTH_SHORT).show();
         });
 
-        ImageView backButton = findViewById(R.id.back_button);
+        ImageView backButton = findViewById(R.id.back_button2);
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

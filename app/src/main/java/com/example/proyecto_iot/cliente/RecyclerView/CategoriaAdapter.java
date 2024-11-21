@@ -16,7 +16,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.admin_restaurante.AgregarCategoriaActivity;
 import com.example.proyecto_iot.admin_restaurante.EditarProductoActivity;
-import com.example.proyecto_iot.admin_restaurante.RecyclerView.Categoria;
 import com.example.proyecto_iot.cliente.InicioClienteActivity;
 import com.example.proyecto_iot.cliente.ListaRestaurantesCategoriasClienteActivity;
 
@@ -24,10 +23,10 @@ import java.util.List;
 
 public class CategoriaAdapter extends RecyclerView.Adapter<CategoriaAdapter.CategoriaViewHolder>{
 
-    private List<Categoria> categoryList;
+    private List<com.example.proyecto_iot.cliente.RecyclerView.Categoria> categoryList;
     private Context context;
 
-    public CategoriaAdapter(List<Categoria> categoryList, Context context) {
+    public CategoriaAdapter(List<com.example.proyecto_iot.cliente.RecyclerView.Categoria> categoryList, Context context) {
         this.categoryList = categoryList;
         this.context = context;
     }

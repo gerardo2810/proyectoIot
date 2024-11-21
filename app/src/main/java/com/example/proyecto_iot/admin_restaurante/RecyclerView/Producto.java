@@ -2,31 +2,16 @@ package com.example.proyecto_iot.admin_restaurante.RecyclerView;
 
 public class Producto {
     private String id;
-    private String name;
-    private String descripcion;
-    private int stock;
-    private String categoria;
-    private double price;
-    private boolean isActive;
-    private int imageResId; // ID del recurso de la imagen del producto
+    private String Nombre;
+    private String Descripcion;
+    private String Imagen;
+    private String Precio;
+    private String Stock;
+    private String TiempoPreparacion;
+    private String idCategoria;
+    private Boolean isActive;
 
-    public Producto(String id, String name, String descripcion, String categoria, int stock, double price, boolean isActive, int imageResId) {
-        this.id = id;
-        this.name = name;
-        this.descripcion = descripcion;
-        this.categoria = categoria;
-        this.stock = stock;
-        this.price = price;
-        this.isActive = isActive;
-        this.imageResId = imageResId;
-    }
-
-    public String getCategoria() {
-        return categoria;
-    }
-
-    public void setCategoria(String categoria) {
-        this.categoria = categoria;
+    public Producto() {
     }
 
     public String getId() {
@@ -37,51 +22,67 @@ public class Producto {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getNombre() {
+        return Nombre;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getStock() {
-        return stock;
-    }
-
-    public void setStock(int stock) {
-        this.stock = stock;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    public boolean isActive() {
-        return isActive;
-    }
-
-    public void setActive(boolean active) {
-        isActive = active;
-    }
-
-    public int getImageResId() {
-        return imageResId;
-    }
-
-    public void setImageResId(int imageResId) {
-        this.imageResId = imageResId;
+    public void setNombre(String nombre) {
+        Nombre = nombre;
     }
 
     public String getDescripcion() {
-        return descripcion;
+        return Descripcion;
     }
 
     public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
+        Descripcion = descripcion;
+    }
+
+    public String getImagen() {
+        return Imagen;
+    }
+
+    public void setImagen(String imagen) {
+        Imagen = imagen;
+    }
+
+    public String getPrecio() {
+        return Precio;
+    }
+
+    public void setPrecio(String precio) {
+        Precio = precio;
+    }
+
+    public String getStock() {
+        return Stock;
+    }
+
+    public void setStock(String stock) {
+        Stock = stock;
+    }
+
+    public String getTiempoPreparacion() {
+        return TiempoPreparacion;
+    }
+
+    public void setTiempoPreparacion(String tiempoPreparacion) {
+        TiempoPreparacion = tiempoPreparacion;
+    }
+
+    public String getIdCategoria() {
+        return idCategoria;
+    }
+
+    public void setIdCategoria(String idCategoria) {
+        this.idCategoria = idCategoria;
+    }
+
+    public Boolean getActive() {
+        return isActive;
+    }
+
+    public void setActive(Boolean active) {
+        isActive = active;
     }
 }

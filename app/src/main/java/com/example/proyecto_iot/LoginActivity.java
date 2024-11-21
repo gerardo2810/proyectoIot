@@ -36,6 +36,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Arrays;
@@ -185,7 +186,27 @@ public class LoginActivity extends AppCompatActivity {
                 // Verificar administradores
                 db.collection("administradores").document(uid).get().addOnSuccessListener(adminSnapshot -> {
                     if (adminSnapshot.exists()) {
-                        navigateToActivity(AbrirRestauranteActivity.class);
+                        // Buscar el restaurante relacionado con este administrador
+                        db.collection("restaurantes")
+                                .whereEqualTo("idAdministrador", uid) // Suponiendo que el campo en "restaurante" que guarda el id del administrador se llama "adminId"
+                                .get()
+                                .addOnSuccessListener(querySnapshot -> {
+                                    if (!querySnapshot.isEmpty()) {
+                                        DocumentSnapshot restaurantDoc = querySnapshot.getDocuments().get(0);
+                                        String idRestaurante = restaurantDoc.getId();
+
+                                        // Pasar el idRestaurante a la actividad siguiente
+                                        Intent intent = new Intent(LoginActivity.this, AbrirRestauranteActivity.class);
+                                        intent.putExtra("idRestaurante", idRestaurante);
+                                        startActivity(intent);
+                                        finish();
+                                    } else {
+                                        Toast.makeText(LoginActivity.this, "No se encontró restaurante para este administrador", Toast.LENGTH_SHORT).show();
+                                    }
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(LoginActivity.this, "Error al buscar restaurante: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                });
                     } else {
                         // Verificar superadmin
                         db.collection("superadmin").document(uid).get().addOnSuccessListener(superAdminSnapshot -> {

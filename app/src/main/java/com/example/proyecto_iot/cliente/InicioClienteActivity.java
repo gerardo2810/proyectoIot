@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.proyecto_iot.R;
-import com.example.proyecto_iot.admin_restaurante.RecyclerView.Categoria;
+import com.example.proyecto_iot.cliente.RecyclerView.Categoria;
 import com.example.proyecto_iot.cliente.RecyclerView.CategoriaAdapter;
 import com.example.proyecto_iot.cliente.RecyclerView.Restaurante;
 import com.example.proyecto_iot.cliente.RecyclerView.RestauranteAdapter;
@@ -127,18 +127,18 @@ public class InicioClienteActivity extends AppCompatActivity {
     }
 
     // Método para obtener la lista de categorías
-    private List<Categoria> getCategoryList() {
-        List<Categoria> categoryList = new ArrayList<>();
-        categoryList.add(new Categoria("Pollo", R.drawable.chicken));
-        categoryList.add(new Categoria("Carnes", R.drawable.carne));
-        categoryList.add(new Categoria("Hamburguesas", R.drawable.hamburguesa));
-        categoryList.add(new Categoria("Pizzas", R.drawable.pizza));
-        categoryList.add(new Categoria("Pastas", R.drawable.pasta));
+    private List<com.example.proyecto_iot.cliente.RecyclerView.Categoria> getCategoryList() {
+        List<com.example.proyecto_iot.cliente.RecyclerView.Categoria> categoryList = new ArrayList<>();
+        categoryList.add(new com.example.proyecto_iot.cliente.RecyclerView.Categoria("Pollo", R.drawable.chicken));
+        categoryList.add(new com.example.proyecto_iot.cliente.RecyclerView.Categoria("Carnes", R.drawable.carne));
+        categoryList.add(new com.example.proyecto_iot.cliente.RecyclerView.Categoria("Hamburguesas", R.drawable.hamburguesa));
+        categoryList.add(new com.example.proyecto_iot.cliente.RecyclerView.Categoria("Pizzas", R.drawable.pizza));
+        categoryList.add(new com.example.proyecto_iot.cliente.RecyclerView.Categoria("Pastas", R.drawable.pasta));
         categoryList.add(new Categoria("Sushi", R.drawable.makis));
-        categoryList.add(new Categoria("Postres", R.drawable.postre));
-        categoryList.add(new Categoria("Helados", R.drawable.helados));
-        categoryList.add(new Categoria("Jugos", R.drawable.jugo));
-        categoryList.add(new Categoria("Bowls", R.drawable.bowls));
+        categoryList.add(new com.example.proyecto_iot.cliente.RecyclerView.Categoria("Postres", R.drawable.postre));
+        categoryList.add(new com.example.proyecto_iot.cliente.RecyclerView.Categoria("Helados", R.drawable.helados));
+        categoryList.add(new com.example.proyecto_iot.cliente.RecyclerView.Categoria("Jugos", R.drawable.jugo));
+        categoryList.add(new com.example.proyecto_iot.cliente.RecyclerView.Categoria("Bowls", R.drawable.bowls));
         return categoryList;
     }
 

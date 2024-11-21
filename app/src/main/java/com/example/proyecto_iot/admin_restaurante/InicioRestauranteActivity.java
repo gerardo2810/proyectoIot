@@ -1,5 +1,6 @@
 package com.example.proyecto_iot.admin_restaurante;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -19,13 +20,20 @@ public class InicioRestauranteActivity extends AppCompatActivity {
     private final ReportesRestauranteFragment reportesRestauranteFragment = new ReportesRestauranteFragment();
     private final PerfilRestauranteFragment perfilRestauranteFragment = new PerfilRestauranteFragment();
 
+    private String idRestaurante; // Variable para almacenar el ID del restaurante
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.restaurante_activity_inicio);
 
+        // Recibir el idRestaurante del intent
+        Intent intent = getIntent();
+        idRestaurante = intent.getStringExtra("idRestaurante");
+
         // Inicializa el BottomNavigationView
         BottomNavigationView navigation = findViewById(R.id.bottom_navigation);
+
         // Listener para manejar las selecciones en el BottomNavigationView
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
@@ -47,6 +55,10 @@ public class InicioRestauranteActivity extends AppCompatActivity {
                     } else if (item.getItemId() == R.id.navigation_ordenes) {
                         selectedFragment = ordenesRestauranteFragment;
                     } else if (item.getItemId() == R.id.navigation_carta) {
+                        // Pasar idRestaurante a CartaRestauranteFragment
+                        Bundle bundle = new Bundle();
+                        bundle.putString("idRestaurante", idRestaurante);
+                        cartaRestauranteFragment.setArguments(bundle);
                         selectedFragment = cartaRestauranteFragment;
                     } else if (item.getItemId() == R.id.navigation_reportes) {
                         selectedFragment = reportesRestauranteFragment;
@@ -71,6 +83,3 @@ public class InicioRestauranteActivity extends AppCompatActivity {
                 .commit();
     }
 }
-
-
-

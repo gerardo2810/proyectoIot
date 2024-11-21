@@ -11,17 +11,21 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.admin_restaurante.RecyclerView.Categoria;
 import com.example.proyecto_iot.admin_restaurante.RecyclerView.CategoriaAdapter;
 import com.example.proyecto_iot.admin_restaurante.RecyclerView.Producto;
 import com.example.proyecto_iot.admin_restaurante.RecyclerView.ProductoAdapter;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,42 +36,55 @@ public class CartaRestauranteFragment extends Fragment {
     private RecyclerView recyclerCategories, recyclerProducts;
     private CategoriaAdapter categoryAdapter;
     private ProductoAdapter productAdapter;
-    private List<Producto> productList; // Lista completa de productos
-    private List<Producto> filteredProductList; // Lista filtrada
-    private EditText searchBar; // Barra de búsqueda
+    private List<Producto> filteredProductList; // Lista filtrada de productos
+    private EditText searchBar;
+    private String idRestaurante;
+    private FirebaseFirestore db;
+    private List<Categoria> categoryList;
+    private String selectedCategoryId; // ID de la categoría seleccionada
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // Inflar el layout del fragmento
         View view = inflater.inflate(R.layout.fragment_carta_restaurante, container, false);
+
+        // Inicializar Firestore
+        db = FirebaseFirestore.getInstance();
+
+        // Recuperar el idRestaurante desde los argumentos
+        if (getArguments() != null) {
+            idRestaurante = getArguments().getString("idRestaurante");
+        }
 
         // Inicializar RecyclerView de categorías
         recyclerCategories = view.findViewById(R.id.recycler_categories);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        recyclerCategories.setLayoutManager(layoutManager);
-
-        // Inicializar la lista completa de productos y la lista filtrada
-        productList = getProductList();
-        filteredProductList = new ArrayList<>(productList); // Inicialmente muestra todos los productos
-
-        // Asignar adaptador para las categorías y configurar el listener
-        categoryAdapter = new CategoriaAdapter(getCategoryList(), getContext(), this::filterByCategory);
-        recyclerCategories.setAdapter(categoryAdapter);
+        recyclerCategories.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
 
         // Inicializar RecyclerView de productos
         recyclerProducts = view.findViewById(R.id.recycler_products);
         recyclerProducts.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // Asignar adaptador para los productos
+        // Inicializar adaptadores
+        categoryList = new ArrayList<>();
+        categoryAdapter = new CategoriaAdapter(categoryList, getContext(), this::onCategorySelected);
+        recyclerCategories.setAdapter(categoryAdapter);
+
+        filteredProductList = new ArrayList<>();
         productAdapter = new ProductoAdapter(filteredProductList, getContext());
         recyclerProducts.setAdapter(productAdapter);
 
-        // Botón para agregar nuevo producto
+
         Button btnAddProduct = view.findViewById(R.id.btn_add_product);
+        btnAddProduct.setEnabled(false);
+
         btnAddProduct.setOnClickListener(v -> {
-            Intent intent = new Intent(getContext(), AgregarProductoActivity.class);
-            startActivity(intent);
+            if (selectedCategoryId != null) {
+                Intent intent = new Intent(getContext(), AgregarProductoActivity.class);
+                intent.putExtra("idCategoria", selectedCategoryId);
+                startActivity(intent);
+            } else {
+                Toast.makeText(getContext(), "Por favor, selecciona una categoría primero.", Toast.LENGTH_SHORT).show();
+            }
         });
 
         // Configurar la barra de búsqueda
@@ -78,7 +95,6 @@ public class CartaRestauranteFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                // Filtrar productos por el texto ingresado en la búsqueda
                 filterBySearch(charSequence.toString());
             }
 
@@ -86,63 +102,67 @@ public class CartaRestauranteFragment extends Fragment {
             public void afterTextChanged(Editable editable) {}
         });
 
-        return view; // Devolver la vista inflada
+        // Cargar categorías desde Firestore
+        loadCategories();
+
+        return view;
     }
 
-    // Método para filtrar productos por categoría
-    private void filterByCategory(String category) {
-        filteredProductList.clear(); // Limpiar la lista filtrada
-        if (category.equals("Todas")) {
-            filteredProductList.addAll(productList); // Mostrar todos los productos si la categoría es "Todas"
-        } else {
-            for (Producto producto : productList) {
-                if (producto.getCategoria().equalsIgnoreCase(category)) {
-                    filteredProductList.add(producto); // Agregar productos que coincidan con la categoría
-                }
-            }
-        }
-        productAdapter.notifyDataSetChanged(); // Notificar al adaptador sobre los cambios
+    // Método para cargar categorías según el ID del restaurante
+    private void loadCategories() {
+        db.collection("categorias")
+                .whereEqualTo("idRestaurante", idRestaurante)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    categoryList.clear();
+                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                        Categoria categoria = doc.toObject(Categoria.class);
+                        categoria.setId(doc.getId());
+                        categoryList.add(categoria);
+                    }
+                    categoryAdapter.notifyDataSetChanged();
+                })
+                .addOnFailureListener(e -> Log.e("CartaRestaurante", "Error al cargar categorías", e));
+    }
+
+    // Método para manejar la selección de categoría
+    private void onCategorySelected(String categoryId) {
+        selectedCategoryId = categoryId;
+
+        // Habilitar el botón cuando se seleccione una categoría
+        Button btnAddProduct = getView().findViewById(R.id.btn_add_product);
+        btnAddProduct.setEnabled(true);
+
+        loadProductsByCategory(categoryId);
+    }
+
+    // Método para cargar productos según la categoría seleccionada
+    private void loadProductsByCategory(String categoryId) {
+        db.collection("platos")
+                .whereEqualTo("idCategoria", categoryId)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    filteredProductList.clear();
+                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                        Producto producto = doc.toObject(Producto.class);
+                        producto.setId(doc.getId());
+                        filteredProductList.add(producto);
+                    }
+                    productAdapter.notifyDataSetChanged();
+                })
+                .addOnFailureListener(e -> Log.e("CartaRestaurante", "Error al cargar productos", e));
     }
 
     // Método para filtrar productos por búsqueda
     private void filterBySearch(String query) {
-        filteredProductList.clear(); // Limpiar la lista filtrada
-        for (Producto producto : productList) {
-            if (producto.getName().toLowerCase().contains(query.toLowerCase())) {
-                filteredProductList.add(producto); // Agregar productos que coincidan con la búsqueda
+        List<Producto> searchResult = new ArrayList<>();
+        for (Producto producto : filteredProductList) {
+            if (producto.getNombre().toLowerCase().contains(query.toLowerCase())) {
+                searchResult.add(producto);
             }
         }
-        productAdapter.notifyDataSetChanged(); // Notificar al adaptador sobre los cambios
-    }
-
-    // Método para obtener la lista de categorías
-    private List<Categoria> getCategoryList() {
-        List<Categoria> categoryList = new ArrayList<>();
-        categoryList.add(new Categoria("Todas", R.drawable.alllogo)); // Opción para mostrar todas las categorías
-        categoryList.add(new Categoria("Entradas", R.drawable.salad));
-        categoryList.add(new Categoria("Tallarines", R.drawable.pasta));
-        categoryList.add(new Categoria("Pescados", R.drawable.fish));
-        categoryList.add(new Categoria("Carnes", R.drawable.meat));
-        categoryList.add(new Categoria("Arroces", R.drawable.rice));
-        categoryList.add(new Categoria("Especiales", R.drawable.especial));
-        categoryList.add(new Categoria("Nueva categoría", R.drawable.add)); // Opción para nueva categoría
-        return categoryList;
-    }
-
-    // Método para obtener la lista de productos
-    private List<Producto> getProductList() {
-        List<Producto> productList = new ArrayList<>();
-        productList.add(new Producto("1", "Langostinos Tempura 'Pop Corn'", "", "Entradas", 10, 45.50, true, R.drawable.plato));
-        productList.add(new Producto("2", "Shanghai Hot Wings", "", "Entradas", 10, 39.00, true, R.drawable.plato));
-        productList.add(new Producto("3", "Classic Wantan", "", "Entradas", 10, 32.00, true, R.drawable.plato));
-        productList.add(new Producto("4", "Chaufa Especial", "", "Arroces", 5, 38.00, true, R.drawable.plato2));
-        productList.add(new Producto("5", "Arroz Meloso Mixto", "", "Arroces", 5, 42.00, true, R.drawable.plato2));
-        productList.add(new Producto("6", "Salmon Al Curry", "", "Pescados", 7, 35.00, false, R.drawable.plato3));
-        productList.add(new Producto("7", "Pesacado Imperial", "", "Pescados", 7, 35.00, false, R.drawable.plato3));
-        productList.add(new Producto("8", "Mongolian Beef", "", "Carnes", 20, 69.50, true, R.drawable.plato4));
-        productList.add(new Producto("9", "Pollo con nueces", "", "Carnes", 20, 49.50, true, R.drawable.plato4));
-        productList.add(new Producto("10", "KAM LU Wantan", "", "Especiales", 30, 63.50, true, R.drawable.plato5));
-        return productList;
+        productAdapter.updateData(searchResult);
     }
 }
+
 

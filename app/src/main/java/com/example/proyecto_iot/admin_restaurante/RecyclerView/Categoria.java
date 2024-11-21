@@ -1,27 +1,40 @@
 package com.example.proyecto_iot.admin_restaurante.RecyclerView;
 
 public class Categoria {
-    private String name;
-    private int imageResId;
+    private String id;
+    private String Nombre;
+    private String iconFoto;
 
-    public Categoria(String name, int imageResId) {
-        this.name = name;
-        this.imageResId = imageResId;
+    public Categoria() {
     }
 
-    public String getName() {
-        return name;
+    public Categoria(String id, String Nombre, String imageResId) {
+        this.id = id;
+        this.Nombre = Nombre;
+        this.iconFoto = iconFoto;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getId() {
+        return id;
     }
 
-    public int getImageResId() {
-        return imageResId;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public void setImageResId(int imageResId) {
-        this.imageResId = imageResId;
+    public String getNombre() {
+        return Nombre;
+    }
+
+    public void setNombre(String nombre) {
+        Nombre = nombre;
+    }
+
+    public String getIconFoto() {
+        return iconFoto;
+    }
+
+    public void setIconFoto(String iconFoto) {
+        this.iconFoto = iconFoto;
     }
 }

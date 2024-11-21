@@ -26,11 +26,17 @@ public class AbrirRestauranteActivity extends AppCompatActivity {
             return insets;
         });
 
+        // Recibir el idRestaurante del intent
+        Intent intent = getIntent();
+        String idRestaurante = intent.getStringExtra("idRestaurante");
+
         buttonOpen = findViewById(R.id.open_button);
         buttonOpen.setOnClickListener(v -> {
-            Intent intent = new Intent(AbrirRestauranteActivity.this, InicioRestauranteActivity.class);
-            startActivity(intent);
+            // Pasar el idRestaurante a InicioRestauranteActivity
+            Intent inicioIntent = new Intent(AbrirRestauranteActivity.this, InicioRestauranteActivity.class);
+            inicioIntent.putExtra("idRestaurante", idRestaurante); // Pasar el idRestaurante
+            startActivity(inicioIntent);
+            finish();
         });
-
     }
 }

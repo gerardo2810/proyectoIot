@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.admin_restaurante.AgregarCategoriaActivity;
 
@@ -22,6 +23,7 @@ public class CategoriaAdapter extends RecyclerView.Adapter<CategoriaAdapter.Cate
     private Context context;
     private OnCategoryClickListener listener;
 
+    // Interfaz para manejar clics en las categorías
     public interface OnCategoryClickListener {
         void onCategoryClick(String category);
     }
@@ -42,13 +44,19 @@ public class CategoriaAdapter extends RecyclerView.Adapter<CategoriaAdapter.Cate
     @Override
     public void onBindViewHolder(@NonNull CategoriaViewHolder holder, int position) {
         Categoria category = categoryList.get(position);
-        holder.nombreCategoria.setText(category.getName());
-        holder.imageCategoria.setImageResource(category.getImageResId());
 
-        // Evento al hacer clic en la categoría
+        holder.nombreCategoria.setText(category.getNombre());
+
+        Glide.with(context)
+                .load(category.getIconFoto())
+                .placeholder(R.drawable.placeholder)
+                .error(R.drawable.sinfoto)
+                .into(holder.imageCategoria);
+
         holder.itemView.setOnClickListener(v -> {
-            // Llamar al listener para notificar que se seleccionó una categoría
-            listener.onCategoryClick(category.getName());
+            if (listener != null) {
+                listener.onCategoryClick(category.getId());
+            }
         });
     }
 

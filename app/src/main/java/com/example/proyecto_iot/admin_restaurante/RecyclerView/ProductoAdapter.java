@@ -13,6 +13,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.admin_restaurante.EditarProductoActivity;
 
@@ -37,12 +38,17 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.Produc
     @Override
     public void onBindViewHolder(@NonNull ProductoViewHolder holder, int position) {
         Producto product = productList.get(position);
-        holder.tvProductName.setText(product.getName());
-        holder.img_product.setImageResource(product.getImageResId());
-        holder.tvProductStock.setText("stock: " + product.getStock() + " unidades");
+        holder.tvProductName.setText(product.getNombre());
+        holder.tvProductStock.setText("Stock: " + product.getStock() + " unidades");
+
+        // Cargar la imagen del producto desde la URL
+        Glide.with(context)
+                .load(product.getImagen())
+                .placeholder(R.drawable.sinfoto) // Imagen por defecto mientras carga
+                .into(holder.img_product);
 
         // Configurar el switch
-        holder.switchProduct.setChecked(product.isActive());
+        holder.switchProduct.setChecked(product.getActive() != null ? product.getActive() : false);
         holder.switchProduct.setOnCheckedChangeListener((buttonView, isChecked) -> {
             product.setActive(isChecked);
             // Aquí puedes guardar el estado del producto si es necesario
@@ -59,6 +65,12 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.Produc
     @Override
     public int getItemCount() {
         return productList.size();
+    }
+
+    // Método para actualizar los datos del adaptador
+    public void updateData(List<Producto> newProductList) {
+        this.productList = newProductList;
+        notifyDataSetChanged();
     }
 
     public static class ProductoViewHolder extends RecyclerView.ViewHolder {

@@ -105,7 +105,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textMultiLine"
-                        android:maxLength="25"
+                        android:maxLength="30"
                         android:textSize="18sp" />
 
                 </LinearLayout>
@@ -141,7 +141,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textMultiLine"
-                        android:maxLength="25"
+                        android:maxLength="30"
                         android:textSize="18sp" />
 
                 </LinearLayout>
@@ -176,8 +176,8 @@
                         android:id="@+id/editTextCorreo"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="textEmailAddress"
-                        android:maxLength="50"
+                        android:inputType="textMultiLine"
+                        android:maxLength="40"
                         android:textSize="18sp" />
 
                 </LinearLayout>
@@ -338,6 +338,48 @@
                         android:inputType="number"
                         android:maxLength="9"
                         android:textSize="18sp" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="350dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="20dp"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="FOTO"
+                        android:textColor="@color/md_theme_primaryFixed_highContrast"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:id="@+id/imgPreview"
+                        android:layout_width="match_parent"
+                        android:layout_height="300dp"
+                        android:scaleType="centerCrop"
+                        android:background="#E0E0E0"
+                        android:layout_marginBottom="5dp" />
+
+                    <Button
+                        android:id="@+id/buttonUploadImage"
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:text="Seleccionar foto"
+                        android:textSize="13sp" />
+
                 </LinearLayout>
 
             </LinearLayout>

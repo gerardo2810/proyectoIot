@@ -18,12 +18,17 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.superadmin.RecyclerView.Administrador;
+import com.example.proyecto_iot.superadmin.RecyclerView.RestauranteSA;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.UUID;
 
 public class registro_admin_superadmin extends AppCompatActivity {
@@ -44,6 +49,7 @@ public class registro_admin_superadmin extends AppCompatActivity {
     Administrador administrador;
 
     private FirebaseAuth mAuth;
+    FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +57,8 @@ public class registro_admin_superadmin extends AppCompatActivity {
         setContentView(R.layout.superadmin_activity_registro_admin);
 
         mAuth = FirebaseAuth.getInstance();
+
+        db = FirebaseFirestore.getInstance();
 
         imgPreview = findViewById(R.id.imgPreview);
         btnSelectPhoto = findViewById(R.id.buttonUploadImage);
@@ -152,31 +160,38 @@ public class registro_admin_superadmin extends AppCompatActivity {
                 Toast.makeText(this, "Debe seleccionar una opción en Restaurante", Toast.LENGTH_SHORT).show();
             } else if (tipoSeleccionado.equals("Existente")) {
 
-                // Subir la imagen primero
-                String imageFileName = UUID.randomUUID().toString();
-                StorageReference fileRef = storageReference.child(imageFileName);
-                fileRef.putFile(imageUri)
-                        .addOnSuccessListener(taskSnapshot -> {
-                            // Obtener la URL de descarga
-                            fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                                String downloadUrl = uri.toString(); // URL de la imagen
-                                administrador.setFoto(downloadUrl);
+                existeCorreo(correo, new OnCorreoExistenteListener() {
+                    @Override
+                    public void onCorreoExistente(boolean existe) {
+                        if (existe) {
+                            Toast.makeText(registro_admin_superadmin.this, "El correo ya ha sido registrado en la app.", Toast.LENGTH_SHORT).show();
+                        } else {
+                            // Subir la imagen primero
+                            String imageFileName = UUID.randomUUID().toString();
+                            StorageReference fileRef = storageReference.child(imageFileName);
+                            Toast.makeText(registro_admin_superadmin.this, "Espere un momento...", Toast.LENGTH_SHORT).show();
+                            fileRef.putFile(imageUri)
+                                    .addOnSuccessListener(taskSnapshot -> {
+                                        // Obtener la URL de descarga
+                                        fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                                            String downloadUrl = uri.toString(); // URL de la imagen
+                                            administrador.setFoto(downloadUrl);
+                                            administrador.setNombre(nombre);
+                                            administrador.setApellido(apellido);
+                                            administrador.setCorreo(correo);
+                                            administrador.setContraseña(passwd);
+                                            administrador.setDni(dni);
+                                            administrador.setEdad(edad);
+                                            administrador.setDireccion(direccion);
+                                            administrador.setTelefono(telefono);
 
-                            });
-                        });
+                                            mostrarDialogRestaurante();
+                                        });
+                                    });
 
-                Toast.makeText(this, "URL: " + administrador.getFoto(), Toast.LENGTH_SHORT).show();
-
-                administrador.setNombre(nombre);
-                administrador.setApellido(apellido);
-                administrador.setCorreo(correo);
-                administrador.setContraseña(passwd);
-                administrador.setDni(dni);
-                administrador.setEdad(edad);
-                administrador.setDireccion(direccion);
-                administrador.setTelefono(telefono);
-
-                mostrarDialogRestaurante();
+                        }
+                    }
+                });
 
             } else if (tipoSeleccionado.equals("Nuevo")) {
 
@@ -277,31 +292,101 @@ public class registro_admin_superadmin extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Elija el restaurante al que pertenecerá el administrador:");
 
+        ArrayList<String> listaRestaurantes = new ArrayList<>();
+        HashMap<String, String> mapaRestaurantes = new HashMap<>();
+
         // Crear el spinner para el diálogo
         Spinner spinnerRestaurante = new Spinner(this);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.superadmin_lista_restaurante, android.R.layout.simple_spinner_item);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, listaRestaurantes);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerRestaurante.setAdapter(adapter);
 
-        // Agregar el spinner al diálogo
-        builder.setView(spinnerRestaurante);
+        db.collection("restaurantes")
+                .whereEqualTo("idAdministrador", "no tiene")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        // Limpiar la lista antes de llenarla
+                        listaRestaurantes.clear();
 
-        builder.setPositiveButton("OK", (dialog, which) -> {
-            String restauranteSeleccionado = spinnerRestaurante.getSelectedItem().toString();
-            if (restauranteSeleccionado.equals("-Seleccionar-")) {
-                Toast.makeText(this, "Debe elegir un restaurante", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "Administrador creado con éxito para " + restauranteSeleccionado, Toast.LENGTH_SHORT).show();
-                // Redirigir a otra actividad
-                Intent intent = new Intent(registro_admin_superadmin.this, gestion_usuarios_superadmin.class); // Cambia "OtraActividad" por tu actividad deseada
-                startActivity(intent);
-            }
-        });
+                        // Agregar la opción predeterminada al spinner
+                        listaRestaurantes.add("-Seleccionar-");
 
-        builder.setNegativeButton("Cancelar", (dialog, which) -> dialog.dismiss());
+                        // Iterar sobre los documentos obtenidos
+                        for (DocumentSnapshot document : task.getResult()) {
+                            // Obtener el nombre del restaurante
+                            String nombreRestaurante = document.getString("nombre");
+                            String idRestaurante = document.getId();
 
-        AlertDialog dialog = builder.create();
-        dialog.show();
+                            if (nombreRestaurante != null) {
+                                listaRestaurantes.add(nombreRestaurante);
+                                mapaRestaurantes.put(nombreRestaurante, idRestaurante); // Guardar el ID del restaurante
+                            }
+                        }
+
+                        // Notificar al adaptador que los datos han cambiado
+                        adapter.notifyDataSetChanged();
+
+                        // Verificar si se encontraron restaurantes
+                        if (listaRestaurantes.isEmpty()) {
+                            // Si no hay restaurantes disponibles, mostrar un Toast y no mostrar el diálogo
+                            Toast.makeText(this, "No hay restaurantes disponibles", Toast.LENGTH_SHORT).show();
+                        } else {
+                            // Si hay restaurantes, agregar el spinner al diálogo y mostrarlo
+                            builder.setView(spinnerRestaurante);
+                            builder.setPositiveButton("OK", (dialog, which) -> {
+                                String restauranteSeleccionado = spinnerRestaurante.getSelectedItem().toString();
+                                if (restauranteSeleccionado.equals("-Seleccionar-")) {
+                                    Toast.makeText(this, "Debe elegir un restaurante", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    // Obtener el ID del restaurante seleccionado
+                                    String idRestauranteSeleccionado = mapaRestaurantes.get(restauranteSeleccionado);
+
+                                    registrarAdmin(administrador.getCorreo(), administrador.getContraseña(), restauranteSeleccionado, idRestauranteSeleccionado);
+
+                                }
+                            });
+
+                            builder.setNegativeButton("Cancelar", (dialog, which) -> dialog.dismiss());
+
+                            AlertDialog dialog = builder.create();
+                            dialog.show();
+                        }
+                    } else {
+                        Toast.makeText(this, "Error al cargar los restaurantes", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void registrarAdmin(String email, String password, String nombrerestaurante, String idrestauranteSeleccionado) {
+        Toast.makeText(this, "Espere un momento...", Toast.LENGTH_SHORT).show();
+        administrador.setRestaurante(nombrerestaurante);
+        db.collection("administradores")
+                .add(administrador)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        String idAdministrador = task.getResult().getId();
+
+                        db.collection("restaurantes").document(idrestauranteSeleccionado)
+                                .update("idAdministrador", idAdministrador)
+                                .addOnCompleteListener(aVoid -> {
+                                    Toast.makeText(this, "Administrador nuevo asignado a " + idrestauranteSeleccionado, Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(registro_admin_superadmin.this, gestion_usuarios_superadmin.class);
+                                    startActivity(intent);
+                                })
+                                .addOnFailureListener(e -> Toast.makeText(this, "Error al actualizar el restaurante", Toast.LENGTH_SHORT).show());
+
+                    }
+                });
+
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        // Error al registrar
+                        Toast.makeText(this, "Error registro admin: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(this, gestion_usuarios_superadmin.class);
+                        startActivity(intent);
+                    }
+                });
     }
 }

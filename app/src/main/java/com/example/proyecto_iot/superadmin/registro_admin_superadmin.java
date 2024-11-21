@@ -15,6 +15,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.proyecto_iot.R;
+import com.example.proyecto_iot.superadmin.RecyclerView.Administrador;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
@@ -22,7 +23,8 @@ public class registro_admin_superadmin extends AppCompatActivity {
 
     private BottomNavigationView bottomNavigationView;
     private Spinner spinnerTipoAdmin;
-    private EditText editTextDNI;
+    private EditText editTextNombre, editTextApellido, editTextCorreo, editTextPasswd, editTextDNI, editTextEdad, editTextDireccion, editTextTelefono;
+    private String nombre, apellido, correo, passwd, dni, edad, direccion, telefono;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +46,14 @@ public class registro_admin_superadmin extends AppCompatActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerTipoAdmin.setAdapter(adapter);
 
+        editTextNombre = findViewById(R.id.editTextNombre);
+        editTextApellido = findViewById(R.id.editTextApellido);
+        editTextCorreo = findViewById(R.id.editTextCorreo);
+        editTextPasswd = findViewById(R.id.editTextPasswd);
         editTextDNI = findViewById(R.id.editTextDNI);
+        editTextEdad = findViewById(R.id.editTextEdad);
+        editTextDireccion = findViewById(R.id.editTextDireccion);
+        editTextTelefono = findViewById(R.id.editTextTelefono);
 
         Button btnRegistrar = findViewById(R.id.btnRegistrar);
         btnRegistrar.setOnClickListener(v -> registrarAdministrador());
@@ -78,28 +87,60 @@ public class registro_admin_superadmin extends AppCompatActivity {
     }
 
     private void registrarAdministrador() {
-        String tipoSeleccionado = spinnerTipoAdmin.getSelectedItem().toString();
 
-        if (tipoSeleccionado.equals("-Seleccionar-")) {
-            Toast.makeText(this, "Debe seleccionar una opción", Toast.LENGTH_SHORT).show();
-        } else if (tipoSeleccionado.equals("Existente")) {
-            mostrarDialogRestaurante();
-        } else if (tipoSeleccionado.equals("Nuevo")) {
+        nombre = editTextNombre.getText().toString();
+        apellido = editTextApellido.getText().toString();
+        correo = editTextCorreo.getText().toString();
+        passwd = editTextPasswd.getText().toString();
+        dni = editTextDNI.getText().toString();
+        edad = editTextEdad.getText().toString();
+        direccion = editTextDireccion.getText().toString();
+        telefono = editTextTelefono.getText().toString();
 
-            String dniAdmin = editTextDNI.getText().toString();
+        if(verificaDatos()){
+            String tipoSeleccionado = spinnerTipoAdmin.getSelectedItem().toString();
+            Administrador administrador = new Administrador();
 
-            if(dniAdmin.isEmpty()){
-                Toast.makeText(this, "Debe rellanar los datos", Toast.LENGTH_SHORT).show();
-            } else {
-                if (dniAdmin.length() == 8) {
-                    Intent intent = new Intent(registro_admin_superadmin.this, registro_restaurante_superadmin.class);
-                    intent.putExtra("dni_admin", dniAdmin);
-                    startActivity(intent);
-                } else {
-                    Toast.makeText(this, "El DNI debe tener 8 digitos", Toast.LENGTH_SHORT).show();
-                }
+            if (tipoSeleccionado.equals("-Seleccionar-")) {
+                Toast.makeText(this, "Debe seleccionar una opción en Restaurante", Toast.LENGTH_SHORT).show();
+            } else if (tipoSeleccionado.equals("Existente")) {
+
+                administrador.setNombre(nombre);
+                administrador.setApellido(apellido);
+                administrador.setCorreo(correo);
+                administrador.setPasswd(passwd);
+                administrador.setDni(dni);
+                administrador.setEdad(edad);
+                administrador.setDireccion(direccion);
+                administrador.setTelefono(telefono);
+
+                mostrarDialogRestaurante();
+
+            } else if (tipoSeleccionado.equals("Nuevo")) {
+
+                administrador.setNombre(nombre);
+                administrador.setApellido(apellido);
+                administrador.setCorreo(correo);
+                administrador.setPasswd(passwd);
+                administrador.setDni(dni);
+                administrador.setEdad(edad);
+                administrador.setDireccion(direccion);
+                administrador.setTelefono(telefono);
+
+                Intent intent = new Intent(registro_admin_superadmin.this, registro_restaurante_superadmin.class);
+                intent.putExtra("administrador", administrador);
+                startActivity(intent);
+
             }
         }
+
+    }
+
+    private boolean verificaDatos(){
+
+
+
+        return true;
     }
 
     private void mostrarDialogRestaurante() {

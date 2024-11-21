@@ -1,6 +1,20 @@
 <resources>
     <string name="app_name">Proyecto_Iot</string>
     <string name="chinawork_chifa">Chinawork-Chifa</string>
+    
+    <string-array name="tipo_de_comidas">
+        <item>-Seleccionar-</item>
+        <item>Pollo</item>
+        <item>Carnes</item>
+        <item>Hamburguesas</item>
+        <item>Pizzas</item>
+        <item>Pastas</item>
+        <item>Sushi</item>
+        <item>Postres</item>
+        <item>Jugos</item>
+        <item>Helados</item>
+        <item>Bowls</item>
+    </string-array>
 
     <string name="fui_sign_in_with_email">Ingresar con email</string>
     <string name="fui_sign_in_with_google">Ingresar con Google</string>

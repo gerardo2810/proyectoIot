@@ -24,14 +24,15 @@ public class PedidosRecogerAdapter extends RecyclerView.Adapter<PedidosRecogerAd
     private List<PedidoRecoger> listaPedidosRecoger;
     private Context context;
 
-    public PedidosRecogerAdapter(List<PedidoRecoger> listaPedidosRecoger) {
+    public PedidosRecogerAdapter(Context context, List<PedidoRecoger> listaPedidosRecoger) {
         this.listaPedidosRecoger = listaPedidosRecoger;
+        this.context = context;
     }
 
     @NonNull
     @Override
     public PedidosRecogerAdapter.PedidoRecogerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_pedidos_recoger, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_pedidos_recoger, parent, false);
         return new PedidoRecogerViewHolder(view);
     }
 
@@ -40,12 +41,13 @@ public class PedidosRecogerAdapter extends RecyclerView.Adapter<PedidosRecogerAd
         PedidoRecoger pedidoRecoger = listaPedidosRecoger.get(position);
         holder.pedidoRecoger = pedidoRecoger;
 
-        ImageView imageViewRestaurante = holder.itemView.findViewById(R.id.imagen_restaurante);
-        imageViewRestaurante.setImageResource(pedidoRecoger.getImageResourceId());
+        //ImageView imageViewRestaurante = holder.itemView.findViewById(R.id.imagen_restaurante);
+        //imageViewRestaurante.setImageResource(pedidoRecoger.getImageResourceId());
         TextView textViewRestaurante = holder.itemView.findViewById(R.id.nombre_restaurante);
         textViewRestaurante.setText(pedidoRecoger.getNombreRestaurante());
         TextView textViewCantidad = holder.itemView.findViewById(R.id.cantidad_pedido);
-        textViewCantidad.setText(pedidoRecoger.getCantidad());
+        String texto1= pedidoRecoger.getCantidad() + "pedido a";
+        textViewCantidad.setText(texto1);
         TextView textViewDireccion = holder.itemView.findViewById(R.id.direccion_pedido);
         textViewDireccion.setText(pedidoRecoger.getDireccion());
 

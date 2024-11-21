@@ -29,6 +29,8 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -102,15 +104,25 @@ public class InicioRepartidorActivity extends AppCompatActivity {
         recyclerViewListaPedidosRecoger = findViewById(R.id.recyclerViewListaPedidosRecoger);
         recyclerViewListaPedidosRecoger.setLayoutManager(new LinearLayoutManager(this));
         listaPedidos = new ArrayList<>();
-        listaPedidos.add(new PedidoRecoger("El Tío Bigote","1 pedido a","Av. de los Precursores 281, San Miguel",R.drawable.tio_bigote));
-        listaPedidos.add(new PedidoRecoger("Pizza Party","1 pedido a","Av. Simon Bolivar 1486, Pueblo libre",R.drawable.pizzaparty));
-        listaPedidos.add(new PedidoRecoger("El Tío Bigote","1 pedido a","Av. Universitaria 456, San Miguel",R.drawable.tio_bigote));
-        listaPedidos.add(new PedidoRecoger("Pizza Party","1 pedido a","Av. Venezuela 789, Cercado de Lima",R.drawable.pizzaparty));
-        listaPedidos.add(new PedidoRecoger("El Tío Bigote","1 pedido a","Av. Mariano Cornejo 1434, Pueblo libre",R.drawable.tio_bigote));
-        listaPedidos.add(new PedidoRecoger("Pizza Party","1 pedido a","Av. La marina 4596, San Miguel",R.drawable.pizzaparty));
-
-        adapter = new PedidosRecogerAdapter(listaPedidos);
+        adapter = new PedidosRecogerAdapter(this,listaPedidos);
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
         recyclerViewListaPedidosRecoger.setAdapter(adapter);
+        db.collection("pedidos")
+                .addSnapshotListener((querySnapshot, e) -> {
+                    if (e != null) {
+                        Log.d("msg-test", "Error al obtener documentos: ", e);
+                        return;
+                    }
+
+                    listaPedidos.clear();
+                    for (QueryDocumentSnapshot document : querySnapshot) {
+
+                        PedidoRecoger pedidoRecoger = document.toObject(PedidoRecoger.class);
+                        listaPedidos.add(pedidoRecoger);
+                    }
+                    adapter.notifyDataSetChanged();
+
+                });
 
     }
 

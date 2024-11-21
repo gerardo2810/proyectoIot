@@ -75,7 +75,7 @@ public class CompleteRegisterActivity extends AppCompatActivity {
             etTelefono.requestFocus();
         } else {
             userID = mAuth.getCurrentUser().getUid();
-            DocumentReference documentReference = db.collection("superadmin").document(userID);
+            DocumentReference documentReference = db.collection("clientes").document(userID);
 
             // Datos predeterminados
             String defaultPhotoUrl = "https://cdn-icons-png.flaticon.com/256/3849/3849119.png";

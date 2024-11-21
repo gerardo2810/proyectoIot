@@ -80,10 +80,10 @@
             android:contentDescription="Ubicación" />
 
         <TextView
+            android:id="@+id/textViewUbicacion"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="30dp"
-            android:text="Av. Universitaria 123, San Miguel"
+            android:text="Cargando ubicación..."
             android:textColor="#000000"
             android:textSize="16sp"/>
 

@@ -14,6 +14,7 @@ import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
@@ -22,8 +23,18 @@ import androidx.core.content.ContextCompat;
 
 import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.cliente.SeguimientoPedidoActivity;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MarkerOptions;
 
-public class RecojoCurso1Activity extends AppCompatActivity {
+public class RecojoCurso1Activity extends AppCompatActivity implements OnMapReadyCallback {
+
+    private GoogleMap myMap;
 
     private final String CHANNEL_ID = "order_ready_channel";
     private Handler handler;
@@ -34,6 +45,10 @@ public class RecojoCurso1Activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recojo_curso_1);
+
+        // Obtén el mapa
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
 
         // Crear canal de notificación
         createNotificationChannel();
@@ -117,6 +132,34 @@ public class RecojoCurso1Activity extends AppCompatActivity {
             notificationManager.notify(1, builder.build());
         }
 
+    }
+
+    @Override
+    public void onMapReady(@NonNull GoogleMap googleMap) {
+
+        myMap = googleMap;
+
+        // Define las ubicaciones de origen y destino
+        LatLng origen = new LatLng(-12.0682373, -77.0769483); // Coordenadas de ubicacion
+        LatLng destino = new LatLng(-12.071507, -77.090343); // Coordenadas del restaurante
+
+        // Agrega marcadores
+        myMap.addMarker(new MarkerOptions()
+                .position(origen)
+                .title("Tu ubicacion")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+        myMap.addMarker(new MarkerOptions()
+                .position(destino)
+                .title("Punto de retiro")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+
+        // Ajusta la cámara
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        builder.include(origen);
+        builder.include(destino);
+        LatLngBounds bounds = builder.build();
+
+        myMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100));
     }
 
 }

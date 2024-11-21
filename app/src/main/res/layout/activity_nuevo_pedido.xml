@@ -68,15 +68,14 @@
     </LinearLayout>
 
 
-    <ImageView
-        android:id="@+id/imageView"
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="380dp"
         android:layout_height="240dp"
-        android:scaleType="fitXY"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/header_layout"
-        app:srcCompat="@drawable/mapa_nuevo_pedido" />
+        app:layout_constraintTop_toBottomOf="@+id/header_layout" />
 
 
     <TextView
@@ -91,7 +90,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.069"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+        app:layout_constraintTop_toBottomOf="@+id/map" />
 
     <LinearLayout
         android:id="@+id/linearLayout"

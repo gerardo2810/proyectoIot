@@ -12,19 +12,44 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
 import com.example.proyecto_iot.R;
+import com.example.proyecto_iot.admin_restaurante.RecyclerView.Producto;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class EditarProductoActivity extends AppCompatActivity {
     private static final int PICK_IMAGE_REQUEST = 1;
-    private Uri imageUri;
+
     private EditText etProductName, etProductDescription, etProductPrice, etProductStock;
     private Button btnUploadImage, btnSaveProduct;
     private ImageView imageView5;
+    private Uri imageUri;
+    private FirebaseFirestore db;
+    private StorageReference storageRef;
+    private String productId;
+    private Producto producto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.restaurante_activity_editar_producto);
+
+        // Inicializar Firebase
+        db = FirebaseFirestore.getInstance();
+        storageRef = FirebaseStorage.getInstance().getReference("product_images");
+
+        // Obtener productId de la Intent
+        productId = getIntent().getStringExtra("productId");
+        if (productId == null || productId.isEmpty()) {
+            Toast.makeText(this, "Error: No se recibió el ID del producto.", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
 
         // Inicializar vistas
         etProductName = findViewById(R.id.et_product_name);
@@ -35,43 +60,96 @@ public class EditarProductoActivity extends AppCompatActivity {
         btnSaveProduct = findViewById(R.id.btn_save_product);
         imageView5 = findViewById(R.id.imageView5);
 
+        // Cargar datos del producto desde Firestore
+        loadProductData();
+
         // Configurar botón para subir imagen
         btnUploadImage.setOnClickListener(v -> openImageSelector());
 
-        // Guardar producto
-        btnSaveProduct.setOnClickListener(v -> {
-            // Guardar el producto en la base de datos o lista (según sea necesario)
-            // Podrías agregar validaciones aquí para asegurarte de que los datos sean correctos.
-            Toast.makeText(this, "Producto guardado", Toast.LENGTH_SHORT).show();
-            finish();
-        });
+        // Configurar botón para guardar cambios
+        btnSaveProduct.setOnClickListener(v -> saveProductChanges());
 
-
+        // Configurar botón de retroceso
         ImageView backButton = findViewById(R.id.back_button);
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Termina esta actividad para volver a la anterior
-                finish();
-            }
-        });
+        backButton.setOnClickListener(v -> finish());
     }
 
-    // Método para abrir el selector de imágenes
+    private void loadProductData() {
+        db.collection("platos").document(productId).get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        producto = documentSnapshot.toObject(Producto.class);
+                        if (producto != null) {
+                            etProductName.setText(producto.getNombre());
+                            etProductDescription.setText(producto.getDescripcion());
+                            etProductPrice.setText(producto.getPrecio());
+                            etProductStock.setText(producto.getStock());
+
+                            Glide.with(this)
+                                    .load(producto.getImagen())
+                                    .placeholder(R.drawable.placeholder)
+                                    .into(imageView5);
+                        }
+                    } else {
+                        Toast.makeText(this, "Producto no encontrado.", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
+                })
+                .addOnFailureListener(e -> Toast.makeText(this, "Error al cargar el producto.", Toast.LENGTH_SHORT).show());
+    }
+
     private void openImageSelector() {
         Intent intent = new Intent();
         intent.setType("image/*");
-        intent.setAction(Intent.ACTION_PICK); // Abrir selector de imágenes
+        intent.setAction(Intent.ACTION_PICK);
         startActivityForResult(Intent.createChooser(intent, "Seleccionar Imagen"), PICK_IMAGE_REQUEST);
     }
 
-    // Manejar el resultado del selector de imágenes
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
             imageUri = data.getData();
-            imageView5.setImageURI(imageUri); // Mostrar la imagen seleccionada en el ImageView
+            imageView5.setImageURI(imageUri);
         }
+    }
+
+    private void saveProductChanges() {
+        String name = etProductName.getText().toString().trim();
+        String description = etProductDescription.getText().toString().trim();
+        String price = etProductPrice.getText().toString().trim();
+        String stock = etProductStock.getText().toString().trim();
+
+        if (name.isEmpty() || description.isEmpty() || price.isEmpty() || stock.isEmpty()) {
+            Toast.makeText(this, "Por favor completa todos los campos.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (imageUri != null) {
+            // Subir imagen actualizada a Firebase Storage
+            StorageReference fileRef = storageRef.child(System.currentTimeMillis() + ".jpg");
+            fileRef.putFile(imageUri).addOnSuccessListener(taskSnapshot -> fileRef.getDownloadUrl()
+                    .addOnSuccessListener(uri -> updateProductInFirestore(name, description, price, stock, uri.toString()))
+                    .addOnFailureListener(e -> Toast.makeText(this, "Error al subir la imagen.", Toast.LENGTH_SHORT).show()));
+        } else {
+            // Si no se cambia la imagen, actualiza solo los datos
+            updateProductInFirestore(name, description, price, stock, producto.getImagen());
+        }
+    }
+
+    private void updateProductInFirestore(String name, String description, String price, String stock, String imageUrl) {
+        Map<String, Object> updatedProduct = new HashMap<>();
+        updatedProduct.put("Nombre", name);
+        updatedProduct.put("Descripcion", description);
+        updatedProduct.put("Precio", price);
+        updatedProduct.put("Stock", stock);
+        updatedProduct.put("Imagen", imageUrl);
+
+        db.collection("platos").document(productId).update(updatedProduct)
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(this, "Producto actualizado exitosamente.", Toast.LENGTH_SHORT).show();
+                    finish();
+                })
+                .addOnFailureListener(e -> Toast.makeText(this, "Error al actualizar el producto.", Toast.LENGTH_SHORT).show());
     }
 }

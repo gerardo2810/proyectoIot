@@ -39,8 +39,7 @@ public class InicioClienteActivity extends AppCompatActivity {
     private RestauranteAdapter favoritosAdapter;
 
     private List<Restaurante> bestOptionList;
-    private List<Restaurante> popularesList;
-    private List<Restaurante> favoritosList;
+
     private EditText orderSearch; // El cuadro de búsqueda
 
     @Override
@@ -73,18 +72,18 @@ public class InicioClienteActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager1 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         recyclerFavoritos.setLayoutManager(layoutManager1);
 
-        // Asignar adaptador para las favoritos
+        /* Asignar adaptador para las favoritos
         favoritosAdapter = new RestauranteAdapter(this, getFavoritosList());
-        recyclerFavoritos.setAdapter(favoritosAdapter);
+        recyclerFavoritos.setAdapter(favoritosAdapter);*/
 
         // Inicializar RecyclerView de populares
         recyclerPopulares = findViewById(R.id.recycler_populares);
         LinearLayoutManager layoutManager2 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         recyclerPopulares.setLayoutManager(layoutManager2);
 
-        // Asignar adaptador para las populares
+        /* Asignar adaptador para las populares
         popularesAdapter = new RestauranteAdapter(this, getPopularesList());
-        recyclerPopulares.setAdapter(popularesAdapter);
+        recyclerPopulares.setAdapter(popularesAdapter);*/
 
         // Inicializar RecyclerView
         recyclerBestOption = findViewById(R.id.recycler_best_option);
@@ -92,11 +91,9 @@ public class InicioClienteActivity extends AppCompatActivity {
 
         // Inicializar lista de opciones y adaptador
         bestOptionList = new ArrayList<>();
-        bestOptionList.add(new Restaurante("La Lucha", 3.49, "Desayunos", "San Miguel", R.drawable.mlalucha));
-        bestOptionList.add(new Restaurante("Pinkberry", 3.49, "Heladería", "San Miguel", R.drawable.mpinkberry));
-
         bestOptionAdapter = new RestauranteAdapter(this, bestOptionList);
         recyclerBestOption.setAdapter(bestOptionAdapter);
+        fetchBestOptionsFromFirebase();
 
         // Inicializar BottomNavigationView
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
@@ -147,8 +144,32 @@ public class InicioClienteActivity extends AppCompatActivity {
                 });
     }
 
+    private void fetchBestOptionsFromFirebase() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("restaurantes").get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        bestOptionList.clear();
+                        for (DocumentSnapshot document : task.getResult()) {
+                            String nombre = document.getString("nombre");
+                            double precioDelivery = document.getDouble("precioDelivery");
+                            String tipoDeComida = document.getString("tipoDeComida");
+                            String ubicacion = document.getString("ubicacion");
+                            String fotoPortada = document.getString("fotoPortada");
+                            String fotoLogo = document.getString("fotoLogo");
 
-    private List<Restaurante> getFavoritosList() {
+
+                            bestOptionList.add(new Restaurante(nombre, precioDelivery, tipoDeComida, ubicacion,fotoPortada, fotoLogo));
+                        }
+                        bestOptionAdapter.notifyDataSetChanged();
+                    } else {
+                        Log.e("Firestore", "Error al obtener los datos", task.getException());
+                    }
+                });
+    }
+
+
+    /*private List<Restaurante> getFavoritosList() {
         List<Restaurante> favoritosList = new ArrayList<>();
         favoritosList.add(new Restaurante("La Lucha", 3.49, "Desayunos", "San Miguel", R.drawable.mlalucha));
         favoritosList.add(new Restaurante("Pinkberry", 3.49, "Heladería", "San Miguel", R.drawable.mpinkberry));
@@ -168,5 +189,5 @@ public class InicioClienteActivity extends AppCompatActivity {
         popularesList.add(new Restaurante("Santoku Sushi Bar", 2.79, "Sushi", "San Miguel", R.drawable.msantoku));
         popularesList.add(new Restaurante("Wing House", 1.49, "Alitas", "San Miguel", R.drawable.mwinhouse));
         return popularesList;
-    }
+    }*/
 }

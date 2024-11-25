@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,6 +18,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.cliente.RecyclerView.Restaurante;
 import com.example.proyecto_iot.cliente.RecyclerView.RestauranteAdapter;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,51 +28,42 @@ public class ListaRestaurantesCategoriasClienteActivity extends AppCompatActivit
 
     private RecyclerView recyclerView;
     private RestauranteAdapter restauranteAdapter;
-    private List<Restaurante> restauranteList = new ArrayList<>(); // Asegúrate de inicializar la lista
+    private List<Restaurante> restauranteList = new ArrayList<>();
     private EditText searchText;
-    private String selectedCategory; // Declaro selectedCategory como variable global
+    private String selectedCategory; // Categoría seleccionada
+    private FirebaseFirestore db; // Referencia a Firebase Firestore
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lista_restaurantes_categorias_cliente);
 
-        // Obtener la categoría seleccionada del Intent y asignarla a la variable global
+        // Inicializar Firestore
+        db = FirebaseFirestore.getInstance();
+
+        // Obtener la categoría seleccionada del Intent
         selectedCategory = getIntent().getStringExtra("selectedCategory");
 
         // Inicializar el RecyclerView
         recyclerView = findViewById(R.id.recycler_lista_restaurantes_categoria);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Inicializar la lista de restaurantes (puedes obtener la lista desde tu base de datos)
-        restauranteList = getRestaurantesList();
+        // Cargar la lista de restaurantes desde Firebase
+        getRestaurantesList();
 
-        // Filtrar la lista de restaurantes por la categoría seleccionada
-        if (selectedCategory != null) {
-            filterRestaurantsByCategory(selectedCategory); // Filtrar los restaurantes
-        } else {
-            Toast.makeText(this, "No se recibió ninguna categoría.", Toast.LENGTH_SHORT).show();
-        }
-
-        // Lógica para el botón de retroceso (flecha)
+        // Lógica para el botón de retroceso
         ImageView backArrow = findViewById(R.id.back_arrow);
-        backArrow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Intent para regresar a la vista de inicio
-                Intent intent = new Intent(ListaRestaurantesCategoriasClienteActivity.this, InicioClienteActivity.class);
-                startActivity(intent);
-                finish(); // Finaliza la actividad actual
-            }
+        backArrow.setOnClickListener(v -> {
+            Intent intent = new Intent(ListaRestaurantesCategoriasClienteActivity.this, InicioClienteActivity.class);
+            startActivity(intent);
+            finish(); // Finaliza la actividad actual
         });
 
         // Inicializar el buscador
         searchText = findViewById(R.id.search_text);
         searchText.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // No se necesita acción antes del cambio de texto
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -77,9 +71,7 @@ public class ListaRestaurantesCategoriasClienteActivity extends AppCompatActivit
             }
 
             @Override
-            public void afterTextChanged(Editable s) {
-                // No se necesita acción después del cambio de texto
-            }
+            public void afterTextChanged(Editable s) {}
         });
     }
 
@@ -87,7 +79,7 @@ public class ListaRestaurantesCategoriasClienteActivity extends AppCompatActivit
     private void filterRestaurantsByCategory(String category) {
         List<Restaurante> filteredList = new ArrayList<>();
         for (Restaurante restaurante : restauranteList) {
-            if (restaurante.getCategory().equalsIgnoreCase(category)) {
+            if (restaurante.getTipoDeComida().equalsIgnoreCase(category)) {
                 filteredList.add(restaurante);
             }
         }
@@ -100,7 +92,6 @@ public class ListaRestaurantesCategoriasClienteActivity extends AppCompatActivit
         if (restauranteAdapter != null) {
             restauranteAdapter.updateList(filteredList);
         } else {
-            // Inicializar el adaptador si aún no está inicializado
             restauranteAdapter = new RestauranteAdapter(this, filteredList);
             recyclerView.setAdapter(restauranteAdapter);
         }
@@ -110,26 +101,46 @@ public class ListaRestaurantesCategoriasClienteActivity extends AppCompatActivit
     private void filterRestaurantsByName(String name) {
         List<Restaurante> filteredList = new ArrayList<>();
         for (Restaurante restaurante : restauranteList) {
-            // Filtrar solo los restaurantes que pertenezcan a la categoría seleccionada
-            if (restaurante.getCategory().equalsIgnoreCase(selectedCategory) &&
-                    restaurante.getNameTitlte().toLowerCase().contains(name.toLowerCase())) {
+            if (restaurante.getTipoDeComida().equalsIgnoreCase(selectedCategory) &&
+                    restaurante.getNombre().toLowerCase().contains(name.toLowerCase())) {
                 filteredList.add(restaurante);
             }
         }
 
-        // Actualizar el adaptador con la lista filtrada por nombre y categoría
         if (restauranteAdapter != null) {
             restauranteAdapter.updateList(filteredList);
         }
     }
 
-    // Método para obtener la lista de restaurantes (debes reemplazarlo con tu fuente de datos real)
-    private List<Restaurante> getRestaurantesList() {
-        List<Restaurante> list = new ArrayList<>();
-        list.add(new Restaurante("Normita", 4.5, "Pizzas", "San Miguel", R.drawable.mlalucha));
-        list.add(new Restaurante("Norkys", 4.3, "Pollo", "San Miguel", R.drawable.mchinawok));
-        list.add(new Restaurante("La Norteña", 4.0, "Carnes", "Miraflores", R.drawable.mpapajhons));
-        // Añade más restaurantes según sea necesario
-        return list;
+    // Método para obtener la lista de restaurantes desde Firebase
+    private void getRestaurantesList() {
+        db.collection("restaurantes").get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        restauranteList.clear();
+                        for (DocumentSnapshot document : task.getResult()) {
+                            String nombre = document.getString("nombre");
+                            double precioDelivery = document.contains("precioDelivery")
+                                    ? document.getDouble("precioDelivery") : 0.0;
+                            String tipoDeComida = document.getString("tipoDeComida");
+                            String ubicacion = document.getString("ubicacion");
+                            String fotoLogo = document.getString("fotoLogo");
+                            String fotoPortada = document.getString("fotoPortada");
+
+                            restauranteList.add(new Restaurante(nombre, precioDelivery, tipoDeComida, ubicacion, fotoPortada,fotoLogo));
+                        }
+
+                        // Filtrar restaurantes por categoría seleccionada
+                        if (selectedCategory != null) {
+                            filterRestaurantsByCategory(selectedCategory);
+                        } else {
+                            restauranteAdapter = new RestauranteAdapter(this, restauranteList);
+                            recyclerView.setAdapter(restauranteAdapter);
+                        }
+                    } else {
+                        Log.e("Firestore", "Error al obtener los restaurantes", task.getException());
+                        Toast.makeText(this, "Error al cargar los restaurantes.", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 }

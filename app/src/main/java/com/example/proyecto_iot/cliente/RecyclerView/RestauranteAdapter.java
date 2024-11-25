@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
 import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.cliente.PerfilRestauranteActivity;
 
@@ -17,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 public class RestauranteAdapter extends RecyclerView.Adapter<RestauranteAdapter.BestOptionViewHolder> {
+
     private Context context;
     private List<Restaurante> bestOptionList;
 
@@ -41,29 +44,39 @@ public class RestauranteAdapter extends RecyclerView.Adapter<RestauranteAdapter.
     @Override
     public void onBindViewHolder(@NonNull BestOptionViewHolder holder, int position) {
         Restaurante option = bestOptionList.get(position);
-        holder.productName.setText(option.getNameTitlte());
-        holder.productPrice.setText("S/. " + option.getProductPrice());
-        holder.productCategory.setText(option.getCategory());
-        holder.productLocation.setText(option.getLocation());
-        // Aquí puedes cargar la imagen con Glide o Picasso si es necesario
 
+        // Asignar datos al ViewHolder
+        holder.productName.setText(option.getNombre());
+        holder.productPrice.setText("S/. " + option.getPrecioDelivery());
+        holder.productCategory.setText(option.getTipoDeComida());
+        holder.productLocation.setText(option.getUbicacion());
 
-        // Asignar la imagen correspondiente
-        holder.productImage.setImageResource(option.getImageResourceId());
+        // Cargar fotoLogo en productImage1 usando Glide
+        Glide.with(context)
+                .load(option.getFotoLogo())
+                .placeholder(R.drawable.placeholder) // Ícono por defecto
+                .into(holder.productImage1);
 
-        // Acción del botón restaurante
+        // Cargar fotoPortada en productImage usando Glide
+        Glide.with(context)
+                .load(option.getFotoPortada())
+                .placeholder(R.drawable.placeholder) // Ícono por defecto
+                .into(holder.productImage);
+
+        // Acción al hacer clic en un restaurante
         holder.linearLayout.setOnClickListener(v -> {
             Intent intent = new Intent(context, PerfilRestauranteActivity.class);
 
             // Pasar los datos del restaurante seleccionado
-            intent.putExtra("nombre_restaurante", option.getNameTitlte());
-            intent.putExtra("categoria_restaurante", option.getCategory());
-            intent.putExtra("precio_delivery", option.getProductPrice());
-            intent.putExtra("direccion_restaurante", option.getLocation());
+            intent.putExtra("nombre_restaurante", option.getNombre());
+            intent.putExtra("categoria_restaurante", option.getTipoDeComida());
+            intent.putExtra("precio_delivery", option.getPrecioDelivery());
+            intent.putExtra("direccion_restaurante", option.getUbicacion());
+            intent.putExtra("foto_logo", option.getFotoLogo());
+            intent.putExtra("foto_portada", option.getFotoPortada());
 
             context.startActivity(intent);
         });
-
     }
 
     @Override
@@ -73,13 +86,14 @@ public class RestauranteAdapter extends RecyclerView.Adapter<RestauranteAdapter.
 
     public static class BestOptionViewHolder extends RecyclerView.ViewHolder {
 
-        ImageView productImage;
+        ImageView productImage, productImage1;
         TextView productName, productPrice, productCategory, productLocation;
         LinearLayout linearLayout;
 
         public BestOptionViewHolder(@NonNull View itemView) {
             super(itemView);
-            productImage = itemView.findViewById(R.id.product_image);
+            productImage = itemView.findViewById(R.id.product_image); // Foto portada
+            productImage1 = itemView.findViewById(R.id.product_image1); // Foto logo
             productName = itemView.findViewById(R.id.product_name);
             productPrice = itemView.findViewById(R.id.product_price);
             productCategory = itemView.findViewById(R.id.product_category);

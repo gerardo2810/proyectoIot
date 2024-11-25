@@ -2,38 +2,67 @@ package com.example.proyecto_iot.cliente.RecyclerView;
 
 public class Restaurante {
 
-    private String nameTitlte;
-    private double priceDelivery;
-    private String category;
-    private String location;
-    private int imageResourceId; // Campo para el ID del recurso de imagen
+    private String nombre;
+    private double precioDelivery;
+    private String tipoDeComida;
+    private String ubicacion;
+    private  String fotoPortada;
+    private String fotoLogo; // URL de la imagen
 
-
-    public Restaurante(String nameTitlte, double priceDelivery, String category, String location, int imageResourceId) {
-        this.nameTitlte = nameTitlte;
-        this.priceDelivery = priceDelivery;
-        this.category = category;
-        this.location = location;
-        this.imageResourceId=imageResourceId;
+    public Restaurante(String nombre, double precioDelivery, String tipoDeComida, String ubicacion, String fotoPortada,String fotoLogo) {
+        this.nombre = nombre;
+        this.precioDelivery = precioDelivery;
+        this.tipoDeComida = tipoDeComida;
+        this.ubicacion = ubicacion;
+        this.fotoPortada=fotoPortada;
+        this.fotoLogo = fotoLogo;
     }
 
-    public String getNameTitlte() {
-        return nameTitlte;
+    // Getters y setters
+    public String getNombre() {
+        return nombre;
     }
 
-    public double getProductPrice() {
-        return priceDelivery;
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
-    public String getCategory() {
-        return category;
+    public double getPrecioDelivery() {
+        return precioDelivery;
     }
 
-    public String getLocation() {
-        return location;
+    public void setPrecioDelivery(double precioDelivery) {
+        this.precioDelivery = precioDelivery;
     }
-    public int getImageResourceId() {
-        return imageResourceId;
+
+    public String getTipoDeComida() {
+        return tipoDeComida;
+    }
+
+    public void setTipoDeComida(String tipoDeComida) {
+        this.tipoDeComida = tipoDeComida;
+    }
+
+    public String getUbicacion() {
+        return ubicacion;
+    }
+
+    public void setUbicacion(String ubicacion) {
+        this.ubicacion = ubicacion;
+    }
+
+    public String getFotoLogo() {
+        return fotoLogo;
+    }
+
+    public void setFotoLogo(String fotoLogo) {
+        this.fotoLogo = fotoLogo;
+    }
+    public String getFotoPortada() {
+        return fotoLogo;
+    }
+
+    public void setFotoPortada(String fotoLogo) {
+        this.fotoLogo = fotoLogo;
     }
 }
-

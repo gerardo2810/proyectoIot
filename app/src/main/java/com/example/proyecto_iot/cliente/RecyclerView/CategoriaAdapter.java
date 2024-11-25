@@ -13,20 +13,18 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.proyecto_iot.R;
-import com.example.proyecto_iot.admin_restaurante.AgregarCategoriaActivity;
-import com.example.proyecto_iot.admin_restaurante.EditarProductoActivity;
-import com.example.proyecto_iot.cliente.InicioClienteActivity;
 import com.example.proyecto_iot.cliente.ListaRestaurantesCategoriasClienteActivity;
 
 import java.util.List;
 
-public class CategoriaAdapter extends RecyclerView.Adapter<CategoriaAdapter.CategoriaViewHolder>{
+public class CategoriaAdapter extends RecyclerView.Adapter<CategoriaAdapter.CategoriaViewHolder> {
 
-    private List<com.example.proyecto_iot.cliente.RecyclerView.Categoria> categoryList;
+    private List<Categoria> categoryList;
     private Context context;
 
-    public CategoriaAdapter(List<com.example.proyecto_iot.cliente.RecyclerView.Categoria> categoryList, Context context) {
+    public CategoriaAdapter(List<Categoria> categoryList, Context context) {
         this.categoryList = categoryList;
         this.context = context;
     }
@@ -41,26 +39,33 @@ public class CategoriaAdapter extends RecyclerView.Adapter<CategoriaAdapter.Cate
     @Override
     public void onBindViewHolder(@NonNull CategoriaViewHolder holder, int position) {
         Categoria category = categoryList.get(position);
-        holder.tvCategoryName.setText(category.getName());
-        holder.imgCategory.setImageResource(category.getImageResId());
+        holder.tvCategoryName.setText(category.getNombre());
+
+        // Usar Glide para cargar la imagen desde la URL
+        Glide.with(context)
+                .load(category.getIconFoto())
+                .placeholder(R.drawable.placeholder) // Ícono por defecto
+                .into(holder.imgCategory);
 
         // Evento al hacer clic en la categoría
         holder.itemView.setOnClickListener(v -> {
-            // Verificar el nombre de la categoría antes de pasarla
-            Log.d("CategoriaAdapter", "Categoría seleccionada: " + category.getName());
+            Log.d("CategoriaAdapter", "Categoría seleccionada: " + category.getNombre());
 
             // Pasar la categoría seleccionada a la nueva actividad
             Intent intent = new Intent(context, ListaRestaurantesCategoriasClienteActivity.class);
-            intent.putExtra("selectedCategory", category.getName()); // Pasar la categoría seleccionada
+            intent.putExtra("selectedCategory", category.getNombre());
             context.startActivity(intent);
         });
     }
 
-
-
     @Override
     public int getItemCount() {
         return categoryList.size();
+    }
+
+    public void updateData(List<Categoria> newCategories) {
+        this.categoryList = newCategories;
+        notifyDataSetChanged();
     }
 
     public static class CategoriaViewHolder extends RecyclerView.ViewHolder {

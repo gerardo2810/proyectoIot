@@ -178,6 +178,5 @@
         app:menu="@menu/cliente_navigation_bar" />
 
 
-
 </androidx.constraintlayout.widget.ConstraintLayout>
 

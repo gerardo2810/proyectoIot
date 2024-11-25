@@ -2,6 +2,7 @@ package com.example.proyecto_iot.cliente;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -20,6 +21,8 @@ import com.example.proyecto_iot.cliente.RecyclerView.Restaurante;
 import com.example.proyecto_iot.cliente.RecyclerView.RestauranteAdapter;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +30,7 @@ import java.util.List;
 public class InicioClienteActivity extends AppCompatActivity {
     private RecyclerView recyclerBestOption;
     private RestauranteAdapter bestOptionAdapter;
-
+    private FirebaseFirestore db;
     private RecyclerView recyclerCategories;
     private RecyclerView recyclerFavoritos;
     private RecyclerView recyclerPopulares;
@@ -46,7 +49,7 @@ public class InicioClienteActivity extends AppCompatActivity {
         setContentView(R.layout.activity_inicio_cliente);
         // Enlazar el EditText de búsqueda
         orderSearch = findViewById(R.id.order_search);
-
+        db = FirebaseFirestore.getInstance();
         // Configurar un listener para que, al hacer clic, abra la actividad de búsqueda
         orderSearch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,14 +60,14 @@ public class InicioClienteActivity extends AppCompatActivity {
             }
         });
 
-        // Inicializar RecyclerView de categorías
+        // Configurar RecyclerView
         recyclerCategories = findViewById(R.id.recycler_categories);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        recyclerCategories.setLayoutManager(layoutManager);
-
-        // Asignar adaptador para las categorías
-        categoryAdapter = new CategoriaAdapter(getCategoryList(), this);
+        recyclerCategories.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        categoryAdapter = new CategoriaAdapter(new ArrayList<>(), this);
         recyclerCategories.setAdapter(categoryAdapter);
+        fetchCategoriesFromFirebase();
+
+
         // Inicializar RecyclerView de favoritos
         recyclerFavoritos = findViewById(R.id.recycler_favoritos);
         LinearLayoutManager layoutManager1 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
@@ -126,21 +129,24 @@ public class InicioClienteActivity extends AppCompatActivity {
             });
     }
 
-    // Método para obtener la lista de categorías
-    private List<com.example.proyecto_iot.cliente.RecyclerView.Categoria> getCategoryList() {
-        List<com.example.proyecto_iot.cliente.RecyclerView.Categoria> categoryList = new ArrayList<>();
-        categoryList.add(new com.example.proyecto_iot.cliente.RecyclerView.Categoria("Pollo", R.drawable.chicken));
-        categoryList.add(new com.example.proyecto_iot.cliente.RecyclerView.Categoria("Carnes", R.drawable.carne));
-        categoryList.add(new com.example.proyecto_iot.cliente.RecyclerView.Categoria("Hamburguesas", R.drawable.hamburguesa));
-        categoryList.add(new com.example.proyecto_iot.cliente.RecyclerView.Categoria("Pizzas", R.drawable.pizza));
-        categoryList.add(new com.example.proyecto_iot.cliente.RecyclerView.Categoria("Pastas", R.drawable.pasta));
-        categoryList.add(new Categoria("Sushi", R.drawable.makis));
-        categoryList.add(new com.example.proyecto_iot.cliente.RecyclerView.Categoria("Postres", R.drawable.postre));
-        categoryList.add(new com.example.proyecto_iot.cliente.RecyclerView.Categoria("Helados", R.drawable.helados));
-        categoryList.add(new com.example.proyecto_iot.cliente.RecyclerView.Categoria("Jugos", R.drawable.jugo));
-        categoryList.add(new com.example.proyecto_iot.cliente.RecyclerView.Categoria("Bowls", R.drawable.bowls));
-        return categoryList;
+    private void fetchCategoriesFromFirebase() {
+        db.collection("categorias").get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        List<Categoria> categoryList = new ArrayList<>();
+                        for (DocumentSnapshot document : task.getResult()) {
+                            String nombre = document.getString("Nombre");
+                            String iconFoto = document.getString("iconFoto");
+                            String idRestaurante = document.getString("idRestaurante");
+                            categoryList.add(new Categoria(nombre, iconFoto, idRestaurante));
+                        }
+                        categoryAdapter.updateData(categoryList); // Método para actualizar datos del adaptador
+                    } else {
+                        Log.e("Firestore", "Error al obtener categorías", task.getException());
+                    }
+                });
     }
+
 
     private List<Restaurante> getFavoritosList() {
         List<Restaurante> favoritosList = new ArrayList<>();

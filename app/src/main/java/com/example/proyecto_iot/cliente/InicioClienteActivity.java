@@ -67,8 +67,6 @@ public class InicioClienteActivity extends AppCompatActivity {
         categoryAdapter = new CategoriaAdapter(new ArrayList<>(), this);
         recyclerCategories.setAdapter(categoryAdapter);
         fetchCategoriesFromFirebase();
-
-
         // Inicializar RecyclerView de favoritos
         recyclerFavoritos = findViewById(R.id.recycler_favoritos);
         LinearLayoutManager layoutManager1 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
@@ -83,23 +81,15 @@ public class InicioClienteActivity extends AppCompatActivity {
         recyclerPopulares = findViewById(R.id.recycler_populares);
         LinearLayoutManager layoutManager2 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         recyclerPopulares.setLayoutManager(layoutManager2);
-
-        // Crear la lista para populares
-                popularesList = new ArrayList<>();
-
-        // Configurar el adaptador
-                popularesAdapter = new RestauranteAdapter(this, popularesList);
-                recyclerPopulares.setAdapter(popularesAdapter);
-
-        // Llamar al método para obtener los restaurantes desde Firebase
-                fetchPopularesFromFirebase();
+        popularesList = new ArrayList<>();
+        popularesAdapter = new RestauranteAdapter(this, popularesList);
+        recyclerPopulares.setAdapter(popularesAdapter);
+        fetchPopularesFromFirebase();
 
         // Cargar productos desde Firebase
         // Inicializar RecyclerView
         recyclerBestOption = findViewById(R.id.recycler_best_option);
         recyclerBestOption.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-
-        // Inicializar lista de opciones y adaptador
         bestOptionList = new ArrayList<>();
         bestOptionAdapter = new RestauranteAdapter(this, bestOptionList);
         recyclerBestOption.setAdapter(bestOptionAdapter);
@@ -154,6 +144,7 @@ public class InicioClienteActivity extends AppCompatActivity {
                 });
     }
 
+    // Método para obtener los restaurantes desde Firebase que esten abiertos
     private void fetchBestOptionsFromFirebase() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("restaurantes").get()
@@ -167,9 +158,11 @@ public class InicioClienteActivity extends AppCompatActivity {
                             String ubicacion = document.getString("ubicacion");
                             String fotoPortada = document.getString("fotoPortada");
                             String fotoLogo = document.getString("fotoLogo");
+                            Boolean open = document.getBoolean("open");
 
-
-                            bestOptionList.add(new Restaurante(nombre, precioDelivery, tipoDeComida, ubicacion,fotoPortada, fotoLogo));
+                            if (open == true){
+                                bestOptionList.add(new Restaurante(nombre, precioDelivery, tipoDeComida, ubicacion,fotoPortada, fotoLogo,0, open));
+                            }
                         }
                         bestOptionAdapter.notifyDataSetChanged();
                     } else {
@@ -178,24 +171,37 @@ public class InicioClienteActivity extends AppCompatActivity {
                 });
     }
 
-    // Método para obtener los restaurantes desde Firebase
+    // Método para obtener los restaurantes desde Firebase con cantidad de ventas >= 50 y que estén abiertos
     private void fetchPopularesFromFirebase() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("restaurantes").get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult() != null) {
                 popularesList.clear(); // Limpiar la lista antes de agregar nuevos elementos
                 for (DocumentSnapshot document : task.getResult()) {
                     try {
-                        String nombre = document.getString("Nombre");
+                        String nombre = document.contains("nombre") ? document.getString("nombre") : "Nombre no disponible";
                         double precioDelivery = document.contains("precioDelivery") ? document.getDouble("precioDelivery") : 0.0;
-                        String tipoDeComida = document.contains("TipoDeComida") ? document.getString("TipoDeComida") : "Desconocido";
-                        String ubicacion = document.getString("Ubicacion");
-                        String fotoPortada = document.getString("fotoPortada");
-                        String fotoLogo = document.getString("FotoLogo");
+                        String tipoDeComida = document.contains("tipoDeComida") ? document.getString("tipoDeComida") : "Desconocido";
+                        String ubicacion = document.contains("ubicacion") ? document.getString("ubicacion") : "Ubicación no disponible";
+                        String fotoPortada = document.contains("fotoPortada") ? document.getString("fotoPortada") : null;
+                        String fotoLogo = document.contains("fotoLogo") ? document.getString("fotoLogo") : null;
                         int ventas = document.contains("ventas") ? document.getLong("ventas").intValue() : 0;
+                        Boolean open = document.contains("open") ? document.getBoolean("open") : false;
 
-                        // Filtrar restaurantes con ventas >= 50
-                        if (ventas >= 50) {
-                            popularesList.add(new Restaurante(nombre, precioDelivery, tipoDeComida, ubicacion, fotoPortada, fotoLogo, ventas));
+                        Log.d("FirestoreData", "Procesando restaurante: " + nombre);
+
+                        // Filtrar restaurantes con ventas >= 50 y abiertos
+                        if (ventas >= 50 && Boolean.TRUE.equals(open)) {
+                            popularesList.add(new Restaurante(
+                                    nombre,
+                                    precioDelivery,
+                                    tipoDeComida,
+                                    ubicacion,
+                                    fotoPortada,
+                                    fotoLogo,
+                                    ventas,
+                                    open
+                            ));
                         }
                     } catch (Exception e) {
                         Log.e("Firestore", "Error procesando documento: " + document.getId(), e);
@@ -207,6 +213,7 @@ public class InicioClienteActivity extends AppCompatActivity {
             }
         });
     }
+
 
 
 }

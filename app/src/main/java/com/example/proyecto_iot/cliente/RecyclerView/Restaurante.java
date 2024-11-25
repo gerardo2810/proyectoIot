@@ -8,20 +8,22 @@ public class Restaurante {
     private String ubicacion;
     private  String fotoPortada;
     private String fotoLogo;
-    private  int ventas;// URL de la imagen
+    private  int ventas;
+    private boolean open;
 
-    public Restaurante(String nombre, double precioDelivery, String tipoDeComida, String ubicacion, String fotoPortada,String fotoLogo, int cantidad) {
+    public Restaurante(String nombre, double precioDelivery, String tipoDeComida, String ubicacion, String fotoPortada,String fotoLogo, int ventas, boolean open) {
         this.nombre = nombre;
         this.precioDelivery = precioDelivery;
         this.tipoDeComida = tipoDeComida;
         this.ubicacion = ubicacion;
         this.fotoPortada=fotoPortada;
         this.fotoLogo = fotoLogo;
-        this.ventas=cantidad;
+        this.ventas=ventas;
+        this.open=open;
     }
     // Constructor sin el campo "cantidad" (opcional)
     public Restaurante(String nombre, double precioDelivery, String tipoDeComida, String ubicacion, String fotoPortada, String fotoLogo) {
-        this(nombre, precioDelivery, tipoDeComida, ubicacion, fotoPortada, fotoLogo, 0); // Asignar un valor predeterminado a "cantidad"
+        this(nombre, precioDelivery, tipoDeComida, ubicacion, fotoPortada, fotoLogo, 0, true); // Asignar un valor predeterminado a "cantidad"
     }
 
     // Getters y setters

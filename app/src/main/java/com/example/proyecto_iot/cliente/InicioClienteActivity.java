@@ -23,6 +23,7 @@ import com.example.proyecto_iot.cliente.RecyclerView.Restaurante;
 import com.example.proyecto_iot.cliente.RecyclerView.RestauranteAdapter;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -36,12 +37,16 @@ public class InicioClienteActivity extends AppCompatActivity {
     private RecyclerView recyclerCategories;
     private RecyclerView recyclerFavoritos;
     private RestauranteAdapter popularesAdapter;
+    private RestauranteAdapter favoritosAdapter;
+
     private RecyclerView recyclerPopulares;
     private com.example.proyecto_iot.cliente.RecyclerView.CategoriaAdapter categoryAdapter;
 
 
     private List<Restaurante> bestOptionList;
     private List<Restaurante> popularesList;
+    private List<Restaurante> favoritosList;
+
     private EditText orderSearch; // El cuadro de búsqueda
 
     @Override
@@ -67,14 +72,15 @@ public class InicioClienteActivity extends AppCompatActivity {
         categoryAdapter = new CategoriaAdapter(new ArrayList<>(), this);
         recyclerCategories.setAdapter(categoryAdapter);
         fetchCategoriesFromFirebase();
+
         // Inicializar RecyclerView de favoritos
         recyclerFavoritos = findViewById(R.id.recycler_favoritos);
         LinearLayoutManager layoutManager1 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         recyclerFavoritos.setLayoutManager(layoutManager1);
-
-        /* Asignar adaptador para las favoritos
-        favoritosAdapter = new RestauranteAdapter(this, getFavoritosList());
-        recyclerFavoritos.setAdapter(favoritosAdapter);*/
+        favoritosList = new ArrayList<>();
+        favoritosAdapter = new RestauranteAdapter(this, favoritosList);
+        recyclerFavoritos.setAdapter(favoritosAdapter);
+        fetchFavoritosParaClienteLogueado();
 
 
         // Inicializar RecyclerView de populares
@@ -214,22 +220,59 @@ public class InicioClienteActivity extends AppCompatActivity {
         });
     }
 
+    private void fetchFavoritosFromFirebase(String clienteId) {
+        db.collection("clientes").document(clienteId).get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        DocumentSnapshot document = task.getResult();
+
+                        // Obtener lista de favoritos del cliente
+                        List<String> favoritosIds = (List<String>) document.get("favoritos");
+                        if (favoritosIds != null && !favoritosIds.isEmpty()) {
+                            favoritosList.clear(); // Limpiar la lista antes de cargar
+                            for (String restauranteId : favoritosIds) {
+                                db.collection("restaurantes").document(restauranteId).get()
+                                        .addOnCompleteListener(restauranteTask -> {
+                                            if (restauranteTask.isSuccessful() && restauranteTask.getResult() != null) {
+                                                DocumentSnapshot restauranteDoc = restauranteTask.getResult();
+
+                                                String nombre = restauranteDoc.contains("nombre") ? restauranteDoc.getString("nombre") : "Nombre no disponible";
+                                                double precioDelivery = restauranteDoc.contains("precioDelivery") && restauranteDoc.getDouble("precioDelivery") != null
+                                                        ? restauranteDoc.getDouble("precioDelivery")
+                                                        : 0.0;
+                                                String tipoDeComida = restauranteDoc.contains("tipoDeComida") ? restauranteDoc.getString("tipoDeComida") : "Tipo no disponible";
+                                                String ubicacion = restauranteDoc.contains("ubicacion") ? restauranteDoc.getString("ubicacion") : "Ubicación no disponible";
+                                                String fotoPortada = restauranteDoc.contains("fotoPortada") ? restauranteDoc.getString("fotoPortada") : null;
+                                                String fotoLogo = restauranteDoc.contains("fotoLogo") ? restauranteDoc.getString("fotoLogo") : null;
+                                                Boolean open = restauranteDoc.contains("open") ? restauranteDoc.getBoolean("open") : false;
+
+                                                // Agregar restaurante a la lista
+                                                favoritosList.add(new Restaurante(nombre, precioDelivery, tipoDeComida, ubicacion, fotoPortada, fotoLogo, 0, open));
+                                                favoritosAdapter.notifyDataSetChanged();
+                                            }
+                                        });
+                            }
+                        } else {
+                            Log.d("Favoritos", "El cliente no tiene restaurantes favoritos.");
+                        }
+                    } else {
+                        Log.e("Firestore", "Error al obtener cliente", task.getException());
+                    }
+                });
+    }
+    // Obtener ID del cliente logueado
+    private void fetchFavoritosParaClienteLogueado() {
+        String clienteId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        if (clienteId != null) {
+            fetchFavoritosFromFirebase(clienteId);
+        } else {
+            Log.e("Auth", "Cliente no logueado.");
+        }
+    }
 
 
 }
 
 
-    /*private List<Restaurante> getFavoritosList() {
-        List<Restaurante> favoritosList = new ArrayList<>();
-        favoritosList.add(new Restaurante("La Lucha", 3.49, "Desayunos", "San Miguel", R.drawable.mlalucha));
-        favoritosList.add(new Restaurante("Pinkberry", 3.49, "Heladería", "San Miguel", R.drawable.mpinkberry));
-        favoritosList.add(new Restaurante("Taco Bell", 2.50, "Comida mexicana", "San Miguel", R.drawable.mtacobell));
-        favoritosList.add(new Restaurante("Popeyes", 1.20, "Pollos", "San Miguel", R.drawable.mpopeyes));
-        favoritosList.add(new Restaurante("EDO Sushi Bar", 3.49, "Sushi", "San Miguel", R.drawable.medo));
-        favoritosList.add(new Restaurante("Mediterráneo", 3.49, "Pollos", "San Miguel", R.drawable.mmediterraneo));
-        return favoritosList;
-    }
-
-    }*/
 
 

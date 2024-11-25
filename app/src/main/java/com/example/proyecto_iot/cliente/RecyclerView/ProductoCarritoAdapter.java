@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.proyecto_iot.R;
 
 import java.util.List;
@@ -31,6 +32,7 @@ public class ProductoCarritoAdapter extends RecyclerView.Adapter<ProductoCarrito
         return new ProductoViewHolder(view);
     }
 
+
     @Override
     public void onBindViewHolder(@NonNull ProductoViewHolder holder, int position) {
         Producto producto = productos.get(position);
@@ -41,8 +43,12 @@ public class ProductoCarritoAdapter extends RecyclerView.Adapter<ProductoCarrito
         holder.textQuantity.setText(String.valueOf(producto.getCantidad()));
         holder.btnAdd.setText("Pagar S/ " + producto.getTotal());
 
-        // Asignar la imagen correspondiente
-        holder.productImage.setImageResource(producto.getImageResourceId());
+        // Usar Glide para cargar la imagen desde una URL
+        Glide.with(holder.productImage.getContext())
+                .load(producto.getImageUrl()) // URL de la imagen
+                .placeholder(R.drawable.placeholder) // Imagen mientras carga
+                .error(R.drawable.placeholder) // Imagen si ocurre un error
+                .into(holder.productImage);
 
         // Aumentar la cantidad
         holder.increaseQuantity.setOnClickListener(v -> {

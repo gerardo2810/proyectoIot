@@ -2,6 +2,7 @@ package com.example.proyecto_iot.cliente;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -11,11 +12,14 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.cliente.RecyclerView.Producto;
 import com.example.proyecto_iot.cliente.RecyclerView.ProductoDetallesAdapter;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,11 +29,15 @@ public class DetallesPedidoActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ProductoDetallesAdapter adapter;
     private List<Producto> productoList;
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detalles_pedido_cliente);
+
+        // Inicializar FirebaseFirestore
+        db = FirebaseFirestore.getInstance();
 
         // Inicializar RecyclerView
         recyclerView = findViewById(R.id.recycler_productos);
@@ -37,17 +45,13 @@ public class DetallesPedidoActivity extends AppCompatActivity {
 
         // Inicializar la lista de productos
         productoList = new ArrayList<>();
-        productoList.add(new Producto("Pavo a la leña", "Con tártara de la casa", 15.00, 27, R.drawable.lalucha_inicio));
-        productoList.add(new Producto("Pollo a la brasa", "Con papas fritas", 12.00, 15, R.drawable.lalucha_inicio));
-        productoList.add(new Producto("Pollo a la brasa", "Con papas fritas", 12.00, 15, R.drawable.lalucha_inicio));
-
-        // Recibir el ID del pedido desde el intent
-        int pedidoId = getIntent().getIntExtra("pedido_id", 1);
 
         // Configurar el adaptador
-        adapter = new ProductoDetallesAdapter(productoList);
+        adapter = new ProductoDetallesAdapter(this,productoList);
         recyclerView.setAdapter(adapter);
 
+        // Cargar productos desde Firebase
+        fetchProductosFromFirebase();
 
         // Configurar la flecha de retroceso
         ImageView backArrow = findViewById(R.id.back_arrow);
@@ -79,7 +83,7 @@ public class DetallesPedidoActivity extends AppCompatActivity {
                 int id = item.getItemId();
 
                 if (id == R.id.nav_restaurantes) {
-                        startActivity(new Intent(DetallesPedidoActivity.this, InicioClienteActivity.class));
+                    startActivity(new Intent(DetallesPedidoActivity.this, InicioClienteActivity.class));
                     return true;
                 } else if (id == R.id.nav_carrito) {
                     startActivity(new Intent(DetallesPedidoActivity.this, CarritoClienteActivity.class));
@@ -95,5 +99,37 @@ public class DetallesPedidoActivity extends AppCompatActivity {
                 return false;
             }
         });
+    }
+
+    private void fetchProductosFromFirebase() {
+        db.collection("platos").get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        productoList.clear(); // Limpiar la lista antes de agregar nuevos elementos
+                        for (DocumentSnapshot document : task.getResult()) {
+                            try {
+                                // Obtener los valores desde Firestore
+                                String nombre = document.getString("Nombre");
+                                String descripcion = document.getString("Descripcion");
+                                String imageUrl = document.getString("Imagen");
+
+                                // Obtener `Precio` como Double directamente
+                                double precio = document.contains("Precio") ? document.getDouble("Precio") : 0.0;
+
+                                // Obtener `cantidadDeVentas` como Long y convertirlo a int
+                                int cantidad = document.contains("cantidadDeVentas") ?
+                                        document.getLong("cantidadDeVentas").intValue() : 0;
+
+                                // Agregar el producto a la lista
+                                productoList.add(new Producto(nombre, descripcion, precio, cantidad, imageUrl));
+                            } catch (Exception e) {
+                                Log.e("Firestore", "Error al procesar producto", e);
+                            }
+                        }
+                        adapter.notifyDataSetChanged(); // Notificar al adaptador que los datos han cambiado
+                    } else {
+                        Log.e("Firestore", "Error al obtener productos", task.getException());
+                    }
+                });
     }
 }

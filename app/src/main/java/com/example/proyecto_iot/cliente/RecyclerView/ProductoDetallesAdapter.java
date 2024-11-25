@@ -1,20 +1,27 @@
 package com.example.proyecto_iot.cliente.RecyclerView;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
 import com.example.proyecto_iot.R;
+
 import java.util.List;
 
 public class ProductoDetallesAdapter extends RecyclerView.Adapter<ProductoDetallesAdapter.ProductoViewHolder> {
 
     private List<Producto> productos;
+    private Context context;
 
-    public ProductoDetallesAdapter(List<Producto> productos) {
+    public ProductoDetallesAdapter(Context context, List<Producto> productos) {
+        this.context = context;
         this.productos = productos;
     }
 
@@ -32,9 +39,13 @@ public class ProductoDetallesAdapter extends RecyclerView.Adapter<ProductoDetall
         holder.productDescription.setText(producto.getDescripcion());
         holder.productPriceUnit.setText("S/. " + producto.getPrecio());
         holder.productPriceTotal.setText("S/. " + producto.getTotal());
-        // Puedes usar Glide o Picasso para cargar la imagen si es necesario
 
-        holder.productImage.setImageResource(producto.getImageResourceId());
+        // Usar Glide para cargar la imagen desde una URL
+        Glide.with(context)
+                .load(producto.getImageUrl()) // Cambiado para usar URLs en lugar de recursos locales
+                .placeholder(R.drawable.placeholder) // Placeholder mientras se carga la imagen
+                .error(R.drawable.placeholder) // Imagen de error si no se puede cargar
+                .into(holder.productImage);
     }
 
     @Override

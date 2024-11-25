@@ -17,6 +17,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.cliente.RecyclerView.Categoria;
 import com.example.proyecto_iot.cliente.RecyclerView.CategoriaAdapter;
+import com.example.proyecto_iot.cliente.RecyclerView.Producto;
+import com.example.proyecto_iot.cliente.RecyclerView.ProductoAdapter;
 import com.example.proyecto_iot.cliente.RecyclerView.Restaurante;
 import com.example.proyecto_iot.cliente.RecyclerView.RestauranteAdapter;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -33,13 +35,13 @@ public class InicioClienteActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private RecyclerView recyclerCategories;
     private RecyclerView recyclerFavoritos;
+    private RestauranteAdapter popularesAdapter;
     private RecyclerView recyclerPopulares;
     private com.example.proyecto_iot.cliente.RecyclerView.CategoriaAdapter categoryAdapter;
-    private RestauranteAdapter popularesAdapter;
-    private RestauranteAdapter favoritosAdapter;
+
 
     private List<Restaurante> bestOptionList;
-
+    private List<Restaurante> popularesList;
     private EditText orderSearch; // El cuadro de búsqueda
 
     @Override
@@ -76,15 +78,23 @@ public class InicioClienteActivity extends AppCompatActivity {
         favoritosAdapter = new RestauranteAdapter(this, getFavoritosList());
         recyclerFavoritos.setAdapter(favoritosAdapter);*/
 
+
         // Inicializar RecyclerView de populares
         recyclerPopulares = findViewById(R.id.recycler_populares);
         LinearLayoutManager layoutManager2 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         recyclerPopulares.setLayoutManager(layoutManager2);
 
-        /* Asignar adaptador para las populares
-        popularesAdapter = new RestauranteAdapter(this, getPopularesList());
-        recyclerPopulares.setAdapter(popularesAdapter);*/
+        // Crear la lista para populares
+                popularesList = new ArrayList<>();
 
+        // Configurar el adaptador
+                popularesAdapter = new RestauranteAdapter(this, popularesList);
+                recyclerPopulares.setAdapter(popularesAdapter);
+
+        // Llamar al método para obtener los restaurantes desde Firebase
+                fetchPopularesFromFirebase();
+
+        // Cargar productos desde Firebase
         // Inicializar RecyclerView
         recyclerBestOption = findViewById(R.id.recycler_best_option);
         recyclerBestOption.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
@@ -168,6 +178,39 @@ public class InicioClienteActivity extends AppCompatActivity {
                 });
     }
 
+    // Método para obtener los restaurantes desde Firebase
+    private void fetchPopularesFromFirebase() {
+        db.collection("restaurantes").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+                popularesList.clear(); // Limpiar la lista antes de agregar nuevos elementos
+                for (DocumentSnapshot document : task.getResult()) {
+                    try {
+                        String nombre = document.getString("Nombre");
+                        double precioDelivery = document.contains("precioDelivery") ? document.getDouble("precioDelivery") : 0.0;
+                        String tipoDeComida = document.contains("TipoDeComida") ? document.getString("TipoDeComida") : "Desconocido";
+                        String ubicacion = document.getString("Ubicacion");
+                        String fotoPortada = document.getString("fotoPortada");
+                        String fotoLogo = document.getString("FotoLogo");
+                        int ventas = document.contains("ventas") ? document.getLong("ventas").intValue() : 0;
+
+                        // Filtrar restaurantes con ventas >= 50
+                        if (ventas >= 50) {
+                            popularesList.add(new Restaurante(nombre, precioDelivery, tipoDeComida, ubicacion, fotoPortada, fotoLogo, ventas));
+                        }
+                    } catch (Exception e) {
+                        Log.e("Firestore", "Error procesando documento: " + document.getId(), e);
+                    }
+                }
+                popularesAdapter.notifyDataSetChanged(); // Notificar cambios al adaptador
+            } else {
+                Log.e("Firestore", "Error al obtener los datos", task.getException());
+            }
+        });
+    }
+
+
+}
+
 
     /*private List<Restaurante> getFavoritosList() {
         List<Restaurante> favoritosList = new ArrayList<>();
@@ -180,14 +223,6 @@ public class InicioClienteActivity extends AppCompatActivity {
         return favoritosList;
     }
 
-    private List<Restaurante> getPopularesList() {
-        List<Restaurante> popularesList = new ArrayList<>();
-        popularesList.add(new Restaurante("Papa John's", 3.49, "Pizzas", "San Miguel", R.drawable.mpapajhons));
-        popularesList.add(new Restaurante("Bembos", 1.39, "Hamburguesas", "San Miguel", R.drawable.mbembos));
-        popularesList.add(new Restaurante("Chinawok", 2.39, "Chifa", "San Miguel", R.drawable.mchinawok));
-        popularesList.add(new Restaurante("Don Belisario", 4.49, "Pollos", "San Miguel", R.drawable.mdonbelisario));
-        popularesList.add(new Restaurante("Santoku Sushi Bar", 2.79, "Sushi", "San Miguel", R.drawable.msantoku));
-        popularesList.add(new Restaurante("Wing House", 1.49, "Alitas", "San Miguel", R.drawable.mwinhouse));
-        return popularesList;
     }*/
-}
+
+

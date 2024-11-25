@@ -2,17 +2,13 @@ package com.example.proyecto_iot.cliente;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -21,6 +17,8 @@ import com.example.proyecto_iot.cliente.RecyclerView.Producto;
 import com.example.proyecto_iot.cliente.RecyclerView.ProductoDetallesAdapter;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,11 +28,15 @@ public class TodosLosProductosActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ProductoDetallesAdapter adapter;
     private List<Producto> productoList;
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_todos_los_productos_cliente);
+
+        // Inicializar Firebase Firestore
+        db = FirebaseFirestore.getInstance();
 
         // Inicializar RecyclerView
         recyclerView = findViewById(R.id.recycler_productos);
@@ -42,20 +44,13 @@ public class TodosLosProductosActivity extends AppCompatActivity {
 
         // Inicializar la lista de productos
         productoList = new ArrayList<>();
-        productoList.add(new Producto("Pavo a la leña", "Con tártara de la casa", 15.00, 27,R.drawable.lalucha_inicio));
-        productoList.add(new Producto("Pollo a la brasa", "Con papas fritas", 12.00, 15,R.drawable.lalucha_inicio));
-        productoList.add(new Producto("Pollo a la brasa", "Con papas fritas", 12.00, 15,R.drawable.lalucha_inicio));
-        productoList.add(new Producto("Pollo a la brasa", "Con papas fritas", 12.00, 15,R.drawable.lalucha_inicio));
-        productoList.add(new Producto("Pollo a la brasa", "Con papas fritas", 12.00, 15,R.drawable.lalucha_inicio));
-        productoList.add(new Producto("Pollo a la brasa", "Con papas fritas", 12.00, 15,R.drawable.lalucha_inicio));
-        productoList.add(new Producto("Pollo a la brasa", "Con papas fritas", 12.00, 15,R.drawable.lalucha_inicio));
-        productoList.add(new Producto("Pollo a la brasa", "Con papas fritas", 12.00, 15,R.drawable.lalucha_inicio));
-        productoList.add(new Producto("Pollo a la brasa", "Con papas fritas", 12.00, 15,R.drawable.lalucha_inicio));
 
         // Configurar el adaptador
-        adapter = new ProductoDetallesAdapter(productoList);
+        adapter = new ProductoDetallesAdapter(this, productoList);
         recyclerView.setAdapter(adapter);
 
+        // Cargar los productos desde Firebase
+        fetchProductosFromFirebase();
 
         // Configurar la flecha de retroceso
         ImageView backArrow = findViewById(R.id.back_arrow);
@@ -92,7 +87,30 @@ public class TodosLosProductosActivity extends AppCompatActivity {
                 return false;
             }
         });
+    }
 
+    // Método para obtener productos desde Firebase Firestore
+    private void fetchProductosFromFirebase() {
+        db.collection("platos") // Asegúrate de que esta sea tu colección de productos en Firebase
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        productoList.clear(); // Limpiar la lista antes de agregar nuevos datos
+                        for (DocumentSnapshot document : task.getResult()) {
+                            // Extraer los datos del documento
+                            String nombre = document.getString("nombre");
+                            String descripcion = document.getString("descripcion");
+                            double precio = document.contains("precio") ? document.getDouble("precio") : 0.0;
+                            String imageUrl = document.getString("imagen"); // Supone que tienes un campo para la URL de la imagen
+                            int cantidad = 1; // Valor inicial de la cantidad
 
+                            // Agregar el producto a la lista
+                            productoList.add(new Producto(nombre, descripcion, precio, cantidad, imageUrl));
+                        }
+                        adapter.notifyDataSetChanged(); // Actualizar el adaptador con los nuevos datos
+                    } else {
+                        Log.e("Firestore", "Error al obtener productos", task.getException());
+                    }
+                });
     }
 }

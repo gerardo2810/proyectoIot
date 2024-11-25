@@ -1,7 +1,6 @@
 package com.example.proyecto_iot.cliente.RecyclerView;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,8 +11,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.proyecto_iot.R;
-import com.example.proyecto_iot.cliente.PerfilRestauranteActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +25,8 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.Produc
     private OnProductoAñadidoListener listener; // Listener para notificar a la actividad
 
     // Constructor actualizado para recibir el listener
-    public ProductoAdapter(List<Producto> productos, OnProductoAñadidoListener listener) {
+    public ProductoAdapter(Context context, List<Producto> productos, OnProductoAñadidoListener listener) {
+        this.context = context;
         this.productos = productos;
         this.productosListFull = new ArrayList<>(productos); // Copia de la lista original
         this.listener = listener; // Inicializamos el listener
@@ -35,7 +35,7 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.Produc
     @NonNull
     @Override
     public ProductoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_producto_perfil_restaurante, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_producto_perfil_restaurante, parent, false);
         return new ProductoViewHolder(view);
     }
 
@@ -45,7 +45,13 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.Produc
         holder.productTitle.setText(producto.getNombre());
         holder.productDescription.setText(producto.getDescripcion());
         holder.productPrice.setText("S/ " + producto.getPrecio());
-        holder.productImage.setImageResource(producto.getImageResourceId());
+        holder.textQuantity.setText(String.valueOf(producto.getCantidad()));
+
+        // Cargar la imagen usando Glide
+        Glide.with(context)
+                .load(producto.getImageUrl()) // URL de la imagen desde Firebase
+                .placeholder(R.drawable.placeholder) // Imagen por defecto
+                .into(holder.productImage);
 
         // Lógica para los botones de aumentar y disminuir cantidad
         holder.buttonIncrease.setOnClickListener(view -> {
@@ -64,12 +70,6 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.Produc
         holder.buttonAddProduct.setOnClickListener(view -> {
             int cantidadSeleccionada = producto.getCantidad(); // Obtener la cantidad seleccionada
             listener.onProductoAñadido(producto, cantidadSeleccionada); // Notificar a la actividad
-        });
-
-        // Acción del clic para abrir la actividad del restaurante
-        holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(context, PerfilRestauranteActivity.class);
-            context.startActivity(intent);
         });
     }
 

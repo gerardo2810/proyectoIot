@@ -43,6 +43,7 @@ public class ListaRestaurantesCategoriasClienteActivity extends AppCompatActivit
 
         // Obtener la categoría seleccionada del Intent
         selectedCategory = getIntent().getStringExtra("selectedCategory");
+        System.out.println(selectedCategory);
 
         // Inicializar el RecyclerView
         recyclerView = findViewById(R.id.recycler_lista_restaurantes_categoria);
@@ -79,7 +80,7 @@ public class ListaRestaurantesCategoriasClienteActivity extends AppCompatActivit
     private void filterRestaurantsByCategory(String category) {
         List<Restaurante> filteredList = new ArrayList<>();
         for (Restaurante restaurante : restauranteList) {
-            if (restaurante.getTipoDeComida().equalsIgnoreCase(category)) {
+            if (restaurante.getTipoDeComida() != null && restaurante.getTipoDeComida().equalsIgnoreCase(category)) {
                 filteredList.add(restaurante);
             }
         }
@@ -88,13 +89,8 @@ public class ListaRestaurantesCategoriasClienteActivity extends AppCompatActivit
             Toast.makeText(this, "No hay restaurantes en la categoría seleccionada.", Toast.LENGTH_SHORT).show();
         }
 
-        // Actualizar el adaptador con la lista filtrada
-        if (restauranteAdapter != null) {
-            restauranteAdapter.updateList(filteredList);
-        } else {
-            restauranteAdapter = new RestauranteAdapter(this, filteredList);
-            recyclerView.setAdapter(restauranteAdapter);
-        }
+        restauranteAdapter = new RestauranteAdapter(this, filteredList);
+        recyclerView.setAdapter(restauranteAdapter);
     }
 
     // Método para filtrar los restaurantes por nombre dentro de la misma categoría

@@ -8,11 +8,14 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,6 +26,11 @@ import androidx.core.content.ContextCompat;
 
 import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.cliente.SeguimientoPedidoActivity;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -30,11 +38,15 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class RecojoCurso1Activity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap myMap;
+    FusedLocationProviderClient fusedLocationClient;
+    LocationCallback locationCallback;
+    Marker marcadorActual;
 
     private final String CHANNEL_ID = "order_ready_channel";
     private Handler handler;
@@ -49,6 +61,9 @@ public class RecojoCurso1Activity extends AppCompatActivity implements OnMapRead
         // Obtén el mapa
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        // Inicializa el cliente de ubicación
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         // Crear canal de notificación
         createNotificationChannel();
@@ -139,27 +154,83 @@ public class RecojoCurso1Activity extends AppCompatActivity implements OnMapRead
 
         myMap = googleMap;
 
-        // Define las ubicaciones de origen y destino
-        LatLng origen = new LatLng(-12.0682373, -77.0769483); // Coordenadas de ubicacion
-        LatLng destino = new LatLng(-12.071507, -77.090343); // Coordenadas del restaurante
+        LatLng destino = new LatLng(-12.0682373, -77.0769483); // Coordenadas de punto de retiro
 
-        // Agrega marcadores
-        myMap.addMarker(new MarkerOptions()
-                .position(origen)
-                .title("Tu ubicacion")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+        Bitmap original1 = BitmapFactory.decodeResource(getResources(), R.drawable.shop_location_map);
+        Bitmap resized1 = Bitmap.createScaledBitmap(original1, 150, 150, false);
         myMap.addMarker(new MarkerOptions()
                 .position(destino)
                 .title("Punto de retiro")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                .icon(BitmapDescriptorFactory.fromBitmap(resized1)));
 
         // Ajusta la cámara
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
-        builder.include(origen);
         builder.include(destino);
-        LatLngBounds bounds = builder.build();
+        myMap.setOnMyLocationChangeListener(location -> {
+            LatLng nuevaUbicacion = new LatLng(location.getLatitude(), location.getLongitude());
+            builder.include(nuevaUbicacion);
+            myMap.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 100));
+        });
 
-        myMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100));
+        // Configura actualizaciones en tiempo real de tu ubicación
+        configurarActualizacionesUbicacion(destino);
+
+    }
+
+    public void configurarActualizacionesUbicacion(LatLng destino) {
+
+        int selfPermissionFineLocation = ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION);
+        int selfPermissionCoarseLocation = ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION);
+
+
+        if (selfPermissionFineLocation == PackageManager.PERMISSION_GRANTED &&
+                selfPermissionCoarseLocation == PackageManager.PERMISSION_GRANTED) {
+            // Configura la solicitud de actualizaciones de ubicación
+            LocationRequest locationRequest = LocationRequest.create();
+            locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+            locationRequest.setInterval(5000); // Actualización cada 5 segundos
+
+            // Configura el callback para actualizaciones de ubicación
+            locationCallback = new LocationCallback() {
+                @Override
+                public void onLocationResult(@NonNull LocationResult locationResult) {
+                    if (locationResult != null) {
+                        for (Location location : locationResult.getLocations()) {
+                            actualizarUbicacionEnMapa(location, destino);
+                        }
+                    }
+                }
+            };
+
+            // Inicia las actualizaciones de ubicación
+            fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
+        } else {
+            Toast.makeText(this, "Permisos de ubicación no otorgados", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void actualizarUbicacionEnMapa(Location location, LatLng destino) {
+        LatLng nuevaUbicacion = new LatLng(location.getLatitude(), location.getLongitude());
+
+        if (marcadorActual == null) {
+            // Crea el marcador inicial si no existe
+            Bitmap original = BitmapFactory.decodeResource(getResources(), R.drawable.delivery_bike_map);
+            Bitmap resized = Bitmap.createScaledBitmap(original, 150, 150, false);
+            marcadorActual = myMap.addMarker(new MarkerOptions()
+                    .position(nuevaUbicacion)
+                    .title("Tu ubicación")
+                    .icon(BitmapDescriptorFactory.fromBitmap(resized)));
+            myMap.moveCamera(CameraUpdateFactory.newLatLngZoom(nuevaUbicacion, 15));
+        } else {
+            // Actualiza la posición del marcador existente
+            marcadorActual.setPosition(nuevaUbicacion);
+
+            // Ajusta la cámara para que incluya tanto tu posición actual como el destino
+            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+            builder.include(destino);
+            builder.include(nuevaUbicacion);
+            myMap.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 100));
+        }
     }
 
 }

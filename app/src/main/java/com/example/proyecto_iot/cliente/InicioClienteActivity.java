@@ -219,7 +219,6 @@ public class InicioClienteActivity extends AppCompatActivity {
             }
         });
     }
-
     private void fetchFavoritosFromFirebase(String clienteId) {
         db.collection("clientes").document(clienteId).get()
                 .addOnCompleteListener(task -> {
@@ -230,6 +229,8 @@ public class InicioClienteActivity extends AppCompatActivity {
                         List<String> favoritosIds = (List<String>) document.get("favoritos");
                         if (favoritosIds != null && !favoritosIds.isEmpty()) {
                             favoritosList.clear(); // Limpiar la lista antes de cargar
+
+                            // Obtener los datos de los restaurantes en paralelo
                             for (String restauranteId : favoritosIds) {
                                 db.collection("restaurantes").document(restauranteId).get()
                                         .addOnCompleteListener(restauranteTask -> {
@@ -245,9 +246,21 @@ public class InicioClienteActivity extends AppCompatActivity {
                                                 String fotoPortada = restauranteDoc.contains("fotoPortada") ? restauranteDoc.getString("fotoPortada") : null;
                                                 String fotoLogo = restauranteDoc.contains("fotoLogo") ? restauranteDoc.getString("fotoLogo") : null;
                                                 Boolean open = restauranteDoc.contains("open") ? restauranteDoc.getBoolean("open") : false;
-
+                                                System.out.println("FAVORITOS");
+                                                System.out.println(nombre);
+                                                System.out.println(precioDelivery);
+                                                System.out.println(tipoDeComida);
+                                                System.out.println(fotoPortada);
+                                                System.out.println(fotoLogo);
+                                                System.out.println(open);
                                                 // Agregar restaurante a la lista
                                                 favoritosList.add(new Restaurante(nombre, precioDelivery, tipoDeComida, ubicacion, fotoPortada, fotoLogo, 0, open));
+                                            } else {
+                                                Log.e("Firestore", "Error al obtener restaurante: " + restauranteId, restauranteTask.getException());
+                                            }
+
+                                            // Notificar cambios al adaptador solo después de obtener todos los documentos
+                                            if (favoritosList.size() == favoritosIds.size()) {
                                                 favoritosAdapter.notifyDataSetChanged();
                                             }
                                         });
@@ -260,6 +273,8 @@ public class InicioClienteActivity extends AppCompatActivity {
                     }
                 });
     }
+
+
     // Obtener ID del cliente logueado
     private void fetchFavoritosParaClienteLogueado() {
         String clienteId = FirebaseAuth.getInstance().getCurrentUser().getUid();

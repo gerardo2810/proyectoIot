@@ -67,17 +67,17 @@ public class Restaurante {
         this.fotoLogo = fotoLogo;
     }
     public String getFotoPortada() {
-        return fotoLogo;
+        return fotoPortada;
     }
 
     public void setFotoPortada(String fotoLogo) {
-        this.fotoLogo = fotoLogo;
+        this.fotoPortada = fotoLogo;
     }
-    public String getVentas() {
-        return fotoLogo;
+    public int getVentas() {
+        return ventas;
     }
 
-    public void getVentas(String fotoLogo) {
-        this.fotoLogo = fotoLogo;
+    public void getVentas(int ventas) {
+        this.ventas = ventas;
     }
 }

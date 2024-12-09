@@ -91,7 +91,8 @@
             android:exported="true" />
         <activity
             android:name=".superadmin.registro_admin_superadmin"
-            android:exported="true" />
+            android:exported="true">
+        </activity>
         <activity
             android:name=".superadmin.registro_restaurante_superadmin"
             android:exported="true" />

@@ -20,6 +20,7 @@ import com.example.proyecto_iot.superadmin.RecyclerView.Administrador;
 import com.example.proyecto_iot.superadmin.RecyclerView.RestauranteSA;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.zxing.BarcodeFormat;
@@ -37,6 +38,7 @@ public class registro_restaurante_superadmin extends AppCompatActivity {
     FirebaseFirestore db;
     private EditText textFieldNombre, textFieldUbicacion, textFieldDescripccion, textFieldEslogan, textFieldPrecioDelivery;
     private Spinner spinnerTipoComida;
+    private String userId;
 
     private static final int PICK_IMAGE_REQUEST_LOGO = 1;
     private static final int PICK_IMAGE_REQUEST_PORTADA = 2;
@@ -109,70 +111,7 @@ public class registro_restaurante_superadmin extends AppCompatActivity {
         Toast.makeText(this, "Espere un momento...", Toast.LENGTH_SHORT).show();
         administrador.setRestaurante(textFieldNombre.getText().toString());
 
-        db.collection("administradores")
-                .add(administrador)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        String idAdministrador = task.getResult().getId();
 
-                        RestauranteSA restaurante = new RestauranteSA();
-                        restaurante.setIdAdministrador(idAdministrador); // Establecer el ID del administrador
-
-                        String imageFileName = UUID.randomUUID().toString();
-                        String logoFileName = UUID.randomUUID().toString();
-                        String portadaFileName = UUID.randomUUID().toString();
-
-                        StorageReference logoRef = storageReference.child(logoFileName);
-                        StorageReference portadaRef = storageReference.child(portadaFileName);
-
-                        logoRef.putFile(imageUriLogo)
-                                .addOnSuccessListener(taskSnapshot -> {
-                                    // Obtener la URL del logo
-                                    logoRef.getDownloadUrl().addOnSuccessListener(logoUri -> {
-                                        restaurante.setFotoLogo(logoUri.toString());
-
-                                        portadaRef.putFile(imageUri)
-                                                .addOnSuccessListener(taskSnapshot1 -> {
-                                                    // Obtener la URL de la portada
-                                                    portadaRef.getDownloadUrl().addOnSuccessListener(portadaUri -> {
-                                                        restaurante.setFotoPortada(portadaUri.toString());
-
-                                                        restaurante.setNombre(textFieldNombre.getText().toString());
-                                                        restaurante.setUbicacion(textFieldUbicacion.getText().toString());
-                                                        restaurante.setTipoDeComida(spinnerTipoComida.getSelectedItem().toString());
-                                                        restaurante.setDescripcion(textFieldDescripccion.getText().toString());
-                                                        restaurante.setVentas(0);
-                                                        restaurante.setOpen(false);
-                                                        restaurante.setEslogan(textFieldEslogan.getText().toString());
-                                                        double precioDelivery = Double.parseDouble(textFieldPrecioDelivery.getText().toString());
-                                                        restaurante.setPrecioDelivery(precioDelivery);
-
-                                                        // Agregar restaurante a Firestore
-                                                        db.collection("restaurantes")
-                                                                .add(restaurante)
-                                                                .addOnSuccessListener(documentReference -> {
-                                                                    String restauranteId = documentReference.getId();
-
-                                                                    try {
-                                                                        Bitmap qrBitmap = generateQRCode(restauranteId);
-                                                                        saveQRCodeToStorage(qrBitmap, restauranteId); // Opcional: Guardar el QR en Storage
-                                                                    } catch (Exception e) {
-                                                                        Toast.makeText(this, "Error al generar el código QR", Toast.LENGTH_SHORT).show();
-                                                                    }
-
-                                                                    Toast.makeText(this, "Administrador y restaurante registrados exitosamente", Toast.LENGTH_SHORT).show();
-                                                                    Intent intent = new Intent(this, gestion_usuarios_superadmin.class);
-                                                                    startActivity(intent);
-                                                                })
-                                                                .addOnFailureListener(e -> {
-                                                                    Toast.makeText(this, "Algo ocurrió al intentar registrar el restaurante", Toast.LENGTH_SHORT).show();
-                                                                });
-                                                    });
-                                                });
-                                    });
-                                });
-                    }
-                });
 
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
@@ -181,6 +120,74 @@ public class registro_restaurante_superadmin extends AppCompatActivity {
                         Toast.makeText(this, "Error registro admin: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(this, gestion_usuarios_superadmin.class);
                         startActivity(intent);
+                    }
+                    else {
+                        userId = mAuth.getCurrentUser().getUid();
+
+                        db.collection("administradores").document(userId)
+                                .set(administrador, SetOptions.merge())
+                                .addOnCompleteListener(task2 -> {
+                                    if (task2.isSuccessful()) {
+
+                                        RestauranteSA restaurante = new RestauranteSA();
+                                        restaurante.setIdAdministrador(userId); // Establecer el ID del administrador
+
+                                        String imageFileName = UUID.randomUUID().toString();
+                                        String logoFileName = UUID.randomUUID().toString();
+                                        String portadaFileName = UUID.randomUUID().toString();
+
+                                        StorageReference logoRef = storageReference.child(logoFileName);
+                                        StorageReference portadaRef = storageReference.child(portadaFileName);
+
+                                        logoRef.putFile(imageUriLogo)
+                                                .addOnSuccessListener(taskSnapshot -> {
+                                                    // Obtener la URL del logo
+                                                    logoRef.getDownloadUrl().addOnSuccessListener(logoUri -> {
+                                                        restaurante.setFotoLogo(logoUri.toString());
+
+                                                        portadaRef.putFile(imageUri)
+                                                                .addOnSuccessListener(taskSnapshot1 -> {
+                                                                    // Obtener la URL de la portada
+                                                                    portadaRef.getDownloadUrl().addOnSuccessListener(portadaUri -> {
+                                                                        restaurante.setFotoPortada(portadaUri.toString());
+
+                                                                        restaurante.setNombre(textFieldNombre.getText().toString());
+                                                                        restaurante.setUbicacion(textFieldUbicacion.getText().toString());
+                                                                        restaurante.setTipoDeComida(spinnerTipoComida.getSelectedItem().toString());
+                                                                        restaurante.setDescripcion(textFieldDescripccion.getText().toString());
+                                                                        restaurante.setVentas(0);
+                                                                        restaurante.setOpen(false);
+                                                                        restaurante.setEslogan(textFieldEslogan.getText().toString());
+                                                                        double precioDelivery = Double.parseDouble(textFieldPrecioDelivery.getText().toString());
+                                                                        restaurante.setPrecioDelivery(precioDelivery);
+
+                                                                        // Agregar restaurante a Firestore
+                                                                        db.collection("restaurantes")
+                                                                                .add(restaurante)
+                                                                                .addOnSuccessListener(documentReference -> {
+                                                                                    String restauranteId = documentReference.getId();
+
+                                                                                    try {
+                                                                                        Bitmap qrBitmap = generateQRCode(restauranteId);
+                                                                                        saveQRCodeToStorage(qrBitmap, restauranteId); // Opcional: Guardar el QR en Storage
+                                                                                    } catch (Exception e) {
+                                                                                        Toast.makeText(this, "Error al generar el código QR", Toast.LENGTH_SHORT).show();
+                                                                                    }
+
+                                                                                    Toast.makeText(this, "Administrador y restaurante registrados exitosamente", Toast.LENGTH_SHORT).show();
+                                                                                    Intent intent = new Intent(this, gestion_usuarios_superadmin.class);
+                                                                                    startActivity(intent);
+                                                                                })
+                                                                                .addOnFailureListener(e -> {
+                                                                                    Toast.makeText(this, "Algo ocurrió al intentar registrar el restaurante", Toast.LENGTH_SHORT).show();
+                                                                                });
+                                                                    });
+                                                                });
+                                                    });
+                                                });
+                                    }
+                                });
+
                     }
                 });
     }

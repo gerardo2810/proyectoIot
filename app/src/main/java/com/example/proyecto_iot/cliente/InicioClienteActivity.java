@@ -158,6 +158,7 @@ public class InicioClienteActivity extends AppCompatActivity {
                     if (task.isSuccessful() && task.getResult() != null) {
                         bestOptionList.clear();
                         for (DocumentSnapshot document : task.getResult()) {
+                            String restauranteId = document.getId(); // Obtener el ID del documento
                             String nombre = document.getString("nombre");
                             double precioDelivery = document.getDouble("precioDelivery");
                             String tipoDeComida = document.getString("tipoDeComida");
@@ -167,7 +168,7 @@ public class InicioClienteActivity extends AppCompatActivity {
                             Boolean open = document.getBoolean("open");
 
                             if (open == true){
-                                bestOptionList.add(new Restaurante(nombre, precioDelivery, tipoDeComida, ubicacion,fotoPortada, fotoLogo,0, open));
+                                bestOptionList.add(new Restaurante(restauranteId, nombre, precioDelivery, tipoDeComida, ubicacion,fotoPortada, fotoLogo,0, open));
                             }
                         }
                         bestOptionAdapter.notifyDataSetChanged();
@@ -185,6 +186,7 @@ public class InicioClienteActivity extends AppCompatActivity {
                 popularesList.clear(); // Limpiar la lista antes de agregar nuevos elementos
                 for (DocumentSnapshot document : task.getResult()) {
                     try {
+                        String restauranteId = document.getId(); // Obtener el ID del documento
                         String nombre = document.contains("nombre") ? document.getString("nombre") : "Nombre no disponible";
                         double precioDelivery = document.contains("precioDelivery") ? document.getDouble("precioDelivery") : 0.0;
                         String tipoDeComida = document.contains("tipoDeComida") ? document.getString("tipoDeComida") : "Desconocido";
@@ -199,6 +201,7 @@ public class InicioClienteActivity extends AppCompatActivity {
                         // Filtrar restaurantes con ventas >= 50 y abiertos
                         if (ventas >= 50 && Boolean.TRUE.equals(open)) {
                             popularesList.add(new Restaurante(
+                                    restauranteId,
                                     nombre,
                                     precioDelivery,
                                     tipoDeComida,

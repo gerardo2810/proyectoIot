@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -132,24 +133,68 @@ public class PerfilRestauranteActivity extends AppCompatActivity {
         });
 
         fetchProductosFromFirebase();
+
     }
 
     private void fetchProductosFromFirebase() {
-        db.collection("platos").get().addOnCompleteListener(task -> {
-            if (task.isSuccessful() && task.getResult() != null) {
-                productosList.clear();
-                for (DocumentSnapshot document : task.getResult()) {
-                    String nombre = document.getString("Nombre");
-                    String descripcion = document.getString("Descripcion");
-                    double precio = document.contains("Precio") ? document.getDouble("Precio") : 0.0;
-                    String imageUrl = document.getString("Imagen");
-                    int cantidadInicial = 1;
+        // Obtener el ID del restaurante del Intent
+        String restauranteId = getIntent().getStringExtra("restauranteId");
 
-                    productosList.add(new Producto(nombre, descripcion, precio, cantidadInicial, imageUrl));
-                }
-                adapter.notifyDataSetChanged();
-            }
-        });
+        if (restauranteId == null || restauranteId.isEmpty()) {
+            Toast.makeText(this, "Error: Restaurante no válido.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Paso 1: Obtener las categorías asociadas al restaurante
+        db.collection("categorias")
+                .whereEqualTo("idRestaurante", restauranteId) // Filtrar por el ID del restaurante
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        List<String> categoriaIds = new ArrayList<>();
+
+                        // Extraer los IDs de las categorías
+                        for (DocumentSnapshot document : task.getResult()) {
+                            categoriaIds.add(document.getId());
+                        }
+
+                        if (!categoriaIds.isEmpty()) {
+                            // Paso 2: Obtener los platos asociados a las categorías
+                            fetchPlatosPorCategorias(categoriaIds);
+                        } else {
+                            Toast.makeText(this, "No hay platos para este restaurante.", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(this, "Error al cargar categorías.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void fetchPlatosPorCategorias(List<String> categoriaIds) {
+        // Consultar los platos que pertenecen a las categorías
+        db.collection("platos")
+                .whereIn("idCategoria", categoriaIds) // Filtrar por las categorías obtenidas
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        productosList.clear();
+
+                        for (DocumentSnapshot document : task.getResult()) {
+                            String nombre = document.getString("Nombre");
+                            String descripcion = document.getString("Descripcion");
+                            double precio = document.contains("Precio") ? document.getDouble("Precio") : 0.0;
+                            String imageUrl = document.getString("Imagen");
+                            int cantidadInicial = 1;
+
+                            productosList.add(new Producto(nombre, descripcion, precio, cantidadInicial, imageUrl));
+                        }
+
+                        // Notificar al adaptador de los cambios
+                        adapter.notifyDataSetChanged();
+                    } else {
+                        Toast.makeText(this, "Error al cargar platos.", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void agregarProductoAlCarrito(Producto producto, int cantidad) {

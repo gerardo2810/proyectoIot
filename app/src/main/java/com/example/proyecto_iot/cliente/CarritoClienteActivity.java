@@ -42,7 +42,6 @@ public class CarritoClienteActivity extends AppCompatActivity implements Product
 
         // Recibir productos del carrito desde PerfilRestauranteActivity
         productos = (List<Producto>) getIntent().getSerializableExtra("carrito");
-
         // Si no hay productos en el carrito, inicializamos la lista vacía
         if (productos == null) {
             productos = new ArrayList<>();
@@ -50,9 +49,10 @@ public class CarritoClienteActivity extends AppCompatActivity implements Product
         // Recuperar los datos del restaurante desde el Intent
         String nombreRestaurante = getIntent().getStringExtra("nombre_restaurante");
         String fotoLogo = getIntent().getStringExtra("fotoLogo");
-        double precioDelivery = getIntent().getDoubleExtra("precio_delivery", 0.0);
+        double precioDelivery = getIntent().getDoubleExtra("precioDelivery", 0.0);
 
         // Debug: Verificar que los datos se recibieron correctamente
+        System.out.println("carrito cliente");
         System.out.println("Nombre Restaurante: " + nombreRestaurante);
         System.out.println("Categoría Restaurante: " + fotoLogo);
         System.out.println("Precio Delivery: " + precioDelivery);
@@ -97,21 +97,24 @@ public class CarritoClienteActivity extends AppCompatActivity implements Product
                     subtotal += producto.getTotal();
                 }
 
-                // Obtener el precioDelivery desde el Intent (o de donde esté disponible)
-                double precioDelivery = getIntent().getDoubleExtra("precio_delivery", 0.0);
+                // Obtener el precioDelivery desde el Intent
+                double precioDelivery = getIntent().getDoubleExtra("precioDelivery", 0.0);
+
+                // Debug para asegurarse de que el precioDelivery es correcto
+                System.out.println("Carrito Cliente -> Precio Delivery: " + precioDelivery);
+
                 // Navegar a la actividad RealizarPedidoActivity
                 Intent intent = new Intent(CarritoClienteActivity.this, RealizarPedidoActivity.class);
-
-                // Pasar subtotal y precioDelivery al Intent
                 intent.putExtra("subtotal", subtotal);
-                intent.putExtra("precio_delivery", precioDelivery);
+                intent.putExtra("precio_delivery", precioDelivery); // Fíjate en el nombre de la clave
                 intent.putExtra("nombreRestaurante", nombreRestaurante);
-                intent.putExtra("precioDelivery", precioDelivery);
                 intent.putExtra("fotoLogo", fotoLogo);
+
 
                 startActivity(intent);
             }
         });
+
 
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);

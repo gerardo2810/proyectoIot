@@ -54,6 +54,8 @@ public class PerfilRestauranteActivity extends AppCompatActivity {
         String direccionRestaurante = intent.getStringExtra("direccion_restaurante");
         String fotoLogo = intent.getStringExtra("foto_logo");
         String fotoPortada = intent.getStringExtra("foto_portada");
+        System.out.println("perfil resta");
+        System.out.println(precioDelivery);
 
         // Configurar los TextViews con los datos recibidos
         TextView nombreTextView = findViewById(R.id.restaurant_name);

@@ -47,25 +47,27 @@ public class RealizarPedidoActivity extends AppCompatActivity {
         // Recibir los datos del Intent
         Intent intent = getIntent();
         double subtotal = intent.getDoubleExtra("subtotal", 0.0);
-        double precioDelivery = intent.getDoubleExtra("precio_delivery", 0.0);
+        double precioDelivery = intent.getDoubleExtra("precio_delivery", 0.0); // Asegúrate de usar "precio_delivery"
         String nombreRestaurante = intent.getStringExtra("nombreRestaurante");
         String fotoLogo = intent.getStringExtra("fotoLogo");
 
-        // Calcular el total
-        double pagoTotal = subtotal + precioDelivery;
-
-        // Debug: Verificar que los datos fueron recibidos
+        // Debug: Verificar que los datos fueron recibidos correctamente
+        System.out.println("Realizar Pedido:");
         System.out.println("Subtotal: " + subtotal);
         System.out.println("Precio Delivery: " + precioDelivery);
         System.out.println("Nombre Restaurante: " + nombreRestaurante);
         System.out.println("Foto Logo: " + fotoLogo);
-        System.out.println("Pago Total: " + pagoTotal);
+
+        // Calcular el total
+        double pagoTotal = subtotal + precioDelivery;
 
         // Mostrar los valores en los TextViews
         TextView costosProductosTextView = findViewById(R.id.costos_productos_value);
         TextView envioTextView = findViewById(R.id.envio_value);
         TextView pagoTotalTextView = findViewById(R.id.pago_total_value);
         TextView nameRestauranteTextView = findViewById(R.id.restaurant_name1);
+        TextView subtotalTextView = findViewById(R.id.subtotal_value);
+
         ImageView fotoLogoImageView = findViewById(R.id.profile_image);
 
         // Formatear valores como moneda
@@ -73,6 +75,7 @@ public class RealizarPedidoActivity extends AppCompatActivity {
         costosProductosTextView.setText(currencyFormat.format(subtotal));
         envioTextView.setText(currencyFormat.format(precioDelivery));
         pagoTotalTextView.setText(currencyFormat.format(pagoTotal));
+        subtotalTextView.setText(currencyFormat.format(pagoTotal));
         nameRestauranteTextView.setText(nombreRestaurante);
 
         // Cargar la imagen del restaurante usando Glide

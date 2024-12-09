@@ -5,13 +5,18 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.proyecto_iot.R;
+import com.example.proyecto_iot.admin_restaurante.RecyclerView.RestauranteViewModel;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -19,6 +24,10 @@ import com.google.android.material.tabs.TabLayout;
  * create an instance of this fragment.
  */
 public class HomeRestauranteFragment extends Fragment {
+    private RestauranteViewModel restauranteViewModel;
+    private TextView restaurantNameTextView;
+    private TextView cuisineTypeTextView;
+    private FirebaseFirestore db;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -52,13 +61,12 @@ public class HomeRestauranteFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
     }
 
     private TabLayout tabLayout;
@@ -68,6 +76,24 @@ public class HomeRestauranteFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home_restaurante, container, false);
+
+        // Inicializa Firestore
+        db = FirebaseFirestore.getInstance();
+
+        // Inicializa vistas
+        restaurantNameTextView = view.findViewById(R.id.restaurant_name);
+        cuisineTypeTextView = view.findViewById(R.id.cuisine_type);
+
+        // Obtén el ViewModel compartido
+        restauranteViewModel = new ViewModelProvider(requireActivity()).get(RestauranteViewModel.class);
+
+        // Observa los cambios en el idRestaurante
+        restauranteViewModel.getIdRestaurante().observe(getViewLifecycleOwner(), idRestaurante -> {
+            if (idRestaurante != null) {
+                fetchRestaurantData(idRestaurante);
+            }
+        });
+
 
         // Inicializa el TabLayout
         tabLayout = view.findViewById(R.id.tabLayout);
@@ -120,5 +146,26 @@ public class HomeRestauranteFragment extends Fragment {
                 .beginTransaction()
                 .replace(R.id.frame_tab_container, fragment)  // Asegúrate de usar un contenedor de fragmentos dentro del fragmento
                 .commit();
+    }
+
+    private void fetchRestaurantData(String idRestaurante) {
+        db.collection("restaurantes").document(idRestaurante)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        // Recuperar los datos del documento
+                        String restaurantName = documentSnapshot.getString("nombre");
+                        String slogan = documentSnapshot.getString("eslogan");
+
+                        // Actualizar la UI
+                        restaurantNameTextView.setText(restaurantName != null ? restaurantName : "Nombre no disponible");
+                        cuisineTypeTextView.setText(slogan != null ? slogan : "Eslogan no disponible");
+                    } else {
+                        Toast.makeText(getContext(), "Datos del restaurante no encontrados.", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(getContext(), "Error al obtener datos: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
     }
 }

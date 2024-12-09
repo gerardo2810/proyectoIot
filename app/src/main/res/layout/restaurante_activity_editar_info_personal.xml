@@ -35,8 +35,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="SHI - NUÁ"
-                android:textColor="@android:color/black"
+                android:textColor="@color/green_dark"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -45,8 +44,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="peruvian-chinese cuisine"
-                android:textColor="@android:color/black"
+                android:textColor="@color/md_theme_onPrimaryFixedVariant"
+                android:textStyle="bold"
                 android:textSize="14sp" />
         </LinearLayout>
 
@@ -136,13 +135,23 @@
                 </LinearLayout>
             </LinearLayout>
 
+            <Button
+                android:id="@+id/editar_datos"
+                android:layout_width="wrap_content"
+                android:layout_height="38dp"
+                android:backgroundTint="#9CFFCDD2"
+                android:text="EDITAR DATOS"
+                android:textColor="@color/md_theme_errorContainer_mediumContrast"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
             <!-- Información del perfil -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingTop="20dp"
+                android:paddingTop="15dp"
                 android:paddingBottom="5dp"
-                android:text="Nombre y Apellidos:"
+                android:text="Nombre:"
                 android:textColor="@color/md_theme_primaryFixed_highContrast"
                 android:textSize="15sp"
                 android:textStyle="bold" />
@@ -153,7 +162,6 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/border_editar_info"
                 android:padding="10dp"
-                android:text="Jorge Aaron Coronado Villacorta"
                 android:textSize="13sp" />
 
             <TextView
@@ -161,18 +169,17 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="10dp"
                 android:paddingBottom="5dp"
-                android:text="N° de documento de identidad (DNI):"
+                android:text="Apellidos:"
                 android:textColor="@color/md_theme_primaryFixed_highContrast"
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
             <EditText
-                android:id="@+id/et_dni"
+                android:id="@+id/et_apellido"
                 android:layout_width="match_parent"
                 android:layout_height="33dp"
                 android:background="@drawable/border_editar_info"
                 android:padding="10dp"
-                android:text="60784512"
                 android:textSize="13sp" />
 
             <TextView
@@ -180,7 +187,7 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="10dp"
                 android:paddingBottom="5dp"
-                android:text="Fecha de nacimiento:"
+                android:text="Edad:"
                 android:textColor="@color/md_theme_primaryFixed_highContrast"
                 android:textSize="15sp"
                 android:textStyle="bold" />
@@ -191,8 +198,27 @@
                 android:layout_height="33dp"
                 android:background="@drawable/border_editar_info"
                 android:padding="10dp"
-                android:text="12-10-2000"
+                android:inputType="number"
                 android:textSize="13sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="10dp"
+                android:paddingBottom="5dp"
+                android:text="Dirección:"
+                android:textColor="@color/md_theme_primaryFixed_highContrast"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/et_direccion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/border_editar_info"
+                android:padding="10dp"
+                android:textSize="13sp" />
+
 
             <TextView
                 android:layout_width="wrap_content"
@@ -210,7 +236,6 @@
                 android:layout_height="33dp"
                 android:background="@drawable/border_editar_info"
                 android:padding="10dp"
-                android:text="jvillacorta@gmail.com"
                 android:textSize="13sp" />
 
             <TextView
@@ -229,14 +254,13 @@
                 android:layout_height="33dp"
                 android:background="@drawable/border_editar_info"
                 android:padding="10dp"
-                android:text="987654321"
                 android:textSize="13sp" />
 
             <!-- Repetir secciones similares para DNI, Fecha de nacimiento, etc. -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingTop="20dp"
+                android:paddingTop="10dp"
                 android:paddingBottom="5dp"
                 android:text="N° de documento de identidad (DNI):"
                 android:textColor="@color/md_theme_primaryFixed_highContrast"
@@ -249,7 +273,6 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/border_editar_info"
                 android:padding="10dp"
-                android:text="60784512"
                 android:textSize="13sp" />
 
             <!-- Botón de guardar -->

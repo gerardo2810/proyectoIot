@@ -36,8 +36,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="SHI - NUÁ"
-                android:textColor="@android:color/black"
+
+                android:textColor="@color/green_dark"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -46,8 +46,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="peruvian-chinese cuisine"
-                android:textColor="@android:color/black"
+                android:textColor="@color/md_theme_onPrimaryFixedVariant"
+                android:textStyle="bold"
                 android:textSize="14sp" />
         </LinearLayout>
 

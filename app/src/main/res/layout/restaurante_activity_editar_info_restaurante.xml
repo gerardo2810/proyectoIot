@@ -136,11 +136,22 @@
                 </LinearLayout>
             </LinearLayout>
 
+            <Button
+                android:id="@+id/editar_datos"
+                android:layout_width="wrap_content"
+                android:layout_height="38dp"
+                android:backgroundTint="#9CFFCDD2"
+                android:text="EDITAR DATOS"
+                android:textColor="@color/md_theme_errorContainer_mediumContrast"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
             <!-- Información del formulario -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingBottom="5dp"
+                android:paddingTop="10dp"
                 android:text="Nombre del restaurante:"
                 android:textColor="@color/md_theme_primaryFixed_highContrast"
                 android:textSize="16sp"
@@ -162,17 +173,17 @@
                 android:lineSpacingExtra="16sp"
                 android:paddingTop="15dp"
                 android:paddingBottom="5dp"
-                android:text="Cantidad de sucursales:"
+                android:text="Eslogan:"
                 android:textColor="@color/md_theme_primaryFixed_highContrast"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
             <EditText
-                android:id="@+id/et_restaurant_sucursales"
+                android:id="@+id/et_restaurant_eslogan"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/border_editar_info"
-                android:inputType="numberDecimal"
+                android:inputType="text"
                 android:padding="10dp"
                 android:text="1 sucursal"
                 android:textSize="15sp" />
@@ -198,6 +209,23 @@
                 android:text="Via Principal 155 Centro Empresarial, San Isidro"
                 android:textSize="14sp" />
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="15dp"
+                android:paddingBottom="5dp"
+                android:text="Tipo de comida"
+                android:textColor="@color/md_theme_primaryFixed_highContrast"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <Spinner
+                android:id="@+id/spinnerTipoComida"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/border_editar_info"
+                android:entries="@array/tipo_de_comidas"/>
+
             <!-- Descripción del restaurante -->
             <TextView
                 android:layout_width="wrap_content"
@@ -214,10 +242,62 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/border_editar_info"
-                android:inputType="text"
+                android:inputType="textMultiLine"
+                android:minLines="4"
+                android:maxLines="4"
+                android:gravity="top|start"
+                android:imeOptions="flagNoEnterAction"
+                android:scrollbars="vertical"
+                android:overScrollMode="always"
+                android:maxLength="100"
                 android:padding="10dp"
                 android:text="SHI-NUÁ ofrece una comida fusión chino peruana."
                 android:textSize="14sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:lineSpacingExtra="16sp"
+                android:paddingTop="15dp"
+                android:paddingBottom="5dp"
+                android:text="Precio Delivery:"
+                android:textColor="@color/md_theme_primaryFixed_highContrast"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/et_restaurant_delivery"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/border_editar_info"
+                android:inputType="numberDecimal"
+                android:padding="10dp"
+                android:text="1 sucursal"
+                android:textSize="15sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="15dp"
+                android:text="Portada del restaurante:"
+                android:textColor="@color/md_theme_primaryFixed_highContrast"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/imgPreview"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:layout_marginBottom="5dp"
+                android:background="#E0E0E0"
+                android:scaleType="centerCrop" />
+
+            <Button
+                android:id="@+id/buttonUploadImage"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:text="Seleccionar foto"
+                android:textSize="13sp" />
 
             <!-- Botón para guardar -->
             <Button

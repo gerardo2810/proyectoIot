@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.proyecto_iot.R;
@@ -24,6 +26,7 @@ import com.example.proyecto_iot.admin_restaurante.RecyclerView.Categoria;
 import com.example.proyecto_iot.admin_restaurante.RecyclerView.CategoriaAdapter;
 import com.example.proyecto_iot.admin_restaurante.RecyclerView.Producto;
 import com.example.proyecto_iot.admin_restaurante.RecyclerView.ProductoAdapter;
+import com.example.proyecto_iot.admin_restaurante.RecyclerView.RestauranteViewModel;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -32,7 +35,9 @@ import java.util.List;
 
 
 public class CartaRestauranteFragment extends Fragment {
-
+    private RestauranteViewModel restauranteViewModel;
+    private TextView restaurantNameTextView;
+    private TextView cuisineTypeTextView;
     private RecyclerView recyclerCategories, recyclerProducts;
     private CategoriaAdapter categoryAdapter;
     private ProductoAdapter productAdapter;
@@ -48,13 +53,22 @@ public class CartaRestauranteFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_carta_restaurante, container, false);
 
-        // Inicializar Firestore
+        // Inicializa Firestore
         db = FirebaseFirestore.getInstance();
 
-        // Recuperar el idRestaurante desde los argumentos
-        if (getArguments() != null) {
-            idRestaurante = getArguments().getString("idRestaurante");
-        }
+        // Inicializa vistas
+        restaurantNameTextView = view.findViewById(R.id.restaurant_name);
+        cuisineTypeTextView = view.findViewById(R.id.cuisine_type);
+
+        // Obtén el ViewModel compartido
+        restauranteViewModel = new ViewModelProvider(requireActivity()).get(RestauranteViewModel.class);
+
+        // Observa los cambios en el idRestaurante
+        restauranteViewModel.getIdRestaurante().observe(getViewLifecycleOwner(), idRestaurante -> {
+            if (idRestaurante != null) {
+                fetchRestaurantData(idRestaurante);
+            }
+        });
 
         // Inicializar RecyclerView de categorías
         recyclerCategories = view.findViewById(R.id.recycler_categories);
@@ -162,6 +176,27 @@ public class CartaRestauranteFragment extends Fragment {
             }
         }
         productAdapter.updateData(searchResult);
+    }
+
+    private void fetchRestaurantData(String idRestaurante) {
+        db.collection("restaurantes").document(idRestaurante)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        // Recuperar los datos del documento
+                        String restaurantName = documentSnapshot.getString("nombre");
+                        String slogan = documentSnapshot.getString("eslogan");
+
+                        // Actualizar la UI
+                        restaurantNameTextView.setText(restaurantName != null ? restaurantName : "Nombre no disponible");
+                        cuisineTypeTextView.setText(slogan != null ? slogan : "Eslogan no disponible");
+                    } else {
+                        Toast.makeText(getContext(), "Datos del restaurante no encontrados.", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(getContext(), "Error al obtener datos: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
     }
 }
 

@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/fondo6"
+    android:background="@drawable/fondo_login"
     tools:context=".admin_restaurante.AbrirRestauranteActivity">
 
     <!-- Card para nombre del restaurante -->
@@ -13,7 +13,6 @@
         android:id="@+id/top_bar_card"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:backgroundTint="@color/green_light_2"
@@ -21,36 +20,7 @@
         app:cardCornerRadius="12dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="#E8F5E9"
-            android:padding="16dp">
-
-            <!-- Restaurante nombre y tipo de cocina -->
-            <TextView
-                android:id="@+id/restaurant_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="SHI - NUÁ"
-                android:textColor="@android:color/black"
-                android:textSize="24sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/cuisine_type"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="peruvian-chinese cuisine"
-                android:textColor="#676A6F"
-                android:textSize="24sp"
-                android:textStyle="bold" />
-        </LinearLayout>
+        app:layout_constraintTop_toBottomOf="@+id/imageView7">
 
     </androidx.cardview.widget.CardView>
 
@@ -62,49 +32,88 @@
 
     <TextView
         android:id="@+id/open_restaurant_message"
-        android:layout_width="314dp"
-        android:layout_height="114dp"
-        android:layout_marginTop="40dp"
+        android:layout_width="310dp"
+        android:layout_height="72dp"
         android:gravity="center"
         android:text="¡Abre tu restaurante para empezar a recibir los pedidos!"
         android:textColor="@color/green_dark"
-        android:textSize="23sp"
+        android:textSize="18sp"
         android:textStyle="bold|italic"
+        app:layout_constraintBottom_toTopOf="@+id/open_button"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/top_bar_card" />
+        app:layout_constraintHorizontal_bias="0.50"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
         android:id="@+id/imageView6"
-        android:layout_width="476dp"
-        android:layout_height="381dp"
-        android:padding="50dp"
-        app:layout_constraintBottom_toTopOf="@+id/open_button"
+        android:layout_width="230dp"
+        android:layout_height="230dp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout6"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.4"
-        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/open_restaurant_message"
-        app:layout_constraintVertical_bias="0.374"
+        app:layout_constraintTop_toTopOf="@+id/top_bar_card"
+        app:layout_constraintVertical_bias="0.525"
         app:layout_constraintWidth_percent="0.7"
         app:srcCompat="@drawable/shinua_1591641424203" />
 
     <Button
         android:id="@+id/open_button"
-        android:layout_width="373dp"
-        android:layout_height="72dp"
-        android:layout_marginBottom="96dp"
-        android:backgroundTint="@color/green_normal"
+        android:layout_width="241dp"
+        android:layout_height="62dp"
+        android:layout_marginBottom="48dp"
+        android:backgroundTint="#FD504E"
         android:paddingStart="24dp"
         android:paddingEnd="24dp"
         android:text="ABRIR RESTAURANTE"
         android:textColor="@android:color/white"
-        android:textSize="20sp"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView7"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginBottom="15dp"
+        tools:srcCompat="@tools:sample/backgrounds/scenic" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="64dp"
+        android:orientation="vertical"
+        android:padding="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/open_restaurant_message"
+        tools:layout_editor_absoluteX="0dp">
+
+        <!-- Restaurante nombre y tipo de cocina -->
+        <TextView
+            android:id="@+id/restaurant_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="SHI - NUÁ"
+            android:textColor="@android:color/black"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/cuisine_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="peruvian-chinese cuisine"
+            android:textColor="#676A6F"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

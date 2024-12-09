@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -14,11 +15,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.admin_restaurante.RecyclerView.Order;
 import com.example.proyecto_iot.admin_restaurante.RecyclerView.OrderAdapter;
+import com.example.proyecto_iot.admin_restaurante.RecyclerView.RestauranteViewModel;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +33,11 @@ import java.util.List;
  * create an instance of this fragment.
  */
 public class OrdenesRestauranteFragment extends Fragment {
+
+    private RestauranteViewModel restauranteViewModel;
+    private TextView restaurantNameTextView;
+    private TextView cuisineTypeTextView;
+    private FirebaseFirestore db;
 
     private RecyclerView rvOrdersList;
     private OrderAdapter orderAdapter;
@@ -41,6 +50,23 @@ public class OrdenesRestauranteFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // Inflar el layout para este fragmento
         View view = inflater.inflate(R.layout.fragment_ordenes_restaurante, container, false);
+
+        // Inicializa Firestore
+        db = FirebaseFirestore.getInstance();
+
+        // Inicializa vistas
+        restaurantNameTextView = view.findViewById(R.id.restaurant_name);
+        cuisineTypeTextView = view.findViewById(R.id.cuisine_type);
+
+        // Obtén el ViewModel compartido
+        restauranteViewModel = new ViewModelProvider(requireActivity()).get(RestauranteViewModel.class);
+
+        // Observa los cambios en el idRestaurante
+        restauranteViewModel.getIdRestaurante().observe(getViewLifecycleOwner(), idRestaurante -> {
+            if (idRestaurante != null) {
+                fetchRestaurantData(idRestaurante);
+            }
+        });
 
         // Configurar el RecyclerView
         rvOrdersList = view.findViewById(R.id.rv_orders_list);
@@ -145,5 +171,26 @@ public class OrdenesRestauranteFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+    }
+
+    private void fetchRestaurantData(String idRestaurante) {
+        db.collection("restaurantes").document(idRestaurante)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        // Recuperar los datos del documento
+                        String restaurantName = documentSnapshot.getString("nombre");
+                        String slogan = documentSnapshot.getString("eslogan");
+
+                        // Actualizar la UI
+                        restaurantNameTextView.setText(restaurantName != null ? restaurantName : "Nombre no disponible");
+                        cuisineTypeTextView.setText(slogan != null ? slogan : "Eslogan no disponible");
+                    } else {
+                        Toast.makeText(getContext(), "Datos del restaurante no encontrados.", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(getContext(), "Error al obtener datos: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
     }
 }

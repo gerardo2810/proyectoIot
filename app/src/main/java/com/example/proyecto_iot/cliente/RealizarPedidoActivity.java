@@ -1,6 +1,8 @@
 package com.example.proyecto_iot.cliente;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,9 +17,13 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.bumptech.glide.Glide;
 import com.example.proyecto_iot.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+
+import java.text.NumberFormat;
+import java.util.Locale;
 
 public class RealizarPedidoActivity extends AppCompatActivity {
 
@@ -38,6 +44,45 @@ public class RealizarPedidoActivity extends AppCompatActivity {
             return insets;
         });
 
+        // Recibir los datos del Intent
+        Intent intent = getIntent();
+        double subtotal = intent.getDoubleExtra("subtotal", 0.0);
+        double precioDelivery = intent.getDoubleExtra("precio_delivery", 0.0); // Asegúrate de usar "precio_delivery"
+        String nombreRestaurante = intent.getStringExtra("nombreRestaurante");
+        String fotoLogo = intent.getStringExtra("fotoLogo");
+
+        // Debug: Verificar que los datos fueron recibidos correctamente
+        System.out.println("Realizar Pedido:");
+        System.out.println("Subtotal: " + subtotal);
+        System.out.println("Precio Delivery: " + precioDelivery);
+        System.out.println("Nombre Restaurante: " + nombreRestaurante);
+        System.out.println("Foto Logo: " + fotoLogo);
+
+        // Calcular el total
+        double pagoTotal = subtotal + precioDelivery;
+
+        // Mostrar los valores en los TextViews
+        TextView costosProductosTextView = findViewById(R.id.costos_productos_value);
+        TextView envioTextView = findViewById(R.id.envio_value);
+        TextView pagoTotalTextView = findViewById(R.id.pago_total_value);
+        TextView nameRestauranteTextView = findViewById(R.id.restaurant_name1);
+        TextView subtotalTextView = findViewById(R.id.subtotal_value);
+
+        ImageView fotoLogoImageView = findViewById(R.id.profile_image);
+
+        // Formatear valores como moneda
+        NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("es", "PE"));
+        costosProductosTextView.setText(currencyFormat.format(subtotal));
+        envioTextView.setText(currencyFormat.format(precioDelivery));
+        pagoTotalTextView.setText(currencyFormat.format(pagoTotal));
+        subtotalTextView.setText(currencyFormat.format(pagoTotal));
+        nameRestauranteTextView.setText(nombreRestaurante);
+
+        // Cargar la imagen del restaurante usando Glide
+        Glide.with(this)
+                .load(fotoLogo)
+                .placeholder(R.drawable.placeholder) // Imagen de placeholder
+                .into(fotoLogoImageView);
         // Inicialización de vistas
         backArrow = findViewById(R.id.back_arrow);
         payButton = findViewById(R.id.pay_button);

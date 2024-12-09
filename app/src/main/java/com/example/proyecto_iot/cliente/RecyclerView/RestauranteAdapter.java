@@ -2,6 +2,7 @@ package com.example.proyecto_iot.cliente.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.cliente.PerfilRestauranteActivity;
+import com.example.proyecto_iot.cliente.RealizarPedidoActivity;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -74,10 +76,10 @@ public class RestauranteAdapter extends RecyclerView.Adapter<RestauranteAdapter.
             intent.putExtra("direccion_restaurante", option.getUbicacion());
             intent.putExtra("foto_logo", option.getFotoLogo());
             intent.putExtra("foto_portada", option.getFotoPortada());
-
             context.startActivity(intent);
         });
     }
+
 
     @Override
     public int getItemCount() {

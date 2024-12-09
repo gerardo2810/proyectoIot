@@ -170,6 +170,7 @@
         android:layout_height="1dp"
         android:background="#D3D3D3"
         app:layout_constraintTop_toBottomOf="@id/profile_info_container"/>
+
     <!-- Resumen de costos -->
     <androidx.cardview.widget.CardView
         android:id="@+id/order_details_card"
@@ -220,9 +221,10 @@
                     android:textColor="#000000" />
 
                 <TextView
+                    android:id="@+id/costos_productos_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="S/. 405.00"
+                    android:text="S/. 0.00"
                     android:textSize="14sp"
                     android:textColor="#000000" />
             </LinearLayout>
@@ -243,9 +245,10 @@
                     android:textColor="#000000" />
 
                 <TextView
+                    android:id="@+id/envio_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="S/. 3.49"
+                    android:text="S/. 0.00"
                     android:textSize="14sp"
                     android:textColor="#000000" />
             </LinearLayout>
@@ -274,9 +277,10 @@
                     android:textColor="#000000" />
 
                 <TextView
+                    android:id="@+id/pago_total_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="S/. 408.49"
+                    android:text="S/. 0.00"
                     android:textSize="16sp"
                     android:textColor="#000000" />
             </LinearLayout>

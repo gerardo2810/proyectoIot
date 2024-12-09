@@ -47,6 +47,15 @@ public class CarritoClienteActivity extends AppCompatActivity implements Product
         if (productos == null) {
             productos = new ArrayList<>();
         }
+        // Recuperar los datos del restaurante desde el Intent
+        String nombreRestaurante = getIntent().getStringExtra("nombre_restaurante");
+        String fotoLogo = getIntent().getStringExtra("fotoLogo");
+        double precioDelivery = getIntent().getDoubleExtra("precio_delivery", 0.0);
+
+        // Debug: Verificar que los datos se recibieron correctamente
+        System.out.println("Nombre Restaurante: " + nombreRestaurante);
+        System.out.println("Categoría Restaurante: " + fotoLogo);
+        System.out.println("Precio Delivery: " + precioDelivery);
 
         productoCarritoAdapter = new ProductoCarritoAdapter(productos, this);
         recyclerViewCarrito.setAdapter(productoCarritoAdapter);
@@ -83,9 +92,23 @@ public class CarritoClienteActivity extends AppCompatActivity implements Product
             public void onClick(View v) {
                 // Almacenar la lista de productos seleccionados en el Singleton
                 CarritoSingleton.getInstance().setProductos(new ArrayList<>(productos));
+                double subtotal = 0.0;
+                for (Producto producto : productos) {
+                    subtotal += producto.getTotal();
+                }
 
+                // Obtener el precioDelivery desde el Intent (o de donde esté disponible)
+                double precioDelivery = getIntent().getDoubleExtra("precio_delivery", 0.0);
                 // Navegar a la actividad RealizarPedidoActivity
                 Intent intent = new Intent(CarritoClienteActivity.this, RealizarPedidoActivity.class);
+
+                // Pasar subtotal y precioDelivery al Intent
+                intent.putExtra("subtotal", subtotal);
+                intent.putExtra("precio_delivery", precioDelivery);
+                intent.putExtra("nombreRestaurante", nombreRestaurante);
+                intent.putExtra("precioDelivery", precioDelivery);
+                intent.putExtra("fotoLogo", fotoLogo);
+
                 startActivity(intent);
             }
         });

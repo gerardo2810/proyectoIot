@@ -37,6 +37,7 @@ public class PerfilRestauranteActivity extends AppCompatActivity {
     private int totalCantidadCarrito = 0;
     private FirebaseFirestore db;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +52,8 @@ public class PerfilRestauranteActivity extends AppCompatActivity {
         String categoriaRestaurante = intent.getStringExtra("categoria_restaurante");
         double precioDelivery = intent.getDoubleExtra("precio_delivery", 0.0);
         String direccionRestaurante = intent.getStringExtra("direccion_restaurante");
+        String fotoLogo = intent.getStringExtra("foto_logo");
+        String fotoPortada = intent.getStringExtra("foto_portada");
 
         // Configurar los TextViews con los datos recibidos
         TextView nombreTextView = findViewById(R.id.restaurant_name);
@@ -78,9 +81,19 @@ public class PerfilRestauranteActivity extends AppCompatActivity {
 
         carritoIcon.setOnClickListener(view -> {
             Intent intent1 = new Intent(PerfilRestauranteActivity.this, CarritoClienteActivity.class);
+
+            // Pasar la lista de productos del carrito
             intent1.putExtra("carrito", new ArrayList<>(carritoList));
+
+            // Pasar los datos del restaurante
+            intent1.putExtra("nombre_restaurante", nombreRestaurante);
+            intent1.putExtra("fotoLogo", fotoLogo);
+            intent1.putExtra("precioDelivery", precioDelivery);
+
+            // Iniciar la actividad del carrito
             startActivity(intent1);
         });
+
 
         EditText searchText = findViewById(R.id.search_text);
 

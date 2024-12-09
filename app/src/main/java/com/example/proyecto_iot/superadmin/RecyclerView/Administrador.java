@@ -3,17 +3,25 @@ package com.example.proyecto_iot.superadmin.RecyclerView;
 import java.io.Serializable;
 
 public class Administrador implements Serializable {
-
+    private String id;
     private String nombre;
     private String apellido;
     private String foto;
     private String correo;
-    private String contraseña;
+    private String contrasena;
     private String dni;
     private String edad;
     private String direccion;
     private String telefono;
     private String Restaurante;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getNombre() {
         return nombre;
@@ -47,12 +55,12 @@ public class Administrador implements Serializable {
         this.correo = correo;
     }
 
-    public String getContraseña() {
-        return contraseña;
+    public String getContrasena() {
+        return contrasena;
     }
 
-    public void setContraseña(String contraseña) {
-        this.contraseña = contraseña;
+    public void setContrasena(String contrasena) {
+        this.contrasena = contrasena;
     }
 
     public String getDni() {

@@ -2,36 +2,48 @@ package com.example.proyecto_iot.superadmin.RecyclerView;
 
 public class RestauranteSA {
 
-    private String Nombre;
-    private String Ubicacion;
-    private String Descripción;
+    private String nombre;
+    private String eslogan;
+    private String ubicacion;
+    private String descripcion;
     private String tipoDeComida;
-    private String FotoLogo;
+    private String fotoLogo;
+    private String fotoPortada;
     private String idAdministrador;
     private boolean isOpen;
+    private int ventas;
+    private double precioDelivery;
 
     public String getNombre() {
-        return Nombre;
+        return nombre;
     }
 
     public void setNombre(String nombre) {
-        Nombre = nombre;
+        this.nombre = nombre;
+    }
+
+    public String getEslogan() {
+        return eslogan;
+    }
+
+    public void setEslogan(String eslogan) {
+        this.eslogan = eslogan;
     }
 
     public String getUbicacion() {
-        return Ubicacion;
+        return ubicacion;
     }
 
     public void setUbicacion(String ubicacion) {
-        Ubicacion = ubicacion;
+        this.ubicacion = ubicacion;
     }
 
-    public String getDescripción() {
-        return Descripción;
+    public String getDescripcion() {
+        return descripcion;
     }
 
-    public void setDescripción(String descripción) {
-        Descripción = descripción;
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 
     public String getTipoDeComida() {
@@ -43,11 +55,19 @@ public class RestauranteSA {
     }
 
     public String getFotoLogo() {
-        return FotoLogo;
+        return fotoLogo;
     }
 
     public void setFotoLogo(String fotoLogo) {
-        FotoLogo = fotoLogo;
+        this.fotoLogo = fotoLogo;
+    }
+
+    public String getFotoPortada() {
+        return fotoPortada;
+    }
+
+    public void setFotoPortada(String fotoPortada) {
+        this.fotoPortada = fotoPortada;
     }
 
     public String getIdAdministrador() {
@@ -58,11 +78,29 @@ public class RestauranteSA {
         this.idAdministrador = idAdministrador;
     }
 
+
+
     public boolean isOpen() {
         return isOpen;
     }
 
     public void setOpen(boolean open) {
         isOpen = open;
+    }
+
+    public int getVentas() {
+        return ventas;
+    }
+
+    public void setVentas(int ventas) {
+        this.ventas = ventas;
+    }
+
+    public double getPrecioDelivery() {
+        return precioDelivery;
+    }
+
+    public void setPrecioDelivery(double precioDelivery) {
+        this.precioDelivery = precioDelivery;
     }
 }

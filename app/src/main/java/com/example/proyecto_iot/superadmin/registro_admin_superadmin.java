@@ -179,7 +179,7 @@ public class registro_admin_superadmin extends AppCompatActivity {
                                             administrador.setNombre(nombre);
                                             administrador.setApellido(apellido);
                                             administrador.setCorreo(correo);
-                                            administrador.setContraseña(passwd);
+                                            administrador.setContrasena(passwd);
                                             administrador.setDni(dni);
                                             administrador.setEdad(edad);
                                             administrador.setDireccion(direccion);
@@ -214,7 +214,7 @@ public class registro_admin_superadmin extends AppCompatActivity {
                                             administrador.setNombre(nombre);
                                             administrador.setApellido(apellido);
                                             administrador.setCorreo(correo);
-                                            administrador.setContraseña(passwd);
+                                            administrador.setContrasena(passwd);
                                             administrador.setDni(dni);
                                             administrador.setEdad(edad);
                                             administrador.setDireccion(direccion);
@@ -342,7 +342,7 @@ public class registro_admin_superadmin extends AppCompatActivity {
                                     // Obtener el ID del restaurante seleccionado
                                     String idRestauranteSeleccionado = mapaRestaurantes.get(restauranteSeleccionado);
 
-                                    registrarAdmin(administrador.getCorreo(), administrador.getContraseña(), restauranteSeleccionado, idRestauranteSeleccionado);
+                                    registrarAdmin(administrador.getCorreo(), administrador.getContrasena(), restauranteSeleccionado, idRestauranteSeleccionado);
 
                                 }
                             });

@@ -124,7 +124,7 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         FirebaseUser user = mAuth.getCurrentUser();
-                        checkIfNewUser(user);
+                        checkIfNewUser(user, false); // false indica que no es inicio de sesión con Google
                     } else {
                         Toast.makeText(LoginActivity.this, "Error en inicio de sesión", Toast.LENGTH_SHORT).show();
                     }
@@ -157,14 +157,14 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         FirebaseUser user = mAuth.getCurrentUser();
-                        checkIfNewUser(user);
+                        checkIfNewUser(user, true); // true indica inicio de sesión con Google
                     } else {
                         Toast.makeText(LoginActivity.this, "Error en autenticación con Google", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
 
-    private void checkIfNewUser(FirebaseUser user) {
+    private void checkIfNewUser(FirebaseUser user, boolean isGoogleSignIn) {
         String uid = user.getUid();
         String email = user.getEmail();
 
@@ -172,30 +172,26 @@ public class LoginActivity extends AppCompatActivity {
             if (documentSnapshot.exists()) {
                 navigateToActivity(InicioClienteActivity.class);
             } else {
-                checkOtherCollections(uid, email);
+                checkOtherCollections(uid, email, isGoogleSignIn);
             }
         });
     }
 
-    private void checkOtherCollections(String uid, String email) {
-        // Verificar repartidores
+    private void checkOtherCollections(String uid, String email, boolean isGoogleSignIn) {
         db.collection("repartidores").document(uid).get().addOnSuccessListener(documentSnapshot -> {
             if (documentSnapshot.exists()) {
                 navigateToActivity(InicioRepartidorActivity.class);
             } else {
-                // Verificar administradores
                 db.collection("administradores").document(uid).get().addOnSuccessListener(adminSnapshot -> {
                     if (adminSnapshot.exists()) {
-                        // Buscar el restaurante relacionado con este administrador
                         db.collection("restaurantes")
-                                .whereEqualTo("idAdministrador", uid) // Suponiendo que el campo en "restaurante" que guarda el id del administrador se llama "adminId"
+                                .whereEqualTo("idAdministrador", uid)
                                 .get()
                                 .addOnSuccessListener(querySnapshot -> {
                                     if (!querySnapshot.isEmpty()) {
                                         DocumentSnapshot restaurantDoc = querySnapshot.getDocuments().get(0);
                                         String idRestaurante = restaurantDoc.getId();
 
-                                        // Pasar el idRestaurante a la actividad siguiente
                                         Intent intent = new Intent(LoginActivity.this, AbrirRestauranteActivity.class);
                                         intent.putExtra("idRestaurante", idRestaurante);
                                         startActivity(intent);
@@ -208,16 +204,18 @@ public class LoginActivity extends AppCompatActivity {
                                     Toast.makeText(LoginActivity.this, "Error al buscar restaurante: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                                 });
                     } else {
-                        // Verificar superadmin
                         db.collection("superadmin").document(uid).get().addOnSuccessListener(superAdminSnapshot -> {
                             if (superAdminSnapshot.exists()) {
                                 navigateToActivity(gestion_usuarios_superadmin.class);
                             } else {
-                                // Usuario nuevo
-                                Intent intent = new Intent(LoginActivity.this, CompleteRegisterActivity.class);
-                                intent.putExtra("email", email);
-                                startActivity(intent);
-                                finish();
+                                if (isGoogleSignIn) {
+                                    Intent intent = new Intent(LoginActivity.this, CompleteRegisterActivity.class);
+                                    intent.putExtra("email", email);
+                                    startActivity(intent);
+                                    finish();
+                                } else {
+                                    Toast.makeText(LoginActivity.this, "Credenciales no válidas o cuenta no registrada.", Toast.LENGTH_SHORT).show();
+                                }
                             }
                         });
                     }
@@ -232,4 +230,3 @@ public class LoginActivity extends AppCompatActivity {
         finish();
     }
 }
-

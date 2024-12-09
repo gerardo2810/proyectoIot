@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+
+    <!-- Fondo del círculo -->
+    <solid android:color="@color/md_theme_surfaceContainerHighest_highContrast" /> <!-- Color morado, personalizable -->
+
+    <!-- Borde del círculo -->
+    <stroke
+        android:width="4dp"
+        android:color="@color/order_in_preparation" /> <!-- Color blanco, personalizable -->
+
+    <!-- Tamaño del círculo -->
+    <size
+        android:width="100dp"
+        android:height="100dp" />
+
+</shape>

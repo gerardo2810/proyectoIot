@@ -84,7 +84,6 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
         // Enlazar las vistas con sus respectivos IDs en el layout
         backArrow = findViewById(R.id.header_layout);
         qrIcon = findViewById(R.id.qr_icon);
-        cancelOrder = findViewById(R.id.see_more);
         payHere = findViewById(R.id.text_pay_here);
         scanQr = findViewById(R.id.text_scan_qr);
         qrButton = findViewById(R.id.qr_button);
@@ -140,6 +139,8 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
 
 
         TextView nameProductos = findViewById(R.id.order_title);
+        TextView ordenTrackTextView = findViewById(R.id.ordenTrack);
+
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         // Verificar que el idRestaurante no sea nulo ni vacío
@@ -151,7 +152,7 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
                         if (documentSnapshot.exists()) {
                             // Obtener los campos del documento
                             String nombreRestaurante1 = documentSnapshot.getString("nombre");
-                            String direccionRestaurante = documentSnapshot.getString("direccion");
+                            String direccionRestaurante = documentSnapshot.getString("ubicacion");
 
                             // Imprimir el nombre y la dirección
                             String temp = nombreRestaurante1 + " - " + direccionRestaurante;
@@ -170,7 +171,6 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
             System.err.println("El ID del restaurante es nulo o vacío.");
         }
         // Referencias a los TextViews
-        TextView ordenTrackTextView = findViewById(R.id.ordenTrack);
         TextView fechaTextView = findViewById(R.id.fecha);
         TextView repartidorTextView = findViewById(R.id.repartidor);
         TextView direccionClienteTextView = findViewById(R.id.direccio_cliente);
@@ -252,11 +252,7 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // Listener para el botón de "Cancelar Órden" - Dirige a "InicioClienteActivity"
-        cancelOrder.setOnClickListener(view -> {
-            Intent intent = new Intent(SeguimientoPedidoActivity.this, InicioClienteActivity.class);
-            startActivity(intent);
-        });
+
 
         // Listener para el botón de QR - Dirige a "SeguimientoPedidoActivity"
         qrButton.setOnClickListener(view -> {
@@ -418,9 +414,9 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
             case 0:
                 return "Por aceptar";
             case 1:
-                return "En preparación";
+                return "Recibido";
             case 2:
-                return "Por entregar";
+                return "En preparación";
             case 3:
                 return "En camino";
             case 4:

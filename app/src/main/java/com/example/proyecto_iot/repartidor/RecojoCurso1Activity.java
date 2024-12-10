@@ -10,11 +10,15 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -24,6 +28,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 
+import com.bumptech.glide.Glide;
 import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.cliente.SeguimientoPedidoActivity;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -40,6 +45,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.List;
 
 public class RecojoCurso1Activity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -79,16 +87,63 @@ public class RecojoCurso1Activity extends AppCompatActivity implements OnMapRead
         // Iniciar despues de 10 segundos
         iniciarNotificacion();
 
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        String idPedido = getIntent().getStringExtra("idPedido");
+        db.collection("pedidos").document(idPedido)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        String idRestaurante = documentSnapshot.getString("idRestaurante");
+                        String estadoPedido = documentSnapshot.getString("estado");
+
+                        TextView tvEstadoPedido = findViewById(R.id.textView5);
+                        String texto5 = "Estado: "+ estadoPedido;
+                        tvEstadoPedido.setText(texto5);
+
+                        // Ahora consulta los datos del restaurante
+                        db.collection("restaurantes").document(idRestaurante)
+                                .get()
+                                .addOnSuccessListener(restauranteSnapshot -> {
+                                    if (restauranteSnapshot.exists()) {
+                                        String nombreRestaurante = restauranteSnapshot.getString("nombre");
+                                        String direccionRestaurante = restauranteSnapshot.getString("ubicacion");
+                                        String logoUrl = restauranteSnapshot.getString("fotoLogo");
+
+                                        // Muestra los datos del restaurante
+                                        TextView nombreRestauranteTextView = findViewById(R.id.product_name);
+                                        TextView direccionRestauranteTextView = findViewById(R.id.product_description);
+                                        ImageView imageViewRestaurante = findViewById(R.id.product_image);
+
+                                        nombreRestauranteTextView.setText(nombreRestaurante);
+                                        direccionRestauranteTextView.setText(direccionRestaurante);
+                                        Glide.with(this)
+                                                .load(logoUrl) // URL del logo
+                                                .placeholder(R.drawable.baseline_file_upload_24) // Imagen temporal mientras carga
+                                                .into(imageViewRestaurante); // Tu ImageView
+                                    }
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(this, "Error al cargar los datos del restaurante", Toast.LENGTH_SHORT).show();
+                                });
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Error al cargar los datos del pedido", Toast.LENGTH_SHORT).show();
+                });
+
         Button boton1 = findViewById(R.id.button3);
         boton1.setOnClickListener(v -> {
 
             SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
             SharedPreferences.Editor editor = prefs.edit();
             editor.putString("ultima_vista", "RecojoCurso2Activity");
+            editor.putString("idPedido", idPedido); // ID del pedido
             editor.apply();
 
 
             Intent intent = new Intent(this, RecojoCurso2Activity.class);
+            intent.putExtra("idPedido", idPedido);
             startActivity(intent);
         });
 
@@ -154,26 +209,52 @@ public class RecojoCurso1Activity extends AppCompatActivity implements OnMapRead
 
         myMap = googleMap;
 
-        LatLng destino = new LatLng(-12.0682373, -77.0769483); // Coordenadas de punto de retiro
+        // Consulta los datos del restaurante
+        String idPedido = getIntent().getStringExtra("idPedido");
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        Bitmap original1 = BitmapFactory.decodeResource(getResources(), R.drawable.shop_location_map);
-        Bitmap resized1 = Bitmap.createScaledBitmap(original1, 150, 150, false);
-        myMap.addMarker(new MarkerOptions()
-                .position(destino)
-                .title("Punto de retiro")
-                .icon(BitmapDescriptorFactory.fromBitmap(resized1)));
+        db.collection("pedidos").document(idPedido)
+                .get()
+                .addOnSuccessListener(pedidoSnapshot -> {
+                    if (pedidoSnapshot.exists()) {
+                        String idRestaurante = pedidoSnapshot.getString("idRestaurante");
 
-        // Ajusta la cámara
-        LatLngBounds.Builder builder = new LatLngBounds.Builder();
-        builder.include(destino);
-        myMap.setOnMyLocationChangeListener(location -> {
-            LatLng nuevaUbicacion = new LatLng(location.getLatitude(), location.getLongitude());
-            builder.include(nuevaUbicacion);
-            myMap.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 100));
-        });
+                        // Ahora consulta los datos del restaurante
+                        db.collection("restaurantes").document(idRestaurante)
+                                .get()
+                                .addOnSuccessListener(restauranteSnapshot -> {
+                                    if (restauranteSnapshot.exists()) {
+                                        String direccionRestaurante = restauranteSnapshot.getString("ubicacion");
 
-        // Configura actualizaciones en tiempo real de tu ubicación
-        configurarActualizacionesUbicacion(destino);
+                                        // Convertir la dirección en coordenadas
+                                        obtenerCoordenadas(direccionRestaurante, coordenadas -> {
+                                            if (coordenadas != null) {
+                                                LatLng destino = coordenadas;
+                                                // Agrega el marcador al mapa
+                                                Bitmap original1 = BitmapFactory.decodeResource(getResources(), R.drawable.shop_location_map);
+                                                Bitmap resized1 = Bitmap.createScaledBitmap(original1, 150, 150, false);
+                                                myMap.addMarker(new MarkerOptions()
+                                                        .position(destino)
+                                                        .title("Punto de retiro")
+                                                        .icon(BitmapDescriptorFactory.fromBitmap(resized1)));
+                                                // Ajustar la cámara al destino
+                                                myMap.moveCamera(CameraUpdateFactory.newLatLngZoom(destino, 15));
+                                                // Configura actualizaciones de ubicación en tiempo real
+                                                configurarActualizacionesUbicacion(destino);
+                                            } else {
+                                                Toast.makeText(this, "No se pudieron obtener las coordenadas del restaurante.", Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                                    }
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(this, "Error al cargar los datos del restaurante", Toast.LENGTH_SHORT).show();
+                                });
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Error al cargar los datos del pedido", Toast.LENGTH_SHORT).show();
+                });
 
     }
 
@@ -231,6 +312,28 @@ public class RecojoCurso1Activity extends AppCompatActivity implements OnMapRead
             builder.include(nuevaUbicacion);
             myMap.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 100));
         }
+    }
+
+    private void obtenerCoordenadas(String direccion, OnCoordenadasObtenidasCallback callback) {
+        Geocoder geocoder = new Geocoder(this);
+        new Thread(() -> {
+            try {
+                List<Address> direcciones = geocoder.getFromLocationName(direccion, 1);
+                if (direcciones != null && !direcciones.isEmpty()) {
+                    Address direccionObtenida = direcciones.get(0);
+                    LatLng coordenadas = new LatLng(direccionObtenida.getLatitude(), direccionObtenida.getLongitude());
+                    runOnUiThread(() -> callback.onCoordenadasObtenidas(coordenadas));
+                } else {
+                    runOnUiThread(() -> callback.onCoordenadasObtenidas(null));
+                }
+            } catch (Exception e) {
+                runOnUiThread(() -> callback.onCoordenadasObtenidas(null));
+            }
+        }).start();
+    }
+
+    interface OnCoordenadasObtenidasCallback {
+        void onCoordenadasObtenidas(LatLng coordenadas);
     }
 
 }

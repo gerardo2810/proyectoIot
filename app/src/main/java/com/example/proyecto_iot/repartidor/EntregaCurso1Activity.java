@@ -5,16 +5,21 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import com.bumptech.glide.Glide;
 import com.example.proyecto_iot.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -30,6 +35,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.List;
 
 public class EntregaCurso1Activity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -50,16 +58,59 @@ public class EntregaCurso1Activity extends AppCompatActivity implements OnMapRea
         // Inicializa el cliente de ubicación
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        String idPedido = getIntent().getStringExtra("idPedido");
+        db.collection("pedidos").document(idPedido)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        String idCliente = documentSnapshot.getString("idCliente");
+                        String direccion = documentSnapshot.getString("direccion");
+
+                        TextView direccionClienteTextView = findViewById(R.id.direccion_destino);
+                        direccionClienteTextView.setText(direccion);
+
+                        // Ahora consulta los datos del restaurante
+                        db.collection("clientes").document(idCliente)
+                                .get()
+                                .addOnSuccessListener(clienteSnapshot -> {
+                                    if (clienteSnapshot.exists()) {
+                                        String nombreCliente = clienteSnapshot.getString("Nombre");
+                                        String apellidoCliente = clienteSnapshot.getString("Apellido");
+                                        String numeroCelular = clienteSnapshot.getString("Telefono");
+
+                                        // Muestra los datos del restaurante
+                                        TextView nombreClienteTextView = findViewById(R.id.product_name);
+                                        TextView numeroClienteTextView = findViewById(R.id.numero);
+
+                                        String texto3 = nombreCliente + " " + apellidoCliente;
+
+                                        nombreClienteTextView.setText(texto3);
+                                        numeroClienteTextView.setText(numeroCelular);
+                                    }
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(this, "Error al cargar los datos del restaurante", Toast.LENGTH_SHORT).show();
+                                });
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Error al cargar los datos del pedido", Toast.LENGTH_SHORT).show();
+                });
+
         Button boton1 = findViewById(R.id.button3);
         boton1.setOnClickListener(v -> {
 
             SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
             SharedPreferences.Editor editor = prefs.edit();
             editor.putString("ultima_vista", "EntregaCurso2Activity");
+            editor.putString("idPedido", idPedido); // ID del pedido
             editor.apply();
 
 
             Intent intent = new Intent(this, EntregaCurso2Activity.class);
+            intent.putExtra("idPedido", idPedido);
             startActivity(intent);
         });
 
@@ -78,26 +129,44 @@ public class EntregaCurso1Activity extends AppCompatActivity implements OnMapRea
 
         myMap = googleMap;
 
-        LatLng destino = new LatLng(-12.071507, -77.090343); // Coordenadas de punto de entrega
+        // Consulta los datos del restaurante
+        String idPedido = getIntent().getStringExtra("idPedido");
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        Bitmap original1 = BitmapFactory.decodeResource(getResources(), R.drawable.home_address_location);
-        Bitmap resized1 = Bitmap.createScaledBitmap(original1, 150, 150, false);
-        myMap.addMarker(new MarkerOptions()
-                .position(destino)
-                .title("Punto de entrega")
-                .icon(BitmapDescriptorFactory.fromBitmap(resized1)));
+        db.collection("pedidos").document(idPedido)
+                .get()
+                .addOnSuccessListener(pedidoSnapshot -> {
+                    if (pedidoSnapshot.exists()) {
+                        String direccionCliente = pedidoSnapshot.getString("direccion");
 
-        // Ajusta la cámara
-        LatLngBounds.Builder builder = new LatLngBounds.Builder();
-        builder.include(destino);
-        myMap.setOnMyLocationChangeListener(location -> {
-            LatLng nuevaUbicacion = new LatLng(location.getLatitude(), location.getLongitude());
-            builder.include(nuevaUbicacion);
-            myMap.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 100));
-        });
+                        // Convertir la dirección en coordenadas
+                        obtenerCoordenadas(direccionCliente, coordenadas -> {
+                            if (coordenadas != null) {
+                                LatLng destino = coordenadas;
+                                // Agrega el marcador al mapa
+                                Bitmap original1 = BitmapFactory.decodeResource(getResources(), R.drawable.home_address_location);
+                                Bitmap resized1 = Bitmap.createScaledBitmap(original1, 150, 150, false);
+                                myMap.addMarker(new MarkerOptions()
+                                        .position(destino)
+                                        .title("Punto de entrega")
+                                        .icon(BitmapDescriptorFactory.fromBitmap(resized1)));
+                                // Ajustar la cámara al destino
+                                myMap.moveCamera(CameraUpdateFactory.newLatLngZoom(destino, 15));
+                                // Configura actualizaciones de ubicación en tiempo real
+                                configurarActualizacionesUbicacion(destino);
+                            } else {
+                                Toast.makeText(this, "No se pudieron obtener las coordenadas del restaurante.", Toast.LENGTH_SHORT).show();
+                            }
+                        });
 
-        // Configura actualizaciones en tiempo real de tu ubicación
-        configurarActualizacionesUbicacion(destino);
+
+
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Error al cargar los datos del pedido", Toast.LENGTH_SHORT).show();
+                });
+
 
     }
 
@@ -157,5 +226,26 @@ public class EntregaCurso1Activity extends AppCompatActivity implements OnMapRea
         }
     }
 
+    private void obtenerCoordenadas(String direccion, OnCoordenadasObtenidasCallback callback) {
+        Geocoder geocoder = new Geocoder(this);
+        new Thread(() -> {
+            try {
+                List<Address> direcciones = geocoder.getFromLocationName(direccion, 1);
+                if (direcciones != null && !direcciones.isEmpty()) {
+                    Address direccionObtenida = direcciones.get(0);
+                    LatLng coordenadas = new LatLng(direccionObtenida.getLatitude(), direccionObtenida.getLongitude());
+                    runOnUiThread(() -> callback.onCoordenadasObtenidas(coordenadas));
+                } else {
+                    runOnUiThread(() -> callback.onCoordenadasObtenidas(null));
+                }
+            } catch (Exception e) {
+                runOnUiThread(() -> callback.onCoordenadasObtenidas(null));
+            }
+        }).start();
+    }
+
+    interface OnCoordenadasObtenidasCallback {
+        void onCoordenadasObtenidas(LatLng coordenadas);
+    }
 
 }

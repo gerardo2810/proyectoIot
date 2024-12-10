@@ -199,6 +199,7 @@
                         android:textColor="#3032B6" />
 
                     <TextView
+                        android:id="@+id/idPedido"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="456753189"
@@ -222,6 +223,7 @@
                         android:textColor="#3032B6" />
 
                     <TextView
+                        android:id="@+id/nombreCliente"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Juan González A. "
@@ -229,6 +231,7 @@
                         android:textColor="#000000" />
 
                     <TextView
+                        android:id="@+id/numeroCelular"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="959715678"
@@ -240,6 +243,7 @@
 
             <!-- Costo total -->
             <TextView
+                android:id="@+id/cantidadProductos"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -255,50 +259,14 @@
                 android:background="#E0E0E0"
                 android:layout_marginTop="8dp" />
 
-            <LinearLayout
+
+            <TextView
+                android:id="@+id/productos_text_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="8dp">
-
-                <TextView
-                    android:layout_width="152dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="1x"
-                    android:textColor="#000000"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Hamburgesa carne royal "
-                    android:textSize="16sp"
-                    android:textColor="#000000" />
-            </LinearLayout>
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="8dp">
-
-                <TextView
-                    android:layout_width="131dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="1x"
-                    android:textColor="#000000"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Hamburgesa doble carne royal "
-                    android:textSize="16sp"
-                    android:textColor="#000000" />
-            </LinearLayout>
+                android:text="1x pedido"
+                android:textSize="18sp"
+                android:textColor="#000000" />
 
             <!-- Línea gris debajo de Envío -->
             <View

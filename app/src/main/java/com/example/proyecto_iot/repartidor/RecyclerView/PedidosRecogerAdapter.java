@@ -14,6 +14,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.repartidor.InicioRepartidorActivity;
 import com.example.proyecto_iot.repartidor.NuevoPedidoActivity;
@@ -41,10 +42,14 @@ public class PedidosRecogerAdapter extends RecyclerView.Adapter<PedidosRecogerAd
         PedidoRecoger pedidoRecoger = listaPedidosRecoger.get(position);
         holder.pedidoRecoger = pedidoRecoger;
 
-        //ImageView imageViewRestaurante = holder.itemView.findViewById(R.id.imagen_restaurante);
-        //imageViewRestaurante.setImageResource(pedidoRecoger.getImageResourceId());
+        ImageView imageViewRestaurante = holder.itemView.findViewById(R.id.imagen_restaurante);
+        Glide.with(context)
+                .load(pedidoRecoger.getFotoLogo()) // URL del logo
+                .placeholder(R.drawable.baseline_file_upload_24) // Imagen temporal mientras carga
+                .into(imageViewRestaurante); // Tu ImageView
+
         TextView textViewRestaurante = holder.itemView.findViewById(R.id.nombre_restaurante);
-        textViewRestaurante.setText(pedidoRecoger.getNombreRestaurante());
+        textViewRestaurante.setText(pedidoRecoger.getIdRestaurante());
         TextView textViewCantidad = holder.itemView.findViewById(R.id.cantidad_pedido);
         String texto1= pedidoRecoger.getCantidad() + "pedido a";
         textViewCantidad.setText(texto1);
@@ -66,6 +71,9 @@ public class PedidosRecogerAdapter extends RecyclerView.Adapter<PedidosRecogerAd
             arrowIcon.setOnClickListener(v -> {
                 context = itemView.getContext();
                 Intent intent = new Intent(context, NuevoPedidoActivity.class);
+                intent.putExtra("idPedido", pedidoRecoger.getIdPedido());
+                intent.putExtra("direccion", pedidoRecoger.getDireccion()); // Dirección
+                intent.putExtra("direccionRest", pedidoRecoger.getDireccionRest()); // Dirección
                 context.startActivity(intent);
 
             });

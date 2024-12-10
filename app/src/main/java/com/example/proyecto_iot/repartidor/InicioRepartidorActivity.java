@@ -10,6 +10,7 @@ import android.location.Geocoder;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -55,19 +56,30 @@ public class InicioRepartidorActivity extends AppCompatActivity {
         mostrarUbicacion();
 
         Button volverBtn = findViewById(R.id.buttonRegresar);
-        volverBtn.setOnClickListener(v -> {
-            SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
-            String ultimaVista = prefs.getString("ultima_vista", "InicioRepartidorActivity"); // Por defecto, si no hay nada guardado, ir a activityInicio.
+        TextView volverTexto = findViewById(R.id.textoPedProgress);
 
-            // Redirigir a la última vista donde se quedó el usuario
-            try {
-                Class<?> clase = Class.forName("com.example.proyecto_iot.repartidor." + ultimaVista); // Asegúrate de que el paquete sea correcto
-                Intent intent = new Intent(InicioRepartidorActivity.this, clase);
-                startActivity(intent);
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-        });
+        // Recuperar SharedPreferences
+        SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+        String ultimaVista = prefs.getString("ultima_vista", "InicioRepartidorActivity");
+        String idPedido = prefs.getString("idPedido", null);
+
+        if (idPedido == null) {
+            // Si idPedido es nulo, ocultar el botón y el texto
+            volverBtn.setVisibility(View.GONE);
+            volverTexto.setVisibility(View.GONE);
+        } else {
+            // Si idPedido no es nulo, configurar el clic
+            volverBtn.setOnClickListener(v -> {
+                try {
+                    Class<?> clase = Class.forName("com.example.proyecto_iot.repartidor." + ultimaVista);
+                    Intent intent = new Intent(InicioRepartidorActivity.this, clase);
+                    intent.putExtra("idPedido", idPedido); // Pasar el idPedido al Intent
+                    startActivity(intent);
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
 
         //----------------------------------------------------------------------------
         Intent intent = getIntent();
@@ -116,11 +128,37 @@ public class InicioRepartidorActivity extends AppCompatActivity {
 
                     listaPedidos.clear();
                     for (QueryDocumentSnapshot document : querySnapshot) {
+                        String idRestaurante = document.getString("idRestaurante");
+                        String direccion = document.getString("direccion");
+                        String cantidad = document.getString("cantidad");
 
-                        PedidoRecoger pedidoRecoger = document.toObject(PedidoRecoger.class);
-                        listaPedidos.add(pedidoRecoger);
+                        PedidoRecoger pedidoRecoger = new PedidoRecoger();
+                        pedidoRecoger.setIdPedido(document.getId());
+                        pedidoRecoger.setIdRestaurante(idRestaurante);
+                        pedidoRecoger.setDireccion(direccion);
+                        pedidoRecoger.setCantidad(cantidad);
+
+                        if (idRestaurante != null && !idRestaurante.isEmpty()) {
+                            db.collection("restaurantes").document(idRestaurante)
+                                    .get()
+                                    .addOnSuccessListener(restauranteSnapshot -> {
+                                        if (restauranteSnapshot.exists()) {
+                                            String nombreRestaurante = restauranteSnapshot.getString("nombre");
+                                            String logoUrl = restauranteSnapshot.getString("fotoLogo");
+                                            String direccionRest = restauranteSnapshot.getString("ubicacion");
+
+                                            pedidoRecoger.setIdRestaurante(nombreRestaurante);
+                                            pedidoRecoger.setFotoLogo(logoUrl);
+                                            pedidoRecoger.setDireccionRest(direccionRest);
+
+                                            listaPedidos.add(pedidoRecoger);
+                                            adapter.notifyDataSetChanged();
+                                        }
+                                    });
+                        }
+
+
                     }
-                    adapter.notifyDataSetChanged();
 
                 });
 
@@ -206,5 +244,13 @@ public class InicioRepartidorActivity extends AppCompatActivity {
             e.printStackTrace();
             textViewUbicacion.setText("Error al obtener la dirección");
         }
+    }
+
+    @SuppressWarnings("MissingSuperCall")
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, InicioRepartidorActivity.class); // Regresar a la vistaInicio
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Limpia la pila de actividades
+        startActivity(intent);
     }
 }

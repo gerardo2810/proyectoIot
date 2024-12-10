@@ -46,10 +46,14 @@ public class CarritoClienteActivity extends AppCompatActivity implements Product
         if (productos == null) {
             productos = new ArrayList<>();
         }
+        System.out.println("CARRITO" + productos);
+
         // Recuperar los datos del restaurante desde el Intent
         String nombreRestaurante = getIntent().getStringExtra("nombre_restaurante");
         String fotoLogo = getIntent().getStringExtra("fotoLogo");
         double precioDelivery = getIntent().getDoubleExtra("precioDelivery", 0.0);
+
+        String restauranteId = getIntent().getStringExtra("restauranteId");
 
         // Debug: Verificar que los datos se recibieron correctamente
         System.out.println("carrito cliente");
@@ -103,13 +107,20 @@ public class CarritoClienteActivity extends AppCompatActivity implements Product
                 // Debug para asegurarse de que el precioDelivery es correcto
                 System.out.println("Carrito Cliente -> Precio Delivery: " + precioDelivery);
 
+                // Calcular el tamaño de la lista de productos
+                int cantidadProductos = productos.size();
+                System.out.println("Cantidad de productos en el carrito: " + cantidadProductos);
+
                 // Navegar a la actividad RealizarPedidoActivity
+
                 Intent intent = new Intent(CarritoClienteActivity.this, RealizarPedidoActivity.class);
                 intent.putExtra("subtotal", subtotal);
                 intent.putExtra("precio_delivery", precioDelivery); // Fíjate en el nombre de la clave
                 intent.putExtra("nombreRestaurante", nombreRestaurante);
                 intent.putExtra("fotoLogo", fotoLogo);
-
+                intent.putExtra("cantidadProductos", cantidadProductos); // Enviar la cantidad de productos
+                intent.putExtra("restauranteId",restauranteId);
+                intent.putExtra("carrito", new ArrayList<>(productos)); // Añade la lista de productos
 
                 startActivity(intent);
             }

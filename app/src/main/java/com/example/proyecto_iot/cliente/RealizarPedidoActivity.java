@@ -19,17 +19,28 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.bumptech.glide.Glide;
 import com.example.proyecto_iot.R;
+import com.example.proyecto_iot.cliente.RecyclerView.Producto;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.TimeZone;
 
 public class RealizarPedidoActivity extends AppCompatActivity {
 
     private ImageView backArrow;
     private Button payButton;
     private TextView seeMore;
+    private List<Producto> productos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,24 +61,33 @@ public class RealizarPedidoActivity extends AppCompatActivity {
         double precioDelivery = intent.getDoubleExtra("precio_delivery", 0.0); // Asegúrate de usar "precio_delivery"
         String nombreRestaurante = intent.getStringExtra("nombreRestaurante");
         String fotoLogo = intent.getStringExtra("fotoLogo");
+        int cantidadProductos = intent.getIntExtra("cantidadProductos", 0); // Recibir la cantidad de productos
 
-        // Debug: Verificar que los datos fueron recibidos correctamente
+        String restauranteId = getIntent().getStringExtra("restauranteId");
+        System.out.println("Realizar pedido" + restauranteId);
+         productos = (List<Producto>) getIntent().getSerializableExtra("carrito");
+        System.out.println("REALIZAR PEDIDO" + productos);
+
+
+
+        // Debug para asegurarte de que la cantidad es correcta
+        System.out.println("RealizarPedido -> Cantidad de productos: " + cantidadProductos);
         System.out.println("Realizar Pedido:");
         System.out.println("Subtotal: " + subtotal);
         System.out.println("Precio Delivery: " + precioDelivery);
         System.out.println("Nombre Restaurante: " + nombreRestaurante);
-        System.out.println("Foto Logo: " + fotoLogo);
+                                    System.out.println("Foto Logo: " + fotoLogo);
 
         // Calcular el total
         double pagoTotal = subtotal + precioDelivery;
-
+        String temp = "Productos - " + cantidadProductos;
         // Mostrar los valores en los TextViews
         TextView costosProductosTextView = findViewById(R.id.costos_productos_value);
         TextView envioTextView = findViewById(R.id.envio_value);
         TextView pagoTotalTextView = findViewById(R.id.pago_total_value);
         TextView nameRestauranteTextView = findViewById(R.id.restaurant_name1);
         TextView subtotalTextView = findViewById(R.id.subtotal_value);
-
+        TextView cantidadTextView = findViewById(R.id.products_count);
         ImageView fotoLogoImageView = findViewById(R.id.profile_image);
 
         // Formatear valores como moneda
@@ -77,6 +97,8 @@ public class RealizarPedidoActivity extends AppCompatActivity {
         pagoTotalTextView.setText(currencyFormat.format(pagoTotal));
         subtotalTextView.setText(currencyFormat.format(pagoTotal));
         nameRestauranteTextView.setText(nombreRestaurante);
+        cantidadTextView.setText(String.valueOf(temp)); // Mostrar la cantidad como texto
+
 
         // Cargar la imagen del restaurante usando Glide
         Glide.with(this)
@@ -113,10 +135,73 @@ public class RealizarPedidoActivity extends AppCompatActivity {
         payButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Aquí puedes agregar la lógica de pago
-                // Por ejemplo, redirigir a una página de confirmación de pedido o procesamiento de pago
-                Intent intent = new Intent(RealizarPedidoActivity.this, PedidoAceptadoCliente.class); // Crear esta actividad según la estructura de tu app
-                startActivity(intent);
+                // Obtener la instancia de Firestore
+                FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+                // Obtener el ID del cliente logueado
+                String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+                // Obtener la dirección del cliente desde Firestore
+                db.collection("clientes").document(userId)
+                        .get()
+                        .addOnSuccessListener(documentSnapshot -> {
+                            if (documentSnapshot.exists()) {
+                                // Obtener la dirección del cliente
+                                String direccionCliente = documentSnapshot.getString("Direccion");
+                                System.out.println("Dirección del cliente: " + direccionCliente);
+
+                                // Obtener los demás datos necesarios
+                                double subtotal = intent.getDoubleExtra("subtotal", 0.0);
+                                double precioDelivery = intent.getDoubleExtra("precio_delivery", 0.0);
+                                String nombreRestaurante = intent.getStringExtra("nombreRestaurante");
+                                String restauranteId = intent.getStringExtra("restauranteId");
+                                double pagoTotal = subtotal + precioDelivery;
+                                List<String> idProductos = new ArrayList<>();
+
+                                // Extraer IDs de productos del carrito
+                                for (Producto producto : productos) {
+                                    idProductos.add(producto.getId());
+                                }
+
+                                // Obtener la fecha y hora actual en la zona horaria de Perú
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy, HH:mm:ss a", new Locale("es", "PE"));
+                                dateFormat.setTimeZone(TimeZone.getTimeZone("America/Lima"));
+                                String fechaHora = dateFormat.format(new Date());
+
+                                // Crear un mapa de datos para el pedido
+                                Map<String, Object> pedidoData = new HashMap<>();
+                                pedidoData.put("idCliente", userId);
+                                pedidoData.put("direccion", direccionCliente);
+                                pedidoData.put("estado", 0); // Estado inicial
+                                pedidoData.put("fechaHora", fechaHora);
+                                pedidoData.put("productos", idProductos);
+                                pedidoData.put("idRepartidor", ""); // Campo vacío por ahora
+                                pedidoData.put("idRestaurante", restauranteId);
+                                pedidoData.put("nombreRestaurante", nombreRestaurante);
+                                pedidoData.put("pagoTotal", pagoTotal);
+
+                                // Agregar el pedido a la colección "pedidos"
+                                db.collection("pedidos")
+                                        .add(pedidoData)
+                                        .addOnSuccessListener(documentReference -> {
+                                            // Pedido creado con éxito
+                                            System.out.println("Pedido creado con ID: " + documentReference.getId());
+
+                                            // Navegar a la actividad de confirmación
+                                            Intent intent = new Intent(RealizarPedidoActivity.this, PedidoAceptadoCliente.class);
+                                            startActivity(intent);
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            // Manejo de errores
+                                            System.err.println("Error al crear el pedido: " + e.getMessage());
+                                        });
+                            } else {
+                                System.err.println("El cliente no existe en la base de datos.");
+                            }
+                        })
+                        .addOnFailureListener(e -> {
+                            System.err.println("Error al obtener los datos del cliente: " + e.getMessage());
+                        });
             }
         });
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);

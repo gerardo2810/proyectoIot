@@ -98,6 +98,8 @@ public class TodosLosProductosActivity extends AppCompatActivity {
                         productoList.clear(); // Limpiar la lista antes de agregar nuevos datos
                         for (DocumentSnapshot document : task.getResult()) {
                             // Extraer los datos del documento
+                            String id =document.getId();
+
                             String nombre = document.getString("nombre");
                             String descripcion = document.getString("descripcion");
                             double precio = document.contains("precio") ? document.getDouble("precio") : 0.0;
@@ -105,7 +107,7 @@ public class TodosLosProductosActivity extends AppCompatActivity {
                             int cantidad = 1; // Valor inicial de la cantidad
 
                             // Agregar el producto a la lista
-                            productoList.add(new Producto(nombre, descripcion, precio, cantidad, imageUrl));
+                            productoList.add(new Producto(id,nombre, descripcion, precio, cantidad, imageUrl));
                         }
                         adapter.notifyDataSetChanged(); // Actualizar el adaptador con los nuevos datos
                     } else {

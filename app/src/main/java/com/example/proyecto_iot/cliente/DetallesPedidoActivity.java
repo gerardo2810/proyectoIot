@@ -109,6 +109,8 @@ public class DetallesPedidoActivity extends AppCompatActivity {
                         for (DocumentSnapshot document : task.getResult()) {
                             try {
                                 // Obtener los valores desde Firestore
+                                String id =document.getId();
+
                                 String nombre = document.getString("Nombre");
                                 String descripcion = document.getString("Descripcion");
                                 String imageUrl = document.getString("Imagen");
@@ -121,7 +123,7 @@ public class DetallesPedidoActivity extends AppCompatActivity {
                                         document.getLong("cantidadDeVentas").intValue() : 0;
 
                                 // Agregar el producto a la lista
-                                productoList.add(new Producto(nombre, descripcion, precio, cantidad, imageUrl));
+                                productoList.add(new Producto(id,nombre, descripcion, precio, cantidad, imageUrl));
                             } catch (Exception e) {
                                 Log.e("Firestore", "Error al procesar producto", e);
                             }

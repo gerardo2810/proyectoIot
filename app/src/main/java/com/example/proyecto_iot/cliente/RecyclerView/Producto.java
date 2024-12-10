@@ -3,20 +3,24 @@ package com.example.proyecto_iot.cliente.RecyclerView;
 import java.io.Serializable;
 
 public class Producto implements Serializable {
+    private  String id;
     private String nombre;
     private String descripcion;
     private double precio;
     private int cantidad;
     private String imageUrl; // URL de la imagen desde Firebase
 
-    public Producto(String nombre, String descripcion, double precio, int cantidad, String imageUrl) {
+    public Producto(String id,String nombre, String descripcion, double precio, int cantidad, String imageUrl) {
+        this.id =id;
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.precio = precio;
         this.cantidad = cantidad;
         this.imageUrl = imageUrl;
     }
-
+    public String getId(){
+            return  id;
+    }
     public String getNombre() {
         return nombre;
     }

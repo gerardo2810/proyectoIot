@@ -54,6 +54,8 @@ public class PerfilRestauranteActivity extends AppCompatActivity {
         String direccionRestaurante = intent.getStringExtra("direccion_restaurante");
         String fotoLogo = intent.getStringExtra("foto_logo");
         String fotoPortada = intent.getStringExtra("foto_portada");
+
+        String restauranteId = intent.getStringExtra("restauranteId"); // Recibir el ID del restaurante
         System.out.println("perfil resta");
         System.out.println(precioDelivery);
 
@@ -91,6 +93,7 @@ public class PerfilRestauranteActivity extends AppCompatActivity {
             intent1.putExtra("nombre_restaurante", nombreRestaurante);
             intent1.putExtra("fotoLogo", fotoLogo);
             intent1.putExtra("precioDelivery", precioDelivery);
+            intent1.putExtra("restauranteId", restauranteId); // Pasar el ID del restaurante
 
             // Iniciar la actividad del carrito
             startActivity(intent1);
@@ -195,13 +198,14 @@ public class PerfilRestauranteActivity extends AppCompatActivity {
                         productosList.clear();
 
                         for (DocumentSnapshot document : task.getResult()) {
+                            String id =document.getId();
                             String nombre = document.getString("Nombre");
                             String descripcion = document.getString("Descripcion");
                             double precio = document.contains("Precio") ? document.getDouble("Precio") : 0.0;
                             String imageUrl = document.getString("Imagen");
                             int cantidadInicial = 1;
 
-                            productosList.add(new Producto(nombre, descripcion, precio, cantidadInicial, imageUrl));
+                            productosList.add(new Producto(id,nombre, descripcion, precio, cantidadInicial, imageUrl));
                         }
 
                         // Notificar al adaptador de los cambios

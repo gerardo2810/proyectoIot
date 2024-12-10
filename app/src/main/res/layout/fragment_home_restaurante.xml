@@ -28,7 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="10dp">
 
             <!-- Restaurante nombre y tipo de cocina -->
             <TextView
@@ -36,7 +36,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-
                 android:textColor="@color/green_dark"
                 android:textSize="20sp"
                 android:textStyle="bold" />

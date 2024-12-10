@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -41,12 +42,12 @@ public class CartaRestauranteFragment extends Fragment {
     private RecyclerView recyclerCategories, recyclerProducts;
     private CategoriaAdapter categoryAdapter;
     private ProductoAdapter productAdapter;
-    private List<Producto> filteredProductList; // Lista filtrada de productos
+    private List<Producto> filteredProductList;
     private EditText searchBar;
     private String idRestaurante;
     private FirebaseFirestore db;
     private List<Categoria> categoryList;
-    private String selectedCategoryId; // ID de la categoría seleccionada
+    private String selectedCategoryId;
 
     @Nullable
     @Override
@@ -66,7 +67,12 @@ public class CartaRestauranteFragment extends Fragment {
         // Observa los cambios en el idRestaurante
         restauranteViewModel.getIdRestaurante().observe(getViewLifecycleOwner(), idRestaurante -> {
             if (idRestaurante != null) {
+                this.idRestaurante = idRestaurante;
+                Log.d("CartaRestaurante", "idRestaurante recibido: " + idRestaurante);
                 fetchRestaurantData(idRestaurante);
+                loadCategories();
+            } else {
+                Log.e("CartaRestaurante", "idRestaurante es nulo.");
             }
         });
 
@@ -87,10 +93,9 @@ public class CartaRestauranteFragment extends Fragment {
         productAdapter = new ProductoAdapter(filteredProductList, getContext());
         recyclerProducts.setAdapter(productAdapter);
 
-
+        // Botones de agregar
         Button btnAddProduct = view.findViewById(R.id.btn_add_product);
         btnAddProduct.setEnabled(false);
-
         btnAddProduct.setOnClickListener(v -> {
             if (selectedCategoryId != null) {
                 Intent intent = new Intent(getContext(), AgregarProductoActivity.class);
@@ -99,6 +104,14 @@ public class CartaRestauranteFragment extends Fragment {
             } else {
                 Toast.makeText(getContext(), "Por favor, selecciona una categoría primero.", Toast.LENGTH_SHORT).show();
             }
+        });
+
+        Button btnAddCategoria = view.findViewById(R.id.btn_add_categoria);
+        btnAddCategoria.setEnabled(true);
+        btnAddCategoria.setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), AgregarCategoriaActivity.class);
+            intent.putExtra("idRestaurante", idRestaurante);
+            startActivity(intent);
         });
 
         // Configurar la barra de búsqueda
@@ -116,58 +129,102 @@ public class CartaRestauranteFragment extends Fragment {
             public void afterTextChanged(Editable editable) {}
         });
 
-        // Cargar categorías desde Firestore
-        loadCategories();
-
         return view;
     }
 
-    // Método para cargar categorías según el ID del restaurante
-    private void loadCategories() {
-        db.collection("categorias")
-                .whereEqualTo("idRestaurante", idRestaurante)
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    categoryList.clear();
-                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                        Categoria categoria = doc.toObject(Categoria.class);
-                        categoria.setId(doc.getId());
-                        categoryList.add(categoria);
-                    }
-                    categoryAdapter.notifyDataSetChanged();
-                })
-                .addOnFailureListener(e -> Log.e("CartaRestaurante", "Error al cargar categorías", e));
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("CartaRestaurante", "Fragmento resumido. Recargando datos.");
+        if (idRestaurante != null) {
+            loadCategories();
+            if (selectedCategoryId != null) {
+                loadProductsByCategory(selectedCategoryId);
+            }
+        }
     }
 
-    // Método para manejar la selección de categoría
-    private void onCategorySelected(String categoryId) {
-        selectedCategoryId = categoryId;
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("selectedCategoryId", selectedCategoryId);
+    }
 
-        // Habilitar el botón cuando se seleccione una categoría
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if (savedInstanceState != null) {
+            selectedCategoryId = savedInstanceState.getString("selectedCategoryId");
+            if (selectedCategoryId != null) {
+                loadProductsByCategory(selectedCategoryId);
+            }
+        }
+    }
+
+    private void loadCategories() {
+        if (idRestaurante == null) {
+            Log.e("CartaRestaurante", "idRestaurante es nulo. No se pueden cargar categorías.");
+            return;
+        }
+        Log.d("CartaRestaurante", "Cargando categorías para el restaurante: " + idRestaurante);
+        db.collection("categorias")
+                .whereEqualTo("idRestaurante", idRestaurante)
+                .addSnapshotListener((querySnapshot, e) -> {
+                    if (e != null) {
+                        Log.e("CartaRestaurante", "Error al escuchar categorías", e);
+                        return;
+                    }
+                    if (querySnapshot != null) {
+                        categoryList.clear();
+                        for (QueryDocumentSnapshot doc : querySnapshot) {
+                            Categoria categoria = doc.toObject(Categoria.class);
+                            categoria.setId(doc.getId());
+                            categoryList.add(categoria);
+                            Log.d("CartaRestaurante", "Categoría cargada: " + categoria.getNombre());
+                        }
+                        categoryAdapter.notifyDataSetChanged();
+                    }
+                });
+    }
+
+    private void onCategorySelected(String categoryId) {
+        if (categoryId == null) {
+            Log.e("CartaRestaurante", "categoryId es nulo. No se pueden cargar productos.");
+            return;
+        }
+
+        selectedCategoryId = categoryId;
+        Log.d("CartaRestaurante", "Categoría seleccionada: " + categoryId);
+
+        // Habilitar el botón agregar producto
         Button btnAddProduct = getView().findViewById(R.id.btn_add_product);
         btnAddProduct.setEnabled(true);
 
         loadProductsByCategory(categoryId);
     }
 
-    // Método para cargar productos según la categoría seleccionada
     private void loadProductsByCategory(String categoryId) {
+        Log.d("CartaRestaurante", "Cargando productos para la categoría: " + categoryId);
         db.collection("platos")
                 .whereEqualTo("idCategoria", categoryId)
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    filteredProductList.clear();
-                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                        Producto producto = doc.toObject(Producto.class);
-                        producto.setId(doc.getId());
-                        filteredProductList.add(producto);
+                .addSnapshotListener((querySnapshot, e) -> {
+                    if (e != null) {
+                        Log.e("CartaRestaurante", "Error al escuchar productos", e);
+                        return;
                     }
-                    productAdapter.notifyDataSetChanged();
-                })
-                .addOnFailureListener(e -> Log.e("CartaRestaurante", "Error al cargar productos", e));
+                    if (querySnapshot != null) {
+                        filteredProductList.clear();
+                        for (QueryDocumentSnapshot doc : querySnapshot) {
+                            Producto producto = doc.toObject(Producto.class);
+                            producto.setId(doc.getId());
+                            filteredProductList.add(producto);
+                            Log.d("CartaRestaurante", "Producto cargado: " + producto.getNombre());
+                        }
+                        productAdapter.updateData(filteredProductList);
+                    }
+                });
     }
 
-    // Método para filtrar productos por búsqueda
     private void filterBySearch(String query) {
         List<Producto> searchResult = new ArrayList<>();
         for (Producto producto : filteredProductList) {
@@ -175,28 +232,27 @@ public class CartaRestauranteFragment extends Fragment {
                 searchResult.add(producto);
             }
         }
+        Log.d("CartaRestaurante", "Resultados de búsqueda: " + searchResult.size());
         productAdapter.updateData(searchResult);
     }
 
     private void fetchRestaurantData(String idRestaurante) {
+        Log.d("CartaRestaurante", "Cargando datos del restaurante: " + idRestaurante);
         db.collection("restaurantes").document(idRestaurante)
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
-                        // Recuperar los datos del documento
                         String restaurantName = documentSnapshot.getString("nombre");
                         String slogan = documentSnapshot.getString("eslogan");
 
-                        // Actualizar la UI
                         restaurantNameTextView.setText(restaurantName != null ? restaurantName : "Nombre no disponible");
                         cuisineTypeTextView.setText(slogan != null ? slogan : "Eslogan no disponible");
+                        Log.d("CartaRestaurante", "Datos del restaurante cargados correctamente.");
                     } else {
-                        Toast.makeText(getContext(), "Datos del restaurante no encontrados.", Toast.LENGTH_SHORT).show();
+                        Log.e("CartaRestaurante", "Documento del restaurante no encontrado.");
                     }
                 })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(getContext(), "Error al obtener datos: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
+                .addOnFailureListener(e -> Log.e("CartaRestaurante", "Error al cargar datos del restaurante", e));
     }
 }
 

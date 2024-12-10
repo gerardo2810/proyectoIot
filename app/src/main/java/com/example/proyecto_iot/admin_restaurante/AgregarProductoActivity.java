@@ -27,7 +27,7 @@ import java.util.Map;
 public class AgregarProductoActivity extends AppCompatActivity {
 
     private static final int REQUEST_IMAGE_PICK = 1;
-    private EditText etProductName, etProductDescription, etProductPrice, etProductStock;
+    private EditText etProductName, etProductDescription, etProductPrice, etProductStock, etTimePreparation;
     private Button btnUploadImage, btnSaveProduct;
     private String idCategoria;
     private ImageView imageView5;
@@ -50,23 +50,23 @@ public class AgregarProductoActivity extends AppCompatActivity {
             return;
         }
 
+        // Inicialización de vistas
         etProductName = findViewById(R.id.et_product_name);
         etProductDescription = findViewById(R.id.et_product_description);
         etProductPrice = findViewById(R.id.et_product_price);
         etProductStock = findViewById(R.id.et_product_stock);
+        etTimePreparation = findViewById(R.id.et_time_preparation);
         btnUploadImage = findViewById(R.id.btn_upload_image);
         btnSaveProduct = findViewById(R.id.btn_save_product);
         imageView5 = findViewById(R.id.imageView5);
 
         btnUploadImage.setOnClickListener(v -> openImageSelector());
-
         btnSaveProduct.setOnClickListener(v -> saveProduct());
 
         ImageView backButton = findViewById(R.id.back_button);
         backButton.setOnClickListener(v -> finish());
     }
 
-    // Método para abrir el selector de imágenes
     private void openImageSelector() {
         Intent intent = new Intent();
         intent.setType("image/*");
@@ -74,7 +74,6 @@ public class AgregarProductoActivity extends AppCompatActivity {
         startActivityForResult(Intent.createChooser(intent, "Seleccionar Imagen"), REQUEST_IMAGE_PICK);
     }
 
-    // Manejar resultado del selector de imágenes
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -84,24 +83,25 @@ public class AgregarProductoActivity extends AppCompatActivity {
         }
     }
 
-    // Guardar producto en Firestore
     private void saveProduct() {
         String name = etProductName.getText().toString().trim();
         String description = etProductDescription.getText().toString().trim();
-        String price = etProductPrice.getText().toString().trim();
-        String stock = etProductStock.getText().toString().trim();
-        String preparationTime = "30"; // Tiempo de preparación estático por ahora
+        String priceText = etProductPrice.getText().toString().trim();
+        String stockText = etProductStock.getText().toString().trim();
+        String preparationTimeText = etTimePreparation.getText().toString().trim();
 
-        if (name.isEmpty() || description.isEmpty() || price.isEmpty() || stock.isEmpty() || imageUri == null) {
+        if (name.isEmpty() || description.isEmpty() || priceText.isEmpty() || stockText.isEmpty() || preparationTimeText.isEmpty() || imageUri == null) {
             Toast.makeText(this, "Por favor completa todos los campos e incluye una imagen.", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Subir imagen a Firebase Storage
+        double price = Double.parseDouble(priceText);
+        int stock = Integer.parseInt(stockText);
+        int preparationTime = Integer.parseInt(preparationTimeText);
+
         StorageReference fileRef = storageRef.child(System.currentTimeMillis() + ".jpg");
         fileRef.putFile(imageUri).addOnSuccessListener(taskSnapshot -> fileRef.getDownloadUrl()
                         .addOnSuccessListener(uri -> {
-                            // Crear un mapa de datos para el producto
                             Map<String, Object> product = new HashMap<>();
                             product.put("Nombre", name);
                             product.put("Descripcion", description);
@@ -111,8 +111,8 @@ public class AgregarProductoActivity extends AppCompatActivity {
                             product.put("Imagen", uri.toString());
                             product.put("idCategoria", idCategoria);
                             product.put("isActive", true);
+                            product.put("cantidadDeVentas", 0);
 
-                            // Guardar en Firestore
                             db.collection("platos").add(product)
                                     .addOnSuccessListener(documentReference -> {
                                         Toast.makeText(AgregarProductoActivity.this, "Producto guardado exitosamente", Toast.LENGTH_SHORT).show();

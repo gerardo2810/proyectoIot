@@ -5,9 +5,10 @@ public class Producto {
     private String Nombre;
     private String Descripcion;
     private String Imagen;
-    private String Precio;
-    private String Stock;
-    private String TiempoPreparacion;
+    private double Precio;
+    private int Stock;
+    private int TiempoPreparacion;
+    private int cantidadDeVentas;
     private String idCategoria;
     private Boolean isActive;
 
@@ -46,28 +47,36 @@ public class Producto {
         Imagen = imagen;
     }
 
-    public String getPrecio() {
+    public double getPrecio() {
         return Precio;
     }
 
-    public void setPrecio(String precio) {
+    public void setPrecio(double precio) {
         Precio = precio;
     }
 
-    public String getStock() {
+    public int getStock() {
         return Stock;
     }
 
-    public void setStock(String stock) {
+    public void setStock(int stock) {
         Stock = stock;
     }
 
-    public String getTiempoPreparacion() {
+    public int getTiempoPreparacion() {
         return TiempoPreparacion;
     }
 
-    public void setTiempoPreparacion(String tiempoPreparacion) {
+    public void setTiempoPreparacion(int tiempoPreparacion) {
         TiempoPreparacion = tiempoPreparacion;
+    }
+
+    public int getCantidadDeVentas() {
+        return cantidadDeVentas;
+    }
+
+    public void setCantidadDeVentas(int cantidadDeVentas) {
+        this.cantidadDeVentas = cantidadDeVentas;
     }
 
     public String getIdCategoria() {

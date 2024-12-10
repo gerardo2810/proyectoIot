@@ -88,7 +88,7 @@
                 android:layout_gravity="center"
 
                 android:paddingBottom="25dp"
-                android:text="AGREGAR NUEVO PRODUCTO"
+                android:text="AGREGAR NUEVA CATEGORÍA"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -102,35 +102,12 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:paddingTop="20dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingBottom="8dp"
-                        android:text="Nombre del producto:"
-                        android:textStyle="bold" />
-
-                    <EditText
-                        android:id="@+id/et_product_name"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="textMultiLine"
-                        android:background="@drawable/border_editar_info"
-                        android:padding="10dp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:orientation="vertical">
 
                     <ImageView
                         android:id="@+id/imageView5"
-                        android:layout_width="118dp"
-                        android:layout_height="86dp"
+                        android:layout_width="158dp"
+                        android:layout_height="113dp"
                         android:layout_gravity="center"
                         android:background="@drawable/placeholder" />
 
@@ -138,9 +115,9 @@
                         android:id="@+id/btn_upload_image"
                         android:layout_width="144dp"
                         android:layout_height="36dp"
+                        android:layout_gravity="center"
                         android:layout_marginTop="6dp"
                         android:gravity="center"
-                        android:layout_gravity="center"
                         android:text="Subir imagen"
                         android:textSize="11sp" />
                 </LinearLayout>
@@ -152,70 +129,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingTop="15dp"
-                android:text="Descripción:"
+                android:text="NOMBRE:"
                 android:textStyle="bold" />
 
             <EditText
-                android:id="@+id/et_product_description"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textMultiLine"
-                android:background="@drawable/border_editar_info"
-                android:padding="10dp" />
-
-            <!-- Precio -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingTop="15dp"
-                android:text="Precio (S/):"
-                android:textStyle="bold" />
-
-            <EditText
-                android:id="@+id/et_product_price"
+                android:id="@+id/et_category_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/border_editar_info"
-                android:inputType="numberDecimal"
-                android:padding="10dp" />
-
-            <!-- Stock -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingTop="15dp"
-                android:text="Stock:"
-                android:textStyle="bold" />
-
-            <EditText
-                android:id="@+id/et_product_stock"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/border_editar_info"
-                android:inputType="number"
-                android:padding="10dp" />
-
-            <!-- Tiempo de preparación -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingTop="15dp"
-                android:paddingBottom="2dp"
-                android:text="Tiempo de preparación (min):"
-                android:textStyle="bold" />
-
-            <EditText
-                android:id="@+id/et_time_preparation"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/border_editar_info"
-                android:inputType="number"
                 android:padding="10dp" />
 
 
             <!-- Botón para guardar el producto -->
             <Button
-                android:id="@+id/btn_save_product"
+                android:id="@+id/btn_save_category"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"

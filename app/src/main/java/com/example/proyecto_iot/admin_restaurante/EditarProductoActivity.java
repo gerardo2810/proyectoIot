@@ -25,7 +25,7 @@ import java.util.Map;
 public class EditarProductoActivity extends AppCompatActivity {
     private static final int PICK_IMAGE_REQUEST = 1;
 
-    private EditText etProductName, etProductDescription, etProductPrice, etProductStock;
+    private EditText etProductName, etProductDescription, etProductPrice, etProductStock, etTimePreparation;
     private Button btnUploadImage, btnSaveProduct;
     private ImageView imageView5;
     private Uri imageUri;
@@ -56,6 +56,7 @@ public class EditarProductoActivity extends AppCompatActivity {
         etProductDescription = findViewById(R.id.et_product_description);
         etProductPrice = findViewById(R.id.et_product_price);
         etProductStock = findViewById(R.id.et_product_stock);
+        etTimePreparation = findViewById(R.id.et_time_preparation);
         btnUploadImage = findViewById(R.id.btn_upload_image);
         btnSaveProduct = findViewById(R.id.btn_save_product);
         imageView5 = findViewById(R.id.imageView5);
@@ -82,8 +83,9 @@ public class EditarProductoActivity extends AppCompatActivity {
                         if (producto != null) {
                             etProductName.setText(producto.getNombre());
                             etProductDescription.setText(producto.getDescripcion());
-                            etProductPrice.setText(producto.getPrecio());
-                            etProductStock.setText(producto.getStock());
+                            etProductPrice.setText(String.valueOf(producto.getPrecio()));
+                            etProductStock.setText(String.valueOf(producto.getStock()));
+                            etTimePreparation.setText(String.valueOf(producto.getTiempoPreparacion()));
 
                             Glide.with(this)
                                     .load(producto.getImagen())
@@ -117,32 +119,38 @@ public class EditarProductoActivity extends AppCompatActivity {
     private void saveProductChanges() {
         String name = etProductName.getText().toString().trim();
         String description = etProductDescription.getText().toString().trim();
-        String price = etProductPrice.getText().toString().trim();
-        String stock = etProductStock.getText().toString().trim();
+        String priceText = etProductPrice.getText().toString().trim();
+        String stockText = etProductStock.getText().toString().trim();
+        String preparationTimeText = etTimePreparation.getText().toString().trim();
 
-        if (name.isEmpty() || description.isEmpty() || price.isEmpty() || stock.isEmpty()) {
+        if (name.isEmpty() || description.isEmpty() || priceText.isEmpty() || stockText.isEmpty() || preparationTimeText.isEmpty()) {
             Toast.makeText(this, "Por favor completa todos los campos.", Toast.LENGTH_SHORT).show();
             return;
         }
+
+        double price = Double.parseDouble(priceText);
+        int stock = Integer.parseInt(stockText);
+        int preparationTime = Integer.parseInt(preparationTimeText);
 
         if (imageUri != null) {
             // Subir imagen actualizada a Firebase Storage
             StorageReference fileRef = storageRef.child(System.currentTimeMillis() + ".jpg");
             fileRef.putFile(imageUri).addOnSuccessListener(taskSnapshot -> fileRef.getDownloadUrl()
-                    .addOnSuccessListener(uri -> updateProductInFirestore(name, description, price, stock, uri.toString()))
+                    .addOnSuccessListener(uri -> updateProductInFirestore(name, description, price, stock, preparationTime, uri.toString()))
                     .addOnFailureListener(e -> Toast.makeText(this, "Error al subir la imagen.", Toast.LENGTH_SHORT).show()));
         } else {
             // Si no se cambia la imagen, actualiza solo los datos
-            updateProductInFirestore(name, description, price, stock, producto.getImagen());
+            updateProductInFirestore(name, description, price, stock, preparationTime, producto.getImagen());
         }
     }
 
-    private void updateProductInFirestore(String name, String description, String price, String stock, String imageUrl) {
+    private void updateProductInFirestore(String name, String description, double price, int stock, int preparationTime, String imageUrl) {
         Map<String, Object> updatedProduct = new HashMap<>();
         updatedProduct.put("Nombre", name);
         updatedProduct.put("Descripcion", description);
         updatedProduct.put("Precio", price);
         updatedProduct.put("Stock", stock);
+        updatedProduct.put("TiempoPreparacion", preparationTime);
         updatedProduct.put("Imagen", imageUrl);
 
         db.collection("platos").document(productId).update(updatedProduct)

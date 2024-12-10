@@ -6,7 +6,8 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFCFD">
+    android:background="#FFFCFD"
+    tools:context=".admin_restaurante.ViewRestaurantScheduleActivity">
 
     <!-- Card para nombre del restaurante -->
     <androidx.cardview.widget.CardView
@@ -27,7 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="10dp">
 
             <!-- Restaurante nombre y tipo de cocina -->
             <TextView
@@ -35,8 +36,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="SHI - NUÁ"
-                android:textColor="@android:color/black"
+                android:textColor="@color/green_dark"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -45,8 +45,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="peruvian-chinese cuisine"
-                android:textColor="@android:color/black"
+                android:textColor="@color/md_theme_onPrimaryFixedVariant"
+                android:textStyle="bold"
                 android:textSize="14sp" />
         </LinearLayout>
 
@@ -83,7 +83,6 @@
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/top_bar_card" />
 
@@ -92,10 +91,8 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.266"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView8"
-        app:layout_constraintVertical_bias="0.441">
+        app:layout_constraintTop_toBottomOf="@+id/textView8">
 
         <!-- Contenido que se desplazará -->
         <LinearLayout
@@ -153,6 +150,7 @@
                                 android:src="@drawable/baseline_edit_24" />
 
                             <TextView
+                                android:id="@+id/btn_editar_horarios"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="EDITAR"
@@ -188,11 +186,13 @@
                             android:textColor="@android:color/black"
                             android:textStyle="bold" />
 
-                        <TextView
+                        <EditText
+                            android:id="@+id/et_lunes"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@color/md_theme_background_mediumContrast"
                             android:padding="10dp"
+                            android:textSize="14dp"
                             android:text="12:30 pm a 11:00 pm"
                             android:textColor="@color/md_theme_inverseSurface"
                             android:textStyle="bold" />
@@ -210,11 +210,13 @@
                             android:textColor="@android:color/black"
                             android:textStyle="bold" />
 
-                        <TextView
+                        <EditText
+                            android:id="@+id/et_martes"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@color/md_theme_background_mediumContrast"
                             android:padding="10dp"
+                            android:textSize="14dp"
                             android:text="12:30 pm a 11:00 pm"
                             android:textColor="@color/md_theme_inverseSurface"
                             android:textStyle="bold" />
@@ -232,11 +234,13 @@
                             android:textColor="@android:color/black"
                             android:textStyle="bold" />
 
-                        <TextView
+                        <EditText
+                            android:id="@+id/et_miercoles"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@color/md_theme_background_mediumContrast"
                             android:padding="10dp"
+                            android:textSize="14dp"
                             android:text="12:30 pm a 11:00 pm"
                             android:textColor="@color/md_theme_inverseSurface"
                             android:textStyle="bold" />
@@ -254,11 +258,13 @@
                             android:textColor="@android:color/black"
                             android:textStyle="bold" />
 
-                        <TextView
+                        <EditText
+                            android:id="@+id/et_jueves"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@color/md_theme_background_mediumContrast"
                             android:padding="10dp"
+                            android:textSize="14dp"
                             android:text="12:30 pm a 11:00 pm"
                             android:textColor="@color/md_theme_inverseSurface"
                             android:textStyle="bold" />
@@ -276,11 +282,13 @@
                             android:textColor="@android:color/black"
                             android:textStyle="bold" />
 
-                        <TextView
+                        <EditText
+                            android:id="@+id/et_viernes"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@color/md_theme_background_mediumContrast"
                             android:padding="10dp"
+                            android:textSize="14dp"
                             android:text="12:30 pm a 11:00 pm"
                             android:textColor="@color/md_theme_inverseSurface"
                             android:textStyle="bold" />
@@ -298,11 +306,13 @@
                             android:textColor="@android:color/black"
                             android:textStyle="bold" />
 
-                        <TextView
+                        <EditText
+                            android:id="@+id/et_sabado"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@color/md_theme_background_mediumContrast"
                             android:padding="10dp"
+                            android:textSize="14dp"
                             android:text="12:30 pm a 11:00 pm"
                             android:textColor="@color/md_theme_inverseSurface"
                             android:textStyle="bold" />
@@ -320,13 +330,27 @@
                             android:textColor="@android:color/black"
                             android:textStyle="bold" />
 
-                        <TextView
+                        <EditText
+                            android:id="@+id/et_domingo"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@color/md_theme_background_mediumContrast"
                             android:padding="10dp"
+                            android:textSize="14dp"
                             android:text="12:30 pm a 11:00 pm"
                             android:textColor="@color/md_theme_inverseSurface"
+                            android:textStyle="bold" />
+
+                        <Button
+                            android:id="@+id/btn_guardar_horarios"
+                            android:layout_width="wrap_content"
+                            android:layout_height="38dp"
+                            android:backgroundTint="#9CFFCDD2"
+                            android:layout_marginTop="10dp"
+                            android:text="GUARDAR DATOS"
+                            android:layout_gravity="center"
+                            android:textColor="@color/md_theme_errorContainer_mediumContrast"
+                            android:textSize="11sp"
                             android:textStyle="bold" />
 
                         <View

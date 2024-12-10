@@ -20,37 +20,33 @@ import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.admin_restaurante.RecyclerView.Pedido;
 import com.example.proyecto_iot.admin_restaurante.RecyclerView.PedidoEntregadoAdapter;
 import com.example.proyecto_iot.admin_restaurante.RecyclerView.PedidoPreparadoAdapter;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link PorEntregarFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class PorEntregarFragment extends Fragment {
 
-    private RecyclerView rv_orders_list;
+    private RecyclerView rvOrdersList;
     private PedidoEntregadoAdapter pedidoEntregadoAdapter;
     private List<Pedido> pedidoList;
-    private List<Pedido> filteredList; // Lista filtrada
+    private List<Pedido> filteredList; // Filtered list
+    private FirebaseFirestore db;
+    private String idRestaurante; // Restaurant ID
     private EditText orderSearch;
-
-    public PorEntregarFragment() {
-        // Required empty public constructor
-    }
-
-    public static PorEntregarFragment newInstance(String param1, String param2) {
-        PorEntregarFragment fragment = new PorEntregarFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Initialize Firestore
+        db = FirebaseFirestore.getInstance();
+
+        // Get idRestaurante from arguments
+        if (getArguments() != null) {
+            idRestaurante = getArguments().getString("idRestaurante");
+        }
     }
 
     @Nullable
@@ -59,67 +55,85 @@ public class PorEntregarFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_por_entregar, container, false);
 
-        // Configurar el RecyclerView
-        rv_orders_list = view.findViewById(R.id.rv_orders_list);
-        rv_orders_list.setLayoutManager(new LinearLayoutManager(getContext()));
+        // Initialize RecyclerView
+        rvOrdersList = view.findViewById(R.id.rv_orders_list);
+        rvOrdersList.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // Configurar el EditText para búsqueda
+        // Initialize search EditText
         orderSearch = view.findViewById(R.id.order_search);
 
-        // Crear la lista de órdenes
+        // Initialize lists
         pedidoList = new ArrayList<>();
-        pedidoList.add(new Pedido("María Lopez","#004","3 productos", "S/155.00", "20 min", "Repartidor Asignado"));
-        pedidoList.add(new Pedido("Carlos Gomez","#005","3 productos", "S/205.00", "10 min", "Sin Repartidor"));
-        pedidoList.add(new Pedido("Andrea Lomeli","#006","4 productos", "S/380.00", "18 min", "Sin Repartidor"));
-        pedidoList.add(new Pedido("Carlos Rios","#007","7 productos", "S/555.00", "35 min", "Repartidor Asignado"));
+        filteredList = new ArrayList<>();
 
-        // Inicializar la lista filtrada con la lista original
-        filteredList = new ArrayList<>(pedidoList);
-
-        // Configurar el adaptador con la lista filtrada
+        // Initialize adapter
         pedidoEntregadoAdapter = new PedidoEntregadoAdapter(filteredList, getContext());
-        rv_orders_list.setAdapter(pedidoEntregadoAdapter);
+        rvOrdersList.setAdapter(pedidoEntregadoAdapter);
 
-        // Configurar el buscador
+        // Fetch orders from Firestore
+        fetchOrders();
+
+        // Setup search functionality
         orderSearch.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // No se necesita hacer nada aquí
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                filterOrders(s.toString()); // Llamar al método que filtra la lista
+                filterOrders(s.toString());
             }
 
             @Override
-            public void afterTextChanged(Editable s) {
-                // No se necesita hacer nada aquí
-            }
+            public void afterTextChanged(Editable s) {}
         });
 
         return view;
     }
 
-    // Método para filtrar las órdenes
+    private void fetchOrders() {
+        if (idRestaurante == null) return;
+
+        db.collection("pedidos")
+                .whereEqualTo("idRestaurante", idRestaurante)
+                .whereEqualTo("estado", 2)
+                .addSnapshotListener((querySnapshot, e) -> {
+                    if (e != null) {
+                        Toast.makeText(getContext(), "Error fetching orders: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    if (querySnapshot != null) {
+                        pedidoList.clear();
+                        for (QueryDocumentSnapshot doc : querySnapshot) {
+                            Pedido pedido = doc.toObject(Pedido.class);
+                            pedidoList.add(pedido);
+                        }
+
+                        filteredList.clear();
+                        filteredList.addAll(pedidoList);
+                        pedidoEntregadoAdapter.notifyDataSetChanged();
+                    }
+                });
+    }
+
     private void filterOrders(String query) {
         filteredList.clear();
         if (query.isEmpty()) {
-            // Si no hay texto en la búsqueda, mostrar todas las órdenes
             filteredList.addAll(pedidoList);
         } else {
             for (Pedido pedido : pedidoList) {
-                if (pedido.getOrderId().toLowerCase().contains(query.toLowerCase())) {
+                if (pedido.getIdCliente().toLowerCase().contains(query.toLowerCase()) ||
+                        pedido.getNombreRestaurante().toLowerCase().contains(query.toLowerCase())) {
                     filteredList.add(pedido);
                 }
             }
         }
 
         if (filteredList.isEmpty()) {
-            // Mostrar un Toast si no se encontraron resultados
             Toast.makeText(getContext(), "No se encontraron resultados", Toast.LENGTH_SHORT).show();
         }
 
-        pedidoEntregadoAdapter.notifyDataSetChanged(); // Notificar al adaptador sobre el cambio
+        pedidoEntregadoAdapter.notifyDataSetChanged();
     }
 }
+

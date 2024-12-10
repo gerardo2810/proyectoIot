@@ -35,6 +35,10 @@ import com.example.proyecto_iot.admin_restaurante.RecyclerView.Order;
 import com.example.proyecto_iot.admin_restaurante.RecyclerView.OrderAdapter;
 import com.example.proyecto_iot.admin_restaurante.RecyclerView.Pedido;
 import com.example.proyecto_iot.admin_restaurante.RecyclerView.PedidoAdapter;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,28 +63,36 @@ import androidx.core.app.NotificationManagerCompat;
 
 public class PorAceptarFragment extends Fragment {
 
-    private RecyclerView rv_orders_list;
+    private RecyclerView rvOrdersList;
     private PedidoAdapter pedidoAdapter;
     private List<Pedido> pedidoList;
-    private List<Pedido> filteredList; // Lista filtrada
-    private EditText orderSearch; // Campo de búsqueda
-    private Handler handler;
-    private Runnable runnable;
-    private int orderCount = 7;
+    private List<Pedido> filteredList; // Filtered list
+    private FirebaseFirestore db;
+    private String idRestaurante; // Restaurant ID
+    private EditText orderSearch;
+    private ListenerRegistration ordersListener; // Firestore listener registration
     private static final String CHANNEL_ID = "Nuevo_Pedido";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Verificar y solicitar permiso para notificaciones en Android 13+
+        // Initialize Firestore
+        db = FirebaseFirestore.getInstance();
+
+        // Get idRestaurante from arguments
+        if (getArguments() != null) {
+            idRestaurante = getArguments().getString("idRestaurante");
+        }
+
+        // Verify notification permissions for Android 13+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.POST_NOTIFICATIONS}, 100);
             }
         }
 
-        // Crear el canal de notificaciones (necesario para Android 8 y superior)
+        // Create notification channel (Android 8+)
         createNotificationChannel();
     }
 
@@ -89,108 +101,146 @@ public class PorAceptarFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_por_aceptar, container, false);
 
-        // Configurar el RecyclerView
-        rv_orders_list = view.findViewById(R.id.rv_orders_list);
-        rv_orders_list.setLayoutManager(new LinearLayoutManager(getContext()));
+        // Initialize RecyclerView
+        rvOrdersList = view.findViewById(R.id.rv_orders_list);
+        rvOrdersList.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // Configurar el EditText para búsqueda
+        // Initialize search EditText
         orderSearch = view.findViewById(R.id.order_search);
 
-        // Crear la lista de órdenes inicial
+        // Initialize lists
         pedidoList = new ArrayList<>();
-        pedidoList.add(new Pedido("Juan Lopez","#007", "2 productos", "S/45.00", "20 min", "Repartidor Asignado"));
-        pedidoList.add(new Pedido("María Lopez","#006", "1 producto", "S/55.00", "30 min", "Repartidor Asignado"));
-        pedidoList.add(new Pedido("Jonatan Hernandez","#005", "2 productos", "S/85.00", "15 min", "Repartidor Asignado"));
-        pedidoList.add(new Pedido("Frank Córdova","#004", "3 productos", "S/155.00", "20 min", "Repartidor Asignado"));
-        pedidoList.add(new Pedido("Leslie Gomez","#003", "3 productos", "S/205.00", "10 min", "Repartidor Asignado"));
-        pedidoList.add(new Pedido("Camila Sanchez","#002", "4 productos", "S/380.00", "18 min", "Repartidor Asignado"));
-        pedidoList.add(new Pedido("Juan Lopez","#001", "7 productos", "S/555.00", "35 min", "Repartidor Asignado"));
+        filteredList = new ArrayList<>();
 
-        // Inicializar la lista filtrada con la lista original
-        filteredList = new ArrayList<>(pedidoList);
-
-        // Configurar el adaptador con la lista filtrada
+        // Initialize adapter
         pedidoAdapter = new PedidoAdapter(filteredList, getContext());
-        rv_orders_list.setAdapter(pedidoAdapter);
+        rvOrdersList.setAdapter(pedidoAdapter);
 
-        // Configurar el Handler para añadir órdenes cada minuto
-        handler = new Handler(Looper.getMainLooper());
-        runnable = new Runnable() {
-            @Override
-            public void run() {
-                // Agregar una nueva orden
-                orderCount++;
-                Pedido newOrder = new Pedido("Matias Cordova", "#00" + orderCount, "1 producto", "S/100.00", "25 min", "Repartidor Asignado");
-                pedidoList.add(0, newOrder);
-                filteredList.add(0, newOrder);
-                pedidoAdapter.notifyItemInserted(0);
-                rv_orders_list.scrollToPosition(0);
+        // Manually trigger initial data load
+        fetchOrdersInitially();
 
-                // Enviar la notificación
-                sendNotification(newOrder);
-
-                // Ejecutar el runnable cada minuto (60000ms)
-                handler.postDelayed(this, 40000);
-            }
-        };
-
-        // Iniciar el runnable
-        handler.postDelayed(runnable, 40000);
-
-        // Configurar el buscador
+        // Setup search functionality
         orderSearch.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // No se necesita hacer nada aquí
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                filterOrders(s.toString()); // Llamar al método que filtra la lista
+                filterOrders(s.toString());
             }
 
             @Override
-            public void afterTextChanged(Editable s) {
-                // No se necesita hacer nada aquí
-            }
+            public void afterTextChanged(Editable s) {}
         });
 
         return view;
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        handler.removeCallbacks(runnable);
+    public void onResume() {
+        super.onResume();
+        attachFirestoreListener(); // Ensure listener is attached when fragment resumes
     }
 
-    // Método para filtrar las órdenes
+    @Override
+    public void onPause() {
+        super.onPause();
+        detachFirestoreListener(); // Detach listener to avoid leaks
+    }
+
+    /**
+     * Fetch orders initially to ensure the list is loaded on fragment start.
+     */
+    private void fetchOrdersInitially() {
+        if (idRestaurante == null) return;
+
+        db.collection("pedidos")
+                .whereEqualTo("idRestaurante", idRestaurante)
+                .whereEqualTo("estado", 0)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    pedidoList.clear();
+                    for (QueryDocumentSnapshot doc : querySnapshot) {
+                        Pedido pedido = doc.toObject(Pedido.class);
+                        pedidoList.add(pedido);
+                    }
+
+                    filteredList.clear();
+                    filteredList.addAll(pedidoList);
+                    pedidoAdapter.notifyDataSetChanged();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(getContext(), "Error fetching orders: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void attachFirestoreListener() {
+        if (idRestaurante == null) return;
+
+        if (ordersListener == null) {
+            ordersListener = db.collection("pedidos")
+                    .whereEqualTo("idRestaurante", idRestaurante)
+                    .whereEqualTo("estado", 0)
+                    .addSnapshotListener((querySnapshot, e) -> {
+                        if (e != null) {
+                            Toast.makeText(getContext(), "Error fetching orders: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        if (querySnapshot != null) {
+                            pedidoList.clear();
+                            for (QueryDocumentSnapshot doc : querySnapshot) {
+                                Pedido pedido = doc.toObject(Pedido.class);
+                                pedidoList.add(pedido);
+                            }
+
+                            filteredList.clear();
+                            filteredList.addAll(pedidoList);
+                            pedidoAdapter.notifyDataSetChanged();
+
+                            // Notify on new orders
+                            for (DocumentChange change : querySnapshot.getDocumentChanges()) {
+                                if (change.getType() == DocumentChange.Type.ADDED) {
+                                    Pedido newPedido = change.getDocument().toObject(Pedido.class);
+                                    sendNotification(newPedido);
+                                }
+                            }
+                        }
+                    });
+        }
+    }
+
+    private void detachFirestoreListener() {
+        if (ordersListener != null) {
+            ordersListener.remove();
+            ordersListener = null;
+        }
+    }
+
     private void filterOrders(String query) {
         filteredList.clear();
         if (query.isEmpty()) {
-            // Si no hay texto en la búsqueda, mostrar todas las órdenes
             filteredList.addAll(pedidoList);
         } else {
             for (Pedido pedido : pedidoList) {
-                if (pedido.getOrderId().toLowerCase().contains(query.toLowerCase())) {
+                if (pedido.getIdCliente().toLowerCase().contains(query.toLowerCase()) ||
+                        pedido.getNombreRestaurante().toLowerCase().contains(query.toLowerCase())) {
                     filteredList.add(pedido);
                 }
             }
         }
 
         if (filteredList.isEmpty()) {
-            // Mostrar un Toast si no se encontraron resultados
-            Toast.makeText(getContext(), "No se encontraron resultados", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "No matching orders found", Toast.LENGTH_SHORT).show();
         }
 
-        pedidoAdapter.notifyDataSetChanged(); // Notificar al adaptador sobre el cambio
+        pedidoAdapter.notifyDataSetChanged();
     }
 
-    // Crear el canal de notificaciones (solo para Android 8+)
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "New Order Channel";
-            String description = "Canal para nuevas órdenes";
+            CharSequence name = "New Order Notifications";
+            String description = "Channel for new order notifications";
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
             channel.setDescription(description);
@@ -199,13 +249,10 @@ public class PorAceptarFragment extends Fragment {
         }
     }
 
-    // Método para enviar notificación
     private void sendNotification(Pedido pedido) {
-        // Crear la intención para cuando el usuario haga clic en la notificación
         Intent intent = new Intent(requireContext(), InicioRestauranteActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
-        // Agregar FLAG_IMMUTABLE
         PendingIntent pendingIntent = PendingIntent.getActivity(
                 requireContext(),
                 0,
@@ -213,20 +260,19 @@ public class PorAceptarFragment extends Fragment {
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
 
-        // Crear la notificación
         NotificationCompat.Builder builder = new NotificationCompat.Builder(requireContext(), CHANNEL_ID)
-                .setSmallIcon(R.drawable.resource_new)
-                .setContentTitle("Nueva Orden #" + pedido.getOrderId())
-                .setContentText("Detalles: " + pedido.getCantidad() + " - " + pedido.getPrecio())
+                .setSmallIcon(R.drawable.new_orden_noti) // Replace with your notification icon
+                .setContentTitle("Nueva Orden - " + pedido.getNombreRestaurante())
+                .setContentText("Detalles: " + pedido.getProductos().size() + " productos - S/" + pedido.getPagoTotal())
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true);
 
-        // Mostrar la notificación
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(requireContext());
         if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-        notificationManager.notify(orderCount, builder.build());
+        notificationManager.notify((int) System.currentTimeMillis(), builder.build());
     }
 }
+

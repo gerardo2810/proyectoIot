@@ -142,9 +142,17 @@ public class HomeRestauranteFragment extends Fragment {
 
     // Método para reemplazar los fragments dentro del TabLayout
     private void replaceTabFragment(Fragment fragment) {
+        Bundle args = new Bundle();
+        restauranteViewModel.getIdRestaurante().observe(getViewLifecycleOwner(), idRestaurante -> {
+            if (idRestaurante != null) {
+                args.putString("idRestaurante", idRestaurante);
+                fragment.setArguments(args);
+            }
+        });
+
         getChildFragmentManager()
                 .beginTransaction()
-                .replace(R.id.frame_tab_container, fragment)  // Asegúrate de usar un contenedor de fragmentos dentro del fragmento
+                .replace(R.id.frame_tab_container, fragment)
                 .commit();
     }
 

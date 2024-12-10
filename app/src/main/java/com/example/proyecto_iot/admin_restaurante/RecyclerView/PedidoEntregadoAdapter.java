@@ -21,7 +21,7 @@ import com.example.proyecto_iot.admin_restaurante.PedidoDetallesActivity;
 
 import java.util.List;
 
-public class PedidoEntregadoAdapter extends RecyclerView.Adapter<PedidoEntregadoAdapter.PedidoEntregadoViewHolder>{
+public class PedidoEntregadoAdapter extends RecyclerView.Adapter<PedidoEntregadoAdapter.PedidoEntregadoViewHolder> {
 
     private List<Pedido> pedidoList;
     private Context context;
@@ -34,61 +34,46 @@ public class PedidoEntregadoAdapter extends RecyclerView.Adapter<PedidoEntregado
     @NonNull
     @Override
     public PedidoEntregadoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.restaurante_item_por_entregar, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.restaurante_item_por_entregar, parent, false);
         return new PedidoEntregadoViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull PedidoEntregadoAdapter.PedidoEntregadoViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull PedidoEntregadoViewHolder holder, int position) {
         Pedido pedido = pedidoList.get(position);
-        holder.tvPedidoName.setText(pedido.getOrderId());
-        holder.tvPedidoCantidad.setText(pedido.getCantidad());
-        holder.tvRepartidor.setText(pedido.getRepartidor());
-        holder.tvPedidoCliente.setText(pedido.getCliente());
-        // Evento al hacer clic en la categoría
 
+        // Bind data to views
+        holder.tvPedidoName.setText("#" + pedido.getIdCliente());
+        holder.tvPedidoCantidad.setText(pedido.getProductos().size() + " productos");
+        holder.tvRepartidor.setText(pedido.getIdRepartidor().isEmpty() ? "Sin Repartidor" : "Repartidor Asignado");
+        holder.tvPedidoCliente.setText(pedido.getIdCliente());
 
-        // Si el estado del repartidor es "Repartidor Asignado", habilitar el botón
-        if (pedido.getRepartidor().equalsIgnoreCase("Repartidor Asignado")) {
-            holder.btnReadyToDeliver.setEnabled(true);
-            holder.btnReadyToDeliver.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.colorHabilitado)));
-        } else {
+        // Enable or disable the "Delivered" button based on repartidor status
+        if (pedido.getIdRepartidor().isEmpty()) {
             holder.btnReadyToDeliver.setEnabled(false);
             holder.btnReadyToDeliver.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.colorInhabilitado)));
+        } else {
+            holder.btnReadyToDeliver.setEnabled(true);
+            holder.btnReadyToDeliver.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.colorHabilitado)));
         }
 
-        // Configurar la acción del botón "Pedido Entregado"
+        // Handle button click for marking order as delivered
         holder.btnReadyToDeliver.setOnClickListener(v -> {
-            // Eliminar el pedido de la lista y notificar al adaptador
+            // Remove order from list and notify adapter
             pedidoList.remove(position);
             notifyItemRemoved(position);
             notifyItemRangeChanged(position, pedidoList.size());
 
-            // Mostrar un mensaje
+            // Show confirmation message
             Toast.makeText(context, "Pedido entregado", Toast.LENGTH_SHORT).show();
         });
 
-
-
-        switch (pedido.getRepartidor()) {
-            case "Repartidor Asignado":
-                holder.tvRepartidor.setTextColor(ContextCompat.getColor(context, R.color.con_repartidor));
-                break;
-            case "Sin Repartidor":
-                holder.tvRepartidor.setTextColor(ContextCompat.getColor(context, R.color.sin_repartidor));
-                break;
-            default:
-                holder.tvRepartidor.setTextColor(ContextCompat.getColor(context, R.color.black));
-                break;
-        }
-
-
-        // Acción del botón restaurante
+        // Open order details when clicked
         holder.linearLayout.setOnClickListener(v -> {
             Intent intent = new Intent(context, MasDetallesPedidoActivity.class);
+            intent.putExtra("pedidoId", pedido.getIdCliente());
             context.startActivity(intent);
         });
-
     }
 
     @Override
@@ -97,16 +82,12 @@ public class PedidoEntregadoAdapter extends RecyclerView.Adapter<PedidoEntregado
     }
 
     public static class PedidoEntregadoViewHolder extends RecyclerView.ViewHolder {
-        TextView tvPedidoName;
-        TextView tvPedidoCantidad;
-        TextView tvRepartidor;
+        TextView tvPedidoName, tvPedidoCantidad, tvRepartidor, tvPedidoCliente;
         LinearLayout linearLayout;
-        TextView tvPedidoCliente;
         Button btnReadyToDeliver;
 
         public PedidoEntregadoViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvPedidoName = itemView.findViewById(R.id.id_new_pedido);
             tvPedidoCantidad = itemView.findViewById(R.id.cant_productos);
             tvRepartidor = itemView.findViewById(R.id.repartidor);
             tvPedidoCliente = itemView.findViewById(R.id.cliente);
@@ -115,3 +96,4 @@ public class PedidoEntregadoAdapter extends RecyclerView.Adapter<PedidoEntregado
         }
     }
 }
+

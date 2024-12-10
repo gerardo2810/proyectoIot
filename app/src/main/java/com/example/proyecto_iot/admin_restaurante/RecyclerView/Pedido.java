@@ -1,77 +1,115 @@
 package com.example.proyecto_iot.admin_restaurante.RecyclerView;
 
+import java.util.List;
+
 public class Pedido {
-    private String cliente;
-    private String orderId;
-    private String cantidad;
-    private String precio;
-    private String tiempo;
-    private String repartidor;
-    private boolean isReady;
+    private String direccion;
+    private int estado;
+    private String fechaHora;
+    private String idCliente;
+    private String idRepartidor;
+    private String idRestaurante;
+    private String nombreRestaurante;
+    private double pagoTotal;
+    private List<Producto> productos;
+    private String qrUrl;
 
-    public Pedido(String cliente, String orderId, String cantidad, String precio, String tiempo, String repartidor) {
-        this.cliente = cliente;
-        this.orderId = orderId;
-        this.cantidad = cantidad;
-        this.precio = precio;
-        this.tiempo = tiempo;
-        this.repartidor = repartidor;
-        this.isReady = false;
+    // Default constructor required for Firebase
+    public Pedido() {
     }
 
-    public String getOrderId() {
-        return orderId;
+    public Pedido(String direccion, int estado, String fechaHora, String idCliente, String idRepartidor,
+                  String idRestaurante, String nombreRestaurante, double pagoTotal, List<Producto> productos, String qrUrl) {
+        this.direccion = direccion;
+        this.estado = estado;
+        this.fechaHora = fechaHora;
+        this.idCliente = idCliente;
+        this.idRepartidor = idRepartidor;
+        this.idRestaurante = idRestaurante;
+        this.nombreRestaurante = nombreRestaurante;
+        this.pagoTotal = pagoTotal;
+        this.productos = productos;
+        this.qrUrl = qrUrl;
     }
 
-    public void setOrderId(String orderId) {
-        this.orderId = orderId;
+    // Getters and Setters
+    public String getDireccion() {
+        return direccion;
     }
 
-    public String getCantidad() {
-        return cantidad;
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
     }
 
-    public void setCantidad(String cantidad) {
-        this.cantidad = cantidad;
+    public int getEstado() {
+        return estado;
     }
 
-    public String getPrecio() {
-        return precio;
+    public void setEstado(int estado) {
+        this.estado = estado;
     }
 
-    public void setPrecio(String precio) {
-        this.precio = precio;
+    public String getFechaHora() {
+        return fechaHora;
     }
 
-    public String getTiempo() {
-        return tiempo;
+    public void setFechaHora(String fechaHora) {
+        this.fechaHora = fechaHora;
     }
 
-    public void setTiempo(String tiempo) {
-        this.tiempo = tiempo;
+    public String getIdCliente() {
+        return idCliente;
     }
 
-    public String getRepartidor() {
-        return repartidor;
+    public void setIdCliente(String idCliente) {
+        this.idCliente = idCliente;
     }
 
-    public void setRepartidor(String repartidor) {
-        this.repartidor = repartidor;
+    public String getIdRepartidor() {
+        return idRepartidor;
     }
 
-    public String getCliente() {
-        return cliente;
+    public void setIdRepartidor(String idRepartidor) {
+        this.idRepartidor = idRepartidor;
     }
 
-    public void setCliente(String cliente) {
-        this.cliente = cliente;
+    public String getIdRestaurante() {
+        return idRestaurante;
     }
 
-    public boolean isReady() {
-        return isReady;
+    public void setIdRestaurante(String idRestaurante) {
+        this.idRestaurante = idRestaurante;
     }
 
-    public void setReady(boolean ready) {
-        isReady = ready;
+    public String getNombreRestaurante() {
+        return nombreRestaurante;
+    }
+
+    public void setNombreRestaurante(String nombreRestaurante) {
+        this.nombreRestaurante = nombreRestaurante;
+    }
+
+    public double getPagoTotal() {
+        return pagoTotal;
+    }
+
+    public void setPagoTotal(double pagoTotal) {
+        this.pagoTotal = pagoTotal;
+    }
+
+    public List<Producto> getProductos() {
+        return productos;
+    }
+
+    public void setProductos(List<Producto> productos) {
+        this.productos = productos;
+    }
+
+    public String getQrUrl() {
+        return qrUrl;
+    }
+
+    public void setQrUrl(String qrUrl) {
+        this.qrUrl = qrUrl;
     }
 }

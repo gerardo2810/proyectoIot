@@ -74,6 +74,7 @@
         android:layout_marginStart="16dp">
 
         <TextView
+            android:id="@+id/ordenTrack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Orden entregada"
@@ -82,6 +83,7 @@
             android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/fecha"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text=" • 27/08/2024"
@@ -90,7 +92,7 @@
             android:layout_marginStart="8dp" />
     </LinearLayout>
 
-    <!-- Botón Ver más -->
+    <!-- Botón Ver más >
     <TextView
         android:id="@+id/see_more"
         android:layout_width="wrap_content"
@@ -101,7 +103,7 @@
         app:layout_constraintTop_toBottomOf="@id/order_title"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginEnd="16dp"
-        android:layout_marginTop="1dp" />
+        android:layout_marginTop="1dp" /-->
 
     <!-- Imagen del mapa -->
     <ImageView
@@ -397,6 +399,7 @@
                         android:layout_marginEnd="8dp" />
 
                     <TextView
+                        android:id="@+id/direccio_cliente"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="El molle #156 B"
@@ -419,6 +422,7 @@
                         android:layout_marginEnd="8dp" />
 
                     <TextView
+                        android:id="@+id/repartidor"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Miguel Angel Lugo"
@@ -460,6 +464,7 @@
                     android:textColor="#000000" />
 
                 <TextView
+                    android:id="@+id/costoProductos"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="S/. 405.00"
@@ -483,6 +488,7 @@
                     android:textColor="#000000" />
 
                 <TextView
+                    android:id="@+id/delivery"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="S/. 3.49"
@@ -514,6 +520,7 @@
                     android:textColor="#000000" />
 
                 <TextView
+                    android:id="@+id/pagoTotal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="S/. 408.49"
@@ -618,7 +625,7 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!-- Bottom Navigation -->
+    <!-- Bottom Navigation
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
@@ -629,6 +636,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/cliente_navigation_bar" />
+        app:menu="@menu/cliente_navigation_bar" /-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

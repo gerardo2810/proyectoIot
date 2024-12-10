@@ -123,19 +123,14 @@ public class RealizarPedidoActivity extends AppCompatActivity {
                             SimpleDateFormat dateFormat = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy, HH:mm:ss a", new Locale("es", "PE"));
                             dateFormat.setTimeZone(TimeZone.getTimeZone("America/Lima"));
                             String fechaHora = dateFormat.format(new Date());
-                            List<String> idProductos = new ArrayList<>();
-                            // Extraer IDs de productos del carrito
-                            /*for (Producto producto : productos) {
-                                idProductos.add(producto.getId());
-                            }*/
 
-
+                            // Crear el mapa de datos del pedido
                             Map<String, Object> pedidoData = new HashMap<>();
                             pedidoData.put("idCliente", userId);
                             pedidoData.put("direccion", direccionCliente);
                             pedidoData.put("estado", 0);
                             pedidoData.put("fechaHora", fechaHora);
-                            pedidoData.put("productos", productos);
+                            pedidoData.put("productos", productos); // Lista de productos
                             pedidoData.put("idRepartidor", "");
                             pedidoData.put("idRestaurante", restauranteId);
                             pedidoData.put("nombreRestaurante", nombreRestaurante);
@@ -148,8 +143,20 @@ public class RealizarPedidoActivity extends AppCompatActivity {
                                         Bitmap qrBitmap = generarQRCode(pedidoId);
                                         guardarQRCodeEnStorage(pedidoId, qrBitmap);
 
-                                        Intent intent1 = new Intent(RealizarPedidoActivity.this, PedidoAceptadoCliente.class);
+                                        // Enviar los datos a la siguiente vista
+                                        Intent intent1 = new Intent(RealizarPedidoActivity.this, SeguimientoPedidoActivity.class);
+                                        intent1.putExtra("pedidoId", pedidoId);
+                                        intent1.putExtra("direccion", direccionCliente);
+                                        intent1.putExtra("fechaHora", fechaHora);
+                                        intent1.putExtra("subtotal",subtotal);
+                                        intent1.putExtra("precioTotal", pagoTotal);
+                                        intent1.putExtra("precioDelivery", precioDelivery);
+                                        intent1.putExtra("productos", (ArrayList<Producto>) productos); // Enviar productos como ArrayList
+                                        intent1.putExtra("nombreRestaurante", nombreRestaurante);
+                                        intent1.putExtra("idRestaurante", restauranteId);
+
                                         startActivity(intent1);
+
                                     })
                                     .addOnFailureListener(e -> {
                                         System.err.println("Error al crear el pedido: " + e.getMessage());

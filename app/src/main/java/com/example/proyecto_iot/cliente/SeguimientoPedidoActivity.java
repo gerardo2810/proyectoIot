@@ -26,8 +26,12 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.proyecto_iot.R;
+import com.example.proyecto_iot.cliente.RecyclerView.Producto;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.ArrayList;
 
 public class SeguimientoPedidoActivity extends AppCompatActivity {
 
@@ -49,6 +53,9 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
 
     // ID del canal de notificaciones
     private final String CHANNEL_ID = "order_tracking_channel";
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,9 +100,140 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
         findViewById(R.id.linea_2).setVisibility(View.GONE);
         findViewById(R.id.linea_3).setVisibility(View.GONE);
 
+        // Obtener los datos enviados desde la actividad anterior
+        Intent intent1 = getIntent();
+
+        // Extraer los valores enviados en el Intent
+        String pedidoId = intent1.getStringExtra("pedidoId");
+        String direccion = intent1.getStringExtra("direccion");
+        String fechaHora = intent1.getStringExtra("fechaHora");
+        double precioTotal = intent1.getDoubleExtra("precioTotal", 0.0);
+        double precioDelivery = intent1.getDoubleExtra("precioDelivery", 0.0);
+        String nombreRestaurante = intent1.getStringExtra("nombreRestaurante");
+        String idRestaurante = intent1.getStringExtra("idRestaurante");
+        ArrayList<Producto> productos = (ArrayList<Producto>) intent1.getSerializableExtra("productos");
+
+        // Imprimir los valores recibidos para verificar
+        System.out.println("----- Datos recibidos en RealizarPedidoActivity -----");
+        System.out.println("Pedido ID: " + pedidoId);
+        System.out.println("Dirección: " + direccion);
+        System.out.println("Fecha y Hora: " + fechaHora);
+        System.out.println("Precio Total: " + precioTotal);
+        System.out.println("Precio Delivery: " + precioDelivery);
+        System.out.println("Nombre Restaurante: " + nombreRestaurante);
+        System.out.println("ID Restaurante: " + idRestaurante);
+        System.out.println("Productos: ");
+        if (productos != null) {
+            for (Producto producto : productos) {
+                System.out.println(" - Producto ID: " + producto.getId());
+                System.out.println(" - Nombre Producto: " + producto.getNombre());
+                System.out.println(" - Cantidad: " + producto.getCantidad());
+                System.out.println(" - Precio Unitario: " + producto.getPrecio());
+            }
+        } else {
+            System.out.println("No se recibieron productos.");
+        }
+
         // Enlazar las vistas de los textos "Detalle de Orden" y "Verificación de Envío"
         tvDetalleOrden = findViewById(R.id.tv_detalle_orden);
         tvVerificacionEnvio = findViewById(R.id.tv_verificacion_envio);
+
+
+        TextView nameProductos = findViewById(R.id.order_title);
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        // Verificar que el idRestaurante no sea nulo ni vacío
+        if (idRestaurante != null && !idRestaurante.isEmpty()) {
+            // Consultar Firestore para obtener los datos del restaurante
+            db.collection("restaurantes").document(idRestaurante)
+                    .get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        if (documentSnapshot.exists()) {
+                            // Obtener los campos del documento
+                            String nombreRestaurante1 = documentSnapshot.getString("nombre");
+                            String direccionRestaurante = documentSnapshot.getString("direccion");
+
+                            // Imprimir el nombre y la dirección
+                            String temp = nombreRestaurante1 + " - " + direccionRestaurante;
+                            System.out.println("Nombre del restaurante: " + nombreRestaurante1);
+                            System.out.println("Dirección del restaurante: " + direccionRestaurante);
+                            System.out.println("Combinado: " + temp);
+                            nameProductos.setText(temp);
+                        } else {
+                            System.err.println("El restaurante no existe en Firestore.");
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        System.err.println("Error al obtener los datos del restaurante: " + e.getMessage());
+                    });
+        } else {
+            System.err.println("El ID del restaurante es nulo o vacío.");
+        }
+        // Referencias a los TextViews
+        TextView ordenTrackTextView = findViewById(R.id.ordenTrack);
+        TextView fechaTextView = findViewById(R.id.fecha);
+        TextView repartidorTextView = findViewById(R.id.repartidor);
+        TextView direccionClienteTextView = findViewById(R.id.direccio_cliente);
+        TextView costoProductosTextView = findViewById(R.id.costoProductos);
+        TextView deliveryTextView = findViewById(R.id.delivery);
+        TextView pagoTotalTextView = findViewById(R.id.pagoTotal);
+
+        // Obtener el ID del pedido desde el Intent
+
+        if (pedidoId != null) {
+            FirebaseFirestore db1 = FirebaseFirestore.getInstance();
+
+            // Obtener el documento del pedido desde Firestore
+            db1.collection("pedidos").document(pedidoId)
+                    .get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        if (documentSnapshot.exists()) {
+                            // Obtener los datos del pedido
+
+                            int estado = documentSnapshot.getLong("estado").intValue();
+                            String direccionCliente = documentSnapshot.getString("direccion");
+                            String idRepartidor = documentSnapshot.getString("idRepartidor");
+                            String nombreRestaurante1 = documentSnapshot.getString("nombreRestaurante");
+
+                            // Calcular el costo de los productos
+                            double costoProductos = precioTotal - precioDelivery;
+
+                            // Actualizar los TextViews
+                            ordenTrackTextView.setText(obtenerEstadoPedido(estado));
+                            fechaTextView.setText(" • " + fechaHora.split(",")[0]); // Solo la fecha
+                            direccionClienteTextView.setText(direccionCliente);
+                            costoProductosTextView.setText(String.format("S/. %.2f", costoProductos));
+                            deliveryTextView.setText(String.format("S/. %.2f", precioDelivery));
+                            pagoTotalTextView.setText(String.format("S/. %.2f", precioTotal));
+
+                            // Manejo del campo repartidor/nombre restaurante
+                            if (estado < 2) {
+                                repartidorTextView.setText(nombreRestaurante);
+                            } else {
+                                if (idRepartidor != null && !idRepartidor.isEmpty()) {
+                                    db.collection("repartidores").document(idRepartidor)
+                                            .get()
+                                            .addOnSuccessListener(repartidorSnapshot -> {
+                                                if (repartidorSnapshot.exists()) {
+                                                    String nombreRepartidor = repartidorSnapshot.getString("nombre");
+                                                    repartidorTextView.setText(nombreRepartidor);
+                                                }
+                                            })
+                                            .addOnFailureListener(e -> {
+                                                System.err.println("Error al obtener el repartidor: " + e.getMessage());
+                                            });
+                                }
+                            }
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        System.err.println("Error al obtener el pedido: " + e.getMessage());
+                    });
+        }
+
+
+
+
 
         // Enlazar las CardViews para los detalles de la orden y el QR
         orderDetailsCard = findViewById(R.id.order_details_card);
@@ -149,7 +287,7 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
         });
 
         // Configuración del BottomNavigationView
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+       /* BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
 
@@ -168,7 +306,7 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
             }
 
             return false;
-        });
+        });*/
     }
 
     private void iniciarTrackingEstados() {
@@ -273,5 +411,26 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         handler.removeCallbacks(runnable); // Detener el handler cuando la actividad se destruye
+    }
+    // Método para mapear el estado a su descripción
+    private String obtenerEstadoPedido(int estado) {
+        switch (estado) {
+            case 0:
+                return "Por aceptar";
+            case 1:
+                return "En preparación";
+            case 2:
+                return "Por entregar";
+            case 3:
+                return "En camino";
+            case 4:
+                return "Entregado";
+            case 5:
+                return "Rechazado";
+            case 6:
+                return "Cancelado";
+            default:
+                return "Desconocido";
+        }
     }
 }

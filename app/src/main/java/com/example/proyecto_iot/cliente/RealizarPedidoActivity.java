@@ -125,9 +125,9 @@ public class RealizarPedidoActivity extends AppCompatActivity {
                             String fechaHora = dateFormat.format(new Date());
                             List<String> idProductos = new ArrayList<>();
                             // Extraer IDs de productos del carrito
-                            for (Producto producto : productos) {
+                            /*for (Producto producto : productos) {
                                 idProductos.add(producto.getId());
-                            }
+                            }*/
 
 
                             Map<String, Object> pedidoData = new HashMap<>();
@@ -135,7 +135,7 @@ public class RealizarPedidoActivity extends AppCompatActivity {
                             pedidoData.put("direccion", direccionCliente);
                             pedidoData.put("estado", 0);
                             pedidoData.put("fechaHora", fechaHora);
-                            pedidoData.put("productos", idProductos);
+                            pedidoData.put("productos", productos);
                             pedidoData.put("idRepartidor", "");
                             pedidoData.put("idRestaurante", restauranteId);
                             pedidoData.put("nombreRestaurante", nombreRestaurante);

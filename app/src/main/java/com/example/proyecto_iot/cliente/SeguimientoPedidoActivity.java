@@ -5,9 +5,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Build;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -27,8 +25,6 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.cliente.RecyclerView.Producto;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -43,19 +39,8 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
 
     // Variables para el seguimiento de estados
     private LinearLayout layoutEstados;
-    private Handler handler;
-    private Runnable runnable;
-    private int estadoActual = 0;
-    private int interval = 2 * 60 * 100; // 2 minutos en milisegundos
-    private String[] estados = {"Recibido", "En preparación", "En camino", "Entregado"};
-    private int[] imagenesEstados = {R.drawable.placeholder, R.drawable.reportes, R.drawable.reportes_1, R.drawable.repartidor_superadmin};
-    private int[] imagenesRevisado = {R.drawable.baseline_check_circle_outline_24, R.drawable.baseline_check_circle_outline_24, R.drawable.baseline_check_circle_outline_24};  // Imágenes revisadas para cada estado
 
-    // ID del canal de notificaciones
     private final String CHANNEL_ID = "order_tracking_channel";
-
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,7 +86,6 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
 
         // Obtener los datos enviados desde la actividad anterior
         Intent intent1 = getIntent();
-
         // Extraer los valores enviados en el Intent
         String pedidoId = intent1.getStringExtra("pedidoId");
         String direccion = intent1.getStringExtra("direccion");
@@ -133,20 +117,48 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
             System.out.println("No se recibieron productos.");
         }
 
+
         // Enlazar las vistas de los textos "Detalle de Orden" y "Verificación de Envío"
         tvDetalleOrden = findViewById(R.id.tv_detalle_orden);
         tvVerificacionEnvio = findViewById(R.id.tv_verificacion_envio);
-
-
         TextView nameProductos = findViewById(R.id.order_title);
         TextView ordenTrackTextView = findViewById(R.id.ordenTrack);
 
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        // Escuchar cambios en el pedido en tiempo real
+        if (pedidoId != null) {
+            db.collection("pedidos").document(pedidoId)
+                    .addSnapshotListener((documentSnapshot, e) -> {
+                        if (e != null) {
+                            System.err.println("Error al escuchar los cambios del pedido: " + e.getMessage());
+                            return;
+                        }
+                        if (documentSnapshot != null && documentSnapshot.exists()) {
+                            // Obtener datos del pedido
+                            int estado = documentSnapshot.getLong("estado").intValue();
+                            String idRepartidor = documentSnapshot.getString("idRepartidor");
+
+                            // Actualizar el estado en la interfaz
+                            actualizarEstado(estado, idRepartidor);
+
+                            // Mostrar notificación al cambiar de estado
+                            sendNotification(
+                                    "Estado del pedido actualizado",
+                                    "Tu pedido ahora está: " + obtenerEstadoPedido(estado)
+                            );
+                        }
+                    });
+        }
+
+
+
+        FirebaseFirestore db2 = FirebaseFirestore.getInstance();
         // Verificar que el idRestaurante no sea nulo ni vacío
         if (idRestaurante != null && !idRestaurante.isEmpty()) {
             // Consultar Firestore para obtener los datos del restaurante
-            db.collection("restaurantes").document(idRestaurante)
+            db2.collection("restaurantes").document(idRestaurante)
                     .get()
                     .addOnSuccessListener(documentSnapshot -> {
                         if (documentSnapshot.exists()) {
@@ -232,9 +244,6 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
         }
 
 
-
-
-
         // Enlazar las CardViews para los detalles de la orden y el QR
         orderDetailsCard = findViewById(R.id.order_details_card);
         qrCard = findViewById(R.id.qr_card);
@@ -242,9 +251,6 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
         // Mostrar "Detalle de orden" al inicio y ocultar "Verificación de envío"
         orderDetailsCard.setVisibility(View.VISIBLE);
         qrCard.setVisibility(View.GONE);
-
-        // Iniciar la actualización de los estados cada 2 minutos
-        iniciarTrackingEstados();
 
         // Listener para la flecha de retroceso - Dirige a "RealizarPedidoActivity"
         backArrow.setOnClickListener(view -> {
@@ -270,7 +276,6 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
             findViewById(R.id.btn_detalle_orden).setBackgroundResource(R.drawable.rounded_background_white);  // Fondo seleccionado
             findViewById(R.id.btn_verificacion_envio).setBackgroundResource(R.drawable.rounded_background_grey);  // Fondo no seleccionado
         });
-
         // Listener para "Verificación de Envío"
         tvVerificacionEnvio.setOnClickListener(v -> {
             // Mostrar Verificación de envío y ocultar Detalle de Orden
@@ -281,82 +286,43 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
             findViewById(R.id.btn_verificacion_envio).setBackgroundResource(R.drawable.rounded_background_white);  // Fondo seleccionado
             findViewById(R.id.btn_detalle_orden).setBackgroundResource(R.drawable.rounded_background_grey);  // Fondo no seleccionado
         });
-
-        // Configuración del BottomNavigationView
-       /* BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
-        bottomNavigationView.setOnItemSelectedListener(item -> {
-            int id = item.getItemId();
-
-            if (id == R.id.nav_restaurantes) {
-                startActivity(new Intent(SeguimientoPedidoActivity.this, InicioClienteActivity.class));
-                return true;
-            } else if (id == R.id.nav_carrito) {
-                startActivity(new Intent(SeguimientoPedidoActivity.this, CarritoClienteActivity.class));
-                return true;
-            } else if (id == R.id.navigation_ordenes) {
-                startActivity(new Intent(SeguimientoPedidoActivity.this, HistorialPedidosActivity.class));
-                return true;
-            } else if (id == R.id.nav_perfil) {
-                startActivity(new Intent(SeguimientoPedidoActivity.this, PerfilClienteActivity.class));
-                return true;
-            }
-
-            return false;
-        });*/
     }
 
-    private void iniciarTrackingEstados() {
-        handler = new Handler();
-        runnable = new Runnable() {
-            @Override
-            public void run() {
-                if (estadoActual < estados.length) {
-                    actualizarEstado();
-                    handler.postDelayed(this, interval); // Repetir cada 2 minutos
-                }
-            }
-        };
-        handler.post(runnable); // Iniciar el proceso
-    }
-
-    private void actualizarEstado() {
+    private void actualizarEstado(int estado, String idRepartidor) {
         // Cambiar la imagen del estado anterior a "check" (si no es el primer estado)
-        if (estadoActual > 0) {
-            if (estadoActual == 1) {
-                // Reemplazar la imagen del estado "Recibido" por la de "check"
-                ImageView estadoRecibido = findViewById(R.id.estado_recibido);
-                estadoRecibido.setImageResource(R.drawable.baseline_check_circle_outline_24);
-            } else if (estadoActual == 2) {
-                // Reemplazar la imagen del estado "En preparación" por la de "check"
-                ImageView estadoPreparacion = findViewById(R.id.estado_preparacion);
-                estadoPreparacion.setImageResource(R.drawable.baseline_check_circle_outline_24);
-            } else if (estadoActual == 3) {
-                // Reemplazar la imagen del estado "En camino" por la de "check"
-                ImageView estadoEnCamino = findViewById(R.id.estado_en_camino);
-                estadoEnCamino.setImageResource(R.drawable.baseline_check_circle_outline_24);
-            }
-        }
+        switch (estado) {
+            case 1: // Recibido
+                findViewById(R.id.contenedor_recibido).setVisibility(View.VISIBLE);
+                break;
+            case 2: // En preparación
+                findViewById(R.id.linea_1).setVisibility(View.VISIBLE);
+                findViewById(R.id.contenedor_preparacion).setVisibility(View.VISIBLE);
+                break;
+            case 3: // En camino
+                findViewById(R.id.linea_2).setVisibility(View.VISIBLE);
+                findViewById(R.id.contenedor_camino).setVisibility(View.VISIBLE);
 
-        // Notificaciones para cada estado
-        if (estadoActual == 1) {
-            sendNotification("Pedido en preparación", "Tu pedido ha pasado a preparación.");
-            findViewById(R.id.linea_1).setVisibility(View.VISIBLE);
-            findViewById(R.id.contenedor_preparacion).setVisibility(View.VISIBLE);
-        } else if (estadoActual == 2) {
-            sendNotification("Pedido en camino", "Tu pedido está en camino.");
-            findViewById(R.id.linea_2).setVisibility(View.VISIBLE);
-            findViewById(R.id.contenedor_camino).setVisibility(View.VISIBLE);
-        } else if (estadoActual == 3) {
-            sendNotification("Pedido entregado", "Tu pedido ha sido entregado.");
-            findViewById(R.id.linea_3).setVisibility(View.VISIBLE);
-            findViewById(R.id.contenedor_entregado).setVisibility(View.VISIBLE);
+                // Mostrar el nombre del repartidor si está disponible
+                if (idRepartidor != null && !idRepartidor.isEmpty()) {
+                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+                    db.collection("repartidores").document(idRepartidor)
+                            .get()
+                            .addOnSuccessListener(documentSnapshot -> {
+                                if (documentSnapshot.exists()) {
+                                    String nombreRepartidor = documentSnapshot.getString("nombre");
+                                    TextView repartidorTextView = findViewById(R.id.repartidor);
+                                    repartidorTextView.setText(nombreRepartidor);
+                                }
+                            });
+                }
+                break;
+            case 4: // Entregado
+                findViewById(R.id.linea_3).setVisibility(View.VISIBLE);
+                findViewById(R.id.contenedor_entregado).setVisibility(View.VISIBLE);
+                break;
         }
-
-        // Incrementar el estado actual para la próxima ejecución
-        estadoActual++;
     }
 
-    // Método para crear el canal de notificación (solo Android 8.0 o superior)
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = "Seguimiento de Pedido";
@@ -369,30 +335,18 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
             notificationManager.createNotificationChannel(channel);
         }
     }
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == 1) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permiso otorgado: puedes continuar enviando notificaciones
-            } else {
-                // Permiso denegado: aquí puedes mostrar un mensaje explicando por qué es necesario
-            }
-        }
-    }
 
-    // Método para enviar notificaciones
     private void sendNotification(String title, String message) {
         Intent intent = new Intent(this, SeguimientoPedidoActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.drawable.baseline_check_circle_outline_24) // Cambia este icono por uno propio
+                .setSmallIcon(R.drawable.baseline_check_circle_outline_24)
                 .setContentTitle(title)
                 .setContentText(message)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setContentIntent(pendingIntent)
-                .setAutoCancel(true); // La notificación desaparece al hacer clic
+                .setAutoCancel(true);
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
 
@@ -400,15 +354,8 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
                 == PackageManager.PERMISSION_GRANTED) {
             notificationManager.notify(1, builder.build());
         }
-
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        handler.removeCallbacks(runnable); // Detener el handler cuando la actividad se destruye
-    }
-    // Método para mapear el estado a su descripción
     private String obtenerEstadoPedido(int estado) {
         switch (estado) {
             case 0:

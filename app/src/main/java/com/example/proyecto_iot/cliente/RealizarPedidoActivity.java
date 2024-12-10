@@ -128,7 +128,7 @@ public class RealizarPedidoActivity extends AppCompatActivity {
                             Map<String, Object> pedidoData = new HashMap<>();
                             pedidoData.put("idCliente", userId);
                             pedidoData.put("direccion", direccionCliente);
-                            pedidoData.put("estado", 0);
+                            pedidoData.put("estado", 2);
                             pedidoData.put("fechaHora", fechaHora);
                             pedidoData.put("productos", productos); // Lista de productos
                             pedidoData.put("idRepartidor", "");

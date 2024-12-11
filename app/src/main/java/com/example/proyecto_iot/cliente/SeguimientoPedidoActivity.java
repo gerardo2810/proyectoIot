@@ -23,6 +23,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.bumptech.glide.Glide;
 import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.cliente.RecyclerView.Producto;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -189,23 +190,30 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
         TextView costoProductosTextView = findViewById(R.id.costoProductos);
         TextView deliveryTextView = findViewById(R.id.delivery);
         TextView pagoTotalTextView = findViewById(R.id.pagoTotal);
+        ImageView qrPaga  = findViewById(R.id.qr_image);
 
-        // Obtener el ID del pedido desde el Intent
-
+// Obtener el ID del pedido desde el Intent
         if (pedidoId != null) {
             FirebaseFirestore db1 = FirebaseFirestore.getInstance();
 
-            // Obtener el documento del pedido desde Firestore
+            // Configurar un listener para escuchar cambios en el documento en tiempo real
             db1.collection("pedidos").document(pedidoId)
-                    .get()
-                    .addOnSuccessListener(documentSnapshot -> {
-                        if (documentSnapshot.exists()) {
-                            // Obtener los datos del pedido
+                    .addSnapshotListener((documentSnapshot, error) -> {
+                        if (error != null) {
+                            System.err.println("Error al escuchar cambios en el documento: " + error.getMessage());
+                            return;
+                        }
 
+                        if (documentSnapshot != null && documentSnapshot.exists()) {
+                            // Obtener los datos iniciales del pedido
                             int estado = documentSnapshot.getLong("estado").intValue();
                             String direccionCliente = documentSnapshot.getString("direccion");
                             String idRepartidor = documentSnapshot.getString("idRepartidor");
                             String nombreRestaurante1 = documentSnapshot.getString("nombreRestaurante");
+                            String qrUrl = documentSnapshot.getString("qrUrl"); // Obtener la URL del QR
+
+                            System.out.println("Estado actual: " + estado);
+                            System.out.println("QR PARA PAGO: " + qrUrl);
 
                             // Calcular el costo de los productos
                             double costoProductos = precioTotal - precioDelivery;
@@ -236,10 +244,19 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
                                             });
                                 }
                             }
+
+                            // Asignar la URL del QR al ImageView usando Glide
+                            if (qrUrl != null && !qrUrl.isEmpty()) {
+                                Glide.with(SeguimientoPedidoActivity.this)
+                                        .load(qrUrl)
+                                        .placeholder(R.drawable.placeholder) // Imagen por defecto mientras se carga
+                                        .error(R.drawable.placeholder) // Imagen en caso de error
+                                        .into(qrPaga);
+                                System.out.println("QR cargado correctamente: " + qrUrl);
+                            } else {
+                                System.err.println("El campo qrUrl está vacío o es nulo. Esperando actualización...");
+                            }
                         }
-                    })
-                    .addOnFailureListener(e -> {
-                        System.err.println("Error al obtener el pedido: " + e.getMessage());
                     });
         }
 

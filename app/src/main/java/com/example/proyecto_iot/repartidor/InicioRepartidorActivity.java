@@ -130,31 +130,36 @@ public class InicioRepartidorActivity extends AppCompatActivity {
                     for (QueryDocumentSnapshot document : querySnapshot) {
                         String idRestaurante = document.getString("idRestaurante");
                         String direccion = document.getString("direccion");
-                        String cantidad = document.getString("cantidad");
+                        double estadoPedido = document.getDouble("estado");
 
-                        PedidoRecoger pedidoRecoger = new PedidoRecoger();
-                        pedidoRecoger.setIdPedido(document.getId());
-                        pedidoRecoger.setIdRestaurante(idRestaurante);
-                        pedidoRecoger.setDireccion(direccion);
-                        pedidoRecoger.setCantidad(cantidad);
+                        if (estadoPedido == 2) {
 
-                        if (idRestaurante != null && !idRestaurante.isEmpty()) {
-                            db.collection("restaurantes").document(idRestaurante)
-                                    .get()
-                                    .addOnSuccessListener(restauranteSnapshot -> {
-                                        if (restauranteSnapshot.exists()) {
-                                            String nombreRestaurante = restauranteSnapshot.getString("nombre");
-                                            String logoUrl = restauranteSnapshot.getString("fotoLogo");
-                                            String direccionRest = restauranteSnapshot.getString("ubicacion");
+                            PedidoRecoger pedidoRecoger = new PedidoRecoger();
+                            pedidoRecoger.setIdPedido(document.getId());
+                            pedidoRecoger.setIdRestaurante(idRestaurante);
+                            pedidoRecoger.setDireccion(direccion);
 
-                                            pedidoRecoger.setIdRestaurante(nombreRestaurante);
-                                            pedidoRecoger.setFotoLogo(logoUrl);
-                                            pedidoRecoger.setDireccionRest(direccionRest);
+                            if (idRestaurante != null && !idRestaurante.isEmpty()) {
+                                db.collection("restaurantes").document(idRestaurante)
+                                        .get()
+                                        .addOnSuccessListener(restauranteSnapshot -> {
+                                            if (restauranteSnapshot.exists()) {
+                                                String nombreRestaurante = restauranteSnapshot.getString("nombre");
+                                                String logoUrl = restauranteSnapshot.getString("fotoLogo");
+                                                String direccionRest = restauranteSnapshot.getString("ubicacion");
 
-                                            listaPedidos.add(pedidoRecoger);
-                                            adapter.notifyDataSetChanged();
-                                        }
-                                    });
+
+                                                pedidoRecoger.setIdRestaurante(nombreRestaurante);
+                                                pedidoRecoger.setFotoLogo(logoUrl);
+                                                pedidoRecoger.setDireccionRest(direccionRest);
+
+                                                listaPedidos.add(pedidoRecoger);
+                                                adapter.notifyDataSetChanged();
+
+
+                                            }
+                                        });
+                            }
                         }
 
 

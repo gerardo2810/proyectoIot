@@ -17,6 +17,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class RecojoCurso2Activity extends AppCompatActivity {
     @Override
@@ -34,26 +35,29 @@ public class RecojoCurso2Activity extends AppCompatActivity {
                     if (documentSnapshot.exists()) {
                         String idRestaurante = documentSnapshot.getString("idRestaurante");
                         String idCliente = documentSnapshot.getString("idCliente");
-                        String estadoPedido = documentSnapshot.getString("estado");
+                        String estadoPedido = "Listo para recojer";
                         // Recupera el array de productos (IDs)
-                        List<String> productosIds = (List<String>) documentSnapshot.get("productos");
+                        List<Map<String,Object>> productos = (List<Map<String,Object>>) documentSnapshot.get("productos");
 
-                        if (productosIds != null && !productosIds.isEmpty()) {
-                            // Consulta los nombres de los productos
-                            obtenerNombresProductos(productosIds, nombresProductos -> {
-                                if (nombresProductos != null && !nombresProductos.isEmpty()) {
+                        if (productos != null && !productos.isEmpty()) {
 
-                                    int cantidadProductos = productosIds.size();
-                                    TextView cantidadTextView = findViewById(R.id.cantidadProductos);
-                                    String texto7 = cantidadProductos + " productos";
-                                    cantidadTextView.setText(texto7);
-                                    // Muestra los nombres de los productos en la vista
-                                    TextView productosTextView = findViewById(R.id.productos_text_view);
-                                    productosTextView.setText(String.join("\n", nombresProductos)); // Muestra cada nombre en una nueva línea
-                                } else {
-                                    Toast.makeText(this, "No se encontraron productos", Toast.LENGTH_SHORT).show();
-                                }
-                            });
+                            List<String> nombresProductos = new ArrayList<>();
+
+                            for (Map<String,Object> producto :productos){
+                                String nombre = (String) producto.get("nombre");
+                                nombresProductos.add("1x " + nombre);
+                            }
+
+
+                            int cantidadProductos = productos.size();
+                            TextView cantidadTextView = findViewById(R.id.cantidadProductos);
+                            String texto7 = cantidadProductos + " productos";
+                            cantidadTextView.setText(texto7);
+                            // Muestra los nombres de los productos en la vista
+
+                            TextView productosTextView = findViewById(R.id.productos_text_view);
+                            productosTextView.setText(String.join("\n", nombresProductos)); // Muestra cada nombre en una nueva línea
+
                         } else {
                             Toast.makeText(this, "No hay productos en este pedido", Toast.LENGTH_SHORT).show();
                         }
@@ -142,34 +146,4 @@ public class RecojoCurso2Activity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void obtenerNombresProductos(List<String> productosIds, OnNombresProductosObtenidosCallback callback) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        List<String> nombresProductos = new ArrayList<>();
-
-        for (String idProducto : productosIds) {
-            db.collection("platos").document(idProducto)
-                    .get()
-                    .addOnSuccessListener(productoSnapshot -> {
-                        if (productoSnapshot.exists()) {
-                            String nombreProducto = "1x " + productoSnapshot.getString("Nombre");
-                            if (nombreProducto != null) {
-                                nombresProductos.add(nombreProducto);
-                            }
-                        }
-
-                        // Verifica si se han consultado todos los productos
-                        if (nombresProductos.size() == productosIds.size()) {
-                            callback.onNombresProductosObtenidos(nombresProductos);
-                        }
-                    })
-                    .addOnFailureListener(e -> {
-                        Toast.makeText(this, "Error al obtener un producto", Toast.LENGTH_SHORT).show();
-                    });
-        }
-    }
-
-    // Interfaz para callback
-    interface OnNombresProductosObtenidosCallback {
-        void onNombresProductosObtenidos(List<String> nombresProductos);
-    }
 }

@@ -2,31 +2,56 @@ package com.example.proyecto_iot.superadmin.RecyclerView;
 
 public class UsuarioSA {
 
+    private String id;
     private String nombre;
-    private String apellido;
     private String rol;
     private String estado;
+    private String foto;
 
-    public UsuarioSA(String nombre, String apellido, String rol, String estado) {
+    public UsuarioSA(String id, String nombre, String rol, String estado) {
+        this.id = id;
         this.nombre = nombre;
-        this.apellido = apellido;
         this.rol = rol;
         this.estado = estado;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getNombre() {
         return nombre;
     }
 
-    public String getApellido() {
-        return apellido;
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
     public String getRol() {
         return rol;
     }
 
+    public void setRol(String rol) {
+        this.rol = rol;
+    }
+
     public String getEstado() {
         return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+    public String getFoto() {
+        return foto;
+    }
+
+    public void setFoto(String foto) {
+        this.foto = foto;
     }
 }

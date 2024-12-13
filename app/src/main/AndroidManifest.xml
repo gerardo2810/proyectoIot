@@ -9,7 +9,6 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
-
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -70,13 +69,17 @@
             android:exported="false" />
         <activity
             android:name=".superadmin.gestion_usuarios_superadmin"
-            android:exported="true" />
+            android:exported="true" >
+
+        </activity>
         <activity
             android:name=".superadmin.gestion_reportes_superadmin"
             android:exported="true" />
         <activity
             android:name=".superadmin.lista_usuarios_superadmin"
-            android:exported="true" />
+            android:exported="true" >
+
+        </activity>
         <activity
             android:name=".superadmin.lista_restaurantes_superadmin"
             android:exported="true" />

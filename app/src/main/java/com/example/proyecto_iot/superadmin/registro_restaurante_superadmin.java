@@ -3,8 +3,12 @@ package com.example.proyecto_iot.superadmin;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -12,12 +16,19 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.superadmin.RecyclerView.Administrador;
 import com.example.proyecto_iot.superadmin.RecyclerView.RestauranteSA;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
@@ -29,14 +40,17 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
-public class registro_restaurante_superadmin extends AppCompatActivity {
+public class registro_restaurante_superadmin extends AppCompatActivity implements OnMapReadyCallback {
 
     Administrador administrador;
     private FirebaseAuth mAuth;
     FirebaseFirestore db;
-    private EditText textFieldNombre, textFieldUbicacion, textFieldDescripccion, textFieldEslogan, textFieldPrecioDelivery;
+    private EditText textFieldNombre, tvUserUbicacion, textFieldDescripccion, textFieldEslogan, textFieldPrecioDelivery;
     private Spinner spinnerTipoComida;
     private String userId;
 
@@ -46,6 +60,11 @@ public class registro_restaurante_superadmin extends AppCompatActivity {
     private Button btnUploadLogo, btnUploadImage, btnUploadPhoto;
     private Uri imageUri, imageUriLogo; // Uri de la imagen seleccionada
     private StorageReference storageReference;
+
+    private GoogleMap mMap;
+    private double latitude = -12.0453;
+    private double longitude = -77.0306;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,10 +91,30 @@ public class registro_restaurante_superadmin extends AppCompatActivity {
         Button btnGuardar = findViewById(R.id.buttonRegistrarRest);
 
         textFieldNombre = findViewById(R.id.editTextNombreRest);
-        textFieldUbicacion = findViewById(R.id.editTextUbicacionRest);
+        tvUserUbicacion = findViewById(R.id.editTextUbicacionRest);
         textFieldDescripccion = findViewById(R.id.editTextDescripcionRest);
         textFieldEslogan = findViewById(R.id.editTextEsloganRest);
         textFieldPrecioDelivery = findViewById(R.id.editTextPrecioDelivery);
+
+        // Configurar mapa
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapa);
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(this);
+        }
+        tvUserUbicacion.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (!s.toString().isEmpty()) {
+                    getLocationFromAddress(s.toString());
+                }
+            }
+        });
 
         //Gestion de spinner tipo comida
         spinnerTipoComida = findViewById(R.id.spinnerTipoComida);
@@ -87,7 +126,7 @@ public class registro_restaurante_superadmin extends AppCompatActivity {
 
         btnGuardar.setOnClickListener(view -> {
             String nombre = textFieldNombre.getText().toString();
-            String ubicacion = textFieldUbicacion.getText().toString();
+            String ubicacion = tvUserUbicacion.getText().toString();
             String tipoComida = spinnerTipoComida.getSelectedItem().toString();
             String descripcion = textFieldDescripccion.getText().toString();
             String slogan = textFieldEslogan.getText().toString();
@@ -152,7 +191,7 @@ public class registro_restaurante_superadmin extends AppCompatActivity {
                                                                         restaurante.setFotoPortada(portadaUri.toString());
 
                                                                         restaurante.setNombre(textFieldNombre.getText().toString());
-                                                                        restaurante.setUbicacion(textFieldUbicacion.getText().toString());
+                                                                        restaurante.setUbicacion(tvUserUbicacion.getText().toString());
                                                                         restaurante.setTipoDeComida(spinnerTipoComida.getSelectedItem().toString());
                                                                         restaurante.setDescripcion(textFieldDescripccion.getText().toString());
                                                                         restaurante.setVentas(0);
@@ -192,7 +231,6 @@ public class registro_restaurante_superadmin extends AppCompatActivity {
                 });
     }
 
-
     private Bitmap generateQRCode(String text) throws WriterException {
         int width = 500, height = 500;
         BitMatrix bitMatrix = new MultiFormatWriter().encode(text, BarcodeFormat.QR_CODE, width, height);
@@ -225,8 +263,6 @@ public class registro_restaurante_superadmin extends AppCompatActivity {
                 });
     }
 
-
-
     // Método para seleccionar una imagen desde la galería
     private void selectImage(int requestCode) {
         Intent intent = new Intent();
@@ -249,6 +285,61 @@ public class registro_restaurante_superadmin extends AppCompatActivity {
                 imgPreview.setImageURI(imageUri);
             }
         }
+    }
+
+    //PARA EL MAPA
+    private void getLocationFromAddress(String address) {
+        Geocoder geocoder = new Geocoder(this);
+        try {
+            List<Address> addresses = geocoder.getFromLocationName(address, 1);
+            if (addresses != null && !addresses.isEmpty()) {
+                Address location = addresses.get(0);
+                latitude = location.getLatitude();
+                longitude = location.getLongitude();
+                updateMapLocation();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error al buscar dirección", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void updateMapLocation() {
+        LatLng userLocation = new LatLng(latitude, longitude);
+        mMap.clear();
+        mMap.addMarker(new MarkerOptions().position(userLocation).title("Ubicación del usuario"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 15));
+    }
+
+    // Método para obtener el nombre de la ubicación
+    private void updateLocationName() {
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        try {
+            List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
+            if (addresses != null && !addresses.isEmpty()) {
+                Address address = addresses.get(0);
+                String locationName = address.getAddressLine(0);
+                tvUserUbicacion.setText(locationName);
+            } else {
+                tvUserUbicacion.setText("Ubicación desconocida");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error al obtener la ubicación", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onMapReady(@NonNull GoogleMap googleMap) {
+        mMap = googleMap;
+        updateMapLocation();
+
+        mMap.setOnMapClickListener(latLng -> {
+            latitude = latLng.latitude;
+            longitude = latLng.longitude;
+            updateMapLocation();
+            updateLocationName();
+        });
     }
 
 }

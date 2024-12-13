@@ -1,10 +1,13 @@
 package com.example.proyecto_iot.superadmin.RecyclerView;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import com.example.proyecto_iot.R;
+import com.example.proyecto_iot.superadmin.info_usuario_superadmin;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,9 +17,16 @@ import java.util.List;
 public class UsuarioAdapterSA extends RecyclerView.Adapter<UsuarioAdapterSA.UsuarioSAViewHolder> {
 
     private List<UsuarioSA> usuarios;
+    private Context context;
 
-    public UsuarioAdapterSA(List<UsuarioSA> usuarios) {
+    public UsuarioAdapterSA(List<UsuarioSA> usuarios, Context context) {
         this.usuarios = usuarios;
+        this.context = context;
+    }
+
+    public void setUsuarios(List<UsuarioSA> usuarios) {
+        this.usuarios = usuarios;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -29,11 +39,17 @@ public class UsuarioAdapterSA extends RecyclerView.Adapter<UsuarioAdapterSA.Usua
     @Override
     public void onBindViewHolder(@NonNull UsuarioSAViewHolder holder, int position) {
         UsuarioSA usuario = usuarios.get(position);
-        String nombre_completo = usuario.getNombre() + ' ' + usuario.getApellido();
+        holder.nombre.setText(usuario.getNombre());
+        holder.rol.setText(usuario.getRol());
+        holder.estado.setText(usuario.getEstado());
+        //Picasso.get().load(usuario.getFoto()).into(holder.foto);
 
-        holder.textViewNombre.setText(nombre_completo);
-        holder.textViewRol.setText(usuario.getRol());
-        holder.textViewEstadoCuenta.setText(usuario.getEstado());
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, info_usuario_superadmin.class);
+            intent.putExtra("usuario_id", usuario.getId());
+            intent.putExtra("rol", usuario.getRol());
+            context.startActivity(intent);
+        });
     }
 
     @Override
@@ -42,13 +58,15 @@ public class UsuarioAdapterSA extends RecyclerView.Adapter<UsuarioAdapterSA.Usua
     }
 
     public static class UsuarioSAViewHolder extends RecyclerView.ViewHolder {
-        TextView textViewNombre, textViewRol, textViewEstadoCuenta;
+        TextView nombre, rol, estado;
+        //ImageView foto;
 
         public UsuarioSAViewHolder(@NonNull View itemView) {
             super(itemView);
-            textViewNombre = itemView.findViewById(R.id.textViewNombre);
-            textViewRol = itemView.findViewById(R.id.textViewRol);
-            textViewEstadoCuenta = itemView.findViewById(R.id.textViewEstadoCuenta);
+            nombre = itemView.findViewById(R.id.textViewNombre);
+            rol = itemView.findViewById(R.id.textViewRol);
+            estado = itemView.findViewById(R.id.textViewEstadoCuenta);
+            //foto = itemView.findViewById(R.id.imageViewFoto);
         }
     }
 

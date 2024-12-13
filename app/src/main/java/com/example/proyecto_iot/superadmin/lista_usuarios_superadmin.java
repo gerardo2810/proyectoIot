@@ -20,6 +20,8 @@ import com.example.proyecto_iot.superadmin.RecyclerView.UsuarioAdapterSA;
 import com.example.proyecto_iot.superadmin.RecyclerView.UsuarioSA;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,15 +30,17 @@ public class lista_usuarios_superadmin extends AppCompatActivity {
 
     private Spinner spinnerRol, spinnerEstado;
     private BottomNavigationView bottomNavigationView;
-    private RecyclerView recyclerViewListaUsuarios;
+    private RecyclerView recyclerView;
     private UsuarioAdapterSA adapter;
-    private List<UsuarioSA> listaUsuariosOriginal;
-    private List<UsuarioSA> listaUsuariosFiltrada;
+    private List<UsuarioSA> listaUsuarios;
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.superadmin_activity_lista_usuarios);
+
+        db = FirebaseFirestore.getInstance();
 
         //Volver una pantalla atras
         ImageView arrowIcon = findViewById(R.id.arrow_back_icon);
@@ -47,14 +51,13 @@ public class lista_usuarios_superadmin extends AppCompatActivity {
         //----------------------------------------------------------------------------
 
         //Gestion del Recycler View
-        recyclerViewListaUsuarios = findViewById(R.id.recyclerViewListaUsuariosSA);
-        recyclerViewListaUsuarios.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView = findViewById(R.id.recyclerViewListaUsuariosSA);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        listaUsuariosOriginal = cargarUsuarios();
-        listaUsuariosFiltrada = new ArrayList<>(listaUsuariosOriginal);
-
-        adapter = new UsuarioAdapterSA(listaUsuariosFiltrada);
-        recyclerViewListaUsuarios.setAdapter(adapter);
+        listaUsuarios = new ArrayList<>();
+        adapter = new UsuarioAdapterSA(listaUsuarios, this);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(adapter);
         //----------------------------------------------------------------------------
 
         //Gestion de spinner Rol
@@ -67,15 +70,19 @@ public class lista_usuarios_superadmin extends AppCompatActivity {
         spinnerRol.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String rolSeleccionado = parent.getItemAtPosition(position).toString();
-                Log.d("Spinner", "Rol seleccionado: " + rolSeleccionado); // Agregar este log
-                filtrarUsuarios();
+                String rolSeleccionado = spinnerRol.getSelectedItem().toString();
+                if (!rolSeleccionado.equals("-Seleccionar-")) {
+                    spinnerEstado.setEnabled(true);
+                    cargarUsuariosPorRol(rolSeleccionado);
+                } else {
+                    spinnerEstado.setEnabled(false);
+                    listaUsuarios.clear();
+                    adapter.notifyDataSetChanged();
+                }
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // No hacer nada si no hay nada seleccionado
-            }
+            public void onNothingSelected(AdapterView<?> parent) {}
         });
         //----------------------------------------------------------------------------
 
@@ -89,15 +96,11 @@ public class lista_usuarios_superadmin extends AppCompatActivity {
         spinnerEstado.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String estadoSeleccionado = parent.getItemAtPosition(position).toString();
-                Log.d("Spinner", "Estado seleccionado: " + estadoSeleccionado);
-                filtrarUsuarios();
+                filtrarUsuariosPorEstado(spinnerEstado.getSelectedItem().toString());
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // No hacer nada si no hay nada seleccionado
-            }
+            public void onNothingSelected(AdapterView<?> parent) {}
         });
         //----------------------------------------------------------------------------
 
@@ -126,124 +129,42 @@ public class lista_usuarios_superadmin extends AppCompatActivity {
         //----------------------------------------------------------------------------
     }
 
-    // Método para cargar usuarios (simulado)
-    private List<UsuarioSA> cargarUsuarios() {
+    private void cargarUsuariosPorRol(String rol) {
+        listaUsuarios.clear();
+        String coleccion = rol.toLowerCase();
 
-        List<UsuarioSA> listaUsuarios = new ArrayList<>();
-
-        listaUsuarios.add(new UsuarioSA("Ana", "Armas", "Administrador", "Activo"));
-        listaUsuarios.add(new UsuarioSA("Benito", "Bueno", "Repartidor", "Inactivo"));
-        listaUsuarios.add(new UsuarioSA("Carlos", "Carrion", "Cliente", "Activo"));
-        listaUsuarios.add(new UsuarioSA("Daniela", "Delgado", "Administrador", "Activo"));
-        listaUsuarios.add(new UsuarioSA("Eduardo", "Esquivel", "Repartidor", "Inactivo"));
-        listaUsuarios.add(new UsuarioSA("Francisco", "Fernandez", "Cliente", "Activo"));
-        listaUsuarios.add(new UsuarioSA("Gabriela", "Garcia", "Administrador", "Inactivo"));
-        listaUsuarios.add(new UsuarioSA("Hector", "Hidalgo", "Repartidor", "Activo"));
-        listaUsuarios.add(new UsuarioSA("Irene", "Iglesias", "Cliente", "Inactivo"));
-        listaUsuarios.add(new UsuarioSA("Jorge", "Juarez", "Administrador", "Activo"));
-        listaUsuarios.add(new UsuarioSA("Karla", "Krause", "Repartidor", "Inactivo"));
-        listaUsuarios.add(new UsuarioSA("Luis", "Lopez", "Cliente", "Activo"));
-        listaUsuarios.add(new UsuarioSA("Mariana", "Mendoza", "Administrador", "Inactivo"));
-        listaUsuarios.add(new UsuarioSA("Nicolas", "Navarro", "Repartidor", "Activo"));
-        listaUsuarios.add(new UsuarioSA("Oscar", "Ortega", "Cliente", "Inactivo"));
-        listaUsuarios.add(new UsuarioSA("Patricia", "Perez", "Administrador", "Activo"));
-        listaUsuarios.add(new UsuarioSA("Raul", "Ramirez", "Repartidor", "Inactivo"));
-        listaUsuarios.add(new UsuarioSA("Silvia", "Sanchez", "Cliente", "Activo"));
-        listaUsuarios.add(new UsuarioSA("Tomas", "Torres", "Administrador", "Inactivo"));
-        listaUsuarios.add(new UsuarioSA("Ulises", "Uribe", "Repartidor", "Activo"));
-
-        return listaUsuarios;
+        db.collection(coleccion)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (DocumentSnapshot doc : queryDocumentSnapshots) {
+                        if(coleccion.equals("administradores") || coleccion.equals("repartidores")){
+                            String nombre = doc.getString("nombre") + " " + doc.getString("apellido");
+                            String estado = doc.getBoolean("habilitado") ? "Activo" : "Inactivo";
+                            //String foto = doc.getString("foto") != null ? doc.getString("foto") : doc.getString("FotoURL");
+                            listaUsuarios.add(new UsuarioSA(doc.getId(), nombre, rol, estado));
+                        } else {
+                            String nombre = doc.getString("Nombre") + " " + doc.getString("Apellido");
+                            String estado = doc.getBoolean("habilitado") ? "Activo" : "Inactivo";
+                            //String foto = doc.getString("foto") != null ? doc.getString("foto") : doc.getString("FotoURL");
+                            listaUsuarios.add(new UsuarioSA(doc.getId(), nombre, rol, estado));
+                        }
+                    }
+                    adapter.notifyDataSetChanged();
+                });
     }
 
-    // Método para filtrar usuarios según el rol seleccionado
-    private void filtrarUsuarios() {
-        listaUsuariosFiltrada.clear();
-
-        String rolSeleccionado = spinnerRol.getSelectedItem().toString();
-        String estadoSeleccionado = spinnerEstado.getSelectedItem().toString();
-
-        if (rolSeleccionado.equals("-Seleccionar-") && estadoSeleccionado.equals("-Seleccionar-")) {
-            listaUsuariosFiltrada.addAll(listaUsuariosOriginal);
-        } else if (!rolSeleccionado.equals("-Seleccionar-") && estadoSeleccionado.equals("-Seleccionar-")){
-            if (rolSeleccionado.equals("Administradores")) {
-                for (UsuarioSA usuario : listaUsuariosOriginal) {
-                    if (usuario.getRol().equals("Administrador")) {
-                        listaUsuariosFiltrada.add(usuario);
-                    }
-                }
-            } else if (rolSeleccionado.equals("Repartidores")) {
-                for (UsuarioSA usuario : listaUsuariosOriginal) {
-                    if (usuario.getRol().equals("Repartidor")) {
-                        listaUsuariosFiltrada.add(usuario);
-                    }
-                }
-            } else if (rolSeleccionado.equals("Clientes")) {
-                for (UsuarioSA usuario : listaUsuariosOriginal) {
-                    if (usuario.getRol().equals("Cliente")) {
-                        listaUsuariosFiltrada.add(usuario);
-                    }
+    private void filtrarUsuariosPorEstado(String estado) {
+        if (estado.equals("-Seleccionar-")) {
+            adapter.setUsuarios(listaUsuarios); // Restaurar lista original
+        } else {
+            List<UsuarioSA> usuariosFiltrados = new ArrayList<>();
+            for (UsuarioSA usuario : listaUsuarios) {
+                if (usuario.getEstado().equals(estado)) {
+                    usuariosFiltrados.add(usuario);
                 }
             }
-        } else if (rolSeleccionado.equals("-Seleccionar-") && !estadoSeleccionado.equals("-Seleccionar-")){
-            if (estadoSeleccionado.equals("Activo")) {
-                for (UsuarioSA usuario : listaUsuariosOriginal) {
-                    if (usuario.getEstado().equals("Activo")) {
-                        listaUsuariosFiltrada.add(usuario);
-                    }
-                }
-            } else if (estadoSeleccionado.equals("Inactivo")) {
-                for (UsuarioSA usuario : listaUsuariosOriginal) {
-                    if (usuario.getEstado().equals("Inactivo")) {
-                        listaUsuariosFiltrada.add(usuario);
-                    }
-                }
-            }
-        } else if (!rolSeleccionado.equals("-Seleccionar-") && !estadoSeleccionado.equals("-Seleccionar-")){
-            if (estadoSeleccionado.equals("Activo")) {
-                if (rolSeleccionado.equals("Administradores")) {
-                    for (UsuarioSA usuario : listaUsuariosOriginal) {
-                        if (usuario.getRol().equals("Administrador") && usuario.getEstado().equals("Activo")) {
-                            listaUsuariosFiltrada.add(usuario);
-                        }
-                    }
-                } else if (rolSeleccionado.equals("Repartidores")) {
-                    for (UsuarioSA usuario : listaUsuariosOriginal) {
-                        if (usuario.getRol().equals("Repartidor") && usuario.getEstado().equals("Activo")) {
-                            listaUsuariosFiltrada.add(usuario);
-                        }
-                    }
-                } else if (rolSeleccionado.equals("Clientes")) {
-                    for (UsuarioSA usuario : listaUsuariosOriginal) {
-                        if (usuario.getRol().equals("Cliente") && usuario.getEstado().equals("Activo")) {
-                            listaUsuariosFiltrada.add(usuario);
-                        }
-                    }
-                }
-            } else if (estadoSeleccionado.equals("Inactivo")) {
-                if (rolSeleccionado.equals("Administradores")) {
-                    for (UsuarioSA usuario : listaUsuariosOriginal) {
-                        if (usuario.getRol().equals("Administrador") && usuario.getEstado().equals("Inactivo")) {
-                            listaUsuariosFiltrada.add(usuario);
-                        }
-                    }
-                } else if (rolSeleccionado.equals("Repartidores")) {
-                    for (UsuarioSA usuario : listaUsuariosOriginal) {
-                        if (usuario.getRol().equals("Repartidor") && usuario.getEstado().equals("Inactivo")) {
-                            listaUsuariosFiltrada.add(usuario);
-                        }
-                    }
-                } else if (rolSeleccionado.equals("Clientes")) {
-                    for (UsuarioSA usuario : listaUsuariosOriginal) {
-                        if (usuario.getRol().equals("Cliente") && usuario.getEstado().equals("Inactivo")) {
-                            listaUsuariosFiltrada.add(usuario);
-                        }
-                    }
-                }
-
-            }
+            adapter.setUsuarios(usuariosFiltrados);
         }
-
-        adapter.notifyDataSetChanged();
     }
 
 }

@@ -198,13 +198,13 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
                     android:layout_weight="1"
-                    android:text="OCUPACIÓN"
+                    android:text="ROL"
                     android:textSize="16sp"
                     android:textColor="#000000"
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/textViewOcupacion"
+                    android:id="@+id/textViewRol"
                     android:layout_width="90dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"

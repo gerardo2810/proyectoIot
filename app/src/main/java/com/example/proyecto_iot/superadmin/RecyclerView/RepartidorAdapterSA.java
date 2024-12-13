@@ -1,5 +1,7 @@
 package com.example.proyecto_iot.superadmin.RecyclerView;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,14 +11,17 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.proyecto_iot.R;
+import com.example.proyecto_iot.superadmin.info_solitud_repartidor_superadmin;
 
 import java.util.List;
 
 public class RepartidorAdapterSA extends RecyclerView.Adapter<RepartidorAdapterSA.RepartidorSAViewHolder> {
 
+    private Context context;
     private List<RepartidorSA> repartidores;
 
-    public RepartidorAdapterSA(List<RepartidorSA> repartidores) {
+    public RepartidorAdapterSA(Context context,List<RepartidorSA> repartidores) {
+        this.context = context;
         this.repartidores = repartidores;
     }
 
@@ -30,10 +35,23 @@ public class RepartidorAdapterSA extends RecyclerView.Adapter<RepartidorAdapterS
     @Override
     public void onBindViewHolder(@NonNull RepartidorAdapterSA.RepartidorSAViewHolder holder, int position) {
         RepartidorSA repartidor = repartidores.get(position);
-        String nombre_completo = repartidor.getNombre() + ' ' + repartidor.getApellido();
 
-        holder.textViewNombre.setText(nombre_completo);
+        // Asignar datos al ViewHolder
+        holder.textViewNombre.setText(repartidor.getNombre() + " " + repartidor.getApellido());
         holder.textViewFecha.setText(repartidor.getFecha());
+
+        // Cargar imagen desde el URL usando Glide
+        /*Glide.with(context)
+                .load(repartidor.getFoto())
+                .placeholder(R.drawable.placeholder) // Imagen de carga por defecto
+                .into(holder.imageViewFoto);*/
+
+        // Configurar redirección al hacer clic en el item
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, info_solitud_repartidor_superadmin.class);
+            intent.putExtra("document_id", repartidor.getId());
+            context.startActivity(intent);
+        });
     }
 
     @Override
@@ -43,11 +61,13 @@ public class RepartidorAdapterSA extends RecyclerView.Adapter<RepartidorAdapterS
 
     public static class RepartidorSAViewHolder extends RecyclerView.ViewHolder {
         TextView textViewNombre, textViewFecha;
+        //ImageView imageViewFoto;
 
         public RepartidorSAViewHolder(@NonNull View itemView) {
             super(itemView);
             textViewNombre = itemView.findViewById(R.id.textViewNombre);
             textViewFecha = itemView.findViewById(R.id.textViewFecha);
+            //imageViewFoto = itemView.findViewById(R.id.imageViewFoto);
         }
     }
 

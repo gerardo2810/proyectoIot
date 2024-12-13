@@ -184,6 +184,7 @@ public class registro_admin_superadmin extends AppCompatActivity {
                                             administrador.setEdad(edad);
                                             administrador.setDireccion(direccion);
                                             administrador.setTelefono(telefono);
+                                            administrador.setHabilitado(true);
 
                                             mostrarDialogRestaurante();
                                         });

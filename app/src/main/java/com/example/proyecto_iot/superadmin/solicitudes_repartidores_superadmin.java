@@ -2,6 +2,7 @@ package com.example.proyecto_iot.superadmin;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ImageView;
 
@@ -15,6 +16,8 @@ import com.example.proyecto_iot.superadmin.RecyclerView.RepartidorSA;
 import com.example.proyecto_iot.superadmin.RecyclerView.RepartidorAdapterSA;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,12 +27,15 @@ public class solicitudes_repartidores_superadmin extends AppCompatActivity {
     private BottomNavigationView bottomNavigationView;
     private RecyclerView recyclerViewSolicitudesRepartidores;
     private RepartidorAdapterSA adapter;
-    private List<RepartidorSA> listaSolicitudes;
+    private List<RepartidorSA> repartidorList = new ArrayList<>();
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.superadmin_activity_solicitudes_repartidores);
+
+        db = FirebaseFirestore.getInstance();
 
         //Volver una pantalla atras
         ImageView arrowIcon = findViewById(R.id.arrow_back_icon);
@@ -43,20 +49,10 @@ public class solicitudes_repartidores_superadmin extends AppCompatActivity {
         recyclerViewSolicitudesRepartidores = findViewById(R.id.recyclerViewListaRepartidoresSA);
         recyclerViewSolicitudesRepartidores.setLayoutManager(new LinearLayoutManager(this));
 
-        listaSolicitudes = new ArrayList<>();
-        listaSolicitudes.add(new RepartidorSA("Ana", "Armas", "02 / 10 / 2024"));
-        listaSolicitudes.add(new RepartidorSA("Benito", "Bueno", "02 / 10 / 2024"));
-        listaSolicitudes.add(new RepartidorSA("Carlos", "Carrion", "01 / 10 / 2024"));
-        listaSolicitudes.add(new RepartidorSA("Daniela", "Delgado", "01 / 10 / 2024"));
-        listaSolicitudes.add(new RepartidorSA("Eduardo", "Esquivel", "01 / 10 / 2024"));
-        listaSolicitudes.add(new RepartidorSA("Francisco", "Fernandez", "30 / 09 / 2024"));
-        listaSolicitudes.add(new RepartidorSA("Gabriela", "Garcia", "29 / 09 / 2024"));
-        listaSolicitudes.add(new RepartidorSA("Hector", "Hidalgo", "29 / 09 / 2024"));
-        listaSolicitudes.add(new RepartidorSA("Irene", "Iglesias", "29 / 09 / 2024"));
-        listaSolicitudes.add(new RepartidorSA("Jorge", "Juarez", "28 / 09 / 2024"));
-
-        adapter = new RepartidorAdapterSA(listaSolicitudes);
+        adapter = new RepartidorAdapterSA(this, repartidorList);
         recyclerViewSolicitudesRepartidores.setAdapter(adapter);
+
+        cargarRepartidores();
         //----------------------------------------------------------------------------
 
         //Gestion de la bottom navigation bar
@@ -84,4 +80,32 @@ public class solicitudes_repartidores_superadmin extends AppCompatActivity {
         //----------------------------------------------------------------------------
 
     }
+
+    private void cargarRepartidores() {
+        db.collection("repartidores")
+                .whereEqualTo("aceptado", false) // Filtrar los documentos con "aceptado" en false
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        // Limpiar la lista de repartidores
+                        repartidorList.clear();
+
+                        // Iterar sobre los documentos obtenidos
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            RepartidorSA repartidor = document.toObject(RepartidorSA.class);
+                            repartidor.setId(document.getId()); // Asignar el ID del documento
+                            if(document.getBoolean("habilitado")){
+                                repartidorList.add(repartidor);
+                            }
+                        }
+
+                        // Notificar al adaptador que los datos han cambiado
+                        adapter.notifyDataSetChanged();
+                    } else {
+                        // Manejar errores si la consulta falla
+                        Log.e("Firestore", "Error al obtener documentos: " + task.getException());
+                    }
+                });
+    }
+
 }

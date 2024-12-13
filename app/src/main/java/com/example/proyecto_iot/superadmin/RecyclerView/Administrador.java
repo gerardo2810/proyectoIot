@@ -14,6 +14,7 @@ public class Administrador implements Serializable {
     private String direccion;
     private String telefono;
     private String Restaurante;
+    private boolean habilitado;
 
     public String getId() {
         return id;
@@ -101,5 +102,13 @@ public class Administrador implements Serializable {
 
     public void setRestaurante(String restaurante) {
         Restaurante = restaurante;
+    }
+
+    public boolean isHabilitado() {
+        return habilitado;
+    }
+
+    public void setHabilitado(boolean habilitado) {
+        this.habilitado = habilitado;
     }
 }

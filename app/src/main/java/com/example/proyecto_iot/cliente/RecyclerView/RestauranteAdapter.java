@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.proyecto_iot.R;
@@ -67,17 +68,25 @@ public class RestauranteAdapter extends RecyclerView.Adapter<RestauranteAdapter.
 
         // Acción al hacer clic en un restaurante
         holder.linearLayout.setOnClickListener(v -> {
-            Intent intent = new Intent(context, PerfilRestauranteActivity.class);
-            // Pasar los datos del restaurante seleccionado
-            intent.putExtra("restauranteId", option.getId()); // ID del documento
-            intent.putExtra("nombre_restaurante", option.getNombre());
-            intent.putExtra("categoria_restaurante", option.getTipoDeComida());
-            intent.putExtra("precio_delivery", option.getPrecioDelivery());
-            intent.putExtra("direccion_restaurante", option.getUbicacion());
-            intent.putExtra("foto_logo", option.getFotoLogo());
-            intent.putExtra("foto_portada", option.getFotoPortada());
-            context.startActivity(intent);
+            if (option.getId() != null && !option.getId().isEmpty() &&
+                    option.getNombre() != null && !option.getNombre().isEmpty()) {
+
+                Intent intent = new Intent(context, PerfilRestauranteActivity.class);
+                // Pasar los datos del restaurante seleccionado
+                intent.putExtra("restauranteId", option.getId()); // ID del documento
+                intent.putExtra("nombre_restaurante", option.getNombre());
+                intent.putExtra("categoria_restaurante", option.getTipoDeComida());
+                intent.putExtra("precio_delivery", option.getPrecioDelivery());
+                intent.putExtra("direccion_restaurante", option.getUbicacion());
+                intent.putExtra("foto_logo", option.getFotoLogo());
+                intent.putExtra("foto_portada", option.getFotoPortada());
+                context.startActivity(intent);
+            } else {
+                // Mostrar mensaje si los datos del restaurante son inválidos
+                Toast.makeText(context, "Restaurante no válido. Por favor, inténtelo de nuevo.", Toast.LENGTH_SHORT).show();
+            }
         });
+
     }
 
 

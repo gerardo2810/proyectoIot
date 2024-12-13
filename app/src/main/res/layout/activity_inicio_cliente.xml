@@ -115,6 +115,25 @@
                 android:scrollbars="horizontal" />
 
             <TextView
+                android:id="@+id/orders_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Tus Pedidos"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_orders"
+                android:layout_width="match_parent"
+                android:layout_height="209dp"
+                android:orientation="horizontal"
+                android:scrollbars="horizontal"
+                android:visibility="gone" />
+
+
+            <TextView
                 android:id="@+id/favorite_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

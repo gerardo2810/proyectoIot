@@ -14,6 +14,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.cliente.DetallesPedidoActivity;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class HistorialPedidosAdapter extends RecyclerView.Adapter<HistorialPedidosAdapter.PedidoViewHolder> {
@@ -36,20 +38,36 @@ public class HistorialPedidosAdapter extends RecyclerView.Adapter<HistorialPedid
     @Override
     public void onBindViewHolder(@NonNull PedidoViewHolder holder, int position) {
         Pedido pedido = pedidos.get(position);
-        holder.textRestaurantName.setText(pedido.getNombreRestaurante());
-        holder.textOrderStatus.setText(pedido.getEstado() + " - " + pedido.getFecha());
 
-        // Configurar el click listener para la flecha
-        holder.forwardArrow.setOnClickListener(v -> {
-            // Crear el Intent para navegar a DetallesPedidoActivity
+        // Asignar datos al ViewHolder
+        holder.textRestaurantName.setText(pedido.getNombreRestaurante());
+        holder.textOrderStatus.setText(obtenerEstadoPedido(pedido.getEstado()) + " - " + pedido.getFechaHora());
+        holder.productImage.setImageResource(R.drawable.lalucha_inicio); // Asignar imagen por defecto o dinámica
+
+        // Configurar click listener
+        holder.itemView.setOnClickListener(v -> {
+            // Crear Intent y pasar todos los datos
             Intent intent = new Intent(context, DetallesPedidoActivity.class);
-            // Pasar información del pedido si es necesario
-            intent.putExtra("pedido_id", pedido.getPedidoId());
-            intent.putExtra("nombre_restaurante", pedido.getNombreRestaurante());
-            // Iniciar la actividad
+            intent.putExtra("idPedido", pedido.getIdPedido());
+            intent.putExtra("nombreRestaurante", pedido.getNombreRestaurante());
+            intent.putExtra("estado", pedido.getEstado());
+            intent.putExtra("fechaHora", pedido.getFechaHora());
+            intent.putExtra("direccion", pedido.getDireccion());
+            intent.putExtra("pagoTotal", pedido.getPagoTotal());
+            intent.putExtra("idRestaurante", pedido.getIdRestaurante());
+
+            // Convertir lista de productos a ArrayList serializable
+            ArrayList<HashMap<String, Object>> productosData = new ArrayList<>();
+            for (Producto producto : pedido.getProductos()) {
+                HashMap<String, Object> productoMap = new HashMap<>();
+                productoMap.put("nombre", producto.getNombre());
+                productoMap.put("cantidad", producto.getCantidad());
+                productosData.add(productoMap);
+            }
+            intent.putExtra("productos", productosData);
+
             context.startActivity(intent);
         });
-        holder.productImage.setImageResource(pedido.getImageResourceId());
     }
 
     @Override
@@ -67,6 +85,15 @@ public class HistorialPedidosAdapter extends RecyclerView.Adapter<HistorialPedid
             textOrderStatus = itemView.findViewById(R.id.text_order_status);
             forwardArrow = itemView.findViewById(R.id.forward_arrow);  // Inicializar la flecha
             productImage = itemView.findViewById(R.id.product_image);
+        }
+    }
+    private String obtenerEstadoPedido(int estado) {
+        switch (estado) {
+            case 1: return "Recibido";
+            case 2: return "En preparación";
+            case 3: return "En camino";
+            case 4: return "Entregado";
+            default: return "Desconocido";
         }
     }
 }

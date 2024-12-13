@@ -18,6 +18,12 @@ public class Producto implements Serializable {
         this.cantidad = cantidad;
         this.imageUrl = imageUrl;
     }
+    public Producto(String id, String descripcion, int cantidad) {
+        this.id =id;
+        this.descripcion = descripcion;
+        this.cantidad = cantidad;
+
+    }
     public String getId(){
             return  id;
     }

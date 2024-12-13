@@ -52,10 +52,6 @@
     app:layout_constraintTop_toBottomOf="@id/header_layout"
     android:layout_marginTop="-10dp" />
 
-
-
-    <!-- Título de la orden -->
-
     <!-- Estado de la orden y fecha -->
     <TextView
         android:id="@+id/order_title"
@@ -80,6 +76,7 @@
         android:layout_marginStart="16dp">
 
     <TextView
+        android:id="@+id/estado"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Orden entregada"
@@ -88,6 +85,7 @@
         android:textStyle="bold" />
 
     <TextView
+        android:id="@+id/fecha"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text=" • 27/08/2024"
@@ -110,7 +108,6 @@
         android:layout_marginEnd="16dp"
         android:layout_marginTop="24dp" />
 
-    <!-- Cuadro para lista de productos -->
     <!-- Texto "Productos - 27" Fuera de la tarjeta -->
     <TextView
         android:id="@+id/products_title"
@@ -191,6 +188,7 @@
                         android:layout_marginEnd="8dp" />
 
                     <TextView
+                        android:id="@+id/direccion"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="El molle #156 B"
@@ -213,6 +211,8 @@
                         android:layout_marginEnd="8dp" />
 
                     <TextView
+                        android:id="@+id/repartidor"
+
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Miguel Angel Lugo"
@@ -254,6 +254,8 @@
                     android:textColor="#000000" />
 
                 <TextView
+                    android:id="@+id/costoProductos"
+
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="S/. 405.00"
@@ -277,6 +279,8 @@
                     android:textColor="#000000" />
 
                 <TextView
+                    android:id="@+id/precioDelivery"
+
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="S/. 3.49"
@@ -308,6 +312,8 @@
                     android:textColor="#000000" />
 
                 <TextView
+                    android:id="@+id/pagoTotal"
+
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="S/. 408.49"

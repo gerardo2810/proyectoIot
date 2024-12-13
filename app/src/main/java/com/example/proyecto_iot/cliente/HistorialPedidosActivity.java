@@ -2,6 +2,7 @@ package com.example.proyecto_iot.cliente;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -18,11 +19,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.cliente.RecyclerView.HistorialPedidosAdapter;
 import com.example.proyecto_iot.cliente.RecyclerView.Pedido;
+import com.example.proyecto_iot.cliente.RecyclerView.Producto;
 import com.example.proyecto_iot.cliente.RecyclerView.SpaceItemDecoration; // Asegúrate de importar esta clase
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class HistorialPedidosActivity extends AppCompatActivity {
@@ -32,63 +38,84 @@ public class HistorialPedidosActivity extends AppCompatActivity {
     private List<Pedido> listaPedidos;
 
     @Override
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_historial_pedidos_cliente);
 
         // Inicializar RecyclerView
-        recyclerViewHistorialPedidos = findViewById(R.id.recyclerViewHistorialPedidos);
+        recyclerViewHistorialPedidos = findViewById(R.id.recycler_orders);
         recyclerViewHistorialPedidos.setLayoutManager(new LinearLayoutManager(this));
 
-        // Configurar ItemDecoration para reducir espacio entre los elementos
+        // Configurar espacio entre elementos
         int spaceInPixels = getResources().getDimensionPixelSize(R.dimen.recycler_item_space);
         recyclerViewHistorialPedidos.addItemDecoration(new SpaceItemDecoration(spaceInPixels));
 
-        // Crear lista de pedidos (aquí puedes obtener los datos de una fuente real)
         listaPedidos = new ArrayList<>();
-        listaPedidos.add(new Pedido("Papa John's", "Entregado", "01/09", 1,R.drawable.lalucha_inicio));
-        listaPedidos.add(new Pedido("Fridays", "Entregado", "21/07", 2,R.drawable.lalucha_inicio));
-        listaPedidos.add(new Pedido("Fridays", "Entregado", "21/07", 3,R.drawable.lalucha_inicio));
-        listaPedidos.add(new Pedido("Fridays", "Entregado", "21/07", 4,R.drawable.lalucha_inicio));
-        listaPedidos.add(new Pedido("Fridays", "Entregado", "21/07", 5,R.drawable.lalucha_inicio));
-
-        // Configurar Adapter
         adapter = new HistorialPedidosAdapter(listaPedidos, this);
         recyclerViewHistorialPedidos.setAdapter(adapter);
 
+        // Obtener pedidos desde Firebase
+        fetchPedidosFromFirebase();
+
         // Configurar la flecha de retroceso
         ImageView backArrow = findViewById(R.id.back_arrow);
-        backArrow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Navegar a la vista de Carrito
-                Intent intent = new Intent(HistorialPedidosActivity.this, CarritoClienteActivity.class);
-                startActivity(intent);
-                finish(); // Finaliza la actividad actual para no volver a ella con el botón de retroceso
-            }
+        backArrow.setOnClickListener(v -> {
+            Intent intent = new Intent(HistorialPedidosActivity.this, CarritoClienteActivity.class);
+            startActivity(intent);
+            finish();
         });
+    }
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
-        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                int id = item.getItemId();
+    private void fetchPedidosFromFirebase() {
+        String clienteId = FirebaseAuth.getInstance().getCurrentUser().getUid(); // ID del cliente autenticado
+        System.out.println(clienteId);
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("pedidos")
+                .whereEqualTo("idCliente", clienteId) // Filtrar pedidos por idCliente
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        listaPedidos.clear();
+                        for (DocumentSnapshot document : task.getResult()) {
+                            // Obtener los datos del pedido desde Firestore
+                            String idPedido = document.getId();
+                            String nombreRestaurante = document.getString("nombreRestaurante");
+                            int estado = document.getLong("estado").intValue();
+                            System.out.println("PEDIDO " + estado);
+                            // Filtrar pedidos por estado (4, 5 o 6)
+                            if (estado == 4 || estado == 5 || estado == 6) {
+                                String fechaHora = document.getString("fechaHora");
+                                String direccion = document.getString("direccion");
+                                System.out.println("ENTRO" + fechaHora);
+                                double pagoTotal = document.getDouble("pagoTotal");
+                                String idRestaurante = document.getString("idRestaurante");
+                                ArrayList<HashMap<String, Object>> productosData = (ArrayList<HashMap<String, Object>>) document.get("productos");
 
-                if (id == R.id.nav_restaurantes) {
-                    startActivity(new Intent(HistorialPedidosActivity.this, InicioClienteActivity.class));
-                    return true;
-                } else if (id == R.id.nav_carrito) {
-                    startActivity(new Intent(HistorialPedidosActivity.this, CarritoClienteActivity.class));
-                    return true;
-                } else if (id == R.id.navigation_ordenes) {
-                    return true;
-                } else if (id == R.id.nav_perfil) {
-                    startActivity(new Intent(HistorialPedidosActivity.this, PerfilClienteActivity.class));
-                    return true;
-                }
+                                // Convertir productos
+                                List<Producto> productos = new ArrayList<>();
+                                if (productosData != null) {
+                                    for (HashMap<String, Object> productoMap : productosData) {
+                                        String id = (String) productoMap.get("id");
+                                        String nombre = (String) productoMap.get("nombre");
+                                        String descripcion = (String) productoMap.get("descripcion");
+                                        double precio = productoMap.containsKey("precio") ? ((Number) productoMap.get("precio")).doubleValue() : 0.0;
+                                        int cantidad = productoMap.containsKey("cantidad") ? ((Number) productoMap.get("cantidad")).intValue() : 0;
+                                        String imageUrl = (String) productoMap.get("imageUrl"); // Obtener la URL de la imagen
 
-                return false;
-            }
-        });
+                                        productos.add(new Producto(id, nombre, descripcion, precio, cantidad, imageUrl));
+                                    }
+                                }
+
+                                // Crear objeto Pedido y agregarlo a la lista
+                                Pedido pedido = new Pedido(idPedido, idRestaurante, nombreRestaurante, estado, fechaHora, direccion, pagoTotal, productos);
+                                listaPedidos.add(pedido);
+                            }
+                        }
+                        adapter.notifyDataSetChanged(); // Notificar al adaptador que los datos han cambiado
+                    } else {
+                        Log.e("Firebase", "Error al obtener pedidos: ", task.getException());
+                    }
+                });
     }
 }

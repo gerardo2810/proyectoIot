@@ -19,6 +19,8 @@ import com.bumptech.glide.Glide;
 import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.cliente.RecyclerView.Categoria;
 import com.example.proyecto_iot.cliente.RecyclerView.CategoriaAdapter;
+import com.example.proyecto_iot.cliente.RecyclerView.OrderAdapter;
+import com.example.proyecto_iot.cliente.RecyclerView.Pedido;
 import com.example.proyecto_iot.cliente.RecyclerView.Producto;
 import com.example.proyecto_iot.cliente.RecyclerView.ProductoAdapter;
 import com.example.proyecto_iot.cliente.RecyclerView.Restaurante;
@@ -31,8 +33,15 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 public class InicioClienteActivity extends AppCompatActivity {
     private RecyclerView recyclerBestOption;
@@ -50,6 +59,10 @@ public class InicioClienteActivity extends AppCompatActivity {
     private List<Restaurante> bestOptionList;
     private List<Restaurante> popularesList;
     private List<Restaurante> favoritosList;
+
+    private RecyclerView recyclerOrders;
+    private OrderAdapter orderAdapter;
+    private List<Pedido> ordersList;
 
     private EditText orderSearch; // El cuadro de búsqueda
 
@@ -76,6 +89,14 @@ public class InicioClienteActivity extends AppCompatActivity {
         categoryAdapter = new CategoriaAdapter(new ArrayList<>(), this);
         recyclerCategories.setAdapter(categoryAdapter);
         fetchCategoriesFromFirebase();
+
+        recyclerOrders = findViewById(R.id.recycler_orders);
+        recyclerOrders.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        ordersList = new ArrayList<>();
+        orderAdapter = new OrderAdapter(this, ordersList);
+        recyclerOrders.setAdapter(orderAdapter);
+
+        fetchOrdersForCurrentUser();
 
         // Inicializar RecyclerView de favoritos
         recyclerFavoritos = findViewById(R.id.recycler_favoritos);
@@ -266,47 +287,61 @@ public class InicioClienteActivity extends AppCompatActivity {
                     if (task.isSuccessful() && task.getResult() != null) {
                         DocumentSnapshot document = task.getResult();
 
-                        // Obtener lista de favoritos del cliente
+                        // Obtener lista de IDs de favoritos
                         List<String> favoritosIds = (List<String>) document.get("favoritos");
                         if (favoritosIds != null && !favoritosIds.isEmpty()) {
-                            favoritosList.clear(); // Limpiar la lista antes de cargar
+                            // Mostrar la sección de favoritos
+                            findViewById(R.id.favorite_title).setVisibility(View.VISIBLE);
+                            findViewById(R.id.recycler_favoritos).setVisibility(View.VISIBLE);
 
-                            // Obtener los datos de los restaurantes en paralelo
+                            favoritosList.clear(); // Limpiar lista
+                            int[] procesados = {0}; // Contador para procesar todos los IDs
+
                             for (String restauranteId : favoritosIds) {
+                                if (restauranteId == null || restauranteId.trim().isEmpty()) {
+                                    Log.e("Favoritos", "Se encontró un ID inválido.");
+                                    procesados[0]++;
+                                    continue; // Ignorar IDs nulos o vacíos
+                                }
+
+                                // Obtener datos del restaurante por ID
                                 db.collection("restaurantes").document(restauranteId).get()
                                         .addOnCompleteListener(restauranteTask -> {
+                                            procesados[0]++;
                                             if (restauranteTask.isSuccessful() && restauranteTask.getResult() != null) {
                                                 DocumentSnapshot restauranteDoc = restauranteTask.getResult();
 
-                                                String nombre = restauranteDoc.contains("nombre") ? restauranteDoc.getString("nombre") : "Nombre no disponible";
+                                                // Crear objeto Restaurante
+                                                String nombre = restauranteDoc.getString("nombre");
                                                 double precioDelivery = restauranteDoc.contains("precioDelivery") && restauranteDoc.getDouble("precioDelivery") != null
                                                         ? restauranteDoc.getDouble("precioDelivery")
                                                         : 0.0;
-                                                String tipoDeComida = restauranteDoc.contains("tipoDeComida") ? restauranteDoc.getString("tipoDeComida") : "Tipo no disponible";
-                                                String ubicacion = restauranteDoc.contains("ubicacion") ? restauranteDoc.getString("ubicacion") : "Ubicación no disponible";
-                                                String fotoPortada = restauranteDoc.contains("fotoPortada") ? restauranteDoc.getString("fotoPortada") : null;
-                                                String fotoLogo = restauranteDoc.contains("fotoLogo") ? restauranteDoc.getString("fotoLogo") : null;
-                                                Boolean open = restauranteDoc.contains("open") ? restauranteDoc.getBoolean("open") : false;
-                                                System.out.println("FAVORITOS");
-                                                System.out.println(nombre);
-                                                System.out.println(precioDelivery);
-                                                System.out.println(tipoDeComida);
-                                                System.out.println(fotoPortada);
-                                                System.out.println(fotoLogo);
-                                                System.out.println(open);
-                                                // Agregar restaurante a la lista
-                                                favoritosList.add(new Restaurante(nombre, precioDelivery, tipoDeComida, ubicacion, fotoPortada, fotoLogo, 0, open));
+                                                String tipoDeComida = restauranteDoc.getString("tipoDeComida");
+                                                String ubicacion = restauranteDoc.getString("ubicacion");
+                                                String fotoPortada = restauranteDoc.getString("fotoPortada");
+                                                String fotoLogo = restauranteDoc.getString("fotoLogo");
+                                                Boolean open = restauranteDoc.getBoolean("open");
+
+                                                // Agregar restaurante a la lista solo si tiene un ID válido
+                                                if (restauranteId != null && !restauranteId.isEmpty() && nombre != null) {
+                                                    favoritosList.add(new Restaurante(
+                                                            restauranteId, nombre, precioDelivery, tipoDeComida, ubicacion, fotoPortada, fotoLogo, 0, open
+                                                    ));
+                                                }
                                             } else {
-                                                Log.e("Firestore", "Error al obtener restaurante: " + restauranteId, restauranteTask.getException());
+                                                Log.e("Favoritos", "No se pudo obtener datos del restaurante con ID: " + restauranteId);
                                             }
 
-                                            // Notificar cambios al adaptador solo después de obtener todos los documentos
-                                            if (favoritosList.size() == favoritosIds.size()) {
+                                            // Actualizar adaptador una vez que se procesen todos los IDs
+                                            if (procesados[0] == favoritosIds.size()) {
                                                 favoritosAdapter.notifyDataSetChanged();
                                             }
                                         });
                             }
                         } else {
+                            // Ocultar sección si no hay favoritos
+                            findViewById(R.id.favorite_title).setVisibility(View.GONE);
+                            findViewById(R.id.recycler_favoritos).setVisibility(View.GONE);
                             Log.d("Favoritos", "El cliente no tiene restaurantes favoritos.");
                         }
                     } else {
@@ -324,6 +359,87 @@ public class InicioClienteActivity extends AppCompatActivity {
         } else {
             Log.e("Auth", "Cliente no logueado.");
         }
+    }
+
+    private void fetchOrdersForCurrentUser() {
+        String clienteId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        db.collection("pedidos")
+                .whereEqualTo("idCliente", clienteId)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        ordersList.clear(); // Limpiar la lista antes de llenarla
+                        long currentTime = System.currentTimeMillis(); // Tiempo actual en milisegundos
+
+                        for (DocumentSnapshot document : task.getResult()) {
+                            // Validar estado del pedido
+                            int estado = document.contains("estado") ? document.getLong("estado").intValue() : -1;
+                            String fechaHora = document.getString("fechaHora");
+
+                            // Validar y obtener otros campos
+                            String idPedido = document.getId(); // ID del pedido
+                            String idRestaurante = document.getString("idRestaurante");
+                            String nombreRestaurante = document.getString("nombreRestaurante");
+                            String direccion = document.getString("direccion");
+                            double pagoTotal = document.contains("pagoTotal") ? document.getDouble("pagoTotal") : 0.0;
+
+                            // Obtener productos de la lista
+                            List<HashMap<String, Object>> productosData = (List<HashMap<String, Object>>) document.get("productos");
+                            List<Producto> productos = new ArrayList<>();
+                            if (productosData != null) {
+                                for (HashMap<String, Object> productoData : productosData) {
+                                    String id = (String) productoData.get("id");
+                                    String descripcion = (String) productoData.get("descripcion");
+                                    int cantidad = ((Long) productoData.get("cantidad")).intValue();
+                                    productos.add(new Producto(id, descripcion, cantidad));
+                                }
+                            }
+
+                            // Manejar estados 2 y 3
+                            if (estado == 2 || estado == 3) {
+                                ordersList.add(new Pedido(idPedido, idRestaurante, nombreRestaurante, estado, fechaHora, direccion, pagoTotal, productos));
+                            }
+
+                            // Manejar estado 4 (entregado con un tiempo límite de 2 minutos)
+                            if (estado == 4 && fechaHora != null) {
+                                try {
+                                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault());
+                                    Date orderDate = sdf.parse(fechaHora);
+
+                                    if (orderDate != null) {
+                                        long orderTime = orderDate.getTime();
+                                        long timeDiff = currentTime - orderTime;
+
+                                        // Si han pasado menos de 2 minutos, agregar a la lista
+                                        if (timeDiff <= 2 * 60 * 1000) { // 2 minutos en milisegundos
+                                            ordersList.add(new Pedido(idPedido, idRestaurante, nombreRestaurante, estado, fechaHora, direccion, pagoTotal, productos));
+                                        } else {
+                                            // Si han pasado más de 2 minutos, eliminar de Firestore
+                                            db.collection("pedidos").document(document.getId()).delete()
+                                                    .addOnSuccessListener(aVoid -> Log.d("Pedidos", "Pedido eliminado con éxito"))
+                                                    .addOnFailureListener(e -> Log.e("Pedidos", "Error al eliminar pedido", e));
+                                        }
+                                    }
+                                } catch (ParseException e) {
+                                    Log.e("Fecha", "Error al parsear la fecha: " + fechaHora, e);
+                                }
+                            }
+                        }
+
+                        // Actualizar la interfaz
+                        if (!ordersList.isEmpty()) {
+                            findViewById(R.id.orders_title).setVisibility(View.VISIBLE);
+                            recyclerOrders.setVisibility(View.VISIBLE);
+                            orderAdapter.notifyDataSetChanged();
+                        } else {
+                            findViewById(R.id.orders_title).setVisibility(View.GONE);
+                            recyclerOrders.setVisibility(View.GONE);
+                        }
+                    } else {
+                        Log.e("Firestore", "Error al obtener pedidos: ", task.getException());
+                    }
+                });
     }
 
 

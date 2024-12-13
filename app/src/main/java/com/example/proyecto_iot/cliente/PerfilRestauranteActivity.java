@@ -85,11 +85,16 @@ public class PerfilRestauranteActivity extends AppCompatActivity {
                     .load(fotoPortada)
                     .into(coverImageView);  // Cargar la imagen de perfil
         }
+        String restauranteId = intent.getStringExtra("restauranteId");
+        if (restauranteId == null || restauranteId.isEmpty()) {
+            Toast.makeText(this, "Error: Restaurante no válido.", Toast.LENGTH_SHORT).show();
+            finish(); // Cierra la actividad si el ID es inválido
+            return;
+        }
 
         // Obtener la referencia al icono de favorito
         ImageView favoriteIcon = findViewById(R.id.favorite_icon);
 
-        String restauranteId = intent.getStringExtra("restauranteId");
         String restauranteName = intent.getStringExtra("restauranteName"); // Para mostrar nombre si es necesario
 
 // Crear un listener para el clic en el icono de favorito
@@ -248,6 +253,7 @@ public class PerfilRestauranteActivity extends AppCompatActivity {
         fetchProductosFromFirebase();
 
     }
+
 
     private void fetchProductosFromFirebase() {
         // Obtener el ID del restaurante del Intent

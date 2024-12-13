@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Build;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -95,7 +96,6 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
 
         // Obtener los datos enviados desde la actividad anterior
         Intent intent1 = getIntent();
-        // Extraer los valores enviados en el Intent
         pedidoId = intent1.getStringExtra("pedidoId");
         String direccion = intent1.getStringExtra("direccion");
         String fechaHora = intent1.getStringExtra("fechaHora");
@@ -104,6 +104,21 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
         String nombreRestaurante = intent1.getStringExtra("nombreRestaurante");
         idRestaurante = intent1.getStringExtra("idRestaurante");
         ArrayList<Producto> productos = (ArrayList<Producto>) intent1.getSerializableExtra("productos");
+
+        // Logs para verificar los datos
+        Log.d("SeguimientoPedido", "pedidoId: " + pedidoId);
+        Log.d("SeguimientoPedido", "direccion: " + direccion);
+        Log.d("SeguimientoPedido", "fechaHora: " + fechaHora);
+        Log.d("SeguimientoPedido", "precioTotal: " + precioTotal);
+        Log.d("SeguimientoPedido", "precioDelivery: " + precioDelivery);
+        Log.d("SeguimientoPedido", "nombreRestaurante: " + nombreRestaurante);
+        Log.d("SeguimientoPedido", "idRestaurante: " + idRestaurante);
+        Log.d("SeguimientoPedido", "productos: " + productos);
+
+        // Verifica si los datos son nulos
+        if (pedidoId == null || idRestaurante == null || productos == null) {
+            Log.e("SeguimientoPedido", "Datos recibidos son nulos. Verifica el intent.");
+        }
         qrButton = findViewById(R.id.payment_section);
         qrButton.setVisibility(View.GONE);
         // Configurar el botón QR para que sea visible solo cuando el estado sea 3

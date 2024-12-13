@@ -22,7 +22,13 @@ public class ProductoDetallesAdapter extends RecyclerView.Adapter<ProductoDetall
 
     public ProductoDetallesAdapter(Context context, List<Producto> productos) {
         this.context = context;
-        this.productos = productos;
+
+        // Limitar la lista de productos a los primeros 4 si tiene más de 4
+        if (productos.size() > 4) {
+            this.productos = productos.subList(0, 4); // Mostrar solo los primeros 4
+        } else {
+            this.productos = productos; // Mostrar todos los productos
+        }
     }
 
     @NonNull
@@ -37,12 +43,12 @@ public class ProductoDetallesAdapter extends RecyclerView.Adapter<ProductoDetall
         Producto producto = productos.get(position);
         holder.productName.setText(producto.getNombre());
         holder.productDescription.setText(producto.getDescripcion());
-        holder.productPriceUnit.setText("S/. " + producto.getPrecio());
-        holder.productPriceTotal.setText("S/. " + producto.getTotal());
+        holder.productPriceUnit.setText(String.format("S/. %.2f", producto.getPrecio()));
+        holder.productPriceTotal.setText(String.format("S/. %.2f", producto.getTotal()));
 
         // Usar Glide para cargar la imagen desde una URL
         Glide.with(context)
-                .load(producto.getImageUrl()) // Cambiado para usar URLs en lugar de recursos locales
+                .load(producto.getImageUrl()) // Cargar la imagen desde la URL
                 .placeholder(R.drawable.placeholder) // Placeholder mientras se carga la imagen
                 .error(R.drawable.placeholder) // Imagen de error si no se puede cargar
                 .into(holder.productImage);

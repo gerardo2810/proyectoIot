@@ -22,6 +22,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class DetallesPedidoActivity extends AppCompatActivity {
@@ -38,20 +39,73 @@ public class DetallesPedidoActivity extends AppCompatActivity {
 
         // Inicializar FirebaseFirestore
         db = FirebaseFirestore.getInstance();
-
         // Inicializar RecyclerView
         recyclerView = findViewById(R.id.recycler_productos);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        // Inicializar la lista de productos
         productoList = new ArrayList<>();
-
-        // Configurar el adaptador
         adapter = new ProductoDetallesAdapter(this,productoList);
         recyclerView.setAdapter(adapter);
 
         // Cargar productos desde Firebase
-        fetchProductosFromFirebase();
+
+        // Referencias a los TextViews
+        TextView orderTitleTextView = findViewById(R.id.order_title);
+        TextView estadoTextView = findViewById(R.id.estado);
+        TextView fechaTextView = findViewById(R.id.fecha);
+        TextView productsTitleTextView = findViewById(R.id.products_title);
+
+        // Obtener datos del Intent
+        Intent intent = getIntent();
+        String nombreRestaurante = intent.getStringExtra("nombreRestaurante");
+        String direccion = intent.getStringExtra("direccion");
+        int estado = intent.getIntExtra("estado", -1);
+        String fechaHora = intent.getStringExtra("fechaHora");
+
+        ArrayList<HashMap<String, Object>> productosData = (ArrayList<HashMap<String, Object>>) intent.getSerializableExtra("productos");
+
+// Lista de productos finales que se pasará al adaptador
+        List<Producto> productos = new ArrayList<>();
+
+        if (productosData != null) {
+            for (HashMap<String, Object> productoMap : productosData) {
+                String id = (String) productoMap.get("id");
+                String nombre = (String) productoMap.get("nombre");
+                String descripcion = (String) productoMap.get("descripcion");
+                double precio = productoMap.containsKey("precio") ? ((Number) productoMap.get("precio")).doubleValue() : 0.0;
+                int cantidad = productoMap.containsKey("cantidad") ? ((Number) productoMap.get("cantidad")).intValue() : 0;
+                String imageUrl = (String) productoMap.get("imageUrl");
+
+                // Crear objeto Producto y agregarlo a la lista
+                productos.add(new Producto(id, nombre, descripcion, precio, cantidad, imageUrl));
+            }
+        }
+
+// Pasar la lista convertida al adaptador
+        adapter = new ProductoDetallesAdapter(this, productos);
+        recyclerView.setAdapter(adapter);
+
+        // Combinar nombre del restaurante y dirección
+        if (nombreRestaurante != null && direccion != null) {
+            orderTitleTextView.setText(String.format("%s - %s", nombreRestaurante, direccion));
+        }
+
+        // Asignar estado
+        estadoTextView.setText(obtenerEstadoPedido(estado)); // Llama a un método helper para traducir el estado numérico a texto
+
+        // Asignar fecha
+        if (fechaHora != null) {
+            // Extraer solo la fecha si fechaHora está en formato "dd/MM/yyyy HH:mm:ss"
+            String[] fechaPartes = fechaHora.split(",");
+            if (fechaPartes.length > 0) {
+                fechaTextView.setText(" • " + fechaPartes[0].trim());
+            }
+        }
+
+        // Asignar cantidad de productos
+        if (productos != null) {
+            int totalProductos = productos.size();
+            productsTitleTextView.setText(String.format("Productos - %d", totalProductos));
+        }
 
         // Configurar la flecha de retroceso
         ImageView backArrow = findViewById(R.id.back_arrow);
@@ -75,6 +129,62 @@ public class DetallesPedidoActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        // Referencias a los TextViews
+        TextView direccionTextView = findViewById(R.id.direccion);
+        TextView repartidorTextView = findViewById(R.id.repartidor);
+        TextView costoProductosTextView = findViewById(R.id.costoProductos);
+        TextView precioDeliveryTextView = findViewById(R.id.precioDelivery);
+        TextView pagoTotalTextView = findViewById(R.id.pagoTotal);
+        // Obtener datos del Intent
+        String pedidoId = intent.getStringExtra("pedidoId");
+
+        if (pedidoId != null) {
+            // Consultar Firestore para obtener los datos de la orden
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            db.collection("pedidos").document(pedidoId)
+                    .get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        if (documentSnapshot.exists()) {
+                            // Obtener los datos del pedido
+                            String idRepartidor = documentSnapshot.getString("idRepartidor");
+
+                            double costoProductos = documentSnapshot.contains("pagoTotal")
+                                    ? documentSnapshot.getDouble("pagoTotal") - documentSnapshot.getDouble("precioDelivery")
+                                    : 0.0;
+                            double precioDelivery = documentSnapshot.contains("precioDelivery")
+                                    ? documentSnapshot.getDouble("precioDelivery")
+                                    : 0.0;
+                            double pagoTotal = costoProductos + precioDelivery;
+
+                            // Actualizar dirección del cliente
+                            direccionTextView.setText(direccion != null ? direccion : "Sin dirección");
+
+                            // Obtener el nombre del repartidor desde la colección "repartidores"
+                            if (idRepartidor != null && !idRepartidor.isEmpty()) {
+                                db.collection("repartidores").document(idRepartidor)
+                                        .get()
+                                        .addOnSuccessListener(repartidorSnapshot -> {
+                                            if (repartidorSnapshot.exists()) {
+                                                String nombreRepartidor = repartidorSnapshot.getString("nombre");
+                                                repartidorTextView.setText(nombreRepartidor != null ? nombreRepartidor : "Sin repartidor asignado");
+                                            } else {
+                                                repartidorTextView.setText("Sin repartidor asignado");
+                                            }
+                                        })
+                                        .addOnFailureListener(e -> Log.e("Firestore", "Error al obtener repartidor", e));
+                            } else {
+                                repartidorTextView.setText("Sin repartidor asignado");
+                            }
+
+                            // Actualizar los costos
+                            costoProductosTextView.setText(String.format("S/. %.2f", costoProductos));
+                            precioDeliveryTextView.setText(String.format("S/. %.2f", precioDelivery));
+                            pagoTotalTextView.setText(String.format("S/. %.2f", pagoTotal));
+                        }
+                    })
+                    .addOnFailureListener(e -> Log.e("Firestore", "Error al obtener pedido", e));
+        }
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
@@ -101,37 +211,18 @@ public class DetallesPedidoActivity extends AppCompatActivity {
         });
     }
 
-    private void fetchProductosFromFirebase() {
-        db.collection("platos").get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && task.getResult() != null) {
-                        productoList.clear(); // Limpiar la lista antes de agregar nuevos elementos
-                        for (DocumentSnapshot document : task.getResult()) {
-                            try {
-                                // Obtener los valores desde Firestore
-                                String id =document.getId();
 
-                                String nombre = document.getString("Nombre");
-                                String descripcion = document.getString("Descripcion");
-                                String imageUrl = document.getString("Imagen");
-
-                                // Obtener `Precio` como Double directamente
-                                double precio = document.contains("Precio") ? document.getDouble("Precio") : 0.0;
-
-                                // Obtener `cantidadDeVentas` como Long y convertirlo a int
-                                int cantidad = document.contains("cantidadDeVentas") ?
-                                        document.getLong("cantidadDeVentas").intValue() : 0;
-
-                                // Agregar el producto a la lista
-                                productoList.add(new Producto(id,nombre, descripcion, precio, cantidad, imageUrl));
-                            } catch (Exception e) {
-                                Log.e("Firestore", "Error al procesar producto", e);
-                            }
-                        }
-                        adapter.notifyDataSetChanged(); // Notificar al adaptador que los datos han cambiado
-                    } else {
-                        Log.e("Firestore", "Error al obtener productos", task.getException());
-                    }
-                });
+    private String obtenerEstadoPedido(int estado) {
+        switch (estado) {
+            case 4:
+                return "Orden entregada";
+            case 5:
+                return "Orden rechazada";
+            case 6:
+                return "Orden cancelada";
+            default:
+                return "Estado desconocido";
+        }
     }
+
 }

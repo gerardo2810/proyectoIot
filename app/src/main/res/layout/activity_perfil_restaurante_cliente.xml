@@ -7,8 +7,16 @@
     android:layout_height="match_parent"
     android:background="#FFFFFF"
     tools:context=".cliente.PerfilRestauranteActivity">
+    <!-- FrameLayout para los corazones flotantes -->
+    <FrameLayout
+        android:id="@+id/floating_hearts_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:layout_alignParentTop="true">
+        <!-- Corazones flotantes se agregarán dinámicamente en este contenedor -->
+    </FrameLayout>
 
-    <!-- Mantener el diseño anterior intacto -->
     <!-- Imagen de portada con flecha para retroceder -->
     <ImageView
         android:id="@+id/cover_image"
@@ -61,6 +69,8 @@
 
         <!-- Nombre del restaurante y icono de corazón -->
         <LinearLayout
+            android:id="@+id/root_layout"
+
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="horizontal"

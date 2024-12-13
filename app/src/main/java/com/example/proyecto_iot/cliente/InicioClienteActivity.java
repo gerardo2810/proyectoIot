@@ -8,12 +8,14 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.cliente.RecyclerView.Categoria;
 import com.example.proyecto_iot.cliente.RecyclerView.CategoriaAdapter;
@@ -24,6 +26,8 @@ import com.example.proyecto_iot.cliente.RecyclerView.RestauranteAdapter;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -81,6 +85,40 @@ public class InicioClienteActivity extends AppCompatActivity {
         favoritosAdapter = new RestauranteAdapter(this, favoritosList);
         recyclerFavoritos.setAdapter(favoritosAdapter);
         fetchFavoritosParaClienteLogueado();
+
+        // Suponiendo que ya tienes el usuario logueado con Firebase Authentication
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            String userId = user.getUid(); // Obtener el ID del usuario logueado
+            // Obtener referencia a la colección de clientes
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            DocumentReference docRef = db.collection("clientes").document(userId);
+
+            // Obtener los datos del cliente desde Firestore
+            docRef.get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        // Obtener los datos del cliente
+                        String direccion = document.getString("Direccion");
+                        String fotoUrl = document.getString("FotoURL");
+
+                        // Actualizar el TextView con la dirección
+                        TextView direccionTextView = findViewById(R.id.direccion);
+                        direccionTextView.setText(direccion);
+
+                        // Actualizar el ImageView con la foto de perfil
+                        ImageView iconoPerfilImageView = findViewById(R.id.icono_perfil);
+                        Glide.with(this)
+                                .load(fotoUrl)
+                                .into(iconoPerfilImageView);  // Usando Glide para cargar la imagen
+                    }
+                } else {
+                    Log.d("Firestore", "Error getting documents: ", task.getException());
+                }
+            });
+        }
+
 
 
         // Inicializar RecyclerView de populares

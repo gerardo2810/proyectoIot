@@ -95,10 +95,10 @@ public class RecojoCurso1Activity extends AppCompatActivity implements OnMapRead
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
                         String idRestaurante = documentSnapshot.getString("idRestaurante");
-                        String estadoPedido = documentSnapshot.getString("estado");
+                        String estadoPedidotexto = "Listo para recoger";
 
                         TextView tvEstadoPedido = findViewById(R.id.textView5);
-                        String texto5 = "Estado: "+ estadoPedido;
+                        String texto5 = "Estado: "+ estadoPedidotexto;
                         tvEstadoPedido.setText(texto5);
 
                         // Ahora consulta los datos del restaurante

@@ -20,6 +20,9 @@
         android:theme="@style/Theme.Proyecto_Iot"
         tools:targetApi="31">
         <activity
+            android:name=".cliente.ConfirmarPagoActivity"
+            android:exported="false" />
+        <activity
             android:name=".cliente.PedidoAceptadoCliente"
             android:exported="false" />
         <activity
@@ -94,8 +97,7 @@
             android:exported="true" />
         <activity
             android:name=".superadmin.registro_admin_superadmin"
-            android:exported="true">
-        </activity>
+            android:exported="true"></activity>
         <activity
             android:name=".superadmin.registro_restaurante_superadmin"
             android:exported="true" />
@@ -110,9 +112,7 @@
             android:exported="true" />
         <activity
             android:name=".MainActivity"
-            android:exported="true">
-
-        </activity>
+            android:exported="true"></activity>
         <activity
             android:name=".admin_restaurante.AbrirRestauranteActivity"
             android:exported="true" />
@@ -184,7 +184,7 @@
             android:exported="true" />
         <activity
             android:name=".LoginActivity"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -15,8 +15,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 public class RegisterRepartidorActivity extends AppCompatActivity {
     private EditText etNombre;
@@ -128,17 +132,24 @@ public class RegisterRepartidorActivity extends AppCompatActivity {
 
                         String defaultPhotoUrl = "https://cdn-icons-png.flaticon.com/256/3849/3849119.png";
 
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", new Locale("es", "PE"));
+                        dateFormat.setTimeZone(TimeZone.getTimeZone("America/Lima"));
+                        String fechaHora = dateFormat.format(new Date());
+
                         // Estructura del documento
                         Map<String, Object> repartidor = new HashMap<>();
-                        repartidor.put("Nombre", nombre);
-                        repartidor.put("Apellido", apellido);
-                        repartidor.put("DNO", dni);
-                        repartidor.put("Nacimiento", nacimiento);
-                        repartidor.put("Direccion", direccion);
-                        repartidor.put("Telefono", telefono);
-                        repartidor.put("Email", email);
-                        repartidor.put("Contraseña", password);
-                        repartidor.put("FotoURL", defaultPhotoUrl);
+                        repartidor.put("nombre", nombre);
+                        repartidor.put("apellido", apellido);
+                        repartidor.put("dni", dni);
+                        repartidor.put("nacimiento", nacimiento);
+                        repartidor.put("direccion", direccion);
+                        repartidor.put("telefono", telefono);
+                        repartidor.put("email", email);
+                        repartidor.put("contraseña", password);
+                        repartidor.put("foto", defaultPhotoUrl);
+                        repartidor.put("habilitado",false);
+                        repartidor.put("aceptado",false);
+                        repartidor.put("fecha",fechaHora);
 
                         // Guardar en Firestore
                         documentReference.set(repartidor).addOnSuccessListener(aVoid -> {

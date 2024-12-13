@@ -11,8 +11,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.content.pm.PackageManager;
+import android.widget.Toast;
+
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
@@ -23,9 +26,12 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.bumptech.glide.Glide;
 import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.cliente.RecyclerView.Producto;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import java.util.ArrayList;
 
@@ -36,8 +42,11 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
     private TextView cancelOrder, payHere, scanQr, tvDetalleOrden, tvVerificacionEnvio;
     private LinearLayout qrButton, verificationButton, backArrow;
     private CardView orderDetailsCard, qrCard; // Agregar CardView para los detalles y el QR
-
-    // Variables para el seguimiento de estados
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private String idRestaurante;
+    private String pedidoId;
+    private double precioTotal;
+    private String qrRestaurante; // QR del restaurante
     private LinearLayout layoutEstados;
 
     private final String CHANNEL_ID = "order_tracking_channel";
@@ -87,35 +96,67 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
         // Obtener los datos enviados desde la actividad anterior
         Intent intent1 = getIntent();
         // Extraer los valores enviados en el Intent
-        String pedidoId = intent1.getStringExtra("pedidoId");
+        pedidoId = intent1.getStringExtra("pedidoId");
         String direccion = intent1.getStringExtra("direccion");
         String fechaHora = intent1.getStringExtra("fechaHora");
-        double precioTotal = intent1.getDoubleExtra("precioTotal", 0.0);
+        precioTotal = intent1.getDoubleExtra("precioTotal", 0.0);
         double precioDelivery = intent1.getDoubleExtra("precioDelivery", 0.0);
         String nombreRestaurante = intent1.getStringExtra("nombreRestaurante");
-        String idRestaurante = intent1.getStringExtra("idRestaurante");
+        idRestaurante = intent1.getStringExtra("idRestaurante");
         ArrayList<Producto> productos = (ArrayList<Producto>) intent1.getSerializableExtra("productos");
+        qrButton = findViewById(R.id.payment_section);
+        qrButton.setVisibility(View.GONE);
+        // Configurar el botón QR para que sea visible solo cuando el estado sea 3
+        if (pedidoId != null) {
+            db.collection("pedidos").document(pedidoId)
+                    .addSnapshotListener((documentSnapshot, error) -> {
+                        if (error != null) {
+                            System.err.println("Error al escuchar cambios en el documento: " + error.getMessage());
+                            return;
+                        }
 
-        // Imprimir los valores recibidos para verificar
-        System.out.println("----- Datos recibidos en RealizarPedidoActivity -----");
-        System.out.println("Pedido ID: " + pedidoId);
-        System.out.println("Dirección: " + direccion);
-        System.out.println("Fecha y Hora: " + fechaHora);
-        System.out.println("Precio Total: " + precioTotal);
-        System.out.println("Precio Delivery: " + precioDelivery);
-        System.out.println("Nombre Restaurante: " + nombreRestaurante);
-        System.out.println("ID Restaurante: " + idRestaurante);
-        System.out.println("Productos: ");
-        if (productos != null) {
-            for (Producto producto : productos) {
-                System.out.println(" - Producto ID: " + producto.getId());
-                System.out.println(" - Nombre Producto: " + producto.getNombre());
-                System.out.println(" - Cantidad: " + producto.getCantidad());
-                System.out.println(" - Precio Unitario: " + producto.getPrecio());
-            }
-        } else {
-            System.out.println("No se recibieron productos.");
+                        if (documentSnapshot != null && documentSnapshot.exists()) {
+                            int estado = documentSnapshot.getLong("estado").intValue();
+
+                            if (estado == 3) { // Estado "En camino"
+                                qrButton.setVisibility(View.VISIBLE);
+
+                                // Configurar el listener para abrir la cámara de QR
+                                qrButton.setOnClickListener(v -> iniciarEscaneoQR());
+                            } else {
+                                qrButton.setVisibility(View.GONE);
+                            }
+                        }
+                    });
         }
+        // Configurar listener para payButton
+        qrButton.setOnClickListener(v -> {
+            if (pedidoId != null) {
+                db.collection("pedidos").document(pedidoId)
+                        .addSnapshotListener((documentSnapshot, error) -> {
+                            if (error != null) {
+                                Toast.makeText(this, "Error al recuperar pedido.", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+
+                            // Procesar datos del documento Firestore si se encuentran correctamente
+                            if (documentSnapshot != null && documentSnapshot.exists()) {
+                                int estado = documentSnapshot.getLong("estado").intValue();
+
+                                if (estado == 3) {
+                                    iniciarEscaneoQR(); // Llama a tu método para abrir el escáner de QR
+                                } else {
+                                    Toast.makeText(this, "El pedido aún no está en el estado válido para pago.", Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                Toast.makeText(this, "El pedido no existe.", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+            } else {
+                Toast.makeText(this, "Pedido no válido.", Toast.LENGTH_SHORT).show();
+            }
+        });
+
 
 
         // Enlazar las vistas de los textos "Detalle de Orden" y "Verificación de Envío"
@@ -125,7 +166,6 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
         TextView ordenTrackTextView = findViewById(R.id.ordenTrack);
 
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         // Escuchar cambios en el pedido en tiempo real
         if (pedidoId != null) {
@@ -154,11 +194,10 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
 
 
 
-        FirebaseFirestore db2 = FirebaseFirestore.getInstance();
         // Verificar que el idRestaurante no sea nulo ni vacío
         if (idRestaurante != null && !idRestaurante.isEmpty()) {
             // Consultar Firestore para obtener los datos del restaurante
-            db2.collection("restaurantes").document(idRestaurante)
+            db.collection("restaurantes").document(idRestaurante)
                     .get()
                     .addOnSuccessListener(documentSnapshot -> {
                         if (documentSnapshot.exists()) {
@@ -189,23 +228,26 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
         TextView costoProductosTextView = findViewById(R.id.costoProductos);
         TextView deliveryTextView = findViewById(R.id.delivery);
         TextView pagoTotalTextView = findViewById(R.id.pagoTotal);
+        ImageView qrPaga  = findViewById(R.id.qr_image);
 
         // Obtener el ID del pedido desde el Intent
-
         if (pedidoId != null) {
-            FirebaseFirestore db1 = FirebaseFirestore.getInstance();
+            // Configurar un listener para escuchar cambios en el documento en tiempo real
+            db.collection("pedidos").document(pedidoId)
+                    .addSnapshotListener((documentSnapshot, error) -> {
+                        if (error != null) {
+                            System.err.println("Error al escuchar cambios en el documento: " + error.getMessage());
+                            return;
+                        }
 
-            // Obtener el documento del pedido desde Firestore
-            db1.collection("pedidos").document(pedidoId)
-                    .get()
-                    .addOnSuccessListener(documentSnapshot -> {
-                        if (documentSnapshot.exists()) {
-                            // Obtener los datos del pedido
-
+                        if (documentSnapshot != null && documentSnapshot.exists()) {
+                            // Obtener los datos iniciales del pedido
                             int estado = documentSnapshot.getLong("estado").intValue();
                             String direccionCliente = documentSnapshot.getString("direccion");
                             String idRepartidor = documentSnapshot.getString("idRepartidor");
                             String nombreRestaurante1 = documentSnapshot.getString("nombreRestaurante");
+                            String qrUrl = documentSnapshot.getString("qrUrl"); // Obtener la URL del QR
+
 
                             // Calcular el costo de los productos
                             double costoProductos = precioTotal - precioDelivery;
@@ -236,10 +278,19 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
                                             });
                                 }
                             }
+
+                            // Asignar la URL del QR al ImageView usando Glide
+                            if (qrUrl != null && !qrUrl.isEmpty()) {
+                                Glide.with(SeguimientoPedidoActivity.this)
+                                        .load(qrUrl)
+                                        .placeholder(R.drawable.placeholder) // Imagen por defecto mientras se carga
+                                        .error(R.drawable.placeholder) // Imagen en caso de error
+                                        .into(qrPaga);
+                                System.out.println("QR cargado correctamente: " + qrUrl);
+                            } else {
+                                System.err.println("El campo qrUrl está vacío o es nulo. Esperando actualización...");
+                            }
                         }
-                    })
-                    .addOnFailureListener(e -> {
-                        System.err.println("Error al obtener el pedido: " + e.getMessage());
                     });
         }
 
@@ -247,7 +298,6 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
         // Enlazar las CardViews para los detalles de la orden y el QR
         orderDetailsCard = findViewById(R.id.order_details_card);
         qrCard = findViewById(R.id.qr_card);
-
         // Mostrar "Detalle de orden" al inicio y ocultar "Verificación de envío"
         orderDetailsCard.setVisibility(View.VISIBLE);
         qrCard.setVisibility(View.GONE);
@@ -260,11 +310,6 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
 
 
 
-        // Listener para el botón de QR - Dirige a "SeguimientoPedidoActivity"
-        qrButton.setOnClickListener(view -> {
-            Intent intent = new Intent(SeguimientoPedidoActivity.this, SeguimientoPedidoActivity.class);
-            startActivity(intent);
-        });
 
         // Listener para "Detalle de Orden"
         tvDetalleOrden.setOnClickListener(v -> {
@@ -376,4 +421,58 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
                 return "Desconocido";
         }
     }
+    // Método para iniciar el escaneo de QR
+    private void iniciarEscaneoQR() {
+        IntentIntegrator integrator = new IntentIntegrator(this);
+        integrator.setPrompt("Escanea el código QR del restaurante");
+        integrator.setOrientationLocked(false);
+        integrator.setBeepEnabled(true);
+        integrator.initiateScan();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+
+        if (result != null) {
+            if (result.getContents() != null) {
+                String qrEscaneado = result.getContents();
+
+                // Validar el QR escaneado
+                db.collection("restaurantes").document(idRestaurante)
+                        .get()
+                        .addOnSuccessListener(documentSnapshot -> {
+                            if (documentSnapshot.exists()) {
+                                String qrRestaurante = documentSnapshot.getString("qr");
+
+                                if (qrEscaneado.equals(qrRestaurante)) {
+                                    // QR correcto, abrir la vista de confirmación de pago
+                                    abrirVistaDePago();
+                                } else {
+                                    // QR incorrecto
+                                    Toast.makeText(this, "QR incorrecto. Inténtalo nuevamente.", Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                Toast.makeText(this, "No se encontró el restaurante.", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .addOnFailureListener(e -> {
+                            Toast.makeText(this, "Error al validar QR: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        });
+            } else {
+                Toast.makeText(this, "No se escaneó ningún QR.", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    // Método para abrir la vista de confirmación de pago
+    private void abrirVistaDePago() {
+        Intent intent = new Intent(this, ConfirmarPagoActivity.class);
+        intent.putExtra("pedidoId", pedidoId);
+        intent.putExtra("precioTotal", precioTotal);
+        intent.putExtra("nombreRestaurante", idRestaurante);
+        startActivity(intent);
+    }
+
 }

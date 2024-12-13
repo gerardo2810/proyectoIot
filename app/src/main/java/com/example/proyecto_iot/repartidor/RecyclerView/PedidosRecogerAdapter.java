@@ -50,9 +50,6 @@ public class PedidosRecogerAdapter extends RecyclerView.Adapter<PedidosRecogerAd
 
         TextView textViewRestaurante = holder.itemView.findViewById(R.id.nombre_restaurante);
         textViewRestaurante.setText(pedidoRecoger.getIdRestaurante());
-        TextView textViewCantidad = holder.itemView.findViewById(R.id.cantidad_pedido);
-        String texto1= pedidoRecoger.getCantidad() + "pedido a";
-        textViewCantidad.setText(texto1);
         TextView textViewDireccion = holder.itemView.findViewById(R.id.direccion_pedido);
         textViewDireccion.setText(pedidoRecoger.getDireccion());
 

@@ -171,7 +171,12 @@ public class LoginActivity extends AppCompatActivity {
 
         db.collection("clientes").document(uid).get().addOnSuccessListener(documentSnapshot -> {
             if (documentSnapshot.exists()) {
-                navigateToActivity(InicioClienteActivity.class);
+                Boolean habilitado = documentSnapshot.getBoolean("habilitado");
+                if(habilitado){
+                    navigateToActivity(InicioClienteActivity.class);
+                } else {
+                    Toast.makeText(LoginActivity.this, "Su cuenta está inhabilitada. Contactese con soporte", Toast.LENGTH_LONG).show();
+                }
             } else {
                 checkOtherCollections(uid, email, isGoogleSignIn);
             }
@@ -181,7 +186,20 @@ public class LoginActivity extends AppCompatActivity {
     private void checkOtherCollections(String uid, String email, boolean isGoogleSignIn) {
         db.collection("repartidores").document(uid).get().addOnSuccessListener(documentSnapshot -> {
             if (documentSnapshot.exists()) {
-                navigateToActivity(InicioRepartidorActivity.class);
+                Boolean habilitado = documentSnapshot.getBoolean("habilitado");
+                Boolean aceptado = documentSnapshot.getBoolean("aceptado");
+                if(habilitado && aceptado){
+                    navigateToActivity(InicioRepartidorActivity.class);
+                }
+                if(!habilitado && aceptado){
+                    Toast.makeText(LoginActivity.this, "Su cuenta está inhabilitada. Contactese con soporte", Toast.LENGTH_LONG).show();
+                }
+                if(habilitado && !aceptado){
+                    Toast.makeText(LoginActivity.this, "Su solicitud aun se encuentra en revisión.", Toast.LENGTH_LONG).show();
+                }
+                if(!habilitado && !aceptado){
+                    Toast.makeText(LoginActivity.this, "Su solicitud ha sido rechazada.", Toast.LENGTH_LONG).show();
+                }
             } else {
                 db.collection("administradores").document(uid).get().addOnSuccessListener(adminSnapshot -> {
                     if (adminSnapshot.exists()) {
@@ -190,13 +208,18 @@ public class LoginActivity extends AppCompatActivity {
                                 .get()
                                 .addOnSuccessListener(querySnapshot -> {
                                     if (!querySnapshot.isEmpty()) {
-                                        DocumentSnapshot restaurantDoc = querySnapshot.getDocuments().get(0);
-                                        String idRestaurante = restaurantDoc.getId();
+                                        Boolean habilitado = adminSnapshot.getBoolean("habilitado");
+                                        if(habilitado){
+                                            DocumentSnapshot restaurantDoc = querySnapshot.getDocuments().get(0);
+                                            String idRestaurante = restaurantDoc.getId();
 
-                                        Intent intent = new Intent(LoginActivity.this, InicioRestauranteActivity.class);
-                                        intent.putExtra("idRestaurante", idRestaurante);
-                                        startActivity(intent);
-                                        finish();
+                                            Intent intent = new Intent(LoginActivity.this, InicioRestauranteActivity.class);
+                                            intent.putExtra("idRestaurante", idRestaurante);
+                                            startActivity(intent);
+                                            finish();
+                                        } else {
+                                            Toast.makeText(LoginActivity.this, "Su cuenta está inhabilitada. Contactese con soporte", Toast.LENGTH_LONG).show();
+                                        }
                                     } else {
                                         Toast.makeText(LoginActivity.this, "No se encontró restaurante para este administrador", Toast.LENGTH_SHORT).show();
                                     }

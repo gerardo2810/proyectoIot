@@ -319,7 +319,7 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
 
         // Listener para la flecha de retroceso - Dirige a "RealizarPedidoActivity"
         backArrow.setOnClickListener(view -> {
-            Intent intent = new Intent(SeguimientoPedidoActivity.this, RealizarPedidoActivity.class);
+            Intent intent = new Intent(SeguimientoPedidoActivity.this, InicioClienteActivity.class);
             startActivity(intent);
         });
 

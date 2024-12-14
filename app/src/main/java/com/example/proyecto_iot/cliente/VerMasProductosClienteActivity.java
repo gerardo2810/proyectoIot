@@ -12,11 +12,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.cliente.RecyclerView.Producto;
 import com.example.proyecto_iot.cliente.RecyclerView.ProductoCarritoAdapter;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +33,58 @@ public class VerMasProductosClienteActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ver_mas_productos_cliente);
+
+        // Recuperar los valores del Intent
+        String nombreRestaurante = getIntent().getStringExtra("nombreRestaurante");
+        String restauranteId = getIntent().getStringExtra("restauranteId");
+        // Referencia al ImageView
+        ImageView profileImage = findViewById(R.id.profile_image);
+
+        // Buscar en Firestore usando el restauranteId
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("restaurantes").document(restauranteId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        // Obtener el campo fotoLogo
+                        String fotoLogoUrl = documentSnapshot.getString("fotoLogo");
+
+                        if (fotoLogoUrl != null && !fotoLogoUrl.isEmpty()) {
+                            // Usar Glide para cargar la imagen
+                            Glide.with(this)
+                                    .load(fotoLogoUrl)
+                                    .placeholder(R.drawable.placeholder) // Imagen mientras se carga
+                                    .error(R.drawable.placeholder) // Imagen en caso de error
+                                    .into(profileImage);
+                        } else {
+                            // En caso de que no haya URL, usar una imagen predeterminada
+                            profileImage.setImageResource(R.drawable.placeholder);
+                        }
+                    } else {
+                        // Documento no encontrado, usar imagen predeterminada
+                        profileImage.setImageResource(R.drawable.placeholder);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    // Manejar errores en la consulta
+                    e.printStackTrace();
+                    // Usar una imagen predeterminada en caso de error
+                    profileImage.setImageResource(R.drawable.placeholder);
+                });
+
+        // Recuperar la lista de productos
+        ArrayList<Producto> carrito = (ArrayList<Producto>) getIntent().getSerializableExtra("carrito");
+
+        // Recuperar el tamaño de la lista
+        int carritoSize = getIntent().getIntExtra("carritoSize", 0);
+
+        // Ahora puedes usar estos valores en tu actividad
+        // Por ejemplo, mostrar el nombre del restaurante y el tamaño de la lista en un TextView
+        TextView nombreRestauranteTextView = findViewById(R.id.restaurant_name1);
+        TextView carritoSizeTextView = findViewById(R.id.products_count);
+
+        nombreRestauranteTextView.setText(nombreRestaurante);
+        carritoSizeTextView.setText("Productos - " + carritoSize);
 
         // Inicializar el RecyclerView
         recyclerView = findViewById(R.id.recycler_carrito);
@@ -60,7 +114,6 @@ public class VerMasProductosClienteActivity extends AppCompatActivity implements
             public void onClick(View v) {
                 // Navegar a la vista de Realizar Pedido
                 Intent intent = new Intent(VerMasProductosClienteActivity.this, RealizarPedidoActivity.class);
-                startActivity(intent);
                 finish(); // Finaliza la actividad actual para no volver a ella con el botón de retroceso
             }
         });

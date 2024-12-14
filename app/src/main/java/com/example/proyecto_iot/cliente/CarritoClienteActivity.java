@@ -83,12 +83,10 @@ public class CarritoClienteActivity extends AppCompatActivity implements Product
         backArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Navegar a la vista de PerfilRestauranteActivity
-                Intent intent = new Intent(CarritoClienteActivity.this, PerfilRestauranteActivity.class);
-                startActivity(intent);
-                finish(); // Finaliza la actividad actual
+                finish(); // Regresa automáticamente a PerfilRestauranteActivity
             }
         });
+
 
         // Configurar el botón "Ir a pagar"
         payButton.setOnClickListener(new View.OnClickListener() {
@@ -128,28 +126,7 @@ public class CarritoClienteActivity extends AppCompatActivity implements Product
 
 
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
-        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                int id = item.getItemId();
 
-                if (id == R.id.nav_restaurantes) {
-                    startActivity(new Intent(CarritoClienteActivity.this, InicioClienteActivity.class));
-                    return true;
-                } else if (id == R.id.nav_carrito) {
-                    return true;
-                } else if (id == R.id.navigation_ordenes) {
-                    startActivity(new Intent(CarritoClienteActivity.this, HistorialPedidosActivity.class));
-                    return true;
-                } else if (id == R.id.nav_perfil) {
-                    startActivity(new Intent(CarritoClienteActivity.this, PerfilClienteActivity.class));
-                    return true;
-                }
-
-                return false;
-            }
-        });
     }
 
     // Actualiza el subtotal

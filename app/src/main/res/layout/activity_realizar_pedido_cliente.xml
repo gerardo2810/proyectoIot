@@ -288,6 +288,7 @@
     </androidx.cardview.widget.CardView>
 
     <!-- Subtotal and Pay button section -->
+    <!-- Subtotal and Pay button section -->
     <LinearLayout
         android:id="@+id/total_section"
         android:layout_width="match_parent"
@@ -296,9 +297,10 @@
         android:background="#E0E0E0"
         android:padding="16dp"
         android:gravity="center_vertical"
-        app:layout_constraintBottom_toTopOf="@id/bottom_navigation">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Subtotal and value in a vertical LinearLayout -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -317,12 +319,12 @@
                 android:id="@+id/subtotal_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="S/1620.00"
+                android:text="S/0.00"
                 android:textSize="16sp"
                 android:textColor="#000000" />
         </LinearLayout>
 
-        <!-- Pay button -->
+        <!-- Botón de Pagar -->
         <Button
             android:id="@+id/pay_button"
             android:layout_width="wrap_content"
@@ -336,17 +338,5 @@
     </LinearLayout>
 
 
-    <!-- Bottom Navigation -->
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_navigation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/green_light_2"
-        app:itemBackground="@drawable/superadmin_nav_ripple"
-        app:labelVisibilityMode="labeled"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/cliente_navigation_bar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

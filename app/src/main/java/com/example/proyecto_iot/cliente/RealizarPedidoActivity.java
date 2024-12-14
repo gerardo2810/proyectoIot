@@ -101,15 +101,33 @@ public class RealizarPedidoActivity extends AppCompatActivity {
         seeMore = findViewById(R.id.see_more);
 
         backArrow.setOnClickListener(view -> {
-            Intent intent1 = new Intent(RealizarPedidoActivity.this, CarritoClienteActivity.class);
-            startActivity(intent1);
-            finish();
+            finish(); // Regresa automáticamente a CarritoClienteActivity sin crear una nueva instancia
         });
 
+
         seeMore.setOnClickListener(v -> {
+            // Crear el Intent para navegar a VerMasProductosClienteActivity
             Intent intent1 = new Intent(RealizarPedidoActivity.this, VerMasProductosClienteActivity.class);
+
+            // Pasar el nombre del restaurante
+            intent1.putExtra("nombreRestaurante", nombreRestaurante);
+
+            // Pasar el restauranteId
+            intent1.putExtra("restauranteId", restauranteId);
+
+            // Convertir la lista de productos en un ArrayList
+            ArrayList<Producto> carrito = new ArrayList<>(productos);
+
+            // Pasar la lista de productos
+            intent1.putExtra("carrito", carrito);
+
+            // Pasar el tamaño de la lista
+            intent1.putExtra("carritoSize", carrito.size());
+
+            // Iniciar la nueva actividad
             startActivity(intent1);
         });
+
 
         payButton.setOnClickListener(v -> {
             FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -170,24 +188,7 @@ public class RealizarPedidoActivity extends AppCompatActivity {
                     });
         });
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
-        bottomNavigationView.setOnItemSelectedListener(item -> {
-            int id = item.getItemId();
-            if (id == R.id.nav_restaurantes) {
-                startActivity(new Intent(RealizarPedidoActivity.this, InicioClienteActivity.class));
-                return true;
-            } else if (id == R.id.nav_carrito) {
-                startActivity(new Intent(RealizarPedidoActivity.this, CarritoClienteActivity.class));
-                return true;
-            } else if (id == R.id.navigation_ordenes) {
-                startActivity(new Intent(RealizarPedidoActivity.this, HistorialPedidosActivity.class));
-                return true;
-            } else if (id == R.id.nav_perfil) {
-                startActivity(new Intent(RealizarPedidoActivity.this, PerfilClienteActivity.class));
-                return true;
-            }
-            return false;
-        });
+
     }
 
     private void guardarQRCodeEnStorage(String pedidoId, Bitmap qrBitmap) {

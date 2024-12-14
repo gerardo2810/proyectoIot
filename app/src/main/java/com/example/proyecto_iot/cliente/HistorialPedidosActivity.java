@@ -61,7 +61,7 @@ public class HistorialPedidosActivity extends AppCompatActivity {
         // Configurar la flecha de retroceso
         ImageView backArrow = findViewById(R.id.back_arrow);
         backArrow.setOnClickListener(v -> {
-            Intent intent = new Intent(HistorialPedidosActivity.this, CarritoClienteActivity.class);
+            Intent intent = new Intent(HistorialPedidosActivity.this, InicioClienteActivity.class);
             startActivity(intent);
             finish();
         });

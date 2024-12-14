@@ -1,15 +1,19 @@
 package com.example.proyecto_iot.repartidor;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
@@ -23,14 +27,20 @@ import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.StorageReference;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class EditarPerfilRepartidorActivity extends AppCompatActivity {
 
-    private BottomNavigationView bottomNavigationView;
+    BottomNavigationView bottomNavigationView;
     EditText etNombre, etApellido, etFecha, etDireccion, etCorreo, etTelefono, etDni;
+    Button btnUploadImage, btnGuardarDatos;
     ImageView ivFoto;
     FirebaseFirestore db;
     FirebaseAuth auth;
+    private static final int PICK_IMAGE_REQUEST = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,11 +56,16 @@ public class EditarPerfilRepartidorActivity extends AppCompatActivity {
         etTelefono = findViewById(R.id.et_telefono);
         etDireccion = findViewById(R.id.et_domicilio);
         ivFoto = findViewById(R.id.imageViewSelected);
+        btnUploadImage = findViewById(R.id.buttonUploadImage);
+        btnGuardarDatos = findViewById(R.id.btn_save_personal_info);
 
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
 
         cargarDatosUsuario();
+
+        // Guardar datos editados
+        btnGuardarDatos.setOnClickListener(v -> guardarDatosRepartidor());
 
         //Volver una pantalla atras
         LinearLayout regresar = findViewById(R.id.header_layout);
@@ -90,6 +105,8 @@ public class EditarPerfilRepartidorActivity extends AppCompatActivity {
         //----------------------------------------------------------------------------
 
 
+
+
     }
 
     public void cargarDatosUsuario() {
@@ -121,4 +138,28 @@ public class EditarPerfilRepartidorActivity extends AppCompatActivity {
             Toast.makeText(this, "Error al cargar los datos: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         });
     }
+
+    private void guardarDatosRepartidor() {
+        String userId = auth.getCurrentUser().getUid();
+
+        Map<String, Object> userData = new HashMap<>();
+        userData.put("nombre", etNombre.getText().toString());
+        userData.put("apellido", etApellido.getText().toString());
+        userData.put("dni", etDni.getText().toString());
+        userData.put("nacimiento", etFecha.getText().toString());
+        userData.put("correo", etCorreo.getText().toString());
+        userData.put("telefono", etTelefono.getText().toString());
+        userData.put("direccion", etDireccion.getText().toString());
+
+        // Guardar los datos en Firestore
+        db.collection("repartidores").document(userId)
+                .update(userData)
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(this, "Datos guardados correctamente.", Toast.LENGTH_SHORT).show();
+                    finish();
+                }).addOnFailureListener(e -> {
+                    Toast.makeText(this, "Error al guardar los datos: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        });
+    }
+
 }

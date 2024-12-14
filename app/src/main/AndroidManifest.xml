@@ -109,9 +109,6 @@
             android:name=".superadmin.info_usuario_superadmin"
             android:exported="true" />
         <activity
-            android:name=".superadmin.reporte_restaurante"
-            android:exported="true" />
-        <activity
             android:name=".MainActivity"
             android:exported="true" />
         <activity

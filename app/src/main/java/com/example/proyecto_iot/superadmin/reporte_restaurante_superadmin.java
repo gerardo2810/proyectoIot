@@ -3,6 +3,7 @@ package com.example.proyecto_iot.superadmin;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.widget.AdapterView;
@@ -30,6 +31,8 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -51,6 +54,7 @@ public class reporte_restaurante_superadmin extends AppCompatActivity {
     private String restauranteUID;
     private ArrayList<PedidoSA> pedidosFiltrados = new ArrayList<>();
     private Map<String, ProductoResumen> resumenProductos = new HashMap<>();
+    private TextView textView4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +72,26 @@ public class reporte_restaurante_superadmin extends AppCompatActivity {
         linearLayoutContainer = findViewById(R.id.linearLayoutContainer);
 
         restauranteUID = getIntent().getStringExtra("restauranteUID");
+
+        // Referencia al documento en la colección "restaurantes"
+        DocumentReference docRef = db.collection("restaurantes").document(restauranteUID);
+
+        // Inicializar el TextView
+        textView4 = findViewById(R.id.textView4);
+
+        // Obtener el nombre del restaurante
+        docRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (document.exists()) {
+                    // Obtener el campo 'nombre' del documento
+                    String nombreRestaurante = document.getString("nombre");
+
+                    textView4.setText("Reporte de Ventas de " + nombreRestaurante);
+
+                }
+            }
+        });
 
         configurarSpinnerMes();
 
@@ -127,12 +151,15 @@ public class reporte_restaurante_superadmin extends AppCompatActivity {
         });
     }
 
+    private ArrayList<PedidoSA> pedidosOriginales = new ArrayList<>(); // Mantén la lista original
+
     private void obtenerPedidos() {
         CollectionReference pedidosRef = db.collection("pedidos");
 
         pedidosRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 pedidosFiltrados.clear();
+                pedidosOriginales.clear(); // Asegúrate de limpiar la lista original
 
                 for (QueryDocumentSnapshot document : task.getResult()) {
                     PedidoSA pedido = document.toObject(PedidoSA.class);
@@ -140,10 +167,10 @@ public class reporte_restaurante_superadmin extends AppCompatActivity {
                     // Filtrar por restaurante y estado
                     if (pedido.getIdRestaurante().equals(restauranteUID) && pedido.getEstado() == 4) {
                         pedidosFiltrados.add(pedido);
+                        pedidosOriginales.add(pedido); // Agrega a la lista original
                     }
                 }
 
-                // Mostrar pedidos sin filtro de mes
                 mostrarPedidosFiltrados();
             } else {
                 Toast.makeText(this, "Error al obtener pedidos", Toast.LENGTH_SHORT).show();
@@ -152,32 +179,67 @@ public class reporte_restaurante_superadmin extends AppCompatActivity {
     }
 
     private void filtrarPedidosPorMes(int mesSeleccionado) {
-        if (mesSeleccionado == 0) {
-            // Mostrar todos los pedidos (sin filtrar por mes)
+        Log.d("FiltrarPedidos", "Mes seleccionado: " + mesSeleccionado);
+        Log.d("FiltrarPedidos", "Pedidos originales: " + pedidosOriginales.size());
+        Log.d("FiltrarPedidos", "Pedidos filtrados antes de procesar: " + pedidosFiltrados.size());
+
+        TextView tvReporteMes = findViewById(R.id.textViewMes);
+
+        // Verifica si pedidosOriginales está vacío o nulo
+        if (pedidosOriginales == null || pedidosOriginales.isEmpty()) {
+            tvReporteMes.setText("Reporte de Ventas: General");
+            pedidosFiltrados = new ArrayList<>(); // Lista vacía.
             mostrarPedidosFiltrados();
             return;
         }
 
-        ArrayList<PedidoSA> pedidosMes = new ArrayList<>();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM", new Locale("es", "ES"));
+        // Para opción "-Seleccionar-"
+        if (mesSeleccionado == 0) {
+            pedidosFiltrados = new ArrayList<>(pedidosOriginales);
+            if (pedidosFiltrados.isEmpty()) {
+                tvReporteMes.setText("Reporte de Ventas: General");
+            } else {
+                tvReporteMes.setText("Reporte de Ventas: General");
+            }
+            mostrarPedidosFiltrados();
+            return;
+        }
 
-        for (PedidoSA pedido : pedidosFiltrados) {
-            String mesPedido = dateFormat.format(pedido.getFechaHora());
-            if (mesPedido.equalsIgnoreCase(getResources().getStringArray(R.array.meses_array)[mesSeleccionado])) {
+        // Para un mes específico
+        String mesSeleccionadoTexto = getResources().getStringArray(R.array.meses_array)[mesSeleccionado];
+        ArrayList<PedidoSA> pedidosMes = new ArrayList<>();
+        for (PedidoSA pedido : pedidosOriginales) {
+            // Filtra pedidos por fecha usando la cadena del mes seleccionado
+            if (pedido.getFechaHora().toLowerCase().contains(mesSeleccionadoTexto.toLowerCase())) {
                 pedidosMes.add(pedido);
             }
         }
 
         pedidosFiltrados = pedidosMes;
+
+        tvReporteMes.setText("Reporte de Ventas: " + mesSeleccionadoTexto);
+
         mostrarPedidosFiltrados();
     }
 
     private void mostrarPedidosFiltrados() {
+        // Limpia el contenedor principal y otros elementos si no hay datos.
+        if (pedidosFiltrados == null || pedidosFiltrados.isEmpty()) {
+            resumenProductos.clear();
+            linearLayoutContainer.removeAllViews(); // Limpia cualquier vista previa.
+            tvVentasTotales.setText("S/ 0.00"); // Resetea el texto de ventas totales.
+            tvTotalPedidos.setText("0"); // Resetea el texto de total de pedidos.
+            graficarProductos(); // Llama al método de graficar para que limpie el gráfico.
+
+            return; // No procesa nada más si no hay datos.
+        }
+
+        // Inicializa las variables de resumen.
         resumenProductos.clear();
         int totalPedidos = 0;
         double ventasTotales = 0.0;
 
-        // Limpiar el contenedor principal
+        // Limpia el contenedor principal
         linearLayoutContainer.removeAllViews();
 
         // Crear el encabezado de la tabla
@@ -239,7 +301,7 @@ public class reporte_restaurante_superadmin extends AppCompatActivity {
             TextView tvNombre = crearTextoCelda(resumen.getNombre());
             row.addView(tvNombre);
 
-            TextView tvCantidad = crearTextoCelda("S/ " +  String.valueOf(resumen.getCantidad())); // Cantidad
+            TextView tvCantidad = crearTextoCelda("S/ " + String.valueOf(resumen.getCantidad())); // Cantidad
             row.addView(tvCantidad);
 
             TextView tvPrecio = crearTextoCelda(String.format("%.0f", resumen.getPrecio())); // Precio Unitario
@@ -296,7 +358,6 @@ public class reporte_restaurante_superadmin extends AppCompatActivity {
 
     private void graficarProductos() {
         if (resumenProductos.isEmpty()) {
-            Toast.makeText(this, "No hay datos para graficar", Toast.LENGTH_SHORT).show();
             barChart.clear();
             barChart.invalidate();
             return;
@@ -309,7 +370,6 @@ public class reporte_restaurante_superadmin extends AppCompatActivity {
         for (ProductoResumen resumen : resumenProductos.values()) {
             entries.add(new BarEntry(index++, (int) resumen.getTotal()));
             labels.add(resumen.getNombre());
-            String total = Double.toString(resumen.getTotal());
         }
 
         BarDataSet dataSet = new BarDataSet(entries, "Ventas");
@@ -330,7 +390,7 @@ public class reporte_restaurante_superadmin extends AppCompatActivity {
                 if ((int) value < labels.size()) {
                     return labels.get((int) value);
                 } else {
-                    return ""; // Evita IndexOutOfBoundsException
+                    return "";
                 }
             }
         });

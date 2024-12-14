@@ -8,10 +8,12 @@ import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.proyecto_iot.LoginActivity;
 import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.admin_restaurante.EditPersonalInfoActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class PerfilRepartidorActivity extends AppCompatActivity {
 
@@ -29,6 +31,17 @@ public class PerfilRepartidorActivity extends AppCompatActivity {
             Intent intent = new Intent(this, EditarPerfilRepartidorActivity.class);
             startActivity(intent);
         });
+
+        // Listener para cerrar sesión
+        LinearLayout logoutLayout = findViewById(R.id.logout_layout);
+        logoutLayout.setOnClickListener(v -> {
+            FirebaseAuth.getInstance().signOut(); // Cierra la sesión
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            this.finish(); // Finaliza la actividad actual
+        });
+
 
         //Gestion de la bottom navigation bar
         bottomNavigationView = findViewById(R.id.bottom_navigation);

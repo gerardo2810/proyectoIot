@@ -45,6 +45,7 @@ public class InicioRepartidorActivity extends AppCompatActivity {
     private List<PedidoRecoger> listaPedidos;
     private PedidosRecogerAdapter adapter;
     TextView textViewUbicacion;
+    double estadoPedido;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,7 +131,7 @@ public class InicioRepartidorActivity extends AppCompatActivity {
                     for (QueryDocumentSnapshot document : querySnapshot) {
                         String idRestaurante = document.getString("idRestaurante");
                         String direccion = document.getString("direccion");
-                        double estadoPedido = document.getDouble("estado");
+                        estadoPedido = document.getDouble("estado");
 
                         if (estadoPedido == 2) {
 

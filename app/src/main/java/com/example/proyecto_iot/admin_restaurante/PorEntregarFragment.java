@@ -24,6 +24,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class PorEntregarFragment extends Fragment {
@@ -95,7 +96,7 @@ public class PorEntregarFragment extends Fragment {
 
         db.collection("pedidos")
                 .whereEqualTo("idRestaurante", idRestaurante)
-                .whereEqualTo("estado", 2)
+                .whereIn("estado", Arrays.asList(2, 3)) // Filtrar estado 2 o 3
                 .addSnapshotListener((querySnapshot, e) -> {
                     if (e != null) {
                         Toast.makeText(getContext(), "Error fetching orders: " + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -106,14 +107,45 @@ public class PorEntregarFragment extends Fragment {
                         pedidoList.clear();
                         for (QueryDocumentSnapshot doc : querySnapshot) {
                             Pedido pedido = doc.toObject(Pedido.class);
-                            pedidoList.add(pedido);
+                            pedido.setId(doc.getId()); // Asigna el ID del documento
+                            fetchRepartidor(pedido); // Obtiene el nombre del repartidor si aplica
                         }
-
-                        filteredList.clear();
-                        filteredList.addAll(pedidoList);
-                        pedidoEntregadoAdapter.notifyDataSetChanged();
                     }
                 });
+    }
+
+    private void fetchRepartidor(Pedido pedido) {
+        if (pedido.getIdRepartidor() == null || pedido.getIdRepartidor().isEmpty()) {
+            pedido.setNombreRepartidor("Sin repartidor asignado");
+            pedido.setRepartidorAsignado(false);
+            pedidoList.add(pedido);
+            updateFilteredList();
+        } else {
+            db.collection("repartidores").document(pedido.getIdRepartidor())
+                    .get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        if (documentSnapshot.exists()) {
+                            String nombreRepartidor = documentSnapshot.getString("nombre");
+                            pedido.setNombreRepartidor(nombreRepartidor);
+                        } else {
+                            pedido.setNombreRepartidor("Repartidor desconocido");
+                        }
+                        pedido.setRepartidorAsignado(true);
+                        pedidoList.add(pedido);
+                        updateFilteredList();
+                    })
+                    .addOnFailureListener(e -> {
+                        pedido.setNombreRepartidor("Error al cargar repartidor");
+                        pedidoList.add(pedido);
+                        updateFilteredList();
+                    });
+        }
+    }
+
+    private void updateFilteredList() {
+        filteredList.clear();
+        filteredList.addAll(pedidoList);
+        pedidoEntregadoAdapter.notifyDataSetChanged();
     }
 
     private void filterOrders(String query) {
@@ -122,8 +154,8 @@ public class PorEntregarFragment extends Fragment {
             filteredList.addAll(pedidoList);
         } else {
             for (Pedido pedido : pedidoList) {
-                if (pedido.getIdCliente().toLowerCase().contains(query.toLowerCase()) ||
-                        pedido.getNombreRestaurante().toLowerCase().contains(query.toLowerCase())) {
+                if (pedido.getNombreCliente().toLowerCase().contains(query.toLowerCase()) ||
+                        pedido.getNombreRepartidor().toLowerCase().contains(query.toLowerCase())) {
                     filteredList.add(pedido);
                 }
             }
@@ -136,4 +168,3 @@ public class PorEntregarFragment extends Fragment {
         pedidoEntregadoAdapter.notifyDataSetChanged();
     }
 }
-

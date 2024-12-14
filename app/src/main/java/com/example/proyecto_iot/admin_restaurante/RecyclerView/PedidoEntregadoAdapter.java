@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.admin_restaurante.MasDetallesPedidoActivity;
 import com.example.proyecto_iot.admin_restaurante.PedidoDetallesActivity;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
 
@@ -25,10 +26,12 @@ public class PedidoEntregadoAdapter extends RecyclerView.Adapter<PedidoEntregado
 
     private List<Pedido> pedidoList;
     private Context context;
+    private FirebaseFirestore db;
 
     public PedidoEntregadoAdapter(List<Pedido> pedidoList, Context context) {
         this.pedidoList = pedidoList;
         this.context = context;
+        this.db = FirebaseFirestore.getInstance(); // Inicializar Firestore
     }
 
     @NonNull
@@ -42,38 +45,43 @@ public class PedidoEntregadoAdapter extends RecyclerView.Adapter<PedidoEntregado
     public void onBindViewHolder(@NonNull PedidoEntregadoViewHolder holder, int position) {
         Pedido pedido = pedidoList.get(position);
 
-        // Bind data to views
-        holder.tvPedidoName.setText("#" + pedido.getIdCliente());
-        holder.tvPedidoCantidad.setText(pedido.getProductos().size() + " productos");
-        holder.tvRepartidor.setText(pedido.getIdRepartidor().isEmpty() ? "Sin Repartidor" : "Repartidor Asignado");
-        holder.tvPedidoCliente.setText(pedido.getIdCliente());
+        // Asignar datos iniciales al ViewHolder
+        holder.tvFechaHora.setText(pedido.getFechaHora());
+        holder.tvCantidadProductos.setText(pedido.getProductos().size() + " productos");
+        holder.tvTotal.setText("S/. " + pedido.getPagoTotal());
 
-        // Enable or disable the "Delivered" button based on repartidor status
-        if (pedido.getIdRepartidor().isEmpty()) {
-            holder.btnReadyToDeliver.setEnabled(false);
-            holder.btnReadyToDeliver.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.colorInhabilitado)));
+        // Repartidor
+        holder.tvRepartidor.setText(pedido.getNombreRepartidor());
+        if (!pedido.isRepartidorAsignado()) {
+            holder.tvRepartidor.setTextColor(ContextCompat.getColor(context, android.R.color.holo_red_dark));
         } else {
-            holder.btnReadyToDeliver.setEnabled(true);
-            holder.btnReadyToDeliver.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.colorHabilitado)));
+            holder.tvRepartidor.setTextColor(ContextCompat.getColor(context, android.R.color.holo_green_dark));
         }
 
-        // Handle button click for marking order as delivered
-        holder.btnReadyToDeliver.setOnClickListener(v -> {
-            // Remove order from list and notify adapter
-            pedidoList.remove(position);
-            notifyItemRemoved(position);
-            notifyItemRangeChanged(position, pedidoList.size());
-
-            // Show confirmation message
-            Toast.makeText(context, "Pedido entregado", Toast.LENGTH_SHORT).show();
-        });
-
-        // Open order details when clicked
-        holder.linearLayout.setOnClickListener(v -> {
-            Intent intent = new Intent(context, MasDetallesPedidoActivity.class);
-            intent.putExtra("pedidoId", pedido.getIdCliente());
-            context.startActivity(intent);
-        });
+        // Obtener el nombre del cliente desde Firestore si no está disponible
+        if (pedido.getNombreCliente() == null || pedido.getNombreCliente().isEmpty()) {
+            db.collection("clientes").document(pedido.getIdCliente())
+                    .get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        if (documentSnapshot.exists()) {
+                            String nombreCliente = documentSnapshot.getString("Nombre");
+                            if (nombreCliente != null) {
+                                holder.tvCliente.setText(nombreCliente);
+                                pedido.setNombreCliente(nombreCliente); // Actualizar el pedido para evitar futuras consultas
+                            } else {
+                                holder.tvCliente.setText("Cliente desconocido");
+                            }
+                        } else {
+                            holder.tvCliente.setText("Cliente no encontrado");
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        holder.tvCliente.setText("Error al obtener cliente");
+                    });
+        } else {
+            // Si el nombre del cliente ya está disponible, simplemente lo mostramos
+            holder.tvCliente.setText(pedido.getNombreCliente());
+        }
     }
 
     @Override
@@ -82,18 +90,15 @@ public class PedidoEntregadoAdapter extends RecyclerView.Adapter<PedidoEntregado
     }
 
     public static class PedidoEntregadoViewHolder extends RecyclerView.ViewHolder {
-        TextView tvPedidoName, tvPedidoCantidad, tvRepartidor, tvPedidoCliente;
-        LinearLayout linearLayout;
-        Button btnReadyToDeliver;
+        TextView tvFechaHora, tvCliente, tvCantidadProductos, tvTotal, tvRepartidor;
 
         public PedidoEntregadoViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvPedidoCantidad = itemView.findViewById(R.id.cant_productos);
+            tvFechaHora = itemView.findViewById(R.id.fecha_hora);
+            tvCliente = itemView.findViewById(R.id.cliente);
+            tvCantidadProductos = itemView.findViewById(R.id.cant_productos);
+            tvTotal = itemView.findViewById(R.id.total);
             tvRepartidor = itemView.findViewById(R.id.repartidor);
-            tvPedidoCliente = itemView.findViewById(R.id.cliente);
-            linearLayout = itemView.findViewById(R.id.newpedido2);
-            btnReadyToDeliver = itemView.findViewById(R.id.btn_ready_to_deliver);
         }
     }
 }
-

@@ -15,65 +15,99 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.admin_restaurante.DetalleOrdenActivity;
+import com.example.proyecto_iot.admin_restaurante.InfoPedidoHistorialActivity;
+import com.example.proyecto_iot.admin_restaurante.PedidoDetallesActivity;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
 
 public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHolder> {
 
-    private List<Order> orderList;
+    private List<Pedido> orderList;
     private Context context;
+    private FirebaseFirestore db; // Firestore para consultas
 
-
-    public OrderAdapter(List<Order> orderList, Context context) {
+    public OrderAdapter(List<Pedido> orderList, Context context) {
         this.orderList = orderList;
         this.context = context;
+        this.db = FirebaseFirestore.getInstance(); // Inicializar Firestore
     }
 
     @NonNull
     @Override
     public OrderViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.restaurante_activity_item_order, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.restaurante_activity_item_order, parent, false);
         return new OrderViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull OrderViewHolder holder, int position) {
-        Order order = orderList.get(position);
+        Pedido pedido = orderList.get(position);
 
-        holder.tvOrderId.setText(order.getOrderId());
-        holder.tvOrderAddress.setText(order.getDireccion());
-        holder.tvOrderPrice.setText(order.getPrecio());
-        holder.tvOrderStatus.setText(order.getEstado());
-        holder.tvOrderCliente.setText(order.getCliente());
+        // Asignar datos al ViewHolder
+        holder.tvOrderAddress.setText(pedido.getDireccion());
+        holder.tvOrderPrice.setText("S/. " + pedido.getPagoTotal());
 
-        switch (order.getEstado()) {
-            case "ENTREGADO":
-                holder.tvOrderStatus.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.order_delivered)));
-                break;
-            case "EN PREPARACIÓN":
-                holder.tvOrderStatus.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.order_in_preparation)));
-                break;
-            case "EN CAMINO":
-                holder.tvOrderStatus.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.order_on_the_way)));
-                break;
-            case "EN TIENDA":
-                holder.tvOrderStatus.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.order_in_store)));
-                break;
-            default:
-                holder.tvOrderStatus.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.default_order_background)));
-                break;
+        // Obtener el nombre del cliente desde Firestore si no está disponible
+        if (pedido.getNombreCliente() == null || pedido.getNombreCliente().isEmpty()) {
+            db.collection("clientes").document(pedido.getIdCliente())
+                    .get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        if (documentSnapshot.exists()) {
+                            String nombreCliente = documentSnapshot.getString("Nombre");
+                            if (nombreCliente != null) {
+                                holder.tvOrderCliente.setText(nombreCliente);
+                                pedido.setNombreCliente(nombreCliente); // Actualizar el pedido para evitar futuras consultas
+                            } else {
+                                holder.tvOrderCliente.setText("Cliente desconocido");
+                            }
+                        } else {
+                            holder.tvOrderCliente.setText("Cliente no encontrado");
+                        }
+                    })
+                    .addOnFailureListener(e -> holder.tvOrderCliente.setText("Error al obtener cliente"));
+        } else {
+            // Si el nombre del cliente ya está disponible, simplemente lo mostramos
+            holder.tvOrderCliente.setText(pedido.getNombreCliente());
         }
 
-        // Evento de clic para abrir los detalles del plato
+        // Estado del pedido
+        String estadoText = "";
+        int estadoColor = R.color.default_order_background;
+
+        switch (pedido.getEstado()) {
+            case 0:
+                estadoText = "POR ACEPTAR";
+                estadoColor = R.color.blue_light;
+                break;
+            case 1:
+                estadoText = "EN PREPARACIÓN";
+                estadoColor = R.color.order_in_preparation;
+                break;
+            case 2:
+                estadoText = "EN TIENDA";
+                estadoColor = R.color.order_in_store;
+                break;
+            case 7:
+                estadoText = "EN CAMINO";
+                estadoColor = R.color.order_on_the_way;
+                break;
+            case 4:
+                estadoText = "ENTREGADO";
+                estadoColor = R.color.order_delivered;
+                break;
+            case 5:
+                estadoText = "RECHAZADO";
+                estadoColor = R.color.order_rejected;
+                break;
+        }
+        holder.tvOrderStatus.setText(estadoText);
+        holder.tvOrderStatus.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(context, estadoColor)));
+
+        // Evento clic para abrir los detalles del pedido
         holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(context, DetalleOrdenActivity.class);
-            intent.putExtra("estado", order.getEstado());
-            intent.putExtra("orderId", order.getOrderId());
-            intent.putExtra("date", order.getDate());
-            intent.putExtra("cliente", order.getCliente());
-            intent.putExtra("direccion", order.getDireccion());
-            intent.putExtra("precio", order.getPrecio());
-            intent.putExtra("repartidor", order.getRepartidor());
+            Intent intent = new Intent(context, InfoPedidoHistorialActivity.class);
+            intent.putExtra("pedidoId", pedido.getId());
             context.startActivity(intent);
         });
     }
@@ -84,18 +118,14 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
     }
 
     public static class OrderViewHolder extends RecyclerView.ViewHolder {
-        TextView tvOrderId, tvOrderAddress, tvOrderPrice, tvOrderStatus, tvOrderCliente;
-        ImageView ivOrderDetails;
+        TextView tvOrderCliente, tvOrderAddress, tvOrderPrice, tvOrderStatus;
 
         public OrderViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvOrderId = itemView.findViewById(R.id.tv_order_id);
+            tvOrderCliente = itemView.findViewById(R.id.tv_order_cliente);
             tvOrderAddress = itemView.findViewById(R.id.tv_order_address);
             tvOrderPrice = itemView.findViewById(R.id.tv_order_price);
             tvOrderStatus = itemView.findViewById(R.id.tv_order_status);
-            ivOrderDetails = itemView.findViewById(R.id.iv_order_details);
-            tvOrderCliente = itemView.findViewById(R.id.tv_order_cliente);
         }
-
     }
 }

@@ -1,5 +1,6 @@
 package com.example.proyecto_iot.admin_restaurante;
 
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -21,145 +22,151 @@ import android.widget.Toast;
 import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.admin_restaurante.RecyclerView.Order;
 import com.example.proyecto_iot.admin_restaurante.RecyclerView.OrderAdapter;
+import com.example.proyecto_iot.admin_restaurante.RecyclerView.Pedido;
 import com.example.proyecto_iot.admin_restaurante.RecyclerView.RestauranteViewModel;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link OrdenesRestauranteFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import android.util.Log;
+
+
 public class OrdenesRestauranteFragment extends Fragment {
 
+    private static final String TAG = "OrdenesRestaurante"; // Tag para logs
     private RestauranteViewModel restauranteViewModel;
     private FirebaseFirestore db;
-
     private RecyclerView rvOrdersList;
     private OrderAdapter orderAdapter;
-    private List<Order> orderList;
-    private List<Order> filteredList; // Lista filtrada
-    private EditText orderSearch; // Campo de búsqueda
+    private List<Pedido> orderList;
+    private List<Pedido> filteredList;
+    private TextView tvFecha;
+    private Calendar selectedDate; // Fecha seleccionada
+    private SimpleDateFormat dateFormat;
+    private String idRestaurante; // ID del restaurante
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // Inflar el layout para este fragmento
+        // Inflar el diseño del fragmento
         View view = inflater.inflate(R.layout.fragment_ordenes_restaurante, container, false);
 
-        // Inicializa Firestore
+        // Inicializar Firestore
         db = FirebaseFirestore.getInstance();
 
-
-        // Obtén el ViewModel compartido
-        restauranteViewModel = new ViewModelProvider(requireActivity()).get(RestauranteViewModel.class);
-
-
-        // Configurar el RecyclerView
+        // Configurar RecyclerView
         rvOrdersList = view.findViewById(R.id.rv_orders_list);
         rvOrdersList.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // Configurar el EditText para búsqueda
-        orderSearch = view.findViewById(R.id.order_search);
+        // Configurar TextView de fecha
+        tvFecha = view.findViewById(R.id.tv_fecha);
+        selectedDate = Calendar.getInstance(); // Fecha inicial: hoy
+        dateFormat = new SimpleDateFormat("dd/MM/yy", Locale.getDefault());
+        tvFecha.setText("Fecha: " + dateFormat.format(selectedDate.getTime())); // Fecha actual
 
-        // Crear la lista de órdenes
+        // Configurar lista de pedidos
         orderList = new ArrayList<>();
-        orderList.add(new Order("EN CAMINO", "ID 0000012", "Sep 05,2024. 06:45:51 PM", "Ana Armas", "El Molle #156B", "106.00", "Walter Gomez"));
-        orderList.add(new Order("EN PREPARACIÓN", "ID 0000013", "Sep 05,2024. 06:45:51 PM", "Jose Hernandez", "Av.Universitaria 2011", "76.00", "Damian Rojas"));
-        orderList.add(new Order("ENTREGADO", "ID 0000014", "Sep 05,2024. 06:45:51 PM", "Diana Rosas", "Av.Magnolias #255B", "18.20", "Damian Rojas"));
-        orderList.add(new Order("EN CAMINO", "ID 0000015", "Sep 05,2024. 06:45:51 PM", "Maria Jose Ramirez", "Calle 8, San Miguel", "20.00", "Walter Gomez"));
-        orderList.add(new Order("EN TIENDA", "ID 0000016", "Sep 05,2024. 06:45:51 PM", "Melissa Jimenez", "Los Álamos #156B", "50.00", "Damian Rojas"));
-        orderList.add(new Order("ENTREGADO", "ID 0000017", "Sep 05,2024. 06:45:51 PM", "Alvaro Dorian", "Las Casuarinas #156B", "40.00", "Walter Gomez"));
+        filteredList = new ArrayList<>();
 
-        // Inicializar la lista filtrada con la lista original
-        filteredList = new ArrayList<>(orderList);
-
-        // Configurar el adaptador con la lista filtrada
+        // Configurar adaptador
         orderAdapter = new OrderAdapter(filteredList, getContext());
         rvOrdersList.setAdapter(orderAdapter);
 
-        // Configurar el buscador
-        orderSearch.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // No se necesita hacer nada aquí
-            }
+        // Configurar evento clic en el TextView de fecha para mostrar un calendario
+        tvFecha.setOnClickListener(v -> showDatePicker());
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                filterOrders(s.toString()); // Llamar al método que filtra la lista
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                // No se necesita hacer nada aquí
+        // Obtener idRestaurante desde el ViewModel
+        restauranteViewModel = new ViewModelProvider(requireActivity()).get(RestauranteViewModel.class);
+        restauranteViewModel.getIdRestaurante().observe(getViewLifecycleOwner(), id -> {
+            if (id != null && !id.isEmpty()) {
+                idRestaurante = id;
+                Log.d(TAG, "ID del restaurante recibido: " + idRestaurante); // Log del ID
+                fetchOrders(); // Cargar pedidos al obtener idRestaurante
+            } else {
+                Log.w(TAG, "ID del restaurante es nulo o vacío"); // Log de advertencia
             }
         });
 
         return view;
     }
 
-    // Método para filtrar las órdenes
-    private void filterOrders(String query) {
+    private void fetchOrders() {
+        if (idRestaurante == null) {
+            Log.e(TAG, "ID del restaurante no disponible. No se pueden cargar pedidos."); // Log de error
+            Toast.makeText(getContext(), "ID del restaurante no disponible.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Log.d(TAG, "Cargando pedidos para el restaurante con ID: " + idRestaurante); // Log antes de la consulta
+        db.collection("pedidos")
+                .whereEqualTo("idRestaurante", idRestaurante)
+                .addSnapshotListener((querySnapshot, e) -> {
+                    if (e != null) {
+                        Log.e(TAG, "Error al cargar pedidos: " + e.getMessage(), e); // Log de error
+                        Toast.makeText(getContext(), "Error al cargar pedidos: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    if (querySnapshot != null) {
+                        orderList.clear();
+                        for (QueryDocumentSnapshot doc : querySnapshot) {
+                            Pedido pedido = doc.toObject(Pedido.class);
+                            pedido.setId(doc.getId()); // Asignar ID del documento
+                            orderList.add(pedido);
+                            Log.d(TAG, "Pedido cargado: " + pedido.getId() + " - Fecha: " + pedido.getFechaHora());
+                        }
+                        filterOrdersByDate(selectedDate.getTime());
+                    } else {
+                        Log.w(TAG, "No se encontraron pedidos para el restaurante."); // Log de advertencia
+                    }
+                });
+    }
+
+    private void showDatePicker() {
+        // Mostrar un DatePicker para seleccionar una fecha
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                getContext(),
+                (view, year, month, dayOfMonth) -> {
+                    selectedDate.set(year, month, dayOfMonth);
+                    tvFecha.setText("Fecha: " + dateFormat.format(selectedDate.getTime()));
+                    filterOrdersByDate(selectedDate.getTime());
+                    Log.d(TAG, "Fecha seleccionada: " + dateFormat.format(selectedDate.getTime())); // Log de fecha seleccionada
+                },
+                selectedDate.get(Calendar.YEAR),
+                selectedDate.get(Calendar.MONTH),
+                selectedDate.get(Calendar.DAY_OF_MONTH)
+        );
+        datePickerDialog.show();
+    }
+
+    private void filterOrdersByDate(Date date) {
+        String selectedDateStr = dateFormat.format(date);
         filteredList.clear();
-        if (query.isEmpty()) {
-            // Si no hay texto en la búsqueda, mostrar todas las órdenes
-            filteredList.addAll(orderList);
-        } else {
-            for (Order order : orderList) {
-                if (order.getOrderId().toLowerCase().contains(query.toLowerCase())) {
-                    filteredList.add(order);
+
+        // Define el formato de la fecha en Firestore
+        SimpleDateFormat pedidoDateFormat = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy, hh:mm:ss a", Locale.getDefault());
+
+        for (Pedido pedido : orderList) {
+            try {
+                // Convierte el String de fecha del pedido a un objeto Date
+                Date pedidoDate = pedidoDateFormat.parse(pedido.getFechaHora());
+
+                // Compara solo las fechas (sin la hora)
+                if (selectedDateStr.equals(dateFormat.format(pedidoDate))) {
+                    filteredList.add(pedido);
+                    Log.d(TAG, "Pedido filtrado: " + pedido.getId() + " - Fecha: " + pedido.getFechaHora());
                 }
+            } catch (ParseException e) {
+                Log.e(TAG, "Error al convertir la fecha del pedido: " + pedido.getFechaHora(), e);
             }
         }
-
-        if (filteredList.isEmpty()) {
-            // Mostrar un Toast si no se encontraron resultados
-            Toast.makeText(getContext(), "No se encontraron resultados", Toast.LENGTH_SHORT).show();
-        }
-
-        orderAdapter.notifyDataSetChanged(); // Notificar al adaptador sobre el cambio
+        orderAdapter.notifyDataSetChanged();
     }
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public OrdenesRestauranteFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment OrdenesRestauranteFragment.
-     */
-    public static OrdenesRestauranteFragment newInstance(String param1, String param2) {
-        OrdenesRestauranteFragment fragment = new OrdenesRestauranteFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
-
 }

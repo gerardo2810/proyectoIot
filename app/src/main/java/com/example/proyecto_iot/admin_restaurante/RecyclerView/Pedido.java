@@ -15,6 +15,8 @@ public class Pedido {
     private double pagoTotal;
     private List<ProductoPedido> productos;
     private String qrUrl;
+    private String nombreRepartidor;
+    private boolean repartidorAsignado;
 
     // Default constructor required for Firebase
     public Pedido() {
@@ -129,5 +131,21 @@ public class Pedido {
 
     public void setNombreCliente(String nombreCliente) {
         this.nombreCliente = nombreCliente;
+    }
+
+    public String getNombreRepartidor() {
+        return nombreRepartidor;
+    }
+
+    public void setNombreRepartidor(String nombreRepartidor) {
+        this.nombreRepartidor = nombreRepartidor;
+    }
+
+    public boolean isRepartidorAsignado() {
+        return repartidorAsignado;
+    }
+
+    public void setRepartidorAsignado(boolean repartidorAsignado) {
+        this.repartidorAsignado = repartidorAsignado;
     }
 }

@@ -17,8 +17,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.341">
+        app:layout_constraintTop_toTopOf="parent">
 
         <!-- Imagen circular -->
         <ImageView
@@ -34,7 +33,17 @@
             android:layout_weight="1"
             android:orientation="vertical">
 
+            <!-- Fecha y Hora -->
+            <TextView
+                android:id="@+id/fecha_hora"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Fecha y Hora"
+                android:textColor="@android:color/black"
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
+            <!-- Nombre del cliente -->
             <TextView
                 android:id="@+id/cliente"
                 android:layout_width="wrap_content"
@@ -44,6 +53,7 @@
                 android:textSize="13sp"
                 android:textStyle="bold" />
 
+            <!-- Cantidad de productos -->
             <TextView
                 android:id="@+id/cant_productos"
                 android:layout_width="wrap_content"
@@ -53,8 +63,9 @@
                 android:textSize="13sp"
                 android:textStyle="bold" />
 
+            <!-- Total -->
             <TextView
-                android:id="@+id/precio_total"
+                android:id="@+id/total"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Total"
@@ -62,6 +73,7 @@
                 android:textSize="13sp"
                 android:textStyle="bold" />
 
+            <!-- Repartidor -->
             <TextView
                 android:id="@+id/repartidor"
                 android:layout_width="wrap_content"
@@ -72,8 +84,6 @@
 
         </LinearLayout>
 
-        <!-- Botón "Listo para entregar" -->
     </LinearLayout>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

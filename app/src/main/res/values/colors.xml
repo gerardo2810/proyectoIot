@@ -188,4 +188,7 @@
 
     <color name="colorHabilitado">#6A1B9A</color>
     <color name="colorInhabilitado">#D3D3D3</color>
+
+    !-- Verde para ENTREGADO -->
+    <color name="order_rejected">#F44336</color> <!-- Rojo para RECHAZADO -->
 </resources>

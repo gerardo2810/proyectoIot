@@ -148,6 +148,9 @@
             android:name=".admin_restaurante.EditRestaurantInfoActivity"
             android:exported="true" />
         <activity
+            android:name=".admin_restaurante.InfoPedidoHistorialActivity"
+            android:exported="true" />
+        <activity
             android:name=".admin_restaurante.ViewRestaurantScheduleActivity"
             android:exported="true" />
         <activity

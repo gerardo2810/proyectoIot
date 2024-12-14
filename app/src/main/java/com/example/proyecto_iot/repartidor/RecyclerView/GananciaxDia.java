@@ -6,13 +6,6 @@ public class GananciaxDia {
     private String gananciaPedido;
     private String total;
 
-    public GananciaxDia(String fecha, String nombreRestaurante, String gananciaPedido, String total) {
-        this.fecha = fecha;
-        this.nombreRestaurante = nombreRestaurante;
-        this.gananciaPedido = gananciaPedido;
-        this.total = total;
-    }
-
     public String getFecha() {
         return fecha;
     }

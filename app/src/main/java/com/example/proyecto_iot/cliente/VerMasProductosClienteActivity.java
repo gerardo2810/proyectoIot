@@ -65,29 +65,6 @@ public class VerMasProductosClienteActivity extends AppCompatActivity implements
             }
         });
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
-        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                int id = item.getItemId();
-
-                if (id == R.id.nav_restaurantes) {
-                    startActivity(new Intent(VerMasProductosClienteActivity.this, InicioClienteActivity.class));
-                    return true;
-                } else if (id == R.id.nav_carrito) {
-                    startActivity(new Intent(VerMasProductosClienteActivity.this, CarritoClienteActivity.class));
-                    return true;
-                } else if (id == R.id.navigation_ordenes) {
-                    startActivity(new Intent(VerMasProductosClienteActivity.this, HistorialPedidosActivity.class));
-                    return true;
-                } else if (id == R.id.nav_perfil) {
-                    startActivity(new Intent(VerMasProductosClienteActivity.this, PerfilClienteActivity.class));
-                    return true;
-                }
-
-                return false;
-            }
-        });
     }
 
     @Override

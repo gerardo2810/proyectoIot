@@ -62,6 +62,8 @@ public class HistorialPedidosAdapter extends RecyclerView.Adapter<HistorialPedid
                 HashMap<String, Object> productoMap = new HashMap<>();
                 productoMap.put("nombre", producto.getNombre());
                 productoMap.put("cantidad", producto.getCantidad());
+                productoMap.put("imageUrl", producto.getImageUrl());
+                productoMap.put("precio",producto.getPrecio());
                 productosData.add(productoMap);
             }
             intent.putExtra("productos", productosData);

@@ -124,7 +124,8 @@
                         android:layout_width="108dp"
                         android:layout_height="87dp"
                         android:layout_gravity="center"
-                        android:background="@drawable/placeholder" />
+                        android:scaleType="centerCrop"
+                        android:background="@drawable/circle_shape" />
 
                     <Button
                         android:id="@+id/btn_upload_image"

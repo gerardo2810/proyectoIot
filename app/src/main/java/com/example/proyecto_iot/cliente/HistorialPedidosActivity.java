@@ -102,7 +102,7 @@ public class HistorialPedidosActivity extends AppCompatActivity {
                                         double precio = productoMap.containsKey("precio") ? ((Number) productoMap.get("precio")).doubleValue() : 0.0;
                                         int cantidad = productoMap.containsKey("cantidad") ? ((Number) productoMap.get("cantidad")).intValue() : 0;
                                         String imageUrl = (String) productoMap.get("imageUrl"); // Obtener la URL de la imagen
-
+                                        System.out.println("Historial PEDIDOS: " + imageUrl);
                                         productos.add(new Producto(id, nombre, descripcion, precio, cantidad, imageUrl));
                                     }
                                 }

@@ -60,33 +60,59 @@ public class DetallesPedidoActivity extends AppCompatActivity {
         String direccion = intent.getStringExtra("direccion");
         int estado = intent.getIntExtra("estado", -1);
         String fechaHora = intent.getStringExtra("fechaHora");
-
-        ArrayList<HashMap<String, Object>> productosData = (ArrayList<HashMap<String, Object>>) intent.getSerializableExtra("productos");
-
-// Lista de productos finales que se pasará al adaptador
         List<Producto> productos = new ArrayList<>();
 
+        // Obtener productos desde el Intent
+        ArrayList<HashMap<String, Object>> productosData =
+                (ArrayList<HashMap<String, Object>>) intent.getSerializableExtra("productos");
+
+        // Convertir los datos del Intent a una lista de objetos Producto
         if (productosData != null) {
             for (HashMap<String, Object> productoMap : productosData) {
                 String id = (String) productoMap.get("id");
                 String nombre = (String) productoMap.get("nombre");
                 String descripcion = (String) productoMap.get("descripcion");
-                double precio = productoMap.containsKey("precio") ? ((Number) productoMap.get("precio")).doubleValue() : 0.0;
-                int cantidad = productoMap.containsKey("cantidad") ? ((Number) productoMap.get("cantidad")).intValue() : 0;
+                double precio = productoMap.containsKey("precio") ?
+                        ((Number) productoMap.get("precio")).doubleValue() : 0.0;
+                int cantidad = productoMap.containsKey("cantidad") ?
+                        ((Number) productoMap.get("cantidad")).intValue() : 0;
                 String imageUrl = (String) productoMap.get("imageUrl");
 
-                // Crear objeto Producto y agregarlo a la lista
                 productos.add(new Producto(id, nombre, descripcion, precio, cantidad, imageUrl));
             }
         }
-
-// Pasar la lista convertida al adaptador
+        // Pasar la lista convertida al adaptador
         adapter = new ProductoDetallesAdapter(this, productos);
         recyclerView.setAdapter(adapter);
+        String idRestaurante = intent.getStringExtra("idRestaurante");
+        String direccionRestaurante = ""; // Inicializar la dirección del restaurante
+        // Use a final array to hold the direccionRestaurante
+        final String[] direccionRestauranteHolder = {""};
 
-        // Combinar nombre del restaurante y dirección
-        if (nombreRestaurante != null && direccion != null) {
-            orderTitleTextView.setText(String.format("%s - %s", nombreRestaurante, direccion));
+        // Consultar Firestore para obtener la dirección del restaurante
+        if (idRestaurante != null) {
+            db.collection("restaurantes").document(idRestaurante)
+                    .get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        if (documentSnapshot.exists()) {
+                            direccionRestauranteHolder[0] = documentSnapshot.getString("ubicacion");
+                            // Combinar nombre del restaurante y dirección
+                            if (nombreRestaurante != null && direccionRestauranteHolder[0] != null) {
+                                orderTitleTextView.setText(String.format("%s - %s", nombreRestaurante, direccionRestauranteHolder[0]));
+                            } else {
+                                orderTitleTextView.setText(nombreRestaurante != null ? nombreRestaurante : "Nombre desconocido");
+                            }
+                        } else {
+                            orderTitleTextView.setText(nombreRestaurante != null ? nombreRestaurante : "Nombre desconocido");
+                            Log.e("Firestore", "Restaurante no encontrado.");
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e("Firestore", "Error al obtener restaurante", e);
+                        orderTitleTextView.setText(nombreRestaurante != null ? nombreRestaurante : "Nombre desconocido");
+                    });
+        } else {
+            orderTitleTextView.setText(nombreRestaurante != null ? nombreRestaurante : "Nombre desconocido");
         }
 
         // Asignar estado
@@ -137,30 +163,27 @@ public class DetallesPedidoActivity extends AppCompatActivity {
         TextView precioDeliveryTextView = findViewById(R.id.precioDelivery);
         TextView pagoTotalTextView = findViewById(R.id.pagoTotal);
         // Obtener datos del Intent
-        String pedidoId = intent.getStringExtra("pedidoId");
-
+        String pedidoId = intent.getStringExtra("idPedido");
         if (pedidoId != null) {
-            // Consultar Firestore para obtener los datos de la orden
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
             db.collection("pedidos").document(pedidoId)
                     .get()
                     .addOnSuccessListener(documentSnapshot -> {
                         if (documentSnapshot.exists()) {
-                            // Obtener los datos del pedido
                             String idRepartidor = documentSnapshot.getString("idRepartidor");
 
-                            double costoProductos = documentSnapshot.contains("pagoTotal")
+                            double costoProductos = documentSnapshot.contains("pagoTotal") &&
+                                    documentSnapshot.contains("precioDelivery")
                                     ? documentSnapshot.getDouble("pagoTotal") - documentSnapshot.getDouble("precioDelivery")
                                     : 0.0;
+
                             double precioDelivery = documentSnapshot.contains("precioDelivery")
                                     ? documentSnapshot.getDouble("precioDelivery")
                                     : 0.0;
+
                             double pagoTotal = costoProductos + precioDelivery;
 
-                            // Actualizar dirección del cliente
                             direccionTextView.setText(direccion != null ? direccion : "Sin dirección");
 
-                            // Obtener el nombre del repartidor desde la colección "repartidores"
                             if (idRepartidor != null && !idRepartidor.isEmpty()) {
                                 db.collection("repartidores").document(idRepartidor)
                                         .get()
@@ -177,7 +200,6 @@ public class DetallesPedidoActivity extends AppCompatActivity {
                                 repartidorTextView.setText("Sin repartidor asignado");
                             }
 
-                            // Actualizar los costos
                             costoProductosTextView.setText(String.format("S/. %.2f", costoProductos));
                             precioDeliveryTextView.setText(String.format("S/. %.2f", precioDelivery));
                             pagoTotalTextView.setText(String.format("S/. %.2f", pagoTotal));

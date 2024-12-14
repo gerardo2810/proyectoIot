@@ -1,654 +1,546 @@
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
-    tools:context=".cliente.SeguimientoPedidoActivity">
+    android:fillViewport="true">
 
-    <!-- Header con ícono de flecha y título -->
-    <LinearLayout
-        android:id="@+id/header_layout"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:padding="16dp"
         android:background="#FFFFFF"
-        android:minHeight="56dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        tools:context=".cliente.SeguimientoPedidoActivity">
 
-        <!-- Flecha de retroceso más pequeña -->
-        <ImageView
-            android:layout_width="44dp"
-            android:layout_height="34dp"
-            android:scaleType="centerCrop"
-
-            android:src="@drawable/baseline_arrow_back_ios_24"
-            android:contentDescription="Volver"
-            android:padding="8dp" />
-
-        <!-- Texto centrado usando un margin en el TextView -->
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="Detalles de orden"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="#000000"
-            android:gravity="center"
-            android:layout_weight="1" />
-    </LinearLayout>
-
-    <!-- Línea horizontal de color plomo justo debajo del header -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#D3D3D3"
-        app:layout_constraintTop_toBottomOf="@id/header_layout"
-        android:layout_marginTop="-10dp" />
-
-    <!-- Título de la orden -->
-    <TextView
-        android:id="@+id/order_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="La Lucha - Plaza San Miguel"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:textColor="#000000"
-        app:layout_constraintTop_toBottomOf="@id/header_layout"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="-2dp"
-        android:layout_marginStart="16dp" />
-
-    <!-- Estado de la orden y fecha -->
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@id/order_title"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="1dp"
-        android:layout_marginStart="16dp">
-
-        <TextView
-            android:id="@+id/ordenTrack"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Orden entregada"
-            android:textColor="#00B050"
-            android:textSize="14sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/fecha"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=" • 27/08/2024"
-            android:textColor="#888888"
-            android:textSize="14sp"
-            android:layout_marginStart="8dp" />
-    </LinearLayout>
-
-    <!-- Botón Ver más -->
-    <TextView
-        android:id="@+id/see_more"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Cancelar Órden"
-        android:textColor="#FF0640"
-        android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/order_title"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="1dp" />
-
-    <!-- Imagen del mapa -->
-    <ImageView
-        android:id="@+id/iv_mapa"
-        android:layout_width="0dp"
-        android:layout_height="150dp"
-        android:layout_marginTop="25dp"
-        app:layout_constraintTop_toBottomOf="@id/order_title"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:src="@drawable/placeholder"
-        android:scaleType="centerCrop" />
-
-    <!-- Sección de seguimiento debajo del mapa -->
-    <LinearLayout
-        android:id="@+id/seguimiento_pedido_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp"
-        app:layout_constraintTop_toBottomOf="@id/iv_mapa"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <!-- Texto de seguimiento -->
-        <TextView
-            android:id="@+id/tv_seguimiento_titulo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Sigue tu pedido aquí"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="#000000"
-            android:layout_marginStart="24dp" /> <!-- Añadido margen izquierdo -->
-
-        <!-- Contenedor de seguimiento -->
+        <!-- Header con ícono de flecha y título -->
         <LinearLayout
-            android:id="@+id/layout_estados"
+            android:id="@+id/header_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center">
+            android:gravity="center_vertical"
+            android:padding="16dp"
+            android:background="#FFFFFF"
+            android:minHeight="56dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
-            <!-- Estado 1: Recibido (visible al principio) -->
-            <LinearLayout
-                android:id="@+id/contenedor_recibido"
-                android:layout_width="wrap_content"
+            <!-- Flecha de retroceso más pequeña -->
+            <ImageView
+                android:layout_width="44dp"
+                android:layout_height="34dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/baseline_arrow_back_ios_24"
+                android:contentDescription="Volver"
+                android:padding="8dp" />
+
+            <!-- Texto centrado usando un margin en el TextView -->
+            <TextView
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center">
-
-                <ImageView
-                    android:id="@+id/estado_recibido"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:src="@drawable/placeholder"
-                    android:background="@drawable/circle_shape" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="¡Recibido!"
-                    android:textSize="12sp"
-                    android:layout_marginTop="4dp"
-                    android:textColor="@android:color/black" />
-            </LinearLayout>
-
-            <!-- Línea 1: Oculta al inicio -->
-            <View
-                android:id="@+id/linea_1"
-                android:layout_width="32dp"
-                android:layout_height="2dp"
-                android:background="@android:color/darker_gray"
-                android:layout_gravity="center_vertical"
-                android:visibility="gone" />
-
-            <!-- Estado 2: En preparación (oculto al inicio) -->
-            <LinearLayout
-                android:id="@+id/contenedor_preparacion"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:text="Detalles de orden"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="#000000"
                 android:gravity="center"
-                android:visibility="gone">
-
-                <ImageView
-                    android:id="@+id/estado_preparacion"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/reportes"
-                    android:background="@drawable/circle_shape" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="En preparación"
-                    android:textSize="12sp"
-                    android:layout_marginTop="4dp"
-                    android:textColor="@android:color/black" />
-            </LinearLayout>
-
-            <!-- Línea 2: Oculta al inicio -->
-            <View
-                android:id="@+id/linea_2"
-                android:layout_width="32dp"
-                android:layout_height="2dp"
-                android:background="@android:color/darker_gray"
-                android:layout_gravity="center_vertical"
-                android:visibility="gone" />
-
-            <!-- Estado 3: En camino (oculto al inicio) -->
-            <LinearLayout
-                android:id="@+id/contenedor_camino"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:visibility="gone">
-
-                <ImageView
-                    android:id="@+id/estado_en_camino"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:src="@drawable/reportes_1"
-                    android:scaleType="centerCrop"
-
-                    android:background="@drawable/circle_shape" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="En camino"
-                    android:textSize="12sp"
-                    android:layout_marginTop="4dp"
-                    android:textColor="@android:color/black" />
-            </LinearLayout>
-
-            <!-- Línea 3: Oculta al inicio -->
-            <View
-                android:id="@+id/linea_3"
-                android:layout_width="32dp"
-                android:layout_height="2dp"
-                android:background="@android:color/darker_gray"
-                android:layout_gravity="center_vertical"
-                android:visibility="gone" />
-
-            <!-- Estado 4: Entregado (oculto al inicio) -->
-            <LinearLayout
-                android:id="@+id/contenedor_entregado"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:visibility="gone">
-
-                <ImageView
-                    android:id="@+id/estado_entregado"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:scaleType="centerCrop"
-
-                    android:src="@drawable/repartidor_superadmin"
-                    android:background="@drawable/circle_shape" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Entregado"
-                    android:textSize="12sp"
-                    android:layout_marginTop="4dp"
-                    android:textColor="@android:color/black" />
-            </LinearLayout>
-
+                android:layout_weight="1" />
         </LinearLayout>
 
-    </LinearLayout>
+        <!-- Línea horizontal de color plomo justo debajo del header -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#D3D3D3"
+            app:layout_constraintTop_toBottomOf="@id/header_layout"
+            android:layout_marginTop="-10dp" />
 
-
-    <!-- Línea gris divisoria -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#D3D3D3"
-        android:layout_marginTop="-5dp"
-        app:layout_constraintTop_toBottomOf="@id/seguimiento_pedido_layout" />
-
-    <!-- Sección de botones "Detalle de Orden" y "Verificación de Envío" -->
-    <LinearLayout
-        android:id="@+id/detalles"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginTop="2dp"
-        android:layout_marginBottom="8dp"
-        android:background="@drawable/rounded_background_grey"
-        app:layout_constraintTop_toBottomOf="@id/seguimiento_pedido_layout"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:padding="4dp">
-
-        <!-- Botón "Detalle de Orden" -->
-        <LinearLayout
-            android:id="@+id/btn_detalle_orden"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:padding="8dp"
-        android:background="@drawable/rounded_background_white"
-        android:layout_marginEnd="4dp">
-
+        <!-- Título de la orden -->
         <TextView
-            android:id="@+id/tv_detalle_orden"
+            android:id="@+id/order_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Detalle de Orden"
-            android:textSize="16sp"
+            android:text="La Lucha - Plaza San Miguel"
+            android:textSize="24sp"
             android:textStyle="bold"
-            android:textColor="#000000" />
-    </LinearLayout>
+            android:textColor="#000000"
+            app:layout_constraintTop_toBottomOf="@id/header_layout"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="-2dp"
+            android:layout_marginStart="16dp" />
 
-    <!-- Botón "Verificación de Envío" -->
-    <LinearLayout
-        android:id="@+id/btn_verificacion_envio"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:gravity="center"
-    android:padding="8dp"
-    android:background="@drawable/rounded_background_grey"
-    android:layout_marginStart="4dp">
-
-    <TextView
-        android:id="@+id/tv_verificacion_envio"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Verificación de envío"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:textColor="#000000" />
-</LinearLayout>
-    </LinearLayout>
-
-
-    <!-- Línea gris debajo de los botones -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#D3D3D3"
-        android:layout_marginTop="6dp"
-        app:layout_constraintTop_toBottomOf="@id/detalles" />
-
-    <!-- CardView para Detalles de la orden -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/order_details_card"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        app:cardCornerRadius="12dp"
-        app:layout_constraintTop_toBottomOf="@id/detalles"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
+        <!-- Estado de la orden y fecha -->
         <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/order_title"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="1dp"
+            android:layout_marginStart="16dp">
+
+            <TextView
+                android:id="@+id/ordenTrack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Orden entregada"
+                android:textColor="#00B050"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/fecha"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=" • 27/08/2024"
+                android:textColor="#888888"
+                android:textSize="14sp"
+                android:layout_marginStart="8dp" />
+        </LinearLayout>
+
+        <!-- Botón Ver más -->
+        <TextView
+            android:id="@+id/see_more"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancelar Órden"
+            android:textColor="#FF0640"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@id/order_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="1dp" />
+
+        <!-- Imagen del mapa -->
+        <ImageView
+            android:id="@+id/iv_mapa"
+            android:layout_width="0dp"
+            android:layout_height="150dp"
+            android:layout_marginTop="25dp"
+            app:layout_constraintTop_toBottomOf="@id/order_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:src="@drawable/placeholder"
+            android:scaleType="centerCrop" />
+
+        <!-- Sección de seguimiento debajo del mapa -->
+        <LinearLayout
+            android:id="@+id/seguimiento_pedido_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="16dp"
+            app:layout_constraintTop_toBottomOf="@id/iv_mapa"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
+            <!-- Texto de seguimiento -->
             <TextView
+                android:id="@+id/tv_seguimiento_titulo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Detalles de órdenes"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="#000000" />
-
-            <!-- Detalles como ubicación, nombre y costos -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="8dp">
-
-                <!-- Ubicación -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
-
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:scaleType="centerCrop"
-
-                        android:src="@drawable/baseline_location_on_24"
-                        android:layout_marginEnd="8dp" />
-
-                    <TextView
-                        android:id="@+id/direccio_cliente"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="El molle #156 B"
-                        android:textSize="14sp"
-                        android:textColor="#000000" />
-                </LinearLayout>
-
-                <!-- Nombre del repartidor -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginTop="4dp">
-
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:scaleType="centerCrop"
-
-                        android:src="@drawable/baseline_delivery_dining_24"
-                        android:layout_marginEnd="8dp" />
-
-                    <TextView
-                        android:id="@+id/repartidor"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Miguel Angel Lugo"
-                        android:textSize="14sp"
-                        android:textColor="#000000" />
-                </LinearLayout>
-            </LinearLayout>
-
-            <!-- Costo total -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Costo Total"
+                android:text="Sigue tu pedido aquí"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="#000000"
-                android:layout_marginTop="16dp" />
+                android:layout_marginStart="24dp" />
 
-            <!-- Línea gris debajo de Costo Total -->
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#E0E0E0"
-                android:layout_marginTop="8dp" />
-
-            <!-- Costos de productos -->
+            <!-- Contenedor de seguimiento -->
             <LinearLayout
+                android:id="@+id/layout_estados"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="8dp">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Costos de productos"
-                    android:textSize="14sp"
-                    android:textColor="#000000" />
-
-                <TextView
-                    android:id="@+id/costoProductos"
+                android:gravity="center">
+                <!-- Estado 1 -->
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="S/. 405.00"
-                    android:textSize="14sp"
-                    android:textColor="#000000" />
+                    android:orientation="vertical"
+                    android:gravity="center">
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@drawable/placeholder"
+                        android:background="@drawable/circle_shape" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="¡Recibido!"
+                        android:textSize="12sp"
+                        android:layout_marginTop="4dp"
+                        android:textColor="@android:color/black" />
+                </LinearLayout>
             </LinearLayout>
+        </LinearLayout>
 
-            <!-- Envío -->
+        <!-- Línea gris divisoria -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#D3D3D3"
+            android:layout_marginTop="-5dp"
+            app:layout_constraintTop_toBottomOf="@id/seguimiento_pedido_layout" />
+
+        <!-- Sección de botones "Detalle de Orden" y "Verificación de Envío" -->
+        <LinearLayout
+            android:id="@+id/detalles"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/rounded_background_grey"
+            app:layout_constraintTop_toBottomOf="@id/seguimiento_pedido_layout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:padding="4dp">
+
+            <!-- Botón "Detalle de Orden" -->
             <LinearLayout
-                android:layout_width="match_parent"
+                android:id="@+id/btn_detalle_orden"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="8dp">
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="8dp"
+                android:background="@drawable/rounded_background_white"
+                android:layout_marginEnd="4dp">
 
                 <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Envío"
-                    android:textSize="14sp"
-                    android:textColor="#000000" />
-
-                <TextView
-                    android:id="@+id/delivery"
+                    android:id="@+id/tv_detalle_orden"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="S/. 3.49"
-                    android:textSize="14sp"
-                    android:textColor="#000000" />
-            </LinearLayout>
-
-            <!-- Línea gris debajo de Envío -->
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#E0E0E0"
-                android:layout_marginTop="8dp" />
-
-            <!-- Pago Total -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="8dp">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Pago Total"
+                    android:text="Detalle de Orden"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     android:textColor="#000000" />
+            </LinearLayout>
+
+            <!-- Botón "Verificación de Envío" -->
+            <LinearLayout
+                android:id="@+id/btn_verificacion_envio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="8dp"
+                android:background="@drawable/rounded_background_grey"
+                android:layout_marginStart="4dp">
 
                 <TextView
-                    android:id="@+id/pagoTotal"
+                    android:id="@+id/tv_verificacion_envio"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="S/. 408.49"
+                    android:text="Verificación de envío"
                     android:textSize="16sp"
+                    android:textStyle="bold"
                     android:textColor="#000000" />
             </LinearLayout>
         </LinearLayout>
-    </androidx.cardview.widget.CardView>
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/qr_card"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        app:cardCornerRadius="12dp"
-        app:cardBackgroundColor="#D3D3D3"
-        app:layout_constraintTop_toBottomOf="@id/detalles"
 
-        android:layout_gravity="center">
+        <!-- Línea gris debajo de los botones -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#D3D3D3"
+            android:layout_marginTop="6dp"
+            app:layout_constraintTop_toBottomOf="@id/detalles" />
 
-        <LinearLayout
+        <!-- CardView para Detalles de la orden -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/order_details_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:padding="16dp">
+            android:layout_margin="16dp"
+            app:cardCornerRadius="12dp"
+            app:layout_constraintTop_toBottomOf="@id/detalles"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
-            <!-- Texto que aparece encima del código QR -->
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Muestra tu QR a tu repartidor para que te pueda entregar tu orden y asegurarnos que la entrega fue exitosa"
-                android:textSize="16sp"
-                android:textStyle="bold"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Detalles de órdenes"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#000000" />
+
+                <!-- Detalles como ubicación, nombre y costos -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="8dp">
+
+                    <!-- Ubicación -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:scaleType="centerCrop"
+
+                            android:src="@drawable/baseline_location_on_24"
+                            android:layout_marginEnd="8dp" />
+
+                        <TextView
+                            android:id="@+id/direccio_cliente"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="El molle #156 B"
+                            android:textSize="14sp"
+                            android:textColor="#000000" />
+                    </LinearLayout>
+
+                    <!-- Nombre del repartidor -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginTop="4dp">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:scaleType="centerCrop"
+
+                            android:src="@drawable/baseline_delivery_dining_24"
+                            android:layout_marginEnd="8dp" />
+
+                        <TextView
+                            android:id="@+id/repartidor"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Miguel Angel Lugo"
+                            android:textSize="14sp"
+                            android:textColor="#000000" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Costo total -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Costo Total"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#000000"
+                    android:layout_marginTop="16dp" />
+
+                <!-- Línea gris debajo de Costo Total -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#E0E0E0"
+                    android:layout_marginTop="8dp" />
+
+                <!-- Costos de productos -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="8dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Costos de productos"
+                        android:textSize="14sp"
+                        android:textColor="#000000" />
+
+                    <TextView
+                        android:id="@+id/costoProductos"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="S/. 405.00"
+                        android:textSize="14sp"
+                        android:textColor="#000000" />
+                </LinearLayout>
+
+                <!-- Envío -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="8dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Envío"
+                        android:textSize="14sp"
+                        android:textColor="#000000" />
+
+                    <TextView
+                        android:id="@+id/delivery"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="S/. 3.49"
+                        android:textSize="14sp"
+                        android:textColor="#000000" />
+                </LinearLayout>
+
+                <!-- Línea gris debajo de Envío -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#E0E0E0"
+                    android:layout_marginTop="8dp" />
+
+                <!-- Pago Total -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="8dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Pago Total"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="#000000" />
+
+                    <TextView
+                        android:id="@+id/pagoTotal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="S/. 408.49"
+                        android:textSize="16sp"
+                        android:textColor="#000000" />
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/qr_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            app:cardCornerRadius="12dp"
+            app:cardBackgroundColor="#D3D3D3"
+            app:layout_constraintTop_toBottomOf="@id/detalles"
+
+            android:layout_gravity="center">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
                 android:gravity="center"
-                android:textColor="#000000"
-                android:layout_marginBottom="16dp"
-                android:textAlignment="center" />
+                android:padding="16dp">
 
-            <!-- Imagen del código QR -->
-            <ImageView
-                android:id="@+id/qr_image"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
-                android:src="@drawable/placeholder"
-                android:scaleType="fitCenter"
-                android:contentDescription="QR Code" />
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
+                <!-- Texto que aparece encima del código QR -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Muestra tu QR a tu repartidor para que te pueda entregar tu orden y asegurarnos que la entrega fue exitosa"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:textColor="#000000"
+                    android:layout_marginBottom="16dp"
+                    android:textAlignment="center" />
+
+                <!-- Imagen del código QR -->
+                <ImageView
+                    android:id="@+id/qr_image"
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
+                    android:src="@drawable/placeholder"
+                    android:scaleType="fitCenter"
+                    android:contentDescription="QR Code" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
 
-    <!-- Nueva sección de pago con código QR -->
-    <LinearLayout
-        android:id="@+id/payment_section"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:padding="16dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@id/order_details_card">
-
-        <!-- Texto "Paga aquí" en color rojo -->
-        <TextView
-            android:id="@+id/text_pay_here"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Paga aquí"
-            android:textColor="#FF0000"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginEnd="16dp" />
-
-        <!-- Botón con ícono de código QR y texto "Escanea código QR" -->
+        <!-- Nueva sección de pago con código QR -->
         <LinearLayout
-            android:id="@+id/qr_button"
-            android:layout_width="wrap_content"
+            android:id="@+id/payment_section"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/rounded_background_grey"
-            android:padding="12dp"
-            android:orientation="horizontal"
             android:gravity="center"
-            android:layout_gravity="center_vertical">
+            android:orientation="horizontal"
+            android:padding="16dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/qr_card">
 
-            <!-- Ícono del código QR -->
-            <ImageView
-                android:id="@+id/qr_icon"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:scaleType="centerCrop"
-
-                android:src="@drawable/imagen_qr_code"
-                 android:layout_marginEnd="8dp" />
-
-            <!-- Texto "Escanea código QR" -->
+            <!-- Texto "Paga aquí" en color rojo -->
             <TextView
-                android:id="@+id/text_scan_qr"
+                android:id="@+id/text_pay_here"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Escanea código QR"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:text="Paga aquí"
+                android:textColor="#FF0000"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginEnd="16dp" />
+
+            <!-- Botón con ícono de código QR y texto "Escanea código QR" -->
+            <LinearLayout
+                android:id="@+id/qr_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rounded_background_grey"
+                android:padding="12dp"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_gravity="center_vertical">
+
+                <!-- Ícono del código QR -->
+                <ImageView
+                    android:id="@+id/qr_icon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:scaleType="centerCrop"
+
+                    android:src="@drawable/imagen_qr_code"
+                    android:layout_marginEnd="8dp" />
+
+                <!-- Texto "Escanea código QR" -->
+                <TextView
+                    android:id="@+id/text_scan_qr"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Escanea código QR"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
 
-    <!-- Bottom Navigation
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_navigation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/green_light_2"
-        app:itemBackground="@drawable/superadmin_nav_ripple"
-        app:labelVisibilityMode="labeled"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/cliente_navigation_bar" /-->
+        <!-- Bottom Navigation
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottom_navigation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/green_light_2"
+            app:itemBackground="@drawable/superadmin_nav_ripple"
+            app:labelVisibilityMode="labeled"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:menu="@menu/cliente_navigation_bar" /-->
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
+

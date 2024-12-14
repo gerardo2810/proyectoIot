@@ -3,6 +3,7 @@ package com.example.proyecto_iot.cliente;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -29,6 +30,22 @@ public class MenuClienteActivity extends AppCompatActivity {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
+        });
+
+        // Encuentra el ImageView por su ID
+        ImageView backArrow = findViewById(R.id.back_arrow);
+
+        // Configura un listener para el clic
+        backArrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Redirige a InicioClienteActivity
+                Intent intent = new Intent(MenuClienteActivity.this, InicioClienteActivity.class);
+                startActivity(intent);
+
+                // (Opcional) Finaliza la actividad actual si no quieres que el usuario regrese aquí
+                finish();
+            }
         });
 
         // Manejar evento "Cerrar Sesión"

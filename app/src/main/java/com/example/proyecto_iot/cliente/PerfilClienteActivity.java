@@ -1,6 +1,9 @@
 package com.example.proyecto_iot.cliente;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -35,6 +38,19 @@ public class PerfilClienteActivity extends AppCompatActivity {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
+        });
+        // Configura el listener para el botón
+        ImageButton backButton = findViewById(R.id.back_button);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Inicia MenuClienteActivity
+                Intent intent = new Intent(PerfilClienteActivity.this, MenuClienteActivity.class);
+                startActivity(intent);
+
+                // (Opcional) Finaliza la actividad actual si no quieres que el usuario regrese aquí
+                finish();
+            }
         });
 
         // Referencias a los elementos de la interfaz

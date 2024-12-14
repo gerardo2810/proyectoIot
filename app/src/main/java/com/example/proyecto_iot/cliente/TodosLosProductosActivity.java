@@ -1,11 +1,13 @@
 package com.example.proyecto_iot.cliente;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,18 +17,20 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.cliente.RecyclerView.Producto;
 import com.example.proyecto_iot.cliente.RecyclerView.ProductoDetallesAdapter;
+import com.example.proyecto_iot.cliente.RecyclerView.ProductoTodosAdapter;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class TodosLosProductosActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
-    private ProductoDetallesAdapter adapter;
+    private ProductoTodosAdapter adapter;
     private List<Producto> productoList;
     private FirebaseFirestore db;
 
@@ -35,22 +39,35 @@ public class TodosLosProductosActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_todos_los_productos_cliente);
 
-        // Inicializar Firebase Firestore
-        db = FirebaseFirestore.getInstance();
 
         // Inicializar RecyclerView
         recyclerView = findViewById(R.id.recycler_productos);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Inicializar la lista de productos
+        // Recuperar la lista de productos del Intent
+        ArrayList<HashMap<String, Object>> productosData =
+                (ArrayList<HashMap<String, Object>>) getIntent().getSerializableExtra("productos");
+
+        // Convertir la lista recibida en objetos Producto
         productoList = new ArrayList<>();
+        if (productosData != null) {
+            for (HashMap<String, Object> productoMap : productosData) {
+                String id = (String) productoMap.get("id");
+                String nombre = (String) productoMap.get("nombre");
+                String descripcion = (String) productoMap.get("descripcion");
+                double precio = productoMap.containsKey("precio") ?
+                        ((Number) productoMap.get("precio")).doubleValue() : 0.0;
+                int cantidad = productoMap.containsKey("cantidad") ?
+                        ((Number) productoMap.get("cantidad")).intValue() : 0;
+                String imageUrl = (String) productoMap.get("imageUrl");
+
+                productoList.add(new Producto(id, nombre, descripcion, precio, cantidad, imageUrl));
+            }
+        }
 
         // Configurar el adaptador
-        adapter = new ProductoDetallesAdapter(this, productoList);
+        adapter = new ProductoTodosAdapter(this, productoList);
         recyclerView.setAdapter(adapter);
-
-        // Cargar los productos desde Firebase
-        fetchProductosFromFirebase();
 
         // Configurar la flecha de retroceso
         ImageView backArrow = findViewById(R.id.back_arrow);
@@ -63,56 +80,40 @@ public class TodosLosProductosActivity extends AppCompatActivity {
                 finish(); // Finaliza la actividad actual para no volver a ella con el botón de retroceso
             }
         });
+        int estado = getIntent().getIntExtra("estado", -1);
+        // Mostrar el estado en el TextView
+        TextView estadoTextView = findViewById(R.id.estado);
+        estadoTextView.setText(obtenerEstadoPedido(estado)); // Texto del estado
+        estadoTextView.setTextColor(obtenerColorEstado(estado)); // Color del estado
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
-        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                int id = item.getItemId();
+        // Mostrar el tamaño de la lista en el TextView "see_more"
+        TextView seeMoreTextView = findViewById(R.id.see_more);
+        seeMoreTextView.setText(String.format("Total productos: %d", productoList.size()));
 
-                if (id == R.id.nav_restaurantes) {
-                    startActivity(new Intent(TodosLosProductosActivity.this, InicioClienteActivity.class));
-                    return true;
-                } else if (id == R.id.nav_carrito) {
-                    startActivity(new Intent(TodosLosProductosActivity.this, CarritoClienteActivity.class));
-                    return true;
-                } else if (id == R.id.navigation_ordenes) {
-                    startActivity(new Intent(TodosLosProductosActivity.this, HistorialPedidosActivity.class));
-                    return true;
-                } else if (id == R.id.nav_perfil) {
-                    startActivity(new Intent(TodosLosProductosActivity.this, PerfilClienteActivity.class));
-                    return true;
-                }
 
-                return false;
-            }
-        });
+    }
+    // Método para traducir el estado numérico a texto
+    private String obtenerEstadoPedido(int estado) {
+        switch (estado) {
+            case 4:
+                return "Entregado";
+            case 5:
+                return "Rechazado";
+            case 6:
+                return "Cancelado";
+            default:
+                return "Desconocido";
+        }
     }
 
-    // Método para obtener productos desde Firebase Firestore
-    private void fetchProductosFromFirebase() {
-        db.collection("platos") // Asegúrate de que esta sea tu colección de productos en Firebase
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && task.getResult() != null) {
-                        productoList.clear(); // Limpiar la lista antes de agregar nuevos datos
-                        for (DocumentSnapshot document : task.getResult()) {
-                            // Extraer los datos del documento
-                            String id =document.getId();
-
-                            String nombre = document.getString("nombre");
-                            String descripcion = document.getString("descripcion");
-                            double precio = document.contains("precio") ? document.getDouble("precio") : 0.0;
-                            String imageUrl = document.getString("imagen"); // Supone que tienes un campo para la URL de la imagen
-                            int cantidad = 1; // Valor inicial de la cantidad
-
-                            // Agregar el producto a la lista
-                            productoList.add(new Producto(id,nombre, descripcion, precio, cantidad, imageUrl));
-                        }
-                        adapter.notifyDataSetChanged(); // Actualizar el adaptador con los nuevos datos
-                    } else {
-                        Log.e("Firestore", "Error al obtener productos", task.getException());
-                    }
-                });
+    // Método para asignar un color dependiendo del estado
+    private int obtenerColorEstado(int estado) {
+        switch (estado) {
+            case 4: // Verde para entregado
+                return Color.parseColor("#00B050");
+            default: // Rojo para rechazado o cancelado
+                return Color.parseColor("#FF0000");
+        }
     }
+
 }

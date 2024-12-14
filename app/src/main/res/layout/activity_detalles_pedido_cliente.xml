@@ -212,7 +212,6 @@
 
                     <TextView
                         android:id="@+id/repartidor"
-
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Miguel Angel Lugo"
@@ -255,7 +254,6 @@
 
                 <TextView
                     android:id="@+id/costoProductos"
-
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="S/. 405.00"
@@ -280,7 +278,6 @@
 
                 <TextView
                     android:id="@+id/precioDelivery"
-
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="S/. 3.49"
@@ -313,7 +310,6 @@
 
                 <TextView
                     android:id="@+id/pagoTotal"
-
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="S/. 408.49"
@@ -322,17 +318,6 @@
             </LinearLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_navigation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/green_light_2"
-        app:itemBackground="@drawable/superadmin_nav_ripple"
-        app:labelVisibilityMode="labeled"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/cliente_navigation_bar" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

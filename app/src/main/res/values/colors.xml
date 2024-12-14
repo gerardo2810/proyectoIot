@@ -45,6 +45,10 @@
     <color name="md_theme_inversePrimary">#AAC7FF</color>
     <color name="md_theme_primaryFixed">#D6E3FF</color>
     <color name="md_theme_onPrimaryFixed">#001B3E</color>
+    <color name="verde_estado">#00B050</color> <!-- Verde para entregado -->
+    <color name="rojo_estado">#FF0000</color> <!-- Rojo para cancelado/rechazado -->
+    <color name="amarillo_estado">#FFC107</color> <!-- Amarillo para en camino -->
+    <color name="gris_estado">#808080</color> <!-- Gris para otros estados -->
     <color name="md_theme_primaryFixedDim">#AAC7FF</color>
     <color name="md_theme_onPrimaryFixedVariant">#284777</color>
     <color name="md_theme_secondaryFixed">#DAE2F9</color>

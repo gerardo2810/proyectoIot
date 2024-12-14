@@ -7,6 +7,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.graphics.Color;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -78,14 +80,32 @@ public class DetallesPedidoActivity extends AppCompatActivity {
                         ((Number) productoMap.get("cantidad")).intValue() : 0;
                 String imageUrl = (String) productoMap.get("imageUrl");
 
+
                 productos.add(new Producto(id, nombre, descripcion, precio, cantidad, imageUrl));
             }
         }
+
+        // Calcular el costo total de los productos
+        final double[] costoProductos1 = {0.0};
+        if (productosData != null) {
+            for (HashMap<String, Object> productoMap : productosData) {
+                double precio = productoMap.containsKey("precio") ?
+                        ((Number) productoMap.get("precio")).doubleValue() : 0.0;
+                int cantidad = productoMap.containsKey("cantidad") ?
+                        ((Number) productoMap.get("cantidad")).intValue() : 0;
+
+                // Multiplicar precio por cantidad y sumar al total
+                costoProductos1[0] += precio * cantidad;
+            }
+        }
+
+
         // Pasar la lista convertida al adaptador
         adapter = new ProductoDetallesAdapter(this, productos);
         recyclerView.setAdapter(adapter);
         String idRestaurante = intent.getStringExtra("idRestaurante");
-        String direccionRestaurante = ""; // Inicializar la dirección del restaurante
+        System.out.println("DETALLES PEIDDO "+  idRestaurante);
+
         // Use a final array to hold the direccionRestaurante
         final String[] direccionRestauranteHolder = {""};
 
@@ -116,7 +136,8 @@ public class DetallesPedidoActivity extends AppCompatActivity {
         }
 
         // Asignar estado
-        estadoTextView.setText(obtenerEstadoPedido(estado)); // Llama a un método helper para traducir el estado numérico a texto
+        estadoTextView.setText(obtenerEstadoPedido(estado)); // Setea el texto del estado
+        estadoTextView.setTextColor(obtenerColorEstado(estado)); // Cambia dinámicamente el color
 
         // Asignar fecha
         if (fechaHora != null) {
@@ -152,6 +173,24 @@ public class DetallesPedidoActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // Navegar a la vista de Todos los Productos
                 Intent intent = new Intent(DetallesPedidoActivity.this, TodosLosProductosActivity.class);
+
+                // Pasar la lista de productos
+                ArrayList<HashMap<String, Object>> productosData = new ArrayList<>();
+                for (Producto producto : productos) {
+                    HashMap<String, Object> productoMap = new HashMap<>();
+                    productoMap.put("id", producto.getId());
+                    productoMap.put("nombre", producto.getNombre());
+                    productoMap.put("descripcion", producto.getDescripcion());
+                    productoMap.put("precio", producto.getPrecio());
+                    productoMap.put("cantidad", producto.getCantidad());
+                    productoMap.put("imageUrl", producto.getImageUrl());
+                    productosData.add(productoMap);
+                }
+                intent.putExtra("productos", productosData);
+
+                // Pasar el estado
+                intent.putExtra("estado", estado);
+
                 startActivity(intent);
             }
         });
@@ -162,6 +201,29 @@ public class DetallesPedidoActivity extends AppCompatActivity {
         TextView costoProductosTextView = findViewById(R.id.costoProductos);
         TextView precioDeliveryTextView = findViewById(R.id.precioDelivery);
         TextView pagoTotalTextView = findViewById(R.id.pagoTotal);
+        // Mostrar el costo total de los productos
+        costoProductosTextView.setText(String.format("S/. %.2f", costoProductos1[0]));
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("restaurantes").document(idRestaurante).get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        // Obtener el precio del delivery
+                        double precioDelivery = documentSnapshot.contains("precioDelivery") ?
+                                documentSnapshot.getDouble("precioDelivery") : 0.0;
+                        System.out.println("Precio Delivery" + precioDelivery);
+
+                        // Mostrar el precio del delivery
+                        precioDeliveryTextView.setText(String.format("S/. %.2f", precioDelivery));
+
+                        // Calcular y mostrar el pago total
+                        double pagoTotal = costoProductos1[0] + precioDelivery;
+                        pagoTotalTextView.setText(String.format("S/. %.2f", pagoTotal));
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Error al obtener datos del restaurante", Toast.LENGTH_SHORT).show();
+                });
+
         // Obtener datos del Intent
         String pedidoId = intent.getStringExtra("idPedido");
         if (pedidoId != null) {
@@ -170,17 +232,6 @@ public class DetallesPedidoActivity extends AppCompatActivity {
                     .addOnSuccessListener(documentSnapshot -> {
                         if (documentSnapshot.exists()) {
                             String idRepartidor = documentSnapshot.getString("idRepartidor");
-
-                            double costoProductos = documentSnapshot.contains("pagoTotal") &&
-                                    documentSnapshot.contains("precioDelivery")
-                                    ? documentSnapshot.getDouble("pagoTotal") - documentSnapshot.getDouble("precioDelivery")
-                                    : 0.0;
-
-                            double precioDelivery = documentSnapshot.contains("precioDelivery")
-                                    ? documentSnapshot.getDouble("precioDelivery")
-                                    : 0.0;
-
-                            double pagoTotal = costoProductos + precioDelivery;
 
                             direccionTextView.setText(direccion != null ? direccion : "Sin dirección");
 
@@ -200,39 +251,13 @@ public class DetallesPedidoActivity extends AppCompatActivity {
                                 repartidorTextView.setText("Sin repartidor asignado");
                             }
 
-                            costoProductosTextView.setText(String.format("S/. %.2f", costoProductos));
-                            precioDeliveryTextView.setText(String.format("S/. %.2f", precioDelivery));
-                            pagoTotalTextView.setText(String.format("S/. %.2f", pagoTotal));
                         }
                     })
                     .addOnFailureListener(e -> Log.e("Firestore", "Error al obtener pedido", e));
         }
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
-        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                int id = item.getItemId();
 
-                if (id == R.id.nav_restaurantes) {
-                    startActivity(new Intent(DetallesPedidoActivity.this, InicioClienteActivity.class));
-                    return true;
-                } else if (id == R.id.nav_carrito) {
-                    startActivity(new Intent(DetallesPedidoActivity.this, CarritoClienteActivity.class));
-                    return true;
-                } else if (id == R.id.navigation_ordenes) {
-                    startActivity(new Intent(DetallesPedidoActivity.this, HistorialPedidosActivity.class));
-                    return true;
-                } else if (id == R.id.nav_perfil) {
-                    startActivity(new Intent(DetallesPedidoActivity.this, PerfilClienteActivity.class));
-                    return true;
-                }
-
-                return false;
-            }
-        });
     }
-
 
     private String obtenerEstadoPedido(int estado) {
         switch (estado) {
@@ -244,6 +269,16 @@ public class DetallesPedidoActivity extends AppCompatActivity {
                 return "Orden cancelada";
             default:
                 return "Estado desconocido";
+        }
+    }
+    // Método para asignar un color dependiendo del estado
+    private int obtenerColorEstado(int estado) {
+        // Verifica el estado y retorna el color correspondiente
+        switch (estado) {
+            case 4: // Verde para estado 4
+                return Color.parseColor("#00B050");
+            default: // Rojo para cualquier otro estado
+                return Color.parseColor("#FF0000");
         }
     }
 

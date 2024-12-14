@@ -15,20 +15,14 @@ import com.example.proyecto_iot.R;
 
 import java.util.List;
 
-public class ProductoDetallesAdapter extends RecyclerView.Adapter<ProductoDetallesAdapter.ProductoViewHolder> {
+public class ProductoTodosAdapter extends RecyclerView.Adapter<ProductoTodosAdapter.ProductoViewHolder> {
 
     private List<Producto> productos;
     private Context context;
 
-    public ProductoDetallesAdapter(Context context, List<Producto> productos) {
+    public ProductoTodosAdapter(Context context, List<Producto> productos) {
         this.context = context;
-
-        // Limitar la lista de productos a los primeros 4 si tiene más de 4
-        if (productos.size() > 4) {
-            this.productos = productos.subList(0, 4); // Mostrar solo los primeros 4
-        } else {
-            this.productos = productos; // Mostrar todos los productos
-        }
+        this.productos=productos;
     }
 
     @NonNull
@@ -46,7 +40,6 @@ public class ProductoDetallesAdapter extends RecyclerView.Adapter<ProductoDetall
         holder.productPriceUnit.setText(String.format("S/. %.2f", producto.getPrecio()));
         holder.productPriceTotal.setText(String.format("S/. %.2f", producto.getTotal()));
         holder.product_number.setText("#"+producto.getCantidad());
-
         // Usar Glide para cargar la imagen desde una URL
         Glide.with(context)
                 .load(producto.getImageUrl()) // Cargar la imagen desde la URL
@@ -69,10 +62,10 @@ public class ProductoDetallesAdapter extends RecyclerView.Adapter<ProductoDetall
             productName = itemView.findViewById(R.id.product_name);
             productDescription = itemView.findViewById(R.id.product_description);
             productPriceUnit = itemView.findViewById(R.id.product_price);
+            product_number = itemView.findViewById(R.id.product_number);
             productPriceTotal = itemView.findViewById(R.id.product_price_total);
             productImage = itemView.findViewById(R.id.product_image);
-            product_number = itemView.findViewById(R.id.product_number);
-
         }
     }
 }
+

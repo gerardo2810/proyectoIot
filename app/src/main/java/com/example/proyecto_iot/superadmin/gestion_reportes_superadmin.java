@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -12,40 +13,51 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.proyecto_iot.R;
+import com.example.proyecto_iot.superadmin.RecyclerView.RestReportAdapter;
+import com.example.proyecto_iot.superadmin.RecyclerView.RestauranteAdapterSA;
+import com.example.proyecto_iot.superadmin.RecyclerView.RestauranteReporte;
+import com.example.proyecto_iot.superadmin.RecyclerView.RestauranteSA;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class gestion_reportes_superadmin extends AppCompatActivity {
 
     private BottomNavigationView bottomNavigationView;
+    private RecyclerView recyclerView;
+    private RestReportAdapter adapter;
+    private List<RestauranteReporte> restaurantes;
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.superadmin_activity_gestion_reportes);
 
-        //Gestion de los cardviews
-        for (int i = 1; i <= 2; i++) {
-            int arrowIconId = getResources().getIdentifier("arrow_icon_" + i, "id", getPackageName());
-            LinearLayout arrowIcon = findViewById(arrowIconId);
-            final int finalI = i;
+        //Gestion del recycler
+        recyclerView = findViewById(R.id.recyclerViewListaRestaurantesSA);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        restaurantes = new ArrayList<>();
+        db = FirebaseFirestore.getInstance();
 
-            arrowIcon.setOnClickListener(v -> {
-                Intent intent = null;
-                if (finalI == 1) {
-                    intent = new Intent(gestion_reportes_superadmin.this, reportes_recibidos_superadmin.class);
-                    intent.putExtra("SELECTED_ITEM_ID", R.id.navigation_reportes);
-                } else {
-                    intent = new Intent(gestion_reportes_superadmin.this, lista_restaurantes_superadmin.class);
-                }
+        adapter = new RestReportAdapter(restaurantes, restauranteUID -> {
+            Intent intent = new Intent(this, reporte_restaurante_superadmin.class);
+            intent.putExtra("restauranteUID", restauranteUID);
+            startActivity(intent);
+        });
+        recyclerView.setAdapter(adapter);
 
-                if (intent != null) {
-                    startActivity(intent);
-                }
-            });
-        }
+        cargarRestaurantes();
         //----------------------------------------------------------------------------
 
         //Gestion de la bottom navigation bar
@@ -74,4 +86,22 @@ public class gestion_reportes_superadmin extends AppCompatActivity {
         });
         //----------------------------------------------------------------------------
     }
+
+    private void cargarRestaurantes() {
+        db.collection("restaurantes")
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (DocumentSnapshot document : queryDocumentSnapshots) {
+                        RestauranteReporte restaurante = new RestauranteReporte();
+                        restaurante.setNombre(document.getString("nombre"));
+                        restaurante.setIdAdministrador(document.getString("idAdministrador"));
+                        restaurante.setUid(document.getId());
+                        restaurante.setFoto(document.getString("fotoLogo"));
+                        restaurantes.add(restaurante);
+                    }
+                    adapter.notifyDataSetChanged();
+                })
+                .addOnFailureListener(e -> Toast.makeText(this, "Error al cargar restaurantes", Toast.LENGTH_SHORT).show());
+    }
+
 }

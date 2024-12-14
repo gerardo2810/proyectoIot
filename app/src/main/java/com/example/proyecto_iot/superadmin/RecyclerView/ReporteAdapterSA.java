@@ -24,7 +24,7 @@ public class ReporteAdapterSA extends RecyclerView.Adapter<ReporteAdapterSA.Repo
     @NonNull
     @Override
     public ReporteAdapterSA.ReporteSAViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.superadmin_item_reportes, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.superadmin_item_restaurantes, parent, false);
         return new ReporteAdapterSA.ReporteSAViewHolder(view);
     }
 
@@ -57,7 +57,6 @@ public class ReporteAdapterSA extends RecyclerView.Adapter<ReporteAdapterSA.Repo
             super(itemView);
             textViewNombreRestaurante = itemView.findViewById(R.id.textViewNombreRestaurante);
             textViewAdminRestaurante = itemView.findViewById(R.id.textViewAdminRestaurante);
-            textViewFechaReporte = itemView.findViewById(R.id.textViewFechaReporte);
             imageViewTipoReporte = itemView.findViewById(R.id.imageViewTipoReporte);
         }
     }

@@ -6,23 +6,25 @@
     android:layout_height="wrap_content">
 
     <LinearLayout
-        android:id="@+id/card_view_reporte"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:id="@+id/card_view_restaurante"
         android:layout_marginHorizontal="8dp"
         android:background="@drawable/border_perfil"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:padding="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:padding="16dp">
 
         <!-- Imagen circular -->
         <ImageView
-            android:id="@+id/imageViewTipoReporte"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_marginEnd="16dp" />
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/circle_shape"
+            android:src="@drawable/placeholder" />
 
         <!-- Información de la solicitud -->
         <LinearLayout
@@ -32,38 +34,18 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/textViewNombreRestaurante"
+                android:id="@+id/textViewRestauranteVerReporte"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="NOMBRE RESTAURANTE"
-
+                android:text="NOMBRE DEL RESTAURANTE"
                 android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/textViewAdminRestaurante"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="ADMIN DEL RESTAURANTE"
-                android:textColor="#000000"
-                android:textSize="13sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/textViewFechaReporte"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="DD / MM / YYYY"
-                android:textColor="#888888"
-                android:textSize="13sp"
-                android:textStyle="bold" />
         </LinearLayout>
 
         <!-- Flecha hacia la derecha -->
         <ImageView
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:src="@drawable/pdf_sa"
-            android:tint="#888888" />
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/baseline_arrow_forward_ios_24"/>
     </LinearLayout>
 
     <TextView
@@ -75,6 +57,6 @@
         android:textSize="10sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/card_view_reporte" />
+        app:layout_constraintTop_toBottomOf="@id/card_view_restaurante" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

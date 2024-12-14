@@ -155,11 +155,13 @@
                 android:gravity="center">
                 <!-- Estado 1 -->
                 <LinearLayout
+                    android:id="@+id/contenedor_recibido"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:gravity="center">
                     <ImageView
+                        android:id="@+id/estado_recibido"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
                         android:src="@drawable/placeholder"
@@ -168,6 +170,112 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="¡Recibido!"
+                        android:textSize="12sp"
+                        android:layout_marginTop="4dp"
+                        android:textColor="@android:color/black" />
+                </LinearLayout>
+                <!-- Línea 1: Oculta al inicio -->
+                <View
+                    android:id="@+id/linea_1"
+                    android:layout_width="32dp"
+                    android:layout_height="2dp"
+                    android:background="@android:color/darker_gray"
+                    android:layout_gravity="center_vertical"
+                    android:visibility="gone" />
+
+                <!-- Estado 2: En preparación (oculto al inicio) -->
+                <LinearLayout
+                    android:id="@+id/contenedor_preparacion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:id="@+id/estado_preparacion"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/reportes"
+                        android:background="@drawable/circle_shape" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="En preparación"
+                        android:textSize="12sp"
+                        android:layout_marginTop="4dp"
+                        android:textColor="@android:color/black" />
+                </LinearLayout>
+
+                <!-- Línea 2: Oculta al inicio -->
+                <View
+                    android:id="@+id/linea_2"
+                    android:layout_width="32dp"
+                    android:layout_height="2dp"
+                    android:background="@android:color/darker_gray"
+                    android:layout_gravity="center_vertical"
+                    android:visibility="gone" />
+
+                <!-- Estado 3: En camino (oculto al inicio) -->
+                <LinearLayout
+                    android:id="@+id/contenedor_camino"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:id="@+id/estado_en_camino"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@drawable/reportes_1"
+                        android:scaleType="centerCrop"
+
+                        android:background="@drawable/circle_shape" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="En camino"
+                        android:textSize="12sp"
+                        android:layout_marginTop="4dp"
+                        android:textColor="@android:color/black" />
+                </LinearLayout>
+
+                <!-- Línea 3: Oculta al inicio -->
+                <View
+                    android:id="@+id/linea_3"
+                    android:layout_width="32dp"
+                    android:layout_height="2dp"
+                    android:background="@android:color/darker_gray"
+                    android:layout_gravity="center_vertical"
+                    android:visibility="gone" />
+
+                <!-- Estado 4: Entregado (oculto al inicio) -->
+                <LinearLayout
+                    android:id="@+id/contenedor_entregado"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:id="@+id/estado_entregado"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:scaleType="centerCrop"
+
+                        android:src="@drawable/repartidor_superadmin"
+                        android:background="@drawable/circle_shape" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Entregado"
                         android:textSize="12sp"
                         android:layout_marginTop="4dp"
                         android:textColor="@android:color/black" />

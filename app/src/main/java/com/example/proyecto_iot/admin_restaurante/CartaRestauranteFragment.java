@@ -37,8 +37,6 @@ import java.util.List;
 
 public class CartaRestauranteFragment extends Fragment {
     private RestauranteViewModel restauranteViewModel;
-    private TextView restaurantNameTextView;
-    private TextView cuisineTypeTextView;
     private RecyclerView recyclerCategories, recyclerProducts;
     private CategoriaAdapter categoryAdapter;
     private ProductoAdapter productAdapter;
@@ -57,10 +55,6 @@ public class CartaRestauranteFragment extends Fragment {
         // Inicializa Firestore
         db = FirebaseFirestore.getInstance();
 
-        // Inicializa vistas
-        restaurantNameTextView = view.findViewById(R.id.restaurant_name);
-        cuisineTypeTextView = view.findViewById(R.id.cuisine_type);
-
         // Obtén el ViewModel compartido
         restauranteViewModel = new ViewModelProvider(requireActivity()).get(RestauranteViewModel.class);
 
@@ -69,7 +63,6 @@ public class CartaRestauranteFragment extends Fragment {
             if (idRestaurante != null) {
                 this.idRestaurante = idRestaurante;
                 Log.d("CartaRestaurante", "idRestaurante recibido: " + idRestaurante);
-                fetchRestaurantData(idRestaurante);
                 loadCategories();
             } else {
                 Log.e("CartaRestaurante", "idRestaurante es nulo.");
@@ -236,24 +229,6 @@ public class CartaRestauranteFragment extends Fragment {
         productAdapter.updateData(searchResult);
     }
 
-    private void fetchRestaurantData(String idRestaurante) {
-        Log.d("CartaRestaurante", "Cargando datos del restaurante: " + idRestaurante);
-        db.collection("restaurantes").document(idRestaurante)
-                .get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        String restaurantName = documentSnapshot.getString("nombre");
-                        String slogan = documentSnapshot.getString("eslogan");
-
-                        restaurantNameTextView.setText(restaurantName != null ? restaurantName : "Nombre no disponible");
-                        cuisineTypeTextView.setText(slogan != null ? slogan : "Eslogan no disponible");
-                        Log.d("CartaRestaurante", "Datos del restaurante cargados correctamente.");
-                    } else {
-                        Log.e("CartaRestaurante", "Documento del restaurante no encontrado.");
-                    }
-                })
-                .addOnFailureListener(e -> Log.e("CartaRestaurante", "Error al cargar datos del restaurante", e));
-    }
 }
 
 

@@ -31,7 +31,6 @@ public class EditPersonalInfoActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private StorageReference storageReference;
     private String idRestaurante, idAdministrador;
-    private TextView tvRestaurantName, tvCuisineType;
     private static final int PICK_IMAGE_REQUEST = 1;
 
     @Override
@@ -47,8 +46,6 @@ public class EditPersonalInfoActivity extends AppCompatActivity {
         idRestaurante = getIntent().getStringExtra("idRestaurante");
 
         // Inicializar vistas
-        tvRestaurantName = findViewById(R.id.restaurant_name);
-        tvCuisineType = findViewById(R.id.cuisine_type);
         etNombre = findViewById(R.id.et_name);
         etApellido = findViewById(R.id.et_apellido);
         etEdad = findViewById(R.id.et_fecha);
@@ -67,7 +64,6 @@ public class EditPersonalInfoActivity extends AppCompatActivity {
 
         // Cargar datos del administrador
         if (idRestaurante != null) {
-            fetchRestaurantData(idRestaurante);
             fetchAdminData(idRestaurante);
         } else {
             Toast.makeText(this, "No se pudo obtener el ID del restaurante.", Toast.LENGTH_SHORT).show();
@@ -92,26 +88,6 @@ public class EditPersonalInfoActivity extends AppCompatActivity {
         });
     }
 
-    private void fetchRestaurantData(String idRestaurante) {
-        db.collection("restaurantes").document(idRestaurante).get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        // Llenar datos del restaurante
-                        String restaurantName = documentSnapshot.getString("nombre");
-                        String cuisineType = documentSnapshot.getString("eslogan");
-                        idAdministrador = documentSnapshot.getString("idAdministrador");
-
-                        tvRestaurantName.setText(restaurantName != null ? restaurantName : "Nombre no disponible");
-                        tvCuisineType.setText(cuisineType != null ? cuisineType : "Eslogan no disponible");
-
-                    } else {
-                        Toast.makeText(this, "Datos del restaurante no encontrados.", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Error al obtener datos del restaurante: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
-    }
 
     private void fetchAdminData(String idRestaurante) {
         db.collection("restaurantes").document(idRestaurante).get()

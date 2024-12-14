@@ -33,7 +33,6 @@ public class EditRestaurantInfoActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private StorageReference storageReference;
     private String idRestaurante;
-    private TextView tvRestaurantName, tvCuisineType;
     private static final int PICK_LOGO_REQUEST = 1;
     private static final int PICK_PORTADA_REQUEST = 2;
 
@@ -50,8 +49,6 @@ public class EditRestaurantInfoActivity extends AppCompatActivity {
         idRestaurante = getIntent().getStringExtra("idRestaurante");
 
         // Inicializar vistas
-        tvRestaurantName = findViewById(R.id.restaurant_name);
-        tvCuisineType = findViewById(R.id.cuisine_type);
         etRestaurantName = findViewById(R.id.et_restaurant_name);
         etRestaurantEslogan = findViewById(R.id.et_restaurant_eslogan);
         etRestaurantUbicacion = findViewById(R.id.et_restaurant_ubicacion);
@@ -70,7 +67,6 @@ public class EditRestaurantInfoActivity extends AppCompatActivity {
 
         // Cargar datos del restaurante
         if (idRestaurante != null) {
-            fetchRestaurantData1(idRestaurante);
             fetchRestaurantData(idRestaurante);
         } else {
             Toast.makeText(this, "No se pudo obtener el ID del restaurante.", Toast.LENGTH_SHORT).show();
@@ -94,24 +90,6 @@ public class EditRestaurantInfoActivity extends AppCompatActivity {
         backButton.setOnClickListener(v -> finish());
     }
 
-    private void fetchRestaurantData1(String idRestaurante) {
-        db.collection("restaurantes").document(idRestaurante).get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        // Llenar datos del restaurante
-                        String restaurantName = documentSnapshot.getString("nombre");
-                        String cuisineType = documentSnapshot.getString("eslogan");
-                        tvRestaurantName.setText(restaurantName != null ? restaurantName : "Nombre no disponible");
-                        tvCuisineType.setText(cuisineType != null ? cuisineType : "Eslogan no disponible");
-
-                    } else {
-                        Toast.makeText(this, "Datos del restaurante no encontrados.", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Error al obtener datos del restaurante: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
-    }
 
 
     private void fetchRestaurantData(String idRestaurante) {

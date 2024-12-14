@@ -37,12 +37,17 @@ import com.example.proyecto_iot.admin_restaurante.RecyclerView.OrderAdapter;
 import com.example.proyecto_iot.admin_restaurante.RecyclerView.Pedido;
 import com.example.proyecto_iot.admin_restaurante.RecyclerView.PedidoAdapter;
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -93,14 +98,6 @@ public class PorAceptarFragment extends Fragment {
         // Initialize Firestore
         db = FirebaseFirestore.getInstance();
 
-        // Get idRestaurante from arguments
-        if (getArguments() != null) {
-            idRestaurante = getArguments().getString("idRestaurante");
-            Log.d("PorAceptarFragment", "idRestaurante recibido: " + idRestaurante);
-        } else {
-            Log.e("PorAceptarFragment", "No se recibió idRestaurante en los argumentos.");
-        }
-
         // Verify notification permissions for Android 13+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
@@ -132,8 +129,8 @@ public class PorAceptarFragment extends Fragment {
         pedidoAdapter = new PedidoAdapter(filteredList, getContext());
         rvOrdersList.setAdapter(pedidoAdapter);
 
-        // Manually trigger initial data load
-        fetchOrdersInitially();
+        // Trigger initial data load
+        attachFirestoreListener();
 
         // Setup search functionality
         orderSearch.addTextChangedListener(new TextWatcher() {
@@ -161,8 +158,8 @@ public class PorAceptarFragment extends Fragment {
             return;
         }
 
-        Log.d("PorAceptarFragment", "Fragment visible. Recargando datos.");
-        fetchOrders();
+        Log.d("PorAceptarFragment", "Fragment visible. Activando listener en tiempo real.");
+        attachFirestoreListener();
     }
 
     @Override
@@ -171,88 +168,80 @@ public class PorAceptarFragment extends Fragment {
         detachFirestoreListener(); // Detach listener to avoid leaks
     }
 
-    /**
-     * Fetch orders initially to ensure the list is loaded on fragment start.
-     */
-    private void fetchOrdersInitially() {
-        if (idRestaurante == null) {
-            Log.e("PorAceptarFragment", "fetchOrdersInitially: idRestaurante es nulo.");
-            Toast.makeText(getContext(), "ID de restaurante no definido.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        db.collection("pedidos")
-                .whereEqualTo("idRestaurante", idRestaurante)
-                .whereEqualTo("estado", 0)
-                .get()
-                .addOnSuccessListener(querySnapshot -> {
-                    if (querySnapshot != null && !querySnapshot.isEmpty()) {
-                        pedidoList.clear();
-                        for (QueryDocumentSnapshot doc : querySnapshot) {
-                            Pedido pedido = doc.toObject(Pedido.class);
-                            Log.d("Pedido", "Pedido recibido: " + pedido.getIdCliente() + ", Estado: " + pedido.getEstado());
-                            pedidoList.add(pedido);
-                        }
-
-                        filteredList.clear();
-                        filteredList.addAll(pedidoList);
-                        pedidoAdapter.notifyDataSetChanged();
-                    } else {
-                        Log.d("Pedido", "No se encontraron pedidos.");
-                        Toast.makeText(getContext(), "No hay pedidos por aceptar.", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    Log.e("Pedido", "Error obteniendo pedidos: " + e.getMessage());
-                    Toast.makeText(getContext(), "Error obteniendo pedidos.", Toast.LENGTH_SHORT).show();
-                });
-    }
-
     private void attachFirestoreListener() {
         if (idRestaurante == null) {
             Log.e("PorAceptarFragment", "attachFirestoreListener: idRestaurante es nulo.");
             return;
         }
 
-        if (ordersListener == null) {
-            ordersListener = db.collection("pedidos")
-                    .whereEqualTo("idRestaurante", idRestaurante)
-                    .whereEqualTo("estado", 0)
-                    .addSnapshotListener((querySnapshot, e) -> {
-                        if (e != null) {
-                            Log.e("Pedido", "Error obteniendo pedidos: " + e.getMessage());
-                            Toast.makeText(getContext(), "Error obteniendo pedidos.", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-
-                        if (querySnapshot != null) {
-                            pedidoList.clear();
-                            for (QueryDocumentSnapshot doc : querySnapshot) {
-                                Pedido pedido = doc.toObject(Pedido.class);
-                                Log.d("Pedido", "Pedido actualizado: " + pedido.getIdCliente());
-                                pedidoList.add(pedido);
-                            }
-
-                            filteredList.clear();
-                            filteredList.addAll(pedidoList);
-                            pedidoAdapter.notifyDataSetChanged();
-
-                            // Notify on new orders
-                            for (DocumentChange change : querySnapshot.getDocumentChanges()) {
-                                if (change.getType() == DocumentChange.Type.ADDED) {
-                                    Pedido newPedido = change.getDocument().toObject(Pedido.class);
-                                    sendNotification(newPedido);
-                                }
-                            }
-                        }
-                    });
+        if (ordersListener != null) {
+            Log.d("PorAceptarFragment", "Listener ya activo.");
+            return;
         }
+
+        ordersListener = db.collection("pedidos")
+                .whereEqualTo("idRestaurante", idRestaurante)
+                .whereEqualTo("estado", 0)
+                .addSnapshotListener((querySnapshot, e) -> {
+                    if (e != null) {
+                        Log.e("Pedido", "Error obteniendo pedidos: " + e.getMessage());
+                        Toast.makeText(getContext(), "Error obteniendo pedidos.", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    if (querySnapshot != null) {
+                        pedidoList.clear(); // Limpiar la lista para evitar duplicados
+                        for (DocumentChange change : querySnapshot.getDocumentChanges()) {
+                            DocumentSnapshot doc = change.getDocument();
+                            Pedido pedido = doc.toObject(Pedido.class);
+                            pedido.setId(doc.getId()); // Asignar manualmente el ID del documento
+                            Log.d("PorAceptarFragment", "Pedido recibido con ID: " + pedido.getId());
+
+                            switch (change.getType()) {
+                                case ADDED:
+                                    pedidoList.add(pedido);
+                                    break;
+                                case MODIFIED:
+                                    for (int i = 0; i < pedidoList.size(); i++) {
+                                        if (pedidoList.get(i).getId().equals(pedido.getId())) {
+                                            pedidoList.set(i, pedido);
+                                            break;
+                                        }
+                                    }
+                                    break;
+                                case REMOVED:
+                                    pedidoList.removeIf(p -> p.getId().equals(pedido.getId()));
+                                    break;
+                            }
+                        }
+
+                        // Ordenar la lista por fechaHora (más reciente primero)
+                        pedidoList.sort((p1, p2) -> {
+                            try {
+                                SimpleDateFormat sdf = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy, hh:mm:ss a", Locale.getDefault());
+                                Date date1 = sdf.parse(p1.getFechaHora());
+                                Date date2 = sdf.parse(p2.getFechaHora());
+                                return date2.compareTo(date1);
+                            } catch (ParseException ex) {
+                                Log.e("Pedido", "Error al parsear fechaHora: " + ex.getMessage());
+                                return 0;
+                            }
+                        });
+
+                        // Actualizar la lista filtrada y notificar al adaptador
+                        filteredList.clear();
+                        filteredList.addAll(pedidoList);
+                        pedidoAdapter.notifyDataSetChanged();
+                    }
+                });
     }
+
 
     private void detachFirestoreListener() {
         if (ordersListener != null) {
             ordersListener.remove();
             ordersListener = null;
+            Log.d("PorAceptarFragment", "Listener desconectado.");
         }
     }
 
@@ -308,31 +297,5 @@ public class PorAceptarFragment extends Fragment {
             return;
         }
         notificationManager.notify((int) System.currentTimeMillis(), builder.build());
-    }
-
-    private void fetchOrders() {
-        if (idRestaurante == null) {
-            Log.e("PorAceptarFragment", "ID del restaurante no disponible.");
-            return;
-        }
-
-        db.collection("pedidos")
-                .whereEqualTo("idRestaurante", idRestaurante)
-                .whereEqualTo("estado", 0)
-                .get()
-                .addOnSuccessListener(querySnapshot -> {
-                    pedidoList.clear();
-                    for (QueryDocumentSnapshot doc : querySnapshot) {
-                        Pedido pedido = doc.toObject(Pedido.class);
-                        pedidoList.add(pedido);
-                    }
-                    filteredList.clear();
-                    filteredList.addAll(pedidoList);
-                    pedidoAdapter.notifyDataSetChanged();
-                    Log.d("PorAceptarFragment", "Pedidos cargados correctamente. Total: " + pedidoList.size());
-                })
-                .addOnFailureListener(e -> {
-                    Log.e("PorAceptarFragment", "Error al cargar pedidos: " + e.getMessage());
-                });
     }
 }

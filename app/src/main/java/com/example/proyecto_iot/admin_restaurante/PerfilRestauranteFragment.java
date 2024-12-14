@@ -29,8 +29,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 public class PerfilRestauranteFragment extends Fragment {
 
     private RestauranteViewModel restauranteViewModel;
-    private TextView restaurantNameTextView;
-    private TextView cuisineTypeTextView;
     private FirebaseFirestore db;
 
     // TODO: Rename parameter arguments, choose names that match
@@ -81,19 +79,9 @@ public class PerfilRestauranteFragment extends Fragment {
         // Inicializa Firestore
         db = FirebaseFirestore.getInstance();
 
-        // Inicializa vistas
-        restaurantNameTextView = view.findViewById(R.id.restaurant_name);
-        cuisineTypeTextView = view.findViewById(R.id.cuisine_type);
-
         // Obtén el ViewModel compartido
         restauranteViewModel = new ViewModelProvider(requireActivity()).get(RestauranteViewModel.class);
 
-        // Observa los cambios en el idRestaurante
-        restauranteViewModel.getIdRestaurante().observe(getViewLifecycleOwner(), idRestaurante -> {
-            if (idRestaurante != null) {
-                fetchRestaurantData(idRestaurante);
-            }
-        });
 
         // Enlazar los botones para editar datos personales y del restaurante
         LinearLayout personalInfoLayout = view.findViewById(R.id.edit_personal_info);
@@ -148,26 +136,5 @@ public class PerfilRestauranteFragment extends Fragment {
 
 
         return view;
-    }
-
-    private void fetchRestaurantData(String idRestaurante) {
-        db.collection("restaurantes").document(idRestaurante)
-                .get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        // Recuperar los datos del documento
-                        String restaurantName = documentSnapshot.getString("nombre");
-                        String slogan = documentSnapshot.getString("eslogan");
-
-                        // Actualizar la UI
-                        restaurantNameTextView.setText(restaurantName != null ? restaurantName : "Nombre no disponible");
-                        cuisineTypeTextView.setText(slogan != null ? slogan : "Eslogan no disponible");
-                    } else {
-                        Toast.makeText(getContext(), "Datos del restaurante no encontrados.", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(getContext(), "Error al obtener datos: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
     }
 }

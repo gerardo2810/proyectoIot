@@ -35,6 +35,15 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/fecha_hora"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="XXX-1234 - 2 productos"
+                android:textColor="@color/md_theme_errorContainer_mediumContrast"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <TextView
                 android:id="@+id/cliente"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -69,24 +78,14 @@
             android:layout_weight="1"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/time_remaining"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="@drawable/rounded_background"
-                android:padding="8dp"
-                android:text="30 min"
-                android:textColor="@android:color/black" />
-
             <Button
                 android:id="@+id/btn_ready_to_deliver"
-                android:layout_width="wrap_content"
+                android:layout_width="106dp"
                 android:layout_height="36dp"
                 android:layout_gravity="center"
                 android:backgroundTint="#6A1B9A"
                 android:padding="3dp"
-                android:text="¡Listo!"
+                android:text="¡Pedido Listo!"
                 android:textColor="@android:color/white"
                 android:textSize="12sp" />
         </LinearLayout>

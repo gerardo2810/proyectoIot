@@ -16,8 +16,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -29,6 +31,7 @@ import com.example.proyecto_iot.admin_restaurante.EnPreparacionFragment;
 import com.example.proyecto_iot.admin_restaurante.InicioRestauranteActivity;
 import com.example.proyecto_iot.admin_restaurante.MasDetallesPedidoActivity;
 import com.example.proyecto_iot.admin_restaurante.PedidoDetallesActivity;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
 
@@ -36,12 +39,12 @@ public class PedidoPreparadoAdapter extends RecyclerView.Adapter<PedidoPreparado
 
     private List<Pedido> pedidoList;
     private Context context;
-    private OnOrderReadyListener listener;
+    private FirebaseFirestore db;
 
-    public PedidoPreparadoAdapter(List<Pedido> pedidoList, Context context, OnOrderReadyListener listener) {
+    public PedidoPreparadoAdapter(List<Pedido> pedidoList, Context context) {
         this.pedidoList = pedidoList;
         this.context = context;
-        this.listener = listener;
+        this.db = FirebaseFirestore.getInstance(); // Inicializar Firestore
     }
 
     @NonNull
@@ -55,37 +58,93 @@ public class PedidoPreparadoAdapter extends RecyclerView.Adapter<PedidoPreparado
     public void onBindViewHolder(@NonNull PedidoViewHolder holder, int position) {
         Pedido pedido = pedidoList.get(position);
 
-        // Bind data to views
-        holder.cliente.setText(pedido.getIdCliente());
+        // Mostrar datos básicos del pedido
+        holder.fechaHora.setText(pedido.getFechaHora());
         holder.cant_productos.setText(pedido.getProductos().size() + " productos");
-        holder.time_remaining.setText(pedido.getFechaHora()); // Display preparation time
 
-        // Set up the "Ready to Deliver" button
+        // Obtener el nombre del cliente desde Firestore
+        db.collection("clientes").document(pedido.getIdCliente())
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        String nombreCliente = documentSnapshot.getString("Nombre");
+                        holder.cliente.setText("Cliente: " + (nombreCliente != null ? nombreCliente : "Desconocido"));
+                    } else {
+                        holder.cliente.setText("Cliente: Desconocido");
+                    }
+                });
+
+        // Configurar botón "Pedido Listo"
         holder.btn_ready_to_deliver.setOnClickListener(v -> {
-            listener.onOrderReady(pedido);
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            View customLayout = LayoutInflater.from(context).inflate(R.layout.restaurante_custom_pedido_preparado, null);
+
+            TextView tvConfirmMessage = customLayout.findViewById(R.id.tv_confirm_message);
+            Button btnConfirm = customLayout.findViewById(R.id.btn_confirm);
+            Button btnCancel = customLayout.findViewById(R.id.btn_cancel);
+
+            // Personalizar el mensaje de confirmación
+            tvConfirmMessage.setText("¿El pedido de " + pedido.getNombreCliente() + " ya está listo para el delivery?");
+
+            // Crear el diálogo
+            AlertDialog dialog = builder.setView(customLayout).create();
+
+            // Configurar acciones de los botones
+            btnConfirm.setOnClickListener(v1 -> {
+                cambiarEstadoPedido(pedido, 2); // Cambiar estado a "2"
+                dialog.dismiss(); // Cierra el diálogo
+            });
+
+            btnCancel.setOnClickListener(v12 -> dialog.dismiss()); // Cierra el diálogo
+
+            // Mostrar el diálogo
+            dialog.show();
+        });
+
+        // Manejar clic en "Ver más detalles"
+        holder.verMasDetalles.setOnClickListener(v -> {
+            Intent intent = new Intent(context, PedidoDetallesActivity.class);
+            intent.putExtra("pedidoId", pedido.getId());
+            context.startActivity(intent);
         });
     }
+
 
     @Override
     public int getItemCount() {
         return pedidoList.size();
     }
 
+    private void cambiarEstadoPedido(Pedido pedido, int nuevoEstado) {
+        if (pedido == null || pedido.getId() == null) {
+            Toast.makeText(context, "Pedido no válido o ID no disponible.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        db.collection("pedidos").document(pedido.getId())
+                .update("estado", nuevoEstado)
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(context, "El pedido ahora está listo para el delivery.", Toast.LENGTH_SHORT).show();
+                    pedidoList.remove(pedido);
+                    notifyDataSetChanged();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(context, "Error al actualizar el estado: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+    }
+
     public static class PedidoViewHolder extends RecyclerView.ViewHolder {
-        TextView id_new_pedido, cliente, cant_productos, time_remaining;
+        TextView fechaHora, cliente, cant_productos, verMasDetalles;
         Button btn_ready_to_deliver;
 
         public PedidoViewHolder(@NonNull View itemView) {
             super(itemView);
+            fechaHora = itemView.findViewById(R.id.fecha_hora);
             cliente = itemView.findViewById(R.id.cliente);
             cant_productos = itemView.findViewById(R.id.cant_productos);
-            time_remaining = itemView.findViewById(R.id.time_remaining);
+            verMasDetalles = itemView.findViewById(R.id.vermas);
             btn_ready_to_deliver = itemView.findViewById(R.id.btn_ready_to_deliver);
         }
-    }
-
-    public interface OnOrderReadyListener {
-        void onOrderReady(Pedido pedido);
     }
 }
 

@@ -25,7 +25,6 @@ public class ViewRestaurantScheduleActivity extends AppCompatActivity {
     private TextView btnEditar;
     private FirebaseFirestore db;
     private String idRestaurante;
-    private TextView tvRestaurantName, tvCuisineType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +38,6 @@ public class ViewRestaurantScheduleActivity extends AppCompatActivity {
         idRestaurante = getIntent().getStringExtra("idRestaurante");
 
         // Inicializar vistas
-        tvRestaurantName = findViewById(R.id.restaurant_name);
-        tvCuisineType = findViewById(R.id.cuisine_type);
         etLunes = findViewById(R.id.et_lunes);
         etMartes = findViewById(R.id.et_martes);
         etMiercoles = findViewById(R.id.et_miercoles);
@@ -56,7 +53,6 @@ public class ViewRestaurantScheduleActivity extends AppCompatActivity {
 
         // Cargar horarios
         if (idRestaurante != null) {
-            fetchRestaurantData(idRestaurante);
             fetchScheduleData(idRestaurante);
         } else {
             Toast.makeText(this, "No se pudo obtener el ID del restaurante.", Toast.LENGTH_SHORT).show();
@@ -90,24 +86,6 @@ public class ViewRestaurantScheduleActivity extends AppCompatActivity {
 
     }
 
-    private void fetchRestaurantData(String idRestaurante) {
-        db.collection("restaurantes").document(idRestaurante).get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        // Llenar datos del restaurante
-                        String restaurantName = documentSnapshot.getString("nombre");
-                        String cuisineType = documentSnapshot.getString("eslogan");
-                        tvRestaurantName.setText(restaurantName != null ? restaurantName : "Nombre no disponible");
-                        tvCuisineType.setText(cuisineType != null ? cuisineType : "Eslogan no disponible");
-
-                    } else {
-                        Toast.makeText(this, "Datos del restaurante no encontrados.", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Error al obtener datos del restaurante: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
-    }
 
     private void fetchScheduleData(String idRestaurante) {
         db.collection("horarios").whereEqualTo("idRestaurante", idRestaurante).get()

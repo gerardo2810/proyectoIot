@@ -3,15 +3,17 @@ package com.example.proyecto_iot.admin_restaurante.RecyclerView;
 import java.util.List;
 
 public class Pedido {
+    private String id;
     private String direccion;
     private int estado;
     private String fechaHora;
     private String idCliente;
     private String idRepartidor;
+    private String nombreCliente;
     private String idRestaurante;
     private String nombreRestaurante;
     private double pagoTotal;
-    private List<Producto> productos;
+    private List<ProductoPedido> productos;
     private String qrUrl;
 
     // Default constructor required for Firebase
@@ -19,7 +21,7 @@ public class Pedido {
     }
 
     public Pedido(String direccion, int estado, String fechaHora, String idCliente, String idRepartidor,
-                  String idRestaurante, String nombreRestaurante, double pagoTotal, List<Producto> productos, String qrUrl) {
+                  String idRestaurante, String nombreRestaurante, double pagoTotal, List<ProductoPedido> productos, String qrUrl) {
         this.direccion = direccion;
         this.estado = estado;
         this.fechaHora = fechaHora;
@@ -97,11 +99,11 @@ public class Pedido {
         this.pagoTotal = pagoTotal;
     }
 
-    public List<Producto> getProductos() {
+    public List<ProductoPedido> getProductos() {
         return productos;
     }
 
-    public void setProductos(List<Producto> productos) {
+    public void setProductos(List<ProductoPedido> productos) {
         this.productos = productos;
     }
 
@@ -111,5 +113,21 @@ public class Pedido {
 
     public void setQrUrl(String qrUrl) {
         this.qrUrl = qrUrl;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getNombreCliente() {
+        return nombreCliente;
+    }
+
+    public void setNombreCliente(String nombreCliente) {
+        this.nombreCliente = nombreCliente;
     }
 }

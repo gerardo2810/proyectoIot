@@ -11,6 +11,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -25,7 +26,9 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.proyecto_iot.R;
@@ -43,19 +46,18 @@ public class EnPreparacionFragment extends Fragment {
     private RecyclerView rvOrdersList;
     private PedidoPreparadoAdapter pedidoPreparadoAdapter;
     private List<Pedido> pedidoList;
-    private List<Pedido> filteredList; // Filtered list
+    private List<Pedido> filteredList; // Lista filtrada
     private FirebaseFirestore db;
-    private String idRestaurante; // Restaurant ID
-    private EditText orderSearch;
+    private String idRestaurante; // ID del restaurante
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Initialize Firestore
+        // Inicializar Firestore
         db = FirebaseFirestore.getInstance();
 
-        // Get idRestaurante from arguments
+        // Obtener idRestaurante de los argumentos
         if (getArguments() != null) {
             idRestaurante = getArguments().getString("idRestaurante");
         }
@@ -64,53 +66,38 @@ public class EnPreparacionFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_en_preparacion, container, false);
 
-        // Initialize RecyclerView
+        // Inicializar RecyclerView
         rvOrdersList = view.findViewById(R.id.rv_orders_list);
         rvOrdersList.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // Initialize search EditText
-        orderSearch = view.findViewById(R.id.order_search);
-
-        // Initialize lists
+        // Inicializar listas
         pedidoList = new ArrayList<>();
         filteredList = new ArrayList<>();
 
-        // Initialize adapter
-        pedidoPreparadoAdapter = new PedidoPreparadoAdapter(filteredList, getContext(), this::removeOrder);
+        // Inicializar adapter
+        pedidoPreparadoAdapter = new PedidoPreparadoAdapter(filteredList, getContext());
         rvOrdersList.setAdapter(pedidoPreparadoAdapter);
 
-        // Fetch orders from Firestore
+        // Cargar pedidos desde Firestore
         fetchOrders();
-
-        // Setup search functionality
-        orderSearch.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                filterOrders(s.toString());
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {}
-        });
 
         return view;
     }
 
     private void fetchOrders() {
-        if (idRestaurante == null) return;
+        if (idRestaurante == null) {
+            Toast.makeText(getContext(), "ID del restaurante no disponible.", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         db.collection("pedidos")
                 .whereEqualTo("idRestaurante", idRestaurante)
-                .whereEqualTo("estado", 1)
+                .whereEqualTo("estado", 1) // Filtrar pedidos en estado "1"
                 .addSnapshotListener((querySnapshot, e) -> {
                     if (e != null) {
-                        Toast.makeText(getContext(), "Error fetching orders: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Error al obtener pedidos: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         return;
                     }
 
@@ -118,41 +105,32 @@ public class EnPreparacionFragment extends Fragment {
                         pedidoList.clear();
                         for (QueryDocumentSnapshot doc : querySnapshot) {
                             Pedido pedido = doc.toObject(Pedido.class);
-                            pedidoList.add(pedido);
+                            pedido.setId(doc.getId()); // Asigna manualmente el ID del documento
+                            buscarNombreCliente(pedido);
                         }
-
-                        filteredList.clear();
-                        filteredList.addAll(pedidoList);
-                        pedidoPreparadoAdapter.notifyDataSetChanged();
                     }
                 });
     }
 
-    private void filterOrders(String query) {
-        filteredList.clear();
-        if (query.isEmpty()) {
-            filteredList.addAll(pedidoList);
-        } else {
-            for (Pedido pedido : pedidoList) {
-                if (pedido.getIdCliente().toLowerCase().contains(query.toLowerCase()) ||
-                        pedido.getNombreRestaurante().toLowerCase().contains(query.toLowerCase())) {
-                    filteredList.add(pedido);
-                }
-            }
-        }
-
-        if (filteredList.isEmpty()) {
-            Toast.makeText(getContext(), "No se encontraron resultados", Toast.LENGTH_SHORT).show();
-        }
-
-        pedidoPreparadoAdapter.notifyDataSetChanged();
-    }
-
-    private void removeOrder(Pedido pedido) {
-        int position = filteredList.indexOf(pedido);
-        if (position != -1) {
-            filteredList.remove(position);
-            pedidoPreparadoAdapter.notifyItemRemoved(position);
-        }
+    private void buscarNombreCliente(Pedido pedido) {
+        db.collection("clientes").document(pedido.getIdCliente())
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        String nombreCliente = documentSnapshot.getString("Nombre");
+                        pedido.setNombreCliente(nombreCliente != null ? nombreCliente : "Cliente Desconocido");
+                    } else {
+                        pedido.setNombreCliente("Cliente Desconocido");
+                    }
+                    pedidoList.add(pedido);
+                    filteredList.clear();
+                    filteredList.addAll(pedidoList);
+                    pedidoPreparadoAdapter.notifyDataSetChanged();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(getContext(), "Error al obtener nombre del cliente: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
     }
 }
+
+

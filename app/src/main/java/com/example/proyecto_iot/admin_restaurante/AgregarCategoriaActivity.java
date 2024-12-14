@@ -30,7 +30,6 @@ public class AgregarCategoriaActivity extends AppCompatActivity {
     private ImageView categoryImageView;
     private FirebaseFirestore db;
     private String idRestaurante, imageUrl;
-    private TextView tvRestaurantName, tvCuisineType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,9 +37,6 @@ public class AgregarCategoriaActivity extends AppCompatActivity {
         setContentView(R.layout.restaurante_activity_crear_category);
 
         db = FirebaseFirestore.getInstance();
-
-        tvRestaurantName = findViewById(R.id.restaurant_name);
-        tvCuisineType = findViewById(R.id.cuisine_type);
 
         etCategoryName = findViewById(R.id.et_category_name);
         btnSaveCategory = findViewById(R.id.btn_save_category);
@@ -53,12 +49,6 @@ public class AgregarCategoriaActivity extends AppCompatActivity {
             finish();
         }
 
-        if (idRestaurante != null) {
-            fetchRestaurantData1(idRestaurante);
-        } else {
-            Toast.makeText(this, "No se pudo obtener el ID del restaurante.", Toast.LENGTH_SHORT).show();
-            finish();
-        }
 
         btnUploadImage.setOnClickListener(v -> uploadImage());
 
@@ -68,22 +58,7 @@ public class AgregarCategoriaActivity extends AppCompatActivity {
         backButton.setOnClickListener(v -> finish());
     }
 
-    private void fetchRestaurantData1(String idRestaurante) {
-        db.collection("restaurantes").document(idRestaurante).get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        String restaurantName = documentSnapshot.getString("nombre");
-                        String cuisineType = documentSnapshot.getString("eslogan");
-                        tvRestaurantName.setText(restaurantName != null ? restaurantName : "Nombre no disponible");
-                        tvCuisineType.setText(cuisineType != null ? cuisineType : "Eslogan no disponible");
-                    } else {
-                        Toast.makeText(this, "Datos del restaurante no encontrados.", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Error al obtener datos del restaurante: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
-    }
+
 
     private void uploadImage() {
         Intent intent = new Intent();

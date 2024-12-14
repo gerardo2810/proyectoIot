@@ -22,6 +22,23 @@
     <string name="fui_sign_in_with_email">Ingresar con email</string>
     <string name="fui_sign_in_with_google">Ingresar con Google</string>
 
+    <!-- Arreglo de meses para el spinner -->
+    <string-array name="meses_array">
+        <item>-Seleccionar-</item>
+        <item>Enero</item>
+        <item>Febrero</item>
+        <item>Marzo</item>
+        <item>Abril</item>
+        <item>Mayo</item>
+        <item>Junio</item>
+        <item>Julio</item>
+        <item>Agosto</item>
+        <item>Septiembre</item>
+        <item>Octubre</item>
+        <item>Noviembre</item>
+        <item>Diciembre</item>
+    </string-array>
+
     <string-array name="document_types">
         <item>Tipo de Documento de Identidad</item>
         <item>DNI</item>

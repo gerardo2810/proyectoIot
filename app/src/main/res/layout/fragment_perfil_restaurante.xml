@@ -35,18 +35,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:textColor="@color/green_dark"
-                android:textSize="20sp"
+                android:text="MI PERFIL"
+                android:gravity="center_horizontal"
+                android:textColor="@color/purple"
+                android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/cuisine_type"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:textColor="@color/md_theme_onPrimaryFixedVariant"
-                android:textStyle="bold"
-                android:textSize="14sp" />
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
@@ -54,25 +48,11 @@
 
     <!-- BottomNavigationView para cambiar entre fragments principales -->
 
-    <TextView
-        android:id="@+id/tv_historial_titulo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
-        android:text="MI PERFIL"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/top_bar_card"
-        app:layout_constraintVertical_bias="0.133" />
-
     <LinearLayout
         android:id="@+id/linearLayout3"
         android:layout_width="394dp"
         android:layout_height="0dp"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="30dp"
         android:orientation="vertical"
         android:padding="16dp"
         android:paddingLeft="20dp"
@@ -90,7 +70,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:text="Información personal"
-            android:textColor="@color/purple"
+            android:textColor="@color/green_normal"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -130,7 +110,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:text="Información del restaurante"
-            android:textColor="@color/purple"
+            android:textColor="@color/green_normal"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -211,7 +191,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:text="Configuración"
-            android:textColor="@color/purple"
+            android:textColor="@color/green_normal"
             android:textSize="18sp"
             android:textStyle="bold" />
 

@@ -35,18 +35,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:textColor="@color/green_dark"
-                android:textSize="20sp"
+                android:text="AGREGAR NUEVA CATEGORÍA"
+                android:gravity="center_horizontal"
+                android:textColor="@color/purple"
+                android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/cuisine_type"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:textColor="@color/md_theme_onPrimaryFixedVariant"
-                android:textStyle="bold"
-                android:textSize="14sp" />
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
@@ -75,22 +69,10 @@
                 android:id="@+id/back_button"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:layout_marginStart="10dp"
                 android:layout_marginTop="12dp"
                 android:background="@android:color/transparent"
                 android:contentDescription="Back"
                 android:src="@drawable/baseline_arrow_back_ios_24" />
-
-            <TextView
-                android:id="@+id/tv_historial_titulo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-
-                android:paddingBottom="25dp"
-                android:text="AGREGAR NUEVA CATEGORÍA"
-                android:textSize="18sp"
-                android:textStyle="bold" />
 
             <!-- Nombre del producto -->
             <LinearLayout
@@ -107,9 +89,9 @@
                     <ImageView
                         android:id="@+id/imageView5"
                         android:layout_width="158dp"
-                        android:layout_height="113dp"
+                        android:layout_height="149dp"
                         android:layout_gravity="center"
-                        android:background="@drawable/placeholder" />
+                        android:background="@drawable/category_background" />
 
                     <Button
                         android:id="@+id/btn_upload_image"

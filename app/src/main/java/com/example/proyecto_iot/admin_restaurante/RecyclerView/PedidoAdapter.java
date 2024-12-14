@@ -40,9 +40,9 @@ public class PedidoAdapter extends RecyclerView.Adapter<PedidoAdapter.PedidoView
     public void onBindViewHolder(@NonNull PedidoViewHolder holder, int position) {
         Pedido pedido = pedidoList.get(position);
 
-        // Bind data
-        holder.tvPedidoCliente.setText(pedido.getIdCliente());
-        holder.tvPedidoCantidad.setText(pedido.getProductos().size() + " productos");
+        // Asegúrate de que los campos de pedido no sean nulos
+        holder.tvPedidoCliente.setText(pedido.getIdCliente() != null ? pedido.getIdCliente() : "Cliente no disponible");
+        holder.tvPedidoCantidad.setText(pedido.getProductos() != null ? pedido.getProductos().size() + " productos" : "0 productos");
         holder.tvPedidoPrecio.setText(String.format("S/%.2f", pedido.getPagoTotal()));
 
         // Handle click event

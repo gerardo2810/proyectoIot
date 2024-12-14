@@ -35,51 +35,28 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:textColor="@color/green_dark"
-                android:textSize="20sp"
+                android:text="NUESTRA CARTA"
+                android:gravity="center_horizontal"
+                android:textColor="@color/purple"
+                android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/cuisine_type"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:textColor="@color/md_theme_onPrimaryFixedVariant"
-                android:textStyle="bold"
-                android:textSize="14sp" />
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
 
-    <!-- Título de la página -->
-    <TextView
-        android:id="@+id/tv_historial_titulo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="MENÚ"
-        android:paddingTop="20dp"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/top_bar_card"
-        app:layout_constraintVertical_bias="0.031" />
 
-    <!-- Texto de categorías -->
-
-    <!-- Carrusel de categorías -->
     <TextView
         android:id="@+id/textView12"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:text="Categorías"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.051"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_historial_titulo" />
+        tools:layout_editor_absoluteY="90dp" />
 
     <Button
         android:id="@+id/btn_add_categoria"

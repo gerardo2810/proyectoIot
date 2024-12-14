@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -77,12 +78,27 @@ public class PorAceptarFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Obtener el idRestaurante del Bundle
+        if (getArguments() != null) {
+            idRestaurante = getArguments().getString("idRestaurante");
+        }
+
+        if (idRestaurante == null) {
+            Log.e("PorAceptarFragment", "onCreate: idRestaurante es nulo.");
+            return;
+        }
+
+        Log.d("PorAceptarFragment", "onCreate: idRestaurante recibido: " + idRestaurante);
+
         // Initialize Firestore
         db = FirebaseFirestore.getInstance();
 
         // Get idRestaurante from arguments
         if (getArguments() != null) {
             idRestaurante = getArguments().getString("idRestaurante");
+            Log.d("PorAceptarFragment", "idRestaurante recibido: " + idRestaurante);
+        } else {
+            Log.e("PorAceptarFragment", "No se recibió idRestaurante en los argumentos.");
         }
 
         // Verify notification permissions for Android 13+
@@ -139,7 +155,14 @@ public class PorAceptarFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        attachFirestoreListener(); // Ensure listener is attached when fragment resumes
+
+        if (idRestaurante == null) {
+            Log.e("PorAceptarFragment", "onResume: idRestaurante es nulo.");
+            return;
+        }
+
+        Log.d("PorAceptarFragment", "Fragment visible. Recargando datos.");
+        fetchOrders();
     }
 
     @Override
@@ -152,30 +175,44 @@ public class PorAceptarFragment extends Fragment {
      * Fetch orders initially to ensure the list is loaded on fragment start.
      */
     private void fetchOrdersInitially() {
-        if (idRestaurante == null) return;
+        if (idRestaurante == null) {
+            Log.e("PorAceptarFragment", "fetchOrdersInitially: idRestaurante es nulo.");
+            Toast.makeText(getContext(), "ID de restaurante no definido.", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         db.collection("pedidos")
                 .whereEqualTo("idRestaurante", idRestaurante)
                 .whereEqualTo("estado", 0)
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
-                    pedidoList.clear();
-                    for (QueryDocumentSnapshot doc : querySnapshot) {
-                        Pedido pedido = doc.toObject(Pedido.class);
-                        pedidoList.add(pedido);
-                    }
+                    if (querySnapshot != null && !querySnapshot.isEmpty()) {
+                        pedidoList.clear();
+                        for (QueryDocumentSnapshot doc : querySnapshot) {
+                            Pedido pedido = doc.toObject(Pedido.class);
+                            Log.d("Pedido", "Pedido recibido: " + pedido.getIdCliente() + ", Estado: " + pedido.getEstado());
+                            pedidoList.add(pedido);
+                        }
 
-                    filteredList.clear();
-                    filteredList.addAll(pedidoList);
-                    pedidoAdapter.notifyDataSetChanged();
+                        filteredList.clear();
+                        filteredList.addAll(pedidoList);
+                        pedidoAdapter.notifyDataSetChanged();
+                    } else {
+                        Log.d("Pedido", "No se encontraron pedidos.");
+                        Toast.makeText(getContext(), "No hay pedidos por aceptar.", Toast.LENGTH_SHORT).show();
+                    }
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(getContext(), "Error fetching orders: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.e("Pedido", "Error obteniendo pedidos: " + e.getMessage());
+                    Toast.makeText(getContext(), "Error obteniendo pedidos.", Toast.LENGTH_SHORT).show();
                 });
     }
 
     private void attachFirestoreListener() {
-        if (idRestaurante == null) return;
+        if (idRestaurante == null) {
+            Log.e("PorAceptarFragment", "attachFirestoreListener: idRestaurante es nulo.");
+            return;
+        }
 
         if (ordersListener == null) {
             ordersListener = db.collection("pedidos")
@@ -183,7 +220,8 @@ public class PorAceptarFragment extends Fragment {
                     .whereEqualTo("estado", 0)
                     .addSnapshotListener((querySnapshot, e) -> {
                         if (e != null) {
-                            Toast.makeText(getContext(), "Error fetching orders: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Log.e("Pedido", "Error obteniendo pedidos: " + e.getMessage());
+                            Toast.makeText(getContext(), "Error obteniendo pedidos.", Toast.LENGTH_SHORT).show();
                             return;
                         }
 
@@ -191,6 +229,7 @@ public class PorAceptarFragment extends Fragment {
                             pedidoList.clear();
                             for (QueryDocumentSnapshot doc : querySnapshot) {
                                 Pedido pedido = doc.toObject(Pedido.class);
+                                Log.d("Pedido", "Pedido actualizado: " + pedido.getIdCliente());
                                 pedidoList.add(pedido);
                             }
 
@@ -228,10 +267,6 @@ public class PorAceptarFragment extends Fragment {
                     filteredList.add(pedido);
                 }
             }
-        }
-
-        if (filteredList.isEmpty()) {
-            Toast.makeText(getContext(), "No matching orders found", Toast.LENGTH_SHORT).show();
         }
 
         pedidoAdapter.notifyDataSetChanged();
@@ -274,5 +309,30 @@ public class PorAceptarFragment extends Fragment {
         }
         notificationManager.notify((int) System.currentTimeMillis(), builder.build());
     }
-}
 
+    private void fetchOrders() {
+        if (idRestaurante == null) {
+            Log.e("PorAceptarFragment", "ID del restaurante no disponible.");
+            return;
+        }
+
+        db.collection("pedidos")
+                .whereEqualTo("idRestaurante", idRestaurante)
+                .whereEqualTo("estado", 0)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    pedidoList.clear();
+                    for (QueryDocumentSnapshot doc : querySnapshot) {
+                        Pedido pedido = doc.toObject(Pedido.class);
+                        pedidoList.add(pedido);
+                    }
+                    filteredList.clear();
+                    filteredList.addAll(pedidoList);
+                    pedidoAdapter.notifyDataSetChanged();
+                    Log.d("PorAceptarFragment", "Pedidos cargados correctamente. Total: " + pedidoList.size());
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("PorAceptarFragment", "Error al cargar pedidos: " + e.getMessage());
+                });
+    }
+}

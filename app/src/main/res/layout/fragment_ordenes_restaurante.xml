@@ -35,39 +35,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:textColor="@color/green_dark"
-                android:textSize="20sp"
+                android:text="HISTORIAL DE ÓRDENES"
+                android:gravity="center_horizontal"
+                android:textColor="@color/purple"
+                android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/cuisine_type"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:textColor="@color/md_theme_onPrimaryFixedVariant"
-                android:textStyle="bold"
-                android:textSize="14sp" />
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
-
-    <!-- Título de la página -->
-
-    <!-- Selector de fecha -->
-
-    <TextView
-        android:id="@+id/tv_historial_titulo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:paddingBottom="10dp"
-        android:text="HISTORIAL DE ÓRDENES"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/top_bar_card" />
 
     <LinearLayout
         android:id="@+id/date_selector"
@@ -123,7 +99,7 @@
         android:id="@+id/tv_fecha"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="148dp"
+        android:layout_marginTop="90dp"
         android:background="@drawable/rounded_background"
         android:padding="8dp"
         android:text="Fecha: 04/09/2024"

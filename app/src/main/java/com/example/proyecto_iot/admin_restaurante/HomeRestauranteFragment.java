@@ -4,12 +4,16 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,92 +22,145 @@ import com.example.proyecto_iot.admin_restaurante.RecyclerView.RestauranteViewMo
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link HomeRestauranteFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class HomeRestauranteFragment extends Fragment {
     private RestauranteViewModel restauranteViewModel;
-    private TextView restaurantNameTextView;
-    private TextView cuisineTypeTextView;
+    private TextView restaurantNameTextView, cuisineTypeTextView, closedMessage;
+    private Button statusButton;
+    private TabLayout tabLayout;
     private FirebaseFirestore db;
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public HomeRestauranteFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment HomeRestauranteFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static HomeRestauranteFragment newInstance(String param1, String param2) {
-        HomeRestauranteFragment fragment = new HomeRestauranteFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    private String restaurantId; // ID del restaurante
+    private boolean isRestaurantOpen = true; // Estado inicial (puede actualizarse desde Firebase)
+    private Fragment selectedFragment;
+    private int lastSelectedTab = -1; // Guardar la última pestaña seleccionada para evitar recargas innecesarias
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+        Log.d("HomeRestauranteFragment", "Fragment creado en onCreate");
     }
-
-    private TabLayout tabLayout;
-    private Fragment selectedFragment;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Log.d("HomeRestauranteFragment", "Fragment inflado en onCreateView");
         View view = inflater.inflate(R.layout.fragment_home_restaurante, container, false);
 
-        // Inicializa Firestore
+        // Inicializar Firestore
         db = FirebaseFirestore.getInstance();
 
-        // Inicializa vistas
+        // Inicializar vistas
         restaurantNameTextView = view.findViewById(R.id.restaurant_name);
         cuisineTypeTextView = view.findViewById(R.id.cuisine_type);
+        statusButton = view.findViewById(R.id.status_button);
+        closedMessage = view.findViewById(R.id.closed_message);
+        tabLayout = view.findViewById(R.id.tabLayout);
 
-        // Obtén el ViewModel compartido
+        // Configurar ViewModel para obtener el ID del restaurante
         restauranteViewModel = new ViewModelProvider(requireActivity()).get(RestauranteViewModel.class);
 
-        // Observa los cambios en el idRestaurante
+        // Observamos cambios en el ID del restaurante
         restauranteViewModel.getIdRestaurante().observe(getViewLifecycleOwner(), idRestaurante -> {
             if (idRestaurante != null) {
+                Log.d("HomeRestauranteFragment", "ID del restaurante recibido: " + idRestaurante);
+                restaurantId = idRestaurante;
+
+                // Actualizamos los datos del restaurante y la UI
                 fetchRestaurantData(idRestaurante);
+            } else {
+                Log.e("HomeRestauranteFragment", "ID del restaurante no recibido");
             }
         });
 
+        // Configurar el listener del botón
+        statusButton.setOnClickListener(v -> showCloseConfirmationDialog());
 
-        // Inicializa el TabLayout
-        tabLayout = view.findViewById(R.id.tabLayout);
+        // Configurar el TabLayout para manejar los fragmentos
+        setupTabLayout();
 
-        // Listener para manejar las selecciones de pestañas
+        return view;
+    }
+
+    private void fetchRestaurantData(String idRestaurante) {
+        Log.d("HomeRestauranteFragment", "Obteniendo datos del restaurante con ID: " + idRestaurante);
+        db.collection("restaurantes").document(idRestaurante)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        String restaurantName = documentSnapshot.getString("nombre");
+                        String slogan = documentSnapshot.getString("eslogan");
+                        isRestaurantOpen = documentSnapshot.getBoolean("open"); // Obtener estado actual
+
+                        Log.d("HomeRestauranteFragment", "Datos obtenidos: nombre=" + restaurantName + ", eslogan=" + slogan);
+
+                        // Actualizar la UI
+                        restaurantNameTextView.setText(restaurantName != null ? restaurantName : "Nombre no disponible");
+                        cuisineTypeTextView.setText(slogan != null ? slogan : "Eslogan no disponible");
+                        updateUI(true); // Actualizar elementos visuales según el estado, forzar carga inicial
+                    } else {
+                        Log.e("HomeRestauranteFragment", "No se encontraron datos para el restaurante.");
+                        Toast.makeText(getContext(), "Datos del restaurante no encontrados.", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("HomeRestauranteFragment", "Error al obtener datos: " + e.getMessage());
+                    Toast.makeText(getContext(), "Error al obtener datos: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void updateUI(boolean forceLoadInitial) {
+        if (restaurantId == null) {
+            Log.e("HomeRestauranteFragment", "updateUI: restaurantId es nulo. No se puede actualizar la UI.");
+            return;
+        }
+
+        if (isRestaurantOpen) {
+            Log.d("HomeRestauranteFragment", "Restaurante está abierto. Mostrando pestañas y fragmentos.");
+            statusButton.setText("RESTAURANTE ABIERTO");
+            statusButton.setBackgroundTintList(ContextCompat.getColorStateList(requireContext(), R.color.green));
+            closedMessage.setVisibility(View.GONE);
+            tabLayout.setVisibility(View.VISIBLE);
+
+            // Cargar la pestaña activa o la predeterminada (PorAceptarFragment) si aún no se ha cargado o si es la inicialización forzada
+            if (forceLoadInitial || selectedFragment == null || !(selectedFragment instanceof PorAceptarFragment)) {
+                lastSelectedTab = 0; // Establecer la primera pestaña como seleccionada
+                selectedFragment = new PorAceptarFragment();
+                loadFragment(selectedFragment);
+            }
+        } else {
+            Log.d("HomeRestauranteFragment", "Restaurante está cerrado. Ocultando pestañas y mostrando mensaje.");
+            statusButton.setText("RESTAURANTE CERRADO");
+            statusButton.setBackgroundTintList(ContextCompat.getColorStateList(requireContext(), android.R.color.holo_red_dark));
+            closedMessage.setVisibility(View.VISIBLE);
+            tabLayout.setVisibility(View.GONE);
+
+            // Eliminar cualquier fragmento cargado
+            getChildFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.frame_tab_container, new Fragment()) // Fragmento vacío
+                    .commit();
+        }
+    }
+
+    private void setupTabLayout() {
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                // Cambia el fragmento en el TabLayout basado en la pestaña seleccionada
-                switch (tab.getPosition()) {
+                if (!isRestaurantOpen) {
+                    Log.d("HomeRestauranteFragment", "Restaurante cerrado. No se cargarán pestañas.");
+                    return;
+                }
+
+                int currentPosition = tab.getPosition();
+                if (lastSelectedTab == currentPosition) {
+                    // Evitar recargar el fragmento si ya está seleccionado
+                    Log.d("HomeRestauranteFragment", "Evitar recargar el fragmento ya seleccionado: " + currentPosition);
+                    return;
+                }
+
+                Log.d("HomeRestauranteFragment", "Pestaña seleccionada: " + currentPosition);
+                lastSelectedTab = currentPosition;
+
+                switch (currentPosition) {
                     case 0:
                         selectedFragment = new PorAceptarFragment();
                         break;
@@ -115,40 +172,39 @@ public class HomeRestauranteFragment extends Fragment {
                         break;
                 }
 
-                // Reemplazar el fragmento del TabLayout
                 if (selectedFragment != null) {
-                    replaceTabFragment(selectedFragment);
+                    loadFragment(selectedFragment);
                 }
             }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-                // No action needed
+                Log.d("HomeRestauranteFragment", "Pestaña deseleccionada: " + tab.getPosition());
             }
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-                // No action needed
+                Log.d("HomeRestauranteFragment", "Pestaña reseleccionada: " + tab.getPosition());
+                onTabSelected(tab);
             }
         });
 
-        // Cargar el fragmento inicial para el TabLayout (PorAceptarFragment)
-        if (savedInstanceState == null) {
-            replaceTabFragment(new PorAceptarFragment());
+        // Seleccionar la primera pestaña por defecto si el restaurante está abierto
+        if (isRestaurantOpen) {
+            tabLayout.selectTab(tabLayout.getTabAt(0));
         }
-
-        return view;
     }
 
-    // Método para reemplazar los fragments dentro del TabLayout
-    private void replaceTabFragment(Fragment fragment) {
+    private void loadFragment(Fragment fragment) {
+        if (restaurantId == null) {
+            Log.e("HomeRestauranteFragment", "loadFragment: restaurantId es nulo. No se puede cargar el fragmento.");
+            return;
+        }
+
+        // Pasar el restaurantId al fragmento
         Bundle args = new Bundle();
-        restauranteViewModel.getIdRestaurante().observe(getViewLifecycleOwner(), idRestaurante -> {
-            if (idRestaurante != null) {
-                args.putString("idRestaurante", idRestaurante);
-                fragment.setArguments(args);
-            }
-        });
+        args.putString("idRestaurante", restaurantId);
+        fragment.setArguments(args);
 
         getChildFragmentManager()
                 .beginTransaction()
@@ -156,24 +212,39 @@ public class HomeRestauranteFragment extends Fragment {
                 .commit();
     }
 
-    private void fetchRestaurantData(String idRestaurante) {
-        db.collection("restaurantes").document(idRestaurante)
-                .get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        // Recuperar los datos del documento
-                        String restaurantName = documentSnapshot.getString("nombre");
-                        String slogan = documentSnapshot.getString("eslogan");
+    private void showCloseConfirmationDialog() {
+        String message = isRestaurantOpen ? "¿Estás seguro de que deseas cerrar el restaurante?" : "¿Estás seguro de que deseas abrir el restaurante?";
+        String action = isRestaurantOpen ? "Cerrar" : "Abrir";
 
-                        // Actualizar la UI
-                        restaurantNameTextView.setText(restaurantName != null ? restaurantName : "Nombre no disponible");
-                        cuisineTypeTextView.setText(slogan != null ? slogan : "Eslogan no disponible");
-                    } else {
-                        Toast.makeText(getContext(), "Datos del restaurante no encontrados.", Toast.LENGTH_SHORT).show();
-                    }
+        new AlertDialog.Builder(requireContext())
+                .setTitle(action + " restaurante")
+                .setMessage(message)
+                .setPositiveButton("Aceptar", (dialog, which) -> toggleRestaurantStatus())
+                .setNegativeButton("Cancelar", null)
+                .show();
+    }
+
+    private void toggleRestaurantStatus() {
+        if (restaurantId == null) {
+            Log.e("HomeRestauranteFragment", "ID del restaurante no disponible al intentar cambiar el estado.");
+            Toast.makeText(getContext(), "ID del restaurante no disponible.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        isRestaurantOpen = !isRestaurantOpen; // Cambiar el estado local
+        Log.d("HomeRestauranteFragment", "Actualizando estado del restaurante a: " + (isRestaurantOpen ? "Abierto" : "Cerrado"));
+
+        // Actualizar el campo "open" en Firebase
+        db.collection("restaurantes").document(restaurantId)
+                .update("open", isRestaurantOpen)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d("HomeRestauranteFragment", "Estado del restaurante actualizado correctamente.");
+                    Toast.makeText(getContext(), isRestaurantOpen ? "Restaurante abierto." : "Restaurante cerrado.", Toast.LENGTH_SHORT).show();
+                    updateUI(true); // Actualizar la interfaz visual y cargar nuevamente el fragmento inicial si es necesario
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(getContext(), "Error al obtener datos: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.e("HomeRestauranteFragment", "Error al actualizar el estado: " + e.getMessage());
+                    Toast.makeText(getContext(), "Error al actualizar el estado.", Toast.LENGTH_SHORT).show();
                 });
     }
 }

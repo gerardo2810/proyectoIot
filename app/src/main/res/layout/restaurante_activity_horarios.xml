@@ -36,18 +36,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:textColor="@color/green_dark"
-                android:textSize="20sp"
+                android:text="HORARIOS"
+                android:gravity="center_horizontal"
+                android:textColor="@color/purple"
+                android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/cuisine_type"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:textColor="@color/md_theme_onPrimaryFixedVariant"
-                android:textStyle="bold"
-                android:textSize="14sp" />
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
@@ -73,19 +67,6 @@
     <!-- BottomNavigationView para cambiar entre fragments principales -->
     <!-- ScrollView para permitir el scroll del contenido -->
 
-    <TextView
-        android:id="@+id/textView6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="44dp"
-        android:text="HORARIOS"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/top_bar_card" />
-
     <ScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -100,7 +81,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp"
+            android:padding="25dp"
             android:paddingBottom="10dp">
 
             <!-- Card para mostrar el horario regular -->
@@ -345,11 +326,11 @@
                             android:id="@+id/btn_guardar_horarios"
                             android:layout_width="wrap_content"
                             android:layout_height="38dp"
-                            android:backgroundTint="#9CFFCDD2"
+                            android:backgroundTint="#B2DFDB"
                             android:layout_marginTop="10dp"
                             android:text="GUARDAR DATOS"
                             android:layout_gravity="center"
-                            android:textColor="@color/md_theme_errorContainer_mediumContrast"
+                            android:textColor="@color/green_normal"
                             android:textSize="11sp"
                             android:textStyle="bold" />
 
@@ -382,12 +363,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="8dp"
-        android:text="Aquí podrás configurar los horarios de tu local"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.591"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView6" />
+        tools:layout_editor_absoluteY="100dp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

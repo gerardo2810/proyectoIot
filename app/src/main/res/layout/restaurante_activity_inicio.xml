@@ -8,8 +8,6 @@
     android:layout_height="match_parent"
     android:background="#FFFCFD">
 
-
-
     <!-- Contenedor para fragments del BottomNavigationView -->
     <FrameLayout
         android:id="@+id/frame_navigation_container"
@@ -18,7 +16,6 @@
         app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-
 
     <!-- BottomNavigationView para cambiar entre fragments principales -->
     <com.google.android.material.bottomnavigation.BottomNavigationView

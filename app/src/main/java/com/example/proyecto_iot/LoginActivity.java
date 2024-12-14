@@ -17,6 +17,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.proyecto_iot.admin_restaurante.AbrirRestauranteActivity;
+import com.example.proyecto_iot.admin_restaurante.InicioRestauranteActivity;
 import com.example.proyecto_iot.cliente.InicioClienteActivity;
 import com.example.proyecto_iot.repartidor.InicioRepartidorActivity;
 import com.example.proyecto_iot.repartidor.RegistroRepartidorActivity;
@@ -192,7 +193,7 @@ public class LoginActivity extends AppCompatActivity {
                                         DocumentSnapshot restaurantDoc = querySnapshot.getDocuments().get(0);
                                         String idRestaurante = restaurantDoc.getId();
 
-                                        Intent intent = new Intent(LoginActivity.this, AbrirRestauranteActivity.class);
+                                        Intent intent = new Intent(LoginActivity.this, InicioRestauranteActivity.class);
                                         intent.putExtra("idRestaurante", idRestaurante);
                                         startActivity(intent);
                                         finish();

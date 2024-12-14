@@ -139,6 +139,17 @@ public class InicioClienteActivity extends AppCompatActivity {
                 }
             });
         }
+        ImageView iconoPerfil = findViewById(R.id.icono_perfil);
+        iconoPerfil.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Crear el intent para navegar a MenuClienteActivity
+                Intent intent = new Intent(InicioClienteActivity.this, MenuClienteActivity.class);
+                startActivity(intent);
+            }
+        });
+
+
 
 
 
@@ -164,31 +175,7 @@ public class InicioClienteActivity extends AppCompatActivity {
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
 
         // Marcar el ítem de "Restaurantes" como seleccionado
-        bottomNavigationView.setSelectedItemId(R.id.nav_restaurantes);
 
-        // Configurar listener para la navegación
-            bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-                @Override
-                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                    int id = item.getItemId();
-
-                    if (id == R.id.nav_restaurantes) {
-                        // Si ya está en la actividad de Restaurantes, no hacer nada
-                        return true;
-                    } else if (id == R.id.nav_carrito) {
-                        startActivity(new Intent(InicioClienteActivity.this, CarritoClienteActivity.class));
-                        return true;
-                    } else if (id == R.id.navigation_ordenes) {
-                        startActivity(new Intent(InicioClienteActivity.this, HistorialPedidosActivity.class));
-                        return true;
-                    } else if (id == R.id.nav_perfil) {
-                        startActivity(new Intent(InicioClienteActivity.this, PerfilClienteActivity.class));
-                        return true;
-                    }
-
-                    return false;
-                }
-            });
     }
 
     private void fetchCategoriesFromFirebase() {

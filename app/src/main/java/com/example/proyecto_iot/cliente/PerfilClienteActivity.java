@@ -1,21 +1,30 @@
 package com.example.proyecto_iot.cliente;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.view.MenuItem;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.bumptech.glide.Glide;
 import com.example.proyecto_iot.R;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationBarView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 public class PerfilClienteActivity extends AppCompatActivity {
+
+    private ImageView ivImagenUsuario;
+    private TextView tvNombreUsuario, tvEdad, tvDni, tvCorreo, tvTelefono, cantPedidos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,27 +37,89 @@ public class PerfilClienteActivity extends AppCompatActivity {
             return insets;
         });
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
-        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                int id = item.getItemId();
+        // Referencias a los elementos de la interfaz
+        ivImagenUsuario = findViewById(R.id.iv_imagen_usuario);
+        tvNombreUsuario = findViewById(R.id.tv_nombre_usuario);
+        tvEdad = findViewById(R.id.tv_edad);
+        tvDni = findViewById(R.id.tv_dni);
+        tvCorreo = findViewById(R.id.tv_correo);
+        tvTelefono = findViewById(R.id.tv_telefono);
+        cantPedidos = findViewById(R.id.cant_pedidos);
 
-                if (id == R.id.nav_restaurantes) {
-                    startActivity(new Intent(PerfilClienteActivity.this, InicioClienteActivity.class));
-                    return true;
-                } else if (id == R.id.nav_carrito) {
-                    startActivity(new Intent(PerfilClienteActivity.this, CarritoClienteActivity.class));
-                    return true;
-                } else if (id == R.id.navigation_ordenes) {
-                    startActivity(new Intent(PerfilClienteActivity.this, HistorialPedidosActivity.class));
-                    return true;
-                } else if (id == R.id.nav_perfil) {
-                    return true;
-                }
+        // Obtener el usuario logueado
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-                return false;
-            }
-        });
+        // Consultar los datos del usuario desde Firebase Firestore
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("clientes").document(userId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        // Extraer datos de Firestore
+                        String nombre = documentSnapshot.getString("Nombre");
+                        String apellido = documentSnapshot.getString("Apellido");
+                        String fotoUrl = documentSnapshot.getString("FotoURL");
+                        String dni = documentSnapshot.getString("DNI");
+                        String correo = documentSnapshot.getString("Email");
+                        String telefono = documentSnapshot.getString("Telefono");
+                        String nacimiento = documentSnapshot.getString("Nacimiento");
+                        List<?> historialPedidos = (List<?>) documentSnapshot.get("historialpedidos");
+
+                        // Actualizar la imagen de usuario
+                        if (fotoUrl != null && !fotoUrl.isEmpty()) {
+                            Glide.with(this)
+                                    .load(fotoUrl)
+                                    .placeholder(R.drawable.user) // Imagen de placeholder mientras se carga
+                                    .into(ivImagenUsuario);
+                        } else {
+                            ivImagenUsuario.setImageResource(R.drawable.user);
+                        }
+
+                        // Actualizar el nombre y apellidos
+                        tvNombreUsuario.setText(nombre + " " + apellido);
+
+                        // Calcular la edad a partir de la fecha de nacimiento
+                        if (nacimiento != null && !nacimiento.isEmpty()) {
+                            String edad = nacimiento;
+                            tvEdad.setText(edad);
+                        } else {
+                            tvEdad.setText("N/A");
+                        }
+
+                        // Actualizar el DNI
+                        tvDni.setText(dni != null ? dni : "N/A");
+
+                        // Actualizar el correo
+                        tvCorreo.setText(correo != null ? correo : "N/A");
+
+                        // Actualizar el teléfono
+                        tvTelefono.setText(telefono != null ? telefono : "N/A");
+
+                        // Calcular y mostrar la cantidad de pedidos
+                        if (historialPedidos != null) {
+                            cantPedidos.setText(String.valueOf(historialPedidos.size()));
+                        } else {
+                            cantPedidos.setText("0");
+                        }
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    // Manejar errores en la consulta
+                    e.printStackTrace();
+                });
+    }
+
+    // Método para calcular la edad a partir de la fecha de nacimiento
+    private int calcularEdad(String fechaNacimiento) {
+        try {
+            // Formato esperado de la fecha en Firestore: "dd-MM-yy"
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yy");
+            LocalDate fechaNacimientoLocalDate = LocalDate.parse(fechaNacimiento, formatter);
+            LocalDate fechaActual = LocalDate.now();
+            return Period.between(fechaNacimientoLocalDate, fechaActual).getYears();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0; // Retornar 0 si ocurre un error al calcular la edad
+        }
     }
 }

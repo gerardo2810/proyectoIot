@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -146,7 +147,7 @@ public class RealizarPedidoActivity extends AppCompatActivity {
                             Map<String, Object> pedidoData = new HashMap<>();
                             pedidoData.put("idCliente", userId);
                             pedidoData.put("direccion", direccionCliente);
-                            pedidoData.put("estado", 5);
+                            pedidoData.put("estado", 2); // Inicializamos el estado en 0
                             pedidoData.put("fechaHora", fechaHora);
                             pedidoData.put("productos", productos); // Lista de productos
                             pedidoData.put("idRepartidor", "");
@@ -161,12 +162,12 @@ public class RealizarPedidoActivity extends AppCompatActivity {
                                         Bitmap qrBitmap = generarQRCode(pedidoId);
                                         guardarQRCodeEnStorage(pedidoId, qrBitmap);
 
-                                        // Enviar los datos a la siguiente vista
-                                        Intent intent1 = new Intent(RealizarPedidoActivity.this, SeguimientoPedidoActivity.class);
+                                        // Redirigir a CreandoPedidoActivity
+                                        Intent intent1 = new Intent(RealizarPedidoActivity.this, CreandoPedidoActivity.class);
                                         intent1.putExtra("pedidoId", pedidoId);
                                         intent1.putExtra("direccion", direccionCliente);
                                         intent1.putExtra("fechaHora", fechaHora);
-                                        intent1.putExtra("subtotal",subtotal);
+                                        intent1.putExtra("subtotal", subtotal);
                                         intent1.putExtra("precioTotal", pagoTotal);
                                         intent1.putExtra("precioDelivery", precioDelivery);
                                         intent1.putExtra("productos", (ArrayList<Producto>) productos); // Enviar productos como ArrayList
@@ -174,17 +175,20 @@ public class RealizarPedidoActivity extends AppCompatActivity {
                                         intent1.putExtra("idRestaurante", restauranteId);
 
                                         startActivity(intent1);
-
+                                        finish(); // Finalizar esta actividad
                                     })
                                     .addOnFailureListener(e -> {
                                         System.err.println("Error al crear el pedido: " + e.getMessage());
+                                        Toast.makeText(RealizarPedidoActivity.this, "Error al realizar el pedido. Intenta de nuevo.", Toast.LENGTH_SHORT).show();
                                     });
                         } else {
                             System.err.println("Cliente no encontrado en la base de datos.");
+                            Toast.makeText(RealizarPedidoActivity.this, "No se encontró la información del cliente.", Toast.LENGTH_SHORT).show();
                         }
                     })
                     .addOnFailureListener(e -> {
                         System.err.println("Error al obtener los datos del cliente: " + e.getMessage());
+                        Toast.makeText(RealizarPedidoActivity.this, "Error al obtener la dirección del cliente.", Toast.LENGTH_SHORT).show();
                     });
         });
 

@@ -20,6 +20,9 @@
         android:theme="@style/Theme.Proyecto_Iot"
         tools:targetApi="31">
         <activity
+            android:name=".cliente.CreandoPedidoActivity"
+            android:exported="false" />
+        <activity
             android:name=".cliente.MenuClienteActivity"
             android:exported="false" />
         <activity
@@ -81,7 +84,7 @@
             android:exported="true" />
         <activity
             android:name=".superadmin.gestion_reportes_superadmin"
-            android:exported="true"></activity>
+            android:exported="true" />
         <activity
             android:name=".superadmin.lista_usuarios_superadmin"
             android:exported="true" />

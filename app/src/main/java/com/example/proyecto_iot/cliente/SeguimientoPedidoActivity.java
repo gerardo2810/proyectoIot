@@ -263,7 +263,6 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
                             String nombreRestaurante1 = documentSnapshot.getString("nombreRestaurante");
                             String qrUrl = documentSnapshot.getString("qrUrl"); // Obtener la URL del QR
 
-
                             // Calcular el costo de los productos
                             double costoProductos = precioTotal - precioDelivery;
 
@@ -305,6 +304,11 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
                             } else {
                                 System.err.println("El campo qrUrl está vacío o es nulo. Esperando actualización...");
                             }
+
+                            // Lógica para cambiar de estado de "En preparación" (2) a "En camino" (3) después de 30 segundos
+                            if (estado == 2) {
+                                iniciarTemporizadorParaEstado3();
+                            }
                         }
                     });
         }
@@ -322,8 +326,6 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
             Intent intent = new Intent(SeguimientoPedidoActivity.this, InicioClienteActivity.class);
             startActivity(intent);
         });
-
-
 
 
         // Listener para "Detalle de Orden"
@@ -489,5 +491,20 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
         intent.putExtra("nombreRestaurante", idRestaurante);
         startActivity(intent);
     }
+    private void iniciarTemporizadorParaEstado3() {
+        // Crear un temporizador de 30 segundos
+        new android.os.Handler().postDelayed(() -> {
+            db.collection("pedidos").document(pedidoId)
+                    .update("estado", 3)
+                    .addOnSuccessListener(aVoid -> {
+                        System.out.println("Estado actualizado a 3 (En camino) después de 30 segundos.");
+                        sendNotification("Estado del pedido", "Tu pedido ahora está en camino.");
+                    })
+                    .addOnFailureListener(e -> {
+                        System.err.println("Error al actualizar el estado a 3: " + e.getMessage());
+                    });
+        }, 30000); // 30,000 ms = 30 segundos
+    }
+
 
 }

@@ -24,10 +24,12 @@ import java.util.List;
 public class PedidosRecogerAdapter extends RecyclerView.Adapter<PedidosRecogerAdapter.PedidoRecogerViewHolder>{
     private List<PedidoRecoger> listaPedidosRecoger;
     private Context context;
+    private boolean elementosHabilitados;
 
-    public PedidosRecogerAdapter(Context context, List<PedidoRecoger> listaPedidosRecoger) {
+    public PedidosRecogerAdapter(Context context, List<PedidoRecoger> listaPedidosRecoger, boolean elementosHabilitados) {
         this.listaPedidosRecoger = listaPedidosRecoger;
         this.context = context;
+        this.elementosHabilitados = elementosHabilitados;
     }
 
     @NonNull
@@ -53,6 +55,11 @@ public class PedidosRecogerAdapter extends RecyclerView.Adapter<PedidosRecogerAd
         TextView textViewDireccion = holder.itemView.findViewById(R.id.direccion_pedido);
         textViewDireccion.setText(pedidoRecoger.getDireccion());
 
+        // Deshabilitar clics y botones si los elementos no están habilitados
+        holder.itemView.setEnabled(elementosHabilitados);
+        holder.itemView.setAlpha(elementosHabilitados ? 1.0f : 0.5f); // Cambiar transparencia para indicar que están deshabilitados
+
+
     }
 
     @Override
@@ -65,7 +72,7 @@ public class PedidosRecogerAdapter extends RecyclerView.Adapter<PedidosRecogerAd
         public PedidoRecogerViewHolder(@NonNull View itemView) {
             super(itemView);
             LinearLayout arrowIcon = itemView.findViewById(R.id.linealPedidos);
-            arrowIcon.setOnClickListener(v -> {
+            arrowIcon.setOnClickListener(elementosHabilitados ? v -> {
                 context = itemView.getContext();
                 Intent intent = new Intent(context, NuevoPedidoActivity.class);
                 intent.putExtra("idPedido", pedidoRecoger.getIdPedido());
@@ -73,7 +80,7 @@ public class PedidosRecogerAdapter extends RecyclerView.Adapter<PedidosRecogerAd
                 intent.putExtra("direccionRest", pedidoRecoger.getDireccionRest()); // Dirección
                 context.startActivity(intent);
 
-            });
+            }: null);
         }
     }
 

@@ -35,57 +35,82 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="REPORTES"
                 android:gravity="center_horizontal"
+                android:text="REPORTES"
                 android:textColor="@color/purple"
                 android:textSize="18sp"
                 android:textStyle="bold" />
-
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
 
-    <!-- Contenedor para los fragments -->
-
-
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tabLayout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
-        android:background="@drawable/tab_background"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/top_bar_card"
-        app:tabIndicatorColor="#658ED9"
-        app:tabSelectedTextColor="@color/md_theme_primary_mediumContrast"
-        app:tabTextColor="#A0A0A0">
-
-        <com.google.android.material.tabs.TabItem
-            android:id="@+id/btn_ventas_por_plato"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Ventas por Plato" />
-
-        <com.google.android.material.tabs.TabItem
-            android:id="@+id/btn_ventas_por_usuario"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Ventas por Usuario" />
-
-    </com.google.android.material.tabs.TabLayout>
-
-    <FrameLayout
-        android:id="@+id/fragment_container"
+    <!-- ScrollView para el contenido que queremos desplazar -->
+    <ScrollView
+        android:id="@+id/scroll_view_content"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:paddingRight="20dp"
-        android:paddingLeft="20dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.7"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@+id/top_bar_card"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tabLayout" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
 
+        <!-- Contenedor interno para el contenido del scroll -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="28dp"
+                android:layout_marginLeft="15dp"
+                android:text="Reporte de ventas por mes"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <!-- Agregamos el BarChart -->
+            <com.github.mikephil.charting.charts.BarChart
+                android:id="@+id/barChart"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp" />
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tabLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/tab_background"
+                app:tabIndicatorColor="#658ED9"
+                app:tabSelectedTextColor="@color/md_theme_primary_mediumContrast"
+                app:tabTextColor="#A0A0A0">
+
+                <com.google.android.material.tabs.TabItem
+                    android:id="@+id/btn_ventas_por_plato"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Ventas por Plato" />
+
+                <com.google.android.material.tabs.TabItem
+                    android:id="@+id/btn_ventas_por_usuario"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Ventas por Usuario" />
+
+            </com.google.android.material.tabs.TabLayout>
+
+            <FrameLayout
+                android:id="@+id/fragment_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp" />
+        </LinearLayout>
+    </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
+

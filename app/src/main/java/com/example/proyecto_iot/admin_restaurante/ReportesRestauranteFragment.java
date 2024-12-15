@@ -1,5 +1,6 @@
 package com.example.proyecto_iot.admin_restaurante;
 
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -10,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,11 +23,26 @@ import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.admin_restaurante.RecyclerView.Plato;
 import com.example.proyecto_iot.admin_restaurante.RecyclerView.PlatoAdapter;
 import com.example.proyecto_iot.admin_restaurante.RecyclerView.RestauranteViewModel;
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -37,16 +54,12 @@ public class ReportesRestauranteFragment extends Fragment {
     private RestauranteViewModel restauranteViewModel;
     private FirebaseFirestore db;
 
-    private Button btnVentasPorPlato, btnVentasPorUsuario;
     private TabLayout tabLayout;
     private Fragment selectedFragment;
+    private BarChart barChart;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
@@ -54,15 +67,6 @@ public class ReportesRestauranteFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ReportesRestauranteFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static ReportesRestauranteFragment newInstance(String param1, String param2) {
         ReportesRestauranteFragment fragment = new ReportesRestauranteFragment();
         Bundle args = new Bundle();
@@ -83,7 +87,9 @@ public class ReportesRestauranteFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_reportes_restaurante, container, false);
 
         // Inicializa Firestore
@@ -92,14 +98,16 @@ public class ReportesRestauranteFragment extends Fragment {
         // Obtén el ViewModel compartido
         restauranteViewModel = new ViewModelProvider(requireActivity()).get(RestauranteViewModel.class);
 
+        // Referencia al BarChart
+        barChart = view.findViewById(R.id.barChart);
+
         // Inicializa el TabLayout
         tabLayout = view.findViewById(R.id.tabLayout);
 
-        // Listener para manejar las selecciones de pestañas
+        // Listener para las Tabs
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                // Cambia el fragmento en el TabLayout basado en la pestaña seleccionada
                 switch (tab.getPosition()) {
                     case 0:
                         selectedFragment = new VentasPorPlatoFragent();
@@ -109,7 +117,6 @@ public class ReportesRestauranteFragment extends Fragment {
                         break;
                 }
 
-                // Reemplazar el fragmento del TabLayout
                 if (selectedFragment != null) {
                     replaceTabFragment(selectedFragment);
                 }
@@ -117,28 +124,119 @@ public class ReportesRestauranteFragment extends Fragment {
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-                // No action needed
+                // Sin acción
             }
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-                // No action needed
+                // Sin acción
             }
         });
 
-        // Cargar el fragmento inicial para el TabLayout (PorAceptarFragment)
+        // Fragment inicial
         if (savedInstanceState == null) {
             replaceTabFragment(new VentasPorPlatoFragent());
         }
 
+        // Cargar datos del gráfico
+        cargarDatosGrafico();
+
         return view;
     }
 
-    // Método para reemplazar los fragments dentro del TabLayout
     private void replaceTabFragment(Fragment fragment) {
         getChildFragmentManager()
                 .beginTransaction()
-                .replace(R.id.fragment_container, fragment)  // Asegúrate de usar un contenedor de fragmentos dentro del fragmento
+                .replace(R.id.fragment_container, fragment)
                 .commit();
+    }
+
+    private void cargarDatosGrafico() {
+        // Observamos el idRestaurante del ViewModel
+        restauranteViewModel.getIdRestaurante().observe(getViewLifecycleOwner(), idRestaurante -> {
+            db.collection("pedidos")
+                    .whereEqualTo("idRestaurante", idRestaurante)
+                    .whereEqualTo("estado", 4)
+                    .get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        Map<Integer, Float> ventasPorMes = new HashMap<>();
+
+                        for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                            Object fechaObj = doc.get("fechaHora");
+                            Date fechaDate = null;
+
+                            if (fechaObj instanceof com.google.firebase.Timestamp) {
+                                // Si por alguna razón fuera timestamp
+                                com.google.firebase.Timestamp ts = (com.google.firebase.Timestamp) fechaObj;
+                                fechaDate = ts.toDate();
+                            } else if (fechaObj instanceof String) {
+                                // Parsear desde String
+                                String fechaStr = (String) fechaObj;
+
+                                // Ajustar reemplazos según el formato exacto almacenado
+                                // Suponiendo que la fecha tiene "p. m." o "a. m."
+                                fechaStr = fechaStr.replace("p. m.", "PM");
+                                fechaStr = fechaStr.replace("a. m.", "AM");
+
+                                // Ajustar el patrón del formato:
+                                // Por ejemplo: "15 de diciembre de 2024, 15:36:53 p. m."
+                                // Formato: dd 'de' MMMM 'de' yyyy, HH:mm:ss a
+                                SimpleDateFormat sdf = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy, HH:mm:ss a", new Locale("es", "ES"));
+                                try {
+                                    fechaDate = sdf.parse(fechaStr);
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            Double pagoTotal = doc.getDouble("pagoTotal");
+
+                            if (fechaDate != null && pagoTotal != null) {
+                                Calendar cal = Calendar.getInstance();
+                                cal.setTime(fechaDate);
+                                int mes = cal.get(Calendar.MONTH) + 1; // 0-based, se suma 1
+
+                                float montoActual = ventasPorMes.getOrDefault(mes, 0f);
+                                ventasPorMes.put(mes, montoActual + pagoTotal.floatValue());
+                            }
+                        }
+
+                        mostrarGrafico(ventasPorMes);
+                    })
+                    .addOnFailureListener(e -> {
+                        // Manejo de error
+                        e.printStackTrace();
+                    });
+        });
+    }
+
+    private void mostrarGrafico(Map<Integer, Float> ventasPorMes) {
+        // Se crean las entradas del gráfico. Ejemplo: 12 barras (enero a diciembre)
+        List<BarEntry> entries = new ArrayList<>();
+        for (int i = 1; i <= 12; i++) {
+            float valor = ventasPorMes.getOrDefault(i, 0f);
+            entries.add(new BarEntry(i, valor));
+        }
+
+        BarDataSet dataSet = new BarDataSet(entries, "Ventas por Mes");
+        dataSet.setColor(Color.MAGENTA);
+        dataSet.setValueTextColor(Color.BLACK);
+        dataSet.setValueTextSize(10f);
+
+        BarData data = new BarData(dataSet);
+        data.setBarWidth(0.9f);
+
+        barChart.setData(data);
+        barChart.setFitBars(true);
+        barChart.getDescription().setEnabled(false);
+
+        // Eje X con nombres de meses
+        String[] meses = new String[]{"Jan", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"};
+        XAxis xAxis = barChart.getXAxis();
+        xAxis.setValueFormatter(new IndexAxisValueFormatter(meses));
+        xAxis.setGranularity(1f);
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+
+        barChart.invalidate(); // refrescar gráfico
     }
 }

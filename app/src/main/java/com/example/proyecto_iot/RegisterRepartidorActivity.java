@@ -163,7 +163,7 @@ public class RegisterRepartidorActivity extends AppCompatActivity {
                         repartidor.put("nacimiento", nacimiento);
                         repartidor.put("direccion", direccion);
                         repartidor.put("telefono", telefono);
-                        repartidor.put("email", email);
+                        repartidor.put("correo", email);
                         repartidor.put("contraseña", password);
                         repartidor.put("foto", defaultPhotoUrl);
                         repartidor.put("habilitado",true);

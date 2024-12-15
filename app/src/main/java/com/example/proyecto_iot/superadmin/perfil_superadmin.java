@@ -32,6 +32,7 @@ public class perfil_superadmin extends AppCompatActivity {
 
         personalInfoLayout.setOnClickListener(v -> {
             Intent intent = new Intent(this, editar_perfil_superadmin.class);
+            intent.putExtra("SELECTED_ITEM_ID", R.id.navigation_perfil);
             startActivity(intent);
         });
 

@@ -123,16 +123,16 @@
                 android:src="@drawable/baseline_delete_24"
                 android:layout_marginEnd="16dp" />
 
-            <!-- Add Button -->
             <Button
                 android:id="@+id/add_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:backgroundTint="#CCCCCC"
-                android:paddingHorizontal="16dp"
-                android:paddingVertical="8dp"
-                android:text="Pagar S/ 405.00"
-                android:textColor="#FFFFFF" />
+                android:backgroundTint="#FFA500"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="8dp"
+            android:text="Pagar S/ 405.00"
+            android:textColor="#FFFFFF" />
+
         </LinearLayout>
 
         <!-- Divider Line -->

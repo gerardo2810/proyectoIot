@@ -1,8 +1,13 @@
 package com.example.proyecto_iot.repartidor;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,21 +21,34 @@ import com.example.proyecto_iot.repartidor.RecyclerView.PedidoRecoger;
 import com.example.proyecto_iot.repartidor.RecyclerView.PedidosRecogerAdapter;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.firebase.Timestamp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class HistorialRepartidorActivity extends AppCompatActivity {
 
-    private BottomNavigationView bottomNavigationView;
-    private RecyclerView recyclerViewListaGanancias;
-    private List<GananciaxDia> listaGananciasDia;
-    private GananciasDiaAdapter adapter;
+    BottomNavigationView bottomNavigationView;
+    RecyclerView recyclerViewListaGanancias;
+    List<GananciaxDia> listaGananciasDia;
+    GananciasDiaAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_historial_repartidor);
+
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        String repartidorId = auth.getCurrentUser().getUid(); // Obtener UID del repartidor
+
 
         //Gestion de la bottom navigation bar
         bottomNavigationView = findViewById(R.id.bottom_navigation);
@@ -61,15 +79,25 @@ public class HistorialRepartidorActivity extends AppCompatActivity {
         recyclerViewListaGanancias = findViewById(R.id.recyclerViewListaGanacias);
         recyclerViewListaGanancias.setLayoutManager(new LinearLayoutManager(this));
         listaGananciasDia = new ArrayList<>();
-        listaGananciasDia.add(new GananciaxDia("Fecha: 20/06/2024","Restaurante: El Tío Bigote","Ganancia: S/. 10.00","S/. 10.00"));
-        listaGananciasDia.add(new GananciaxDia("Fecha: 19/06/2024","Restaurante: El Tío Bigote","Ganancia: S/. 10.00","S/. 10.00"));
-        listaGananciasDia.add(new GananciaxDia("Fecha: 18/06/2024","Restaurante: Pizza Party","Ganancia: S/. 10.00","S/. 10.00"));
-        listaGananciasDia.add(new GananciaxDia("Fecha: 17/06/2024","Restaurante: Pizza Party","Ganancia: S/. 10.00","S/. 10.00"));
-        listaGananciasDia.add(new GananciaxDia("Fecha: 16/06/2024","Restaurante: Miguelón","Ganancia: S/. 10.00","S/. 10.00"));
-        listaGananciasDia.add(new GananciaxDia("Fecha: 15/06/2024","Restaurante: Miguelón","Ganancia: S/. 10.00","S/. 10.00"));
-
-        adapter = new GananciasDiaAdapter(listaGananciasDia);
+        adapter = new GananciasDiaAdapter(this,listaGananciasDia);
         recyclerViewListaGanancias.setAdapter(adapter);
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("historialPedidos")
+                .whereEqualTo("idRepartidor", repartidorId)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    listaGananciasDia.clear();
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        String fecha = document.getString("fecha");
+                        String nombreRestaurante = document.getString("nombreRestaurante");
+
+                        GananciaxDia gananciaxDia = new GananciaxDia();
+                        gananciaxDia.setFecha(fecha);
+                        gananciaxDia.setNombreRestaurante(nombreRestaurante);
+                        listaGananciasDia.add(gananciaxDia);
+                    }
+                    adapter.notifyDataSetChanged();
+                });
 
     }
 }

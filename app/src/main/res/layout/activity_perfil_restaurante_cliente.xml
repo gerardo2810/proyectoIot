@@ -7,15 +7,16 @@
     android:layout_height="match_parent"
     android:background="#FFFFFF"
     tools:context=".cliente.PerfilRestauranteActivity">
+
     <!-- FrameLayout para los corazones flotantes -->
     <FrameLayout
         android:id="@+id/floating_hearts_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"
-        android:layout_alignParentTop="true">
-        <!-- Corazones flotantes se agregarán dinámicamente en este contenedor -->
-    </FrameLayout>
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Imagen de portada con flecha para retroceder -->
     <ImageView
@@ -26,7 +27,7 @@
         android:background="#E0E0E0"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Contenedor circular para la flecha -->
     <FrameLayout
@@ -45,10 +46,10 @@
             android:layout_height="24dp"
             android:src="@drawable/baseline_arrow_back_ios_24"
             android:layout_gravity="center"
-            android:paddingStart="5dp"/>
+            android:paddingStart="5dp" />
     </FrameLayout>
 
-    <!-- Perfil y carrito, y demás componentes anteriores siguen intactos -->
+    <!-- Perfil y carrito -->
     <LinearLayout
         android:id="@+id/profile_info_container"
         android:layout_width="match_parent"
@@ -70,7 +71,6 @@
         <!-- Nombre del restaurante y icono de corazón -->
         <LinearLayout
             android:id="@+id/root_layout"
-
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -123,7 +123,7 @@
                 android:layout_marginEnd="2dp"
                 android:layout_marginTop="3dp"
                 android:textSize="16sp"
-                android:visibility="gone"/>
+                android:visibility="gone" />
         </FrameLayout>
     </LinearLayout>
 
@@ -148,15 +148,12 @@
             android:padding="8dp">
 
             <!-- Contenido del CardView -->
-            <!-- Precio Delivery, Dirección, Tipo de Comida -->
-            <!-- Primera fila: Iconos y etiquetas -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical">
 
-                <!-- Precio Delivery con icono -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -170,23 +167,17 @@
                         android:text="Delivery"
                         android:textSize="14sp"
                         android:textColor="#000"
-                        android:drawableStart="@drawable/baseline_delivery_dining_24"
-                        android:drawablePadding="4dp"
-                        android:maxLines="1" />
+                        android:drawablePadding="4dp" />
 
                     <TextView
                         android:id="@+id/delivery_price"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="S/. 0.00"
-                    android:textSize="14sp"
-                    android:textColor="#888"
-                    android:gravity="end"
-                    android:layout_gravity="end"
-                    android:paddingEnd="59dp" />
+                        android:textSize="14sp"
+                        android:textColor="#888" />
                 </LinearLayout>
 
-                <!-- Dirección con icono -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -199,10 +190,7 @@
                         android:layout_height="wrap_content"
                         android:text="Dirección"
                         android:textSize="14sp"
-                        android:textColor="#000"
-                        android:drawableStart="@drawable/baseline_location_on_24"
-                        android:drawablePadding="4dp"
-                        android:maxLines="1" />
+                        android:textColor="#000" />
 
                     <TextView
                         android:id="@+id/restaurant_address"
@@ -210,11 +198,9 @@
                         android:layout_height="wrap_content"
                         android:text="Dirección"
                         android:textSize="14sp"
-                        android:textColor="#888"
-                        android:gravity="center" />
+                        android:textColor="#888" />
                 </LinearLayout>
 
-                <!-- Tipo de comida con formato -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -227,8 +213,7 @@
                         android:layout_height="wrap_content"
                         android:text="Tipo de Comida"
                         android:textSize="14sp"
-                        android:textColor="#000"
-                        android:maxLines="1" />
+                        android:textColor="#000" />
 
                     <TextView
                         android:id="@+id/restaurant_category"
@@ -236,10 +221,7 @@
                         android:layout_height="wrap_content"
                         android:text="Tipo de comida"
                         android:textSize="14sp"
-                        android:textColor="#888"
-                        android:gravity="start"
-                        android:layout_gravity="start"
-                        android:paddingStart="49dp" />
+                        android:textColor="#888" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
@@ -263,34 +245,86 @@
             android:hint="¿Qué es lo que quieres comer?"
             android:layout_weight="1"
             android:padding="12dp"
-            android:background="@drawable/search_background"/>
+            android:background="@drawable/search_background" />
     </LinearLayout>
 
-    <!-- Aquí el RecyclerView -->
+    <!-- RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_perfil_restaurante"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:padding="16dp"
         app:layout_constraintTop_toBottomOf="@id/search_bar"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        tools:listitem="@layout/item_producto_perfil_restaurante" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Menú inferior sigue igual -->
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_navigation"
-        android:layout_width="match_parent"
+    <!-- Alerta -->
+    <LinearLayout
+        android:id="@+id/alert_layout"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/green_light_2"
-        app:itemBackground="@drawable/superadmin_nav_ripple"
-        app:labelVisibilityMode="labeled"
+        android:background="@drawable/alert_background"
+        android:orientation="vertical"
+        android:layout_margin="16dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/cliente_navigation_bar" />
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/alert_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="¿Quieres cambiar tu pedido?"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:layout_marginBottom="8dp"
+            android:textColor="#000000" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#B0B0B0"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/alert_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tú tienes en tu carrito productos de [Nombre Restaurante]. ¿Quieres eliminar este producto y añadir productos nuevos?"
+            android:gravity="center"
+            android:textSize="16sp"
+            android:layout_marginBottom="16dp"
+            android:textColor="#000000" />
 
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/btn_keep"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Mantener"
+                android:textColor="#FF0000"
+                android:background="@drawable/button_white_border"
+                android:layout_marginEnd="8dp" />
+
+            <Button
+                android:id="@+id/btn_delete"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Sí, eliminar"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="#4CAF50"
+                android:layout_marginStart="8dp" />
+        </LinearLayout>
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

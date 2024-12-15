@@ -25,6 +25,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.json.JSONArray;
@@ -32,6 +33,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -42,6 +45,7 @@ import okhttp3.Response;
 public class NuevoPedidoActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap myMap;
+    FirebaseAuth auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +79,9 @@ public class NuevoPedidoActivity extends AppCompatActivity implements OnMapReady
 
                                         nombreRestauranteTextView.setText(nombreRestaurante);
                                         direccionRestauranteTextView.setText(direccionRestaurante);
+
+                                        // Lógica para calcular la distancia
+                                        calcularDistancia(direccionRestaurante, direccionCliente);
                                     }
                                 })
                                 .addOnFailureListener(e -> {
@@ -107,6 +114,23 @@ public class NuevoPedidoActivity extends AppCompatActivity implements OnMapReady
             editor.putString("ultima_vista", "RecojoCurso1Activity");
             editor.putString("idPedido", idPedido); // ID del pedido
             editor.apply();
+
+            //Actualizar pedido
+            auth = FirebaseAuth.getInstance();
+            String userId = auth.getCurrentUser().getUid();
+
+            db.collection("pedidos").document(idPedido)
+                    .update("estado", 3,               // Actualiza el campo 'estado' a 7
+                            "idRepartidor", userId)
+                    .addOnSuccessListener(aVoid -> {
+                        // Acción si la actualización fue exitosa
+                        Log.d("Firebase", "Recojo del pedido en progreso");
+                    })
+                    .addOnFailureListener(e -> {
+                        // Acción si ocurrió un error
+                        Log.w("Firebase", "Error al tomar el recojo del pedido", e);
+                    });
+
 
 
             Intent intent = new Intent(this, RecojoCurso1Activity.class);
@@ -200,6 +224,51 @@ public class NuevoPedidoActivity extends AppCompatActivity implements OnMapReady
     // Interfaz para manejar las coordenadas obtenidas
     interface OnCoordenadasObtenidas {
         void onCoordenadasObtenidas(LatLng coordenadas);
+    }
+
+    private void calcularDistancia(String origen, String destino) {
+        String apiKey = "AIzaSyAaD_Wke_n8sefeq8OMyVNlm9fJmU9CH-c"; // Reemplaza con tu clave de Google API
+        String url = "https://maps.googleapis.com/maps/api/directions/json?origin=" + origen.replace(" ", "%20") +
+                "&destination=" + destino.replace(" ", "%20") + "&key=" + apiKey;
+
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String jsonResponse = response.body().string();
+
+                    runOnUiThread(() -> {
+                        try {
+                            JSONObject json = new JSONObject(jsonResponse);
+                            String distancia = json
+                                    .getJSONArray("routes")
+                                    .getJSONObject(0)
+                                    .getJSONArray("legs")
+                                    .getJSONObject(0)
+                                    .getJSONObject("distance")
+                                    .getString("text");
+
+                            // Mostrar la distancia en el TextView
+                            TextView textViewDistancia = findViewById(R.id.textView3);
+                            String texto11 = "S/ 10.00 (" + distancia+")";
+                            textViewDistancia.setText(texto11);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    });
+                }
+            }
+        });
     }
 
 }

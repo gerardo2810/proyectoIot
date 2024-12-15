@@ -20,15 +20,16 @@ public class GananciasDiaAdapter extends RecyclerView.Adapter<GananciasDiaAdapte
     private List<GananciaxDia> listaGanancias;
     private Context context;
 
-    public GananciasDiaAdapter(List<GananciaxDia> listaGanancias) {
+    public GananciasDiaAdapter(Context context, List<GananciaxDia> listaGanancias) {
         this.listaGanancias = listaGanancias;
+        this.context = context;
     }
 
     @NonNull
     @Override
     public GananciasDiaAdapter.GananciaxDiaViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_ganancia_dia, parent, false);
-        return new GananciasDiaAdapter.GananciaxDiaViewHolder(view);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_ganancia_dia, parent, false);
+        return new GananciaxDiaViewHolder(view);
     }
 
     @Override
@@ -40,10 +41,6 @@ public class GananciasDiaAdapter extends RecyclerView.Adapter<GananciasDiaAdapte
         textViewFecha.setText(gananciaxDia.getFecha());
         TextView textViewNombreRestaurante = holder.itemView.findViewById(R.id.nombre_restaurante);
         textViewNombreRestaurante.setText(gananciaxDia.getNombreRestaurante());
-        TextView textViewGanancia = holder.itemView.findViewById(R.id.ganancia_pedido);
-        textViewGanancia.setText(gananciaxDia.getGananciaPedido());
-        TextView textViewTotal = holder.itemView.findViewById(R.id.texto_total_gano);
-        textViewTotal.setText(gananciaxDia.getTotal());
 
     }
 
@@ -52,7 +49,7 @@ public class GananciasDiaAdapter extends RecyclerView.Adapter<GananciasDiaAdapte
         return listaGanancias.size();
     }
 
-    public class GananciaxDiaViewHolder extends RecyclerView.ViewHolder{
+    public static class GananciaxDiaViewHolder extends RecyclerView.ViewHolder{
         GananciaxDia gananciaxDia;
         public GananciaxDiaViewHolder(@NonNull View itemView) {
             super(itemView);

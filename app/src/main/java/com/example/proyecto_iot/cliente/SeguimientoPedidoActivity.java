@@ -15,7 +15,6 @@ import android.content.pm.PackageManager;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -133,7 +132,7 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
                         if (documentSnapshot != null && documentSnapshot.exists()) {
                             int estado = documentSnapshot.getLong("estado").intValue();
 
-                            if (estado == 3) { // Estado "En camino"
+                            if (estado == 3 || estado == 7) { // Estado "En camino"
                                 qrButton.setVisibility(View.VISIBLE);
 
                                 // Configurar el listener para abrir la cámara de QR
@@ -153,12 +152,11 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
                                 Toast.makeText(this, "Error al recuperar pedido.", Toast.LENGTH_SHORT).show();
                                 return;
                             }
-
                             // Procesar datos del documento Firestore si se encuentran correctamente
                             if (documentSnapshot != null && documentSnapshot.exists()) {
                                 int estado = documentSnapshot.getLong("estado").intValue();
 
-                                if (estado == 3) {
+                                if (estado == 3 || estado==7) {
                                     iniciarEscaneoQR(); // Llama a tu método para abrir el escáner de QR
                                 } else {
                                     Toast.makeText(this, "El pedido aún no está en el estado válido para pago.", Toast.LENGTH_SHORT).show();
@@ -206,8 +204,6 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
                         }
                     });
         }
-
-
 
         // Verificar que el idRestaurante no sea nulo ni vacío
         if (idRestaurante != null && !idRestaurante.isEmpty()) {
@@ -263,7 +259,6 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
                             String nombreRestaurante1 = documentSnapshot.getString("nombreRestaurante");
                             String qrUrl = documentSnapshot.getString("qrUrl"); // Obtener la URL del QR
 
-
                             // Calcular el costo de los productos
                             double costoProductos = precioTotal - precioDelivery;
 
@@ -305,6 +300,7 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
                             } else {
                                 System.err.println("El campo qrUrl está vacío o es nulo. Esperando actualización...");
                             }
+
                         }
                     });
         }
@@ -322,8 +318,6 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
             Intent intent = new Intent(SeguimientoPedidoActivity.this, InicioClienteActivity.class);
             startActivity(intent);
         });
-
-
 
 
         // Listener para "Detalle de Orden"
@@ -376,6 +370,25 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
                             });
                 }
                 break;
+            case 7:
+                findViewById(R.id.linea_2).setVisibility(View.VISIBLE);
+                findViewById(R.id.contenedor_camino).setVisibility(View.VISIBLE);
+
+                // Mostrar el nombre del repartidor si está disponible
+                if (idRepartidor != null && !idRepartidor.isEmpty()) {
+                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+                    db.collection("repartidores").document(idRepartidor)
+                            .get()
+                            .addOnSuccessListener(documentSnapshot -> {
+                                if (documentSnapshot.exists()) {
+                                    String nombreRepartidor = documentSnapshot.getString("nombre");
+                                    TextView repartidorTextView = findViewById(R.id.repartidor);
+                                    repartidorTextView.setText(nombreRepartidor);
+                                }
+                            });
+                }
+                break;
+
             case 4: // Entregado
                 findViewById(R.id.linea_3).setVisibility(View.VISIBLE);
                 findViewById(R.id.contenedor_entregado).setVisibility(View.VISIBLE);
@@ -432,6 +445,8 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
                 return "Rechazado";
             case 6:
                 return "Cancelado";
+            case 7:
+                return "En camnio";
             default:
                 return "Desconocido";
         }
@@ -452,32 +467,20 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
 
         if (result != null) {
             if (result.getContents() != null) {
-                String qrEscaneado = result.getContents();
+                String qrEscaneado = result.getContents(); // QR escaneado contiene el ID del restaurante
 
-                // Validar el QR escaneado
-                db.collection("restaurantes").document(idRestaurante)
-                        .get()
-                        .addOnSuccessListener(documentSnapshot -> {
-                            if (documentSnapshot.exists()) {
-                                String qrRestaurante = documentSnapshot.getString("qr");
-
-                                if (qrEscaneado.equals(qrRestaurante)) {
-                                    // QR correcto, abrir la vista de confirmación de pago
-                                    abrirVistaDePago();
-                                } else {
-                                    // QR incorrecto
-                                    Toast.makeText(this, "QR incorrecto. Inténtalo nuevamente.", Toast.LENGTH_SHORT).show();
-                                }
-                            } else {
-                                Toast.makeText(this, "No se encontró el restaurante.", Toast.LENGTH_SHORT).show();
-                            }
-                        })
-                        .addOnFailureListener(e -> {
-                            Toast.makeText(this, "Error al validar QR: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        });
+                // Validar si el ID escaneado coincide con el idRestaurante del Intent
+                if (qrEscaneado.equals(idRestaurante)) {
+                    Toast.makeText(this, "QR correcto. Procediendo al pago...", Toast.LENGTH_SHORT).show();
+                    abrirVistaDePago(); // Llama al método para abrir ConfirmarPagoActivity
+                } else {
+                    Toast.makeText(this, "QR incorrecto. Inténtalo nuevamente.", Toast.LENGTH_SHORT).show();
+                }
             } else {
                 Toast.makeText(this, "No se escaneó ningún QR.", Toast.LENGTH_SHORT).show();
             }
+        } else {
+            Toast.makeText(this, "Error al escanear el QR.", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -489,5 +492,20 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
         intent.putExtra("nombreRestaurante", idRestaurante);
         startActivity(intent);
     }
+    private void iniciarTemporizadorParaEstado3() {
+        // Crear un temporizador de 30 segundos
+        new android.os.Handler().postDelayed(() -> {
+            db.collection("pedidos").document(pedidoId)
+                    .update("estado", 3)
+                    .addOnSuccessListener(aVoid -> {
+                        System.out.println("Estado actualizado a 3 (En camino) después de 30 segundos.");
+                        sendNotification("Estado del pedido", "Tu pedido ahora está en camino.");
+                    })
+                    .addOnFailureListener(e -> {
+                        System.err.println("Error al actualizar el estado a 3: " + e.getMessage());
+                    });
+        }, 30000); // 30,000 ms = 30 segundos
+    }
+
 
 }

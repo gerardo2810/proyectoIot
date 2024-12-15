@@ -45,7 +45,6 @@ public class InicioRepartidorActivity extends AppCompatActivity {
     private List<PedidoRecoger> listaPedidos;
     private PedidosRecogerAdapter adapter;
     TextView textViewUbicacion;
-    double estadoPedido;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +62,8 @@ public class InicioRepartidorActivity extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
         String ultimaVista = prefs.getString("ultima_vista", "InicioRepartidorActivity");
         String idPedido = prefs.getString("idPedido", null);
+
+        boolean elementosHabilitados = (idPedido == null);
 
         if (idPedido == null) {
             // Si idPedido es nulo, ocultar el botón y el texto
@@ -117,10 +118,11 @@ public class InicioRepartidorActivity extends AppCompatActivity {
         recyclerViewListaPedidosRecoger = findViewById(R.id.recyclerViewListaPedidosRecoger);
         recyclerViewListaPedidosRecoger.setLayoutManager(new LinearLayoutManager(this));
         listaPedidos = new ArrayList<>();
-        adapter = new PedidosRecogerAdapter(this,listaPedidos);
+        adapter = new PedidosRecogerAdapter(this,listaPedidos, elementosHabilitados);
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         recyclerViewListaPedidosRecoger.setAdapter(adapter);
         db.collection("pedidos")
+                .whereEqualTo("estado", 2) // Filtrar pedidos en estado "1"
                 .addSnapshotListener((querySnapshot, e) -> {
                     if (e != null) {
                         Log.d("msg-test", "Error al obtener documentos: ", e);
@@ -131,9 +133,8 @@ public class InicioRepartidorActivity extends AppCompatActivity {
                     for (QueryDocumentSnapshot document : querySnapshot) {
                         String idRestaurante = document.getString("idRestaurante");
                         String direccion = document.getString("direccion");
-                        estadoPedido = document.getDouble("estado");
 
-                        if (estadoPedido == 2) {
+
 
                             PedidoRecoger pedidoRecoger = new PedidoRecoger();
                             pedidoRecoger.setIdPedido(document.getId());
@@ -161,7 +162,7 @@ public class InicioRepartidorActivity extends AppCompatActivity {
                                             }
                                         });
                             }
-                        }
+
 
 
                     }

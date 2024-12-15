@@ -271,7 +271,7 @@ public class reporte_restaurante_superadmin extends AppCompatActivity {
 
                 // Close the document
                 document.close();
-                Toast.makeText(context, "PDF generado exitosamente: " + pdfPath, Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "Reporte generado exitosamente.", Toast.LENGTH_LONG).show();
             } catch (Exception e) {
                 e.printStackTrace();
                 Toast.makeText(context, "Error al generar el PDF", Toast.LENGTH_SHORT).show();

@@ -34,6 +34,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import android.util.Log;
 
@@ -183,26 +184,54 @@ public class OrdenesRestauranteFragment extends Fragment {
     }
 
     private void filterOrdersByDate(Date date) {
-        String selectedDateStr = dateFormat.format(date);
-        filteredList.clear();
+        // Configurar la zona horaria de Perú (GMT-5)
+        TimeZone peruTimeZone = TimeZone.getTimeZone("America/Lima");
+        SimpleDateFormat dateFormatPeru = new SimpleDateFormat("dd/MM/yy", Locale.getDefault());
+        dateFormatPeru.setTimeZone(peruTimeZone);
 
-        // Define el formato de la fecha en Firestore
-        SimpleDateFormat pedidoDateFormat = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy, hh:mm:ss a", Locale.getDefault());
+        // Formato que se recibe desde Firestore
+        SimpleDateFormat firestoreDateFormat = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy, hh:mm:ss a", Locale.getDefault());
+        firestoreDateFormat.setTimeZone(TimeZone.getTimeZone("UTC")); // Firestore almacena en UTC
+
+        // Fecha seleccionada formateada para comparación
+        String selectedDateStr = dateFormatPeru.format(date);
+        Log.d(TAG, "Fecha seleccionada formateada: " + selectedDateStr);
+
+        filteredList.clear();
 
         for (Pedido pedido : orderList) {
             try {
-                // Convierte el String de fecha del pedido a un objeto Date
-                Date pedidoDate = pedidoDateFormat.parse(pedido.getFechaHora());
+                Log.d(TAG, "Fecha del pedido (antes de parsear): " + pedido.getFechaHora());
 
-                // Compara solo las fechas (sin la hora)
-                if (selectedDateStr.equals(dateFormat.format(pedidoDate))) {
-                    filteredList.add(pedido);
-                    Log.d(TAG, "Pedido filtrado: " + pedido.getId() + " - Fecha: " + pedido.getFechaHora());
+                // Parsear la fecha original de Firestore (en UTC)
+                Date pedidoDateUTC = firestoreDateFormat.parse(pedido.getFechaHora());
+
+                if (pedidoDateUTC != null) {
+                    // Convertir explícitamente la fecha UTC a la zona horaria de Perú
+                    Calendar cal = Calendar.getInstance();
+                    cal.setTime(pedidoDateUTC);
+                    cal.setTimeZone(peruTimeZone);
+
+                    // Obtener la fecha ajustada a Perú
+                    Date pedidoDatePeru = cal.getTime();
+                    String pedidoDateStr = dateFormatPeru.format(pedidoDatePeru);
+
+                    Log.d(TAG, "Fecha del pedido ajustada a Perú: " + pedidoDateStr);
+
+                    // Comparar solo la fecha
+                    if (selectedDateStr.equals(pedidoDateStr)) {
+                        filteredList.add(pedido);
+                        Log.d(TAG, "Pedido filtrado: " + pedido.getId() + " - Fecha ajustada: " + pedidoDateStr);
+                    } else {
+                        Log.d(TAG, "Pedido no coincide: " + pedido.getId() + " - Fecha ajustada: " + pedidoDateStr);
+                    }
                 }
             } catch (ParseException e) {
                 Log.e(TAG, "Error al convertir la fecha del pedido: " + pedido.getFechaHora(), e);
             }
         }
+
+        Log.d(TAG, "Total de pedidos filtrados: " + filteredList.size());
         orderAdapter.notifyDataSetChanged();
     }
 }

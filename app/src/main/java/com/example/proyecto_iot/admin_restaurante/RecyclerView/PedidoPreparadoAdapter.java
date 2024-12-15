@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,9 +36,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public class PedidoPreparadoAdapter extends RecyclerView.Adapter<PedidoPreparadoAdapter.PedidoViewHolder> {
 
@@ -145,16 +148,38 @@ public class PedidoPreparadoAdapter extends RecyclerView.Adapter<PedidoPreparado
 
     private String obtenerSoloHora(String fechaCompleta) {
         try {
-            // Formato de entrada: "15 de diciembre de 2024, 03:52:01 a. m."
-            SimpleDateFormat formatoEntrada = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy, hh:mm:ss a", Locale.getDefault());
+            Log.d("obtenerSoloHora", "Fecha recibida: " + fechaCompleta);
 
-            // Formato de salida: "03:52:01 a. m."
-            SimpleDateFormat formatoHora = new SimpleDateFormat("hh:mm:ss a", Locale.getDefault());
+            // Formato de entrada (según lo recibido desde Firestore en UTC)
+            SimpleDateFormat formatoEntrada = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy, hh:mm:ss a", new Locale("es", "PE"));
+            formatoEntrada.setTimeZone(TimeZone.getTimeZone("UTC")); // La entrada está en UTC
 
-            Date fecha = formatoEntrada.parse(fechaCompleta); // Parsear la fecha completa
-            return formatoHora.format(fecha); // Formatear solo la hora
+            // Parsear la fecha en UTC
+            Date fechaUTC = formatoEntrada.parse(fechaCompleta);
+
+            if (fechaUTC != null) {
+                // Crear un calendario para manejar la fecha
+                Calendar calendario = Calendar.getInstance();
+                calendario.setTime(fechaUTC);
+
+                // Restar 7 horas (en milisegundos)
+                calendario.add(Calendar.HOUR_OF_DAY, -7);
+
+                // Obtener hora, minuto y segundo ajustados
+                int hora = calendario.get(Calendar.HOUR_OF_DAY);
+                int minuto = calendario.get(Calendar.MINUTE);
+                int segundo = calendario.get(Calendar.SECOND);
+
+                // Formatear la hora ajustada manualmente
+                String horaFormateada = String.format("%02d:%02d:%02d", hora, minuto, segundo);
+                Log.d("obtenerSoloHora", "Hora final obtenida: " + horaFormateada);
+                return horaFormateada;
+            } else {
+                Log.e("obtenerSoloHora", "Error: Fecha parseada es nula.");
+                return "Hora no disponible";
+            }
         } catch (ParseException e) {
-            e.printStackTrace();
+            Log.e("obtenerSoloHora", "Error al parsear la fecha: " + fechaCompleta, e);
             return "Hora no disponible";
         }
     }

@@ -305,10 +305,6 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
                                 System.err.println("El campo qrUrl está vacío o es nulo. Esperando actualización...");
                             }
 
-                            // Lógica para cambiar de estado de "En preparación" (2) a "En camino" (3) después de 30 segundos
-                            if (estado == 2) {
-                                iniciarTemporizadorParaEstado3();
-                            }
                         }
                     });
         }

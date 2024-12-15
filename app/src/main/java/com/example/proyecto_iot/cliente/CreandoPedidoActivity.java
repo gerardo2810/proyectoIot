@@ -113,9 +113,7 @@ public class CreandoPedidoActivity extends AppCompatActivity {
         // Cambiar estado del pedido a "6"
         updateOrderStatus(6);
 
-        // Regresar a RealizarPedidoActivity
-        Intent intent = new Intent(CreandoPedidoActivity.this, RealizarPedidoActivity.class);
-        startActivity(intent);
+
         finish(); // Finalizar esta actividad
     }
 

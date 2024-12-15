@@ -23,6 +23,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.repartidor.RecyclerView.PedidoRecoger;
 import com.example.proyecto_iot.repartidor.RecyclerView.PedidosRecogerAdapter;
@@ -30,6 +31,10 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -45,6 +50,7 @@ public class InicioRepartidorActivity extends AppCompatActivity {
     private List<PedidoRecoger> listaPedidos;
     private PedidosRecogerAdapter adapter;
     TextView textViewUbicacion;
+    ImageView iconoPerfilImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +63,34 @@ public class InicioRepartidorActivity extends AppCompatActivity {
 
         Button volverBtn = findViewById(R.id.buttonRegresar);
         TextView volverTexto = findViewById(R.id.textoPedProgress);
+        iconoPerfilImageView = findViewById(R.id.fotoPerfil);
+
+        // Suponiendo que ya tienes el usuario logueado con Firebase Authentication
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        if (user != null) {
+            String userId = user.getUid(); // Obtener el ID del usuario logueado
+            // Obtener referencia a la colección de repartidores
+
+            DocumentReference docRef = db.collection("repartidores").document(userId);
+
+            // Obtener los datos del cliente desde Firestore
+            docRef.get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+
+                        String fotoUrl = document.getString("foto");
+
+                        Glide.with(this)
+                                .load(fotoUrl)
+                                .into(iconoPerfilImageView);  // Usando Glide para cargar la imagen
+                    }
+                } else {
+                    Log.d("Firestore", "Error getting documents: ", task.getException());
+                }
+            });
+        }
 
         // Recuperar SharedPreferences
         SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
@@ -119,7 +153,7 @@ public class InicioRepartidorActivity extends AppCompatActivity {
         recyclerViewListaPedidosRecoger.setLayoutManager(new LinearLayoutManager(this));
         listaPedidos = new ArrayList<>();
         adapter = new PedidosRecogerAdapter(this,listaPedidos, elementosHabilitados);
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
         recyclerViewListaPedidosRecoger.setAdapter(adapter);
         db.collection("pedidos")
                 .whereEqualTo("estado", 2) // Filtrar pedidos en estado "1"

@@ -154,8 +154,9 @@ public class PorEntregarFragment extends Fragment {
             filteredList.addAll(pedidoList);
         } else {
             for (Pedido pedido : pedidoList) {
-                if (pedido.getNombreCliente().toLowerCase().contains(query.toLowerCase()) ||
-                        pedido.getNombreRepartidor().toLowerCase().contains(query.toLowerCase())) {
+                // Verificar si el texto coincide con el código del pedido o el nombre del cliente
+                if ((pedido.getCodigo() != null && pedido.getCodigo().toLowerCase().contains(query.toLowerCase())) ||
+                        (pedido.getNombreCliente() != null && pedido.getNombreCliente().toLowerCase().contains(query.toLowerCase()))) {
                     filteredList.add(pedido);
                 }
             }

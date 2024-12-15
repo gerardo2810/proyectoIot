@@ -4,12 +4,14 @@ import java.util.List;
 
 public class Pedido {
     private String id;
+    private String codigo;
     private String direccion;
     private int estado;
     private String fechaHora;
     private String idCliente;
     private String idRepartidor;
     private String nombreCliente;
+    private String apellidoCliente;
     private String idRestaurante;
     private String nombreRestaurante;
     private double pagoTotal;
@@ -147,5 +149,21 @@ public class Pedido {
 
     public void setRepartidorAsignado(boolean repartidorAsignado) {
         this.repartidorAsignado = repartidorAsignado;
+    }
+
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
+    }
+
+    public String getApellidoCliente() {
+        return apellidoCliente;
+    }
+
+    public void setApellidoCliente(String apellidoCliente) {
+        this.apellidoCliente = apellidoCliente;
     }
 }

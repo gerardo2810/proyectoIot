@@ -47,27 +47,17 @@
 
     <!-- Contenedor para los fragments -->
 
-    <TextView
-        android:id="@+id/tv_historial_titulo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
-        android:paddingBottom="10dp"
-        android:text="REPORTES"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/top_bar_card" />
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
         android:background="@drawable/tab_background"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_historial_titulo"
+        app:layout_constraintTop_toBottomOf="@+id/top_bar_card"
         app:tabIndicatorColor="#658ED9"
         app:tabSelectedTextColor="@color/md_theme_primary_mediumContrast"
         app:tabTextColor="#A0A0A0">

@@ -1,5 +1,6 @@
 package com.example.proyecto_iot.admin_restaurante;
 
+import android.app.Dialog;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -13,6 +14,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,6 +24,8 @@ import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.admin_restaurante.RecyclerView.RestauranteViewModel;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.Arrays;
 
 public class HomeRestauranteFragment extends Fragment {
     private RestauranteViewModel restauranteViewModel;
@@ -213,15 +218,70 @@ public class HomeRestauranteFragment extends Fragment {
     }
 
     private void showCloseConfirmationDialog() {
-        String message = isRestaurantOpen ? "¿Estás seguro de que deseas cerrar el restaurante?" : "¿Estás seguro de que deseas abrir el restaurante?";
-        String action = isRestaurantOpen ? "Cerrar" : "Abrir";
+        // Crear el diálogo
+        Dialog dialog = new Dialog(requireContext());
+        dialog.setContentView(R.layout.custom_confirmation_dialog);
 
-        new AlertDialog.Builder(requireContext())
-                .setTitle(action + " restaurante")
-                .setMessage(message)
-                .setPositiveButton("Aceptar", (dialog, which) -> toggleRestaurantStatus())
-                .setNegativeButton("Cancelar", null)
-                .show();
+        // Configurar las vistas del diálogo
+        TextView titleTextView = dialog.findViewById(R.id.dialog_title);
+        TextView messageTextView = dialog.findViewById(R.id.dialog_message);
+        Button positiveButton = dialog.findViewById(R.id.dialog_positive_button);
+        Button negativeButton = dialog.findViewById(R.id.dialog_negative_button);
+
+        // Configurar el título y el mensaje
+        titleTextView.setText(isRestaurantOpen ? "Cerrar restaurante" : "Abrir restaurante");
+        messageTextView.setText(isRestaurantOpen ? "¿Deseas cerrar el restaurante?" : "¿Deseas abrir el restaurante?");
+
+        // Configurar las acciones de los botones
+        positiveButton.setOnClickListener(v -> {
+            validatePendingOrders();
+            dialog.dismiss();
+        });
+
+        negativeButton.setOnClickListener(v -> dialog.dismiss());
+
+        // Mostrar el diálogo con dimensiones ajustadas
+        dialog.show();
+
+        // Ajustar el ancho del diálogo dinámicamente
+        Window window = dialog.getWindow();
+        if (window != null) {
+            window.setLayout((int) (getResources().getDisplayMetrics().widthPixels * 0.9), WindowManager.LayoutParams.WRAP_CONTENT);
+        }
+    }
+
+    private void validatePendingOrders() {
+        db.collection("pedidos")
+                .whereEqualTo("idRestaurante", restaurantId)
+                .whereIn("estado", Arrays.asList(0, 1, 2, 3, 7))
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    if (!querySnapshot.isEmpty()) {
+                        new AlertDialog.Builder(requireContext())
+                                .setTitle("Pedidos pendientes")
+                                .setMessage("No puedes cerrar el restaurante porque hay pedidos pendientes.")
+                                .setPositiveButton("Aceptar", null)
+                                .show();
+                    } else {
+                        toggleRestaurantStatus();
+                    }
+                })
+                .addOnFailureListener(e -> Toast.makeText(getContext(), "Error al validar pedidos.", Toast.LENGTH_SHORT).show());
+    }
+
+    private void showCustomAlertDialog(String title, String message) {
+        Dialog dialog = new Dialog(requireContext());
+        dialog.setContentView(R.layout.custom_confirmation_dialog);
+
+        TextView titleTextView = dialog.findViewById(R.id.dialog_title);
+        TextView messageTextView = dialog.findViewById(R.id.dialog_message);
+        Button positiveButton = dialog.findViewById(R.id.dialog_positive_button);
+
+        titleTextView.setText(title);
+        messageTextView.setText(message);
+
+        positiveButton.setOnClickListener(v -> dialog.dismiss());
+        dialog.show();
     }
 
     private void toggleRestaurantStatus() {

@@ -56,28 +56,11 @@ public class PedidoAdapter extends RecyclerView.Adapter<PedidoAdapter.PedidoView
             Log.d("PedidoAdapter", "El ID del pedido en la posición " + position + " es: " + pedido.getId());
         }
 
-        // Asegúrate de que los campos de pedido no sean nulos
+        holder.tvPedidoCodigo.setText(pedido.getCodigo());
         holder.tvPedidoCantidad.setText(pedido.getProductos() != null ? pedido.getProductos().size() + " productos" : "0 productos");
         holder.tvPedidoPrecio.setText(String.format("S/%.2f", pedido.getPagoTotal()));
+        holder.tvPedidoCliente.setText(pedido.getNombreCliente() + " " + pedido.getApellidoCliente()!= null ? pedido.getNombreCliente() + " " + pedido.getApellidoCliente() : "Cliente no disponible");
 
-        // Buscar el nombre del cliente en Firestore y asignarlo a tvPedidoCliente
-        if (pedido.getIdCliente() != null) {
-            db.collection("clientes").document(pedido.getIdCliente())
-                    .get()
-                    .addOnSuccessListener(documentSnapshot -> {
-                        if (documentSnapshot.exists()) {
-                            String nombreCliente = documentSnapshot.getString("Nombre");
-                            holder.tvPedidoCliente.setText(nombreCliente != null ? nombreCliente : "Cliente no disponible");
-                        } else {
-                            holder.tvPedidoCliente.setText("Cliente no disponible");
-                        }
-                    })
-                    .addOnFailureListener(e -> {
-                        holder.tvPedidoCliente.setText("Error al obtener cliente");
-                    });
-        } else {
-            holder.tvPedidoCliente.setText("Cliente no disponible");
-        }
 
         // Manejar el clic para enviar el ID del pedido
         holder.linearLayout.setOnClickListener(v -> {
@@ -102,12 +85,14 @@ public class PedidoAdapter extends RecyclerView.Adapter<PedidoAdapter.PedidoView
     // ViewHolder Class
     public static class PedidoViewHolder extends RecyclerView.ViewHolder {
         TextView tvPedidoCliente;
+        TextView tvPedidoCodigo;
         TextView tvPedidoCantidad;
         TextView tvPedidoPrecio;
         LinearLayout linearLayout;
 
         public PedidoViewHolder(@NonNull View itemView) {
             super(itemView);
+            tvPedidoCodigo = itemView.findViewById(R.id.codID);
             tvPedidoCliente = itemView.findViewById(R.id.cliente);
             tvPedidoCantidad = itemView.findViewById(R.id.cant_productos);
             tvPedidoPrecio = itemView.findViewById(R.id.total);

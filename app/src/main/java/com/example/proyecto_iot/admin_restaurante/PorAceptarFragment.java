@@ -46,8 +46,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -72,18 +74,18 @@ public class PorAceptarFragment extends Fragment {
     private RecyclerView rvOrdersList;
     private PedidoAdapter pedidoAdapter;
     private List<Pedido> pedidoList;
-    private List<Pedido> filteredList; // Filtered list
+    private List<Pedido> filteredList;
     private FirebaseFirestore db;
-    private String idRestaurante; // Restaurant ID
+    private String idRestaurante;
     private EditText orderSearch;
-    private ListenerRegistration ordersListener; // Firestore listener registration
+    private ListenerRegistration ordersListener;
     private static final String CHANNEL_ID = "Nuevo_Pedido";
+    private Set<String> pedidosAnteriores = new HashSet<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Obtener el idRestaurante del Bundle
         if (getArguments() != null) {
             idRestaurante = getArguments().getString("idRestaurante");
         }
@@ -95,17 +97,14 @@ public class PorAceptarFragment extends Fragment {
 
         Log.d("PorAceptarFragment", "onCreate: idRestaurante recibido: " + idRestaurante);
 
-        // Initialize Firestore
         db = FirebaseFirestore.getInstance();
 
-        // Verify notification permissions for Android 13+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.POST_NOTIFICATIONS}, 100);
             }
         }
 
-        // Create notification channel (Android 8+)
         createNotificationChannel();
     }
 
@@ -114,25 +113,19 @@ public class PorAceptarFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_por_aceptar, container, false);
 
-        // Initialize RecyclerView
         rvOrdersList = view.findViewById(R.id.rv_orders_list);
         rvOrdersList.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // Initialize search EditText
         orderSearch = view.findViewById(R.id.order_search);
 
-        // Initialize lists
         pedidoList = new ArrayList<>();
         filteredList = new ArrayList<>();
 
-        // Initialize adapter
         pedidoAdapter = new PedidoAdapter(filteredList, getContext());
         rvOrdersList.setAdapter(pedidoAdapter);
 
-        // Trigger initial data load
         attachFirestoreListener();
 
-        // Setup search functionality
         orderSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -152,86 +145,61 @@ public class PorAceptarFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
-        if (idRestaurante == null) {
-            Log.e("PorAceptarFragment", "onResume: idRestaurante es nulo.");
-            return;
-        }
-
-        Log.d("PorAceptarFragment", "Fragment visible. Activando listener en tiempo real.");
         attachFirestoreListener();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        detachFirestoreListener(); // Detach listener to avoid leaks
+        detachFirestoreListener();
     }
 
     private void attachFirestoreListener() {
-        if (idRestaurante == null) {
-            Log.e("PorAceptarFragment", "attachFirestoreListener: idRestaurante es nulo.");
-            return;
-        }
-
         if (ordersListener != null) {
-            Log.d("PorAceptarFragment", "Listener ya activo.");
-            return;
+            ordersListener.remove();
         }
 
         ordersListener = db.collection("pedidos")
                 .whereEqualTo("idRestaurante", idRestaurante)
-                .whereEqualTo("estado", 0)
+                .whereEqualTo("estado", 0) // Solo pedidos en estado 0
                 .addSnapshotListener((querySnapshot, e) -> {
                     if (e != null) {
-                        Log.e("Pedido", "Error obteniendo pedidos: " + e.getMessage());
-                        Toast.makeText(getContext(), "Error obteniendo pedidos.", Toast.LENGTH_SHORT).show();
+                        Log.e("PorAceptarFragment", "Error obteniendo pedidos: " + e.getMessage());
                         return;
                     }
 
                     if (querySnapshot != null) {
-                        pedidoList.clear(); // Limpiar la lista para evitar duplicados
-                        for (DocumentChange change : querySnapshot.getDocumentChanges()) {
-                            DocumentSnapshot doc = change.getDocument();
-                            Pedido pedido = doc.toObject(Pedido.class);
-                            pedido.setId(doc.getId()); // Asignar manualmente el ID del documento
-                            Log.d("PorAceptarFragment", "Pedido recibido con ID: " + pedido.getId());
+                        // Registro temporal de IDs actuales
+                        Set<String> pedidosActuales = new HashSet<>();
+                        List<Pedido> nuevosPedidos = new ArrayList<>(); // Lista de pedidos nuevos
 
-                            switch (change.getType()) {
-                                case ADDED:
-                                    pedidoList.add(pedido);
-                                    break;
-                                case MODIFIED:
-                                    for (int i = 0; i < pedidoList.size(); i++) {
-                                        if (pedidoList.get(i).getId().equals(pedido.getId())) {
-                                            pedidoList.set(i, pedido);
-                                            break;
-                                        }
-                                    }
-                                    break;
-                                case REMOVED:
-                                    pedidoList.removeIf(p -> p.getId().equals(pedido.getId()));
-                                    break;
+                        // Limpiar lista local para refrescar con los datos actuales de Firestore
+                        pedidoList.clear();
+
+                        for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+                            Pedido pedido = doc.toObject(Pedido.class);
+                            if (pedido != null) {
+                                pedido.setId(doc.getId());
+                                pedidoList.add(pedido);
+                                pedidosActuales.add(pedido.getId());
+
+                                // Si el pedido no estaba en la lista anterior, es nuevo
+                                if (!pedidosAnteriores.contains(pedido.getId())) {
+                                    nuevosPedidos.add(pedido);
+                                }
                             }
                         }
 
-                        // Ordenar la lista por fechaHora (más reciente primero)
-                        pedidoList.sort((p1, p2) -> {
-                            try {
-                                SimpleDateFormat sdf = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy, hh:mm:ss a", Locale.getDefault());
-                                Date date1 = sdf.parse(p1.getFechaHora());
-                                Date date2 = sdf.parse(p2.getFechaHora());
-                                return date2.compareTo(date1);
-                            } catch (ParseException ex) {
-                                Log.e("Pedido", "Error al parsear fechaHora: " + ex.getMessage());
-                                return 0;
-                            }
-                        });
+                        // Enviar notificaciones solo para los pedidos nuevos
+                        for (Pedido nuevoPedido : nuevosPedidos) {
+                            sendNotification(nuevoPedido);
+                        }
 
-                        // Actualizar la lista filtrada y notificar al adaptador
-                        filteredList.clear();
-                        filteredList.addAll(pedidoList);
-                        pedidoAdapter.notifyDataSetChanged();
+                        // Actualizar el registro de IDs anteriores
+                        pedidosAnteriores = pedidosActuales;
+
+                        Log.d("PorAceptarFragment", "Lista de pedidos actualizada: " + pedidoList.size() + " pedidos.");
+                        actualizarListaPedidos(); // Actualiza el RecyclerView
                     }
                 });
     }
@@ -245,19 +213,37 @@ public class PorAceptarFragment extends Fragment {
         }
     }
 
+    private void actualizarListaPedidos() {
+        pedidoList.sort((p1, p2) -> {
+            try {
+                SimpleDateFormat sdf = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy, hh:mm:ss a", Locale.getDefault());
+                Date date1 = sdf.parse(p1.getFechaHora());
+                Date date2 = sdf.parse(p2.getFechaHora());
+                return date2.compareTo(date1);
+            } catch (ParseException ex) {
+                Log.e("Pedido", "Error al parsear fechaHora: " + ex.getMessage());
+                return 0;
+            }
+        });
+
+        filteredList.clear();
+        filteredList.addAll(pedidoList);
+        pedidoAdapter.notifyDataSetChanged();
+    }
+
     private void filterOrders(String query) {
         filteredList.clear();
         if (query.isEmpty()) {
             filteredList.addAll(pedidoList);
         } else {
             for (Pedido pedido : pedidoList) {
-                if (pedido.getIdCliente().toLowerCase().contains(query.toLowerCase()) ||
-                        pedido.getNombreRestaurante().toLowerCase().contains(query.toLowerCase())) {
+                // Verificar si el texto coincide con el código del pedido o el nombre del cliente
+                if ((pedido.getCodigo() != null && pedido.getCodigo().toLowerCase().contains(query.toLowerCase())) ||
+                        (pedido.getNombreCliente() != null && pedido.getNombreCliente().toLowerCase().contains(query.toLowerCase()))) {
                     filteredList.add(pedido);
                 }
             }
         }
-
         pedidoAdapter.notifyDataSetChanged();
     }
 
@@ -265,7 +251,7 @@ public class PorAceptarFragment extends Fragment {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = "New Order Notifications";
             String description = "Channel for new order notifications";
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            int importance = NotificationManager.IMPORTANCE_HIGH;
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
             channel.setDescription(description);
             NotificationManager notificationManager = requireContext().getSystemService(NotificationManager.class);
@@ -279,23 +265,26 @@ public class PorAceptarFragment extends Fragment {
 
         PendingIntent pendingIntent = PendingIntent.getActivity(
                 requireContext(),
-                0,
+                (int) System.currentTimeMillis(),
                 intent,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(requireContext(), CHANNEL_ID)
-                .setSmallIcon(R.drawable.new_orden_noti) // Replace with your notification icon
+                .setSmallIcon(R.drawable.new_orden_noti)
                 .setContentTitle("Nueva Orden - " + pedido.getNombreRestaurante())
-                .setContentText("Detalles: " + pedido.getProductos().size() + " productos - S/" + pedido.getPagoTotal())
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setContentText("Total: S/" + pedido.getPagoTotal() + " - " + pedido.getProductos().size() + " productos.")
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true);
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(requireContext());
+
         if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
+
         notificationManager.notify((int) System.currentTimeMillis(), builder.build());
     }
 }
+

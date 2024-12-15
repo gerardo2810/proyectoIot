@@ -14,17 +14,29 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.proyecto_iot.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 public class EntregaCurso2Activity extends AppCompatActivity {
+
+    String idRestaurante;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_entrega_curso_2);
+
+
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         String idPedido = getIntent().getStringExtra("idPedido");
@@ -34,6 +46,7 @@ public class EntregaCurso2Activity extends AppCompatActivity {
                     if (documentSnapshot.exists()) {
                         String idCliente = documentSnapshot.getString("idCliente");
                         String direccion = documentSnapshot.getString("direccion");
+                        idRestaurante = documentSnapshot.getString("idRestaurante");
 
                         TextView direccionClienteTextView = findViewById(R.id.direccion_destino);
                         direccionClienteTextView.setText(direccion);
@@ -68,7 +81,7 @@ public class EntregaCurso2Activity extends AppCompatActivity {
                         TextView tvIdPedido = findViewById(R.id.idPedido);
                         tvIdPedido.setText(idPedido);
 
-                        // Ahora consulta los datos del restaurante
+                        // Ahora consulta los datos del cliente
                         db.collection("clientes").document(idCliente)
                                 .get()
                                 .addOnSuccessListener(clienteSnapshot -> {
@@ -117,9 +130,46 @@ public class EntregaCurso2Activity extends AppCompatActivity {
         editor.putString("idPedido", null); // ID del pedido se volverá vacío
         editor.apply();
 
-        Intent intent = new Intent(this, InicioRepartidorActivity.class);
-        intent.putExtra("showDialog", true);
-        startActivity(intent);
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        String repartidorId = auth.getCurrentUser().getUid(); // Obtener UID del repartidor
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        // Ahora consulta los datos del cliente
+        db.collection("restaurantes").document(idRestaurante)
+                .get()
+                .addOnSuccessListener(restauranteSnapshot -> {
+                    if (restauranteSnapshot.exists()) {
+                        // Datos del pedido
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", new Locale("es", "PE"));
+                        dateFormat.setTimeZone(TimeZone.getTimeZone("America/Lima"));
+                        String fecha = dateFormat.format(new Date());
+
+
+                        Map<String, Object> pedido = new HashMap<>();
+                        pedido.put("fechaHora", FieldValue.serverTimestamp());
+                        pedido.put("fecha", fecha);
+                        pedido.put("nombreRestaurante", restauranteSnapshot.getString("nombre"));
+                        pedido.put("idRepartidor", repartidorId);
+
+                        // Guardar en Firestore
+                        db.collection("historialPedidos")
+                                .add(pedido)
+                                .addOnSuccessListener(documentReference -> {
+                                    Toast.makeText(this, "Pedido guardado en el historial", Toast.LENGTH_SHORT).show();
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(this, "Error al guardar el pedido", Toast.LENGTH_SHORT).show();
+                                });
+
+                        Intent intent = new Intent(this, InicioRepartidorActivity.class);
+                        intent.putExtra("showDialog", true);
+                        startActivity(intent);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Error al cargar los datos del restaurante", Toast.LENGTH_SHORT).show();
+                });
+
     }
 
     @SuppressWarnings("MissingSuperCall")

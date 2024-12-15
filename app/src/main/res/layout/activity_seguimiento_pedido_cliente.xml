@@ -164,7 +164,7 @@
                         android:id="@+id/estado_recibido"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
-                        android:src="@drawable/placeholder"
+                        android:src="@drawable/recibido"
                         android:background="@drawable/circle_shape" />
                     <TextView
                         android:layout_width="wrap_content"
@@ -197,7 +197,7 @@
                         android:layout_width="48dp"
                         android:layout_height="48dp"
                         android:scaleType="centerCrop"
-                        android:src="@drawable/reportes"
+                        android:src="@drawable/preparacion"
                         android:background="@drawable/circle_shape" />
 
                     <TextView
@@ -231,7 +231,7 @@
                         android:id="@+id/estado_en_camino"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
-                        android:src="@drawable/reportes_1"
+                        android:src="@drawable/encamino"
                         android:scaleType="centerCrop"
 
                         android:background="@drawable/circle_shape" />
@@ -250,7 +250,7 @@
                     android:id="@+id/linea_3"
                     android:layout_width="32dp"
                     android:layout_height="2dp"
-                    android:background="@android:color/darker_gray"
+                    android:background="@drawable/entregado"
                     android:layout_gravity="center_vertical"
                     android:visibility="gone" />
 

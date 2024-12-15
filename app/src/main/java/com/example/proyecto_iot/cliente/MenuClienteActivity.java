@@ -62,8 +62,16 @@ public class MenuClienteActivity extends AppCompatActivity {
         });
 
         // Manejar evento "Editar Datos Personales"
-        View editarDatosPersonalesLayout = findViewById(R.id.edit_personal_info);
+        View editarDatosPersonalesLayout = findViewById(R.id.edit_personal_info1);
         editarDatosPersonalesLayout.setOnClickListener(v -> {
+            // Ir a la vista PerfilClienteActivity
+            Intent intent = new Intent(MenuClienteActivity.this, HistorialPedidosActivity.class);
+            startActivity(intent);
+        });
+
+        // Manejar evento "Editar Datos Personales"
+        View editarDatosPersonalesLayout1 = findViewById(R.id.edit_personal_info);
+        editarDatosPersonalesLayout1.setOnClickListener(v -> {
             // Ir a la vista PerfilClienteActivity
             Intent intent = new Intent(MenuClienteActivity.this, PerfilClienteActivity.class);
             startActivity(intent);

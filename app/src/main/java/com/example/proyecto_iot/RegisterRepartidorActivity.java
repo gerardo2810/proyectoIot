@@ -1,8 +1,12 @@
 package com.example.proyecto_iot;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.OpenableColumns;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -14,7 +18,10 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -37,6 +44,12 @@ public class RegisterRepartidorActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
+    //PDF
+    private static final int PICK_PDF_REQUEST = 2;  // Solicitar código para seleccionar el PDF
+    private TextView textViewPdfUrl; // TextView para mostrar la URL del PDF
+    private Button buttonSelectPdf;  // Botón para seleccionar el archivo PDF
+    private Uri selectedPdfUri = null; // Variable para almacenar la URI del archivo PDF seleccionado
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +66,11 @@ public class RegisterRepartidorActivity extends AppCompatActivity {
         txtPassword = findViewById(R.id.txtPassword);
         btnRegister = findViewById(R.id.btnRegister);
         lblLogin = findViewById(R.id.lblLogin);
+
+        //PDF
+        textViewPdfUrl = findViewById(R.id.textViewPdfUrl);
+        buttonSelectPdf = findViewById(R.id.buttonSelectPdf);
+        buttonSelectPdf.setOnClickListener(v -> openFileChooser());
 
         // Inicialización de Firebase
         mAuth = FirebaseAuth.getInstance();
@@ -124,6 +142,7 @@ public class RegisterRepartidorActivity extends AppCompatActivity {
         }
 
         // Creación de usuario en Firebase Authentication
+        Toast.makeText(RegisterRepartidorActivity.this, "Espere un momento...", Toast.LENGTH_LONG).show();
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -151,16 +170,94 @@ public class RegisterRepartidorActivity extends AppCompatActivity {
                         repartidor.put("aceptado",false);
                         repartidor.put("fecha",fechaHora);
 
-                        // Guardar en Firestore
-                        documentReference.set(repartidor).addOnSuccessListener(aVoid -> {
-                            Toast.makeText(RegisterRepartidorActivity.this, "Registro exitoso", Toast.LENGTH_SHORT).show();
-                            openLoginActivity();
-                        }).addOnFailureListener(e -> {
-                            Toast.makeText(RegisterRepartidorActivity.this, "Error al registrar: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        });
+                        // Subir PDF si se seleccionó uno
+                        if (selectedPdfUri != null) {
+                            uploadPdfToFirebase(selectedPdfUri, userID, documentReference, repartidor);
+                        } else {
+                            // Si no se seleccionó un PDF, guardar el usuario sin PDF
+                            repartidor.put("cv","No adjuntó");
+                            saveUserDocument(documentReference, repartidor);
+                        }
                     } else {
                         Toast.makeText(RegisterRepartidorActivity.this, "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
     }
+
+    //PDF
+    // Método para subir el archivo PDF a Firebase Storage
+    private void uploadPdfToFirebase(Uri pdfUri, String userID, DocumentReference documentReference, Map<String, Object> repartidor) {
+        // Crear una referencia en Firebase Storage para el archivo PDF
+        StorageReference pdfRef = FirebaseStorage.getInstance().getReference().child("cvRepartidores/" + userID + ".pdf");
+
+        // Subir el archivo PDF
+        pdfRef.putFile(pdfUri)
+                .addOnSuccessListener(taskSnapshot -> {
+                    // Obtener la URL del archivo subido
+                    pdfRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                        String pdfUrl = uri.toString();
+                        Log.d("PDF Upload", "PDF subido exitosamente: " + pdfUrl);
+                        // Guardar repartidor
+                        repartidor.put("cv",pdfUrl);
+                        documentReference.set(repartidor)
+                                .addOnSuccessListener(aVoid -> {
+                                    Toast.makeText(RegisterRepartidorActivity.this, "Registro exitoso, debe esperar a que sea aceptado", Toast.LENGTH_LONG).show();
+                                    openLoginActivity();
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(RegisterRepartidorActivity.this, "Error al registrar: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                });
+                    });
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("PDF Upload", "Error al subir el PDF", e);
+                    Toast.makeText(this, "Error al subir el archivo PDF", Toast.LENGTH_SHORT).show();
+                });
+    }
+    // Guardar los datos del repartidor sin PDF
+    private void saveUserDocument(DocumentReference documentReference, Map<String, Object> repartidor) {
+        documentReference.set(repartidor)
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(RegisterRepartidorActivity.this, "Registro exitoso, debe esperar a que sea aceptado", Toast.LENGTH_SHORT).show();
+                    openLoginActivity();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(RegisterRepartidorActivity.this, "Error al registrar: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    // Método para abrir el selector de archivos PDF
+    private void openFileChooser() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("application/pdf"); // Seleccionar solo archivos PDF
+        startActivityForResult(intent, PICK_PDF_REQUEST);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_PDF_REQUEST && resultCode == RESULT_OK && data != null) {
+            selectedPdfUri = data.getData(); // Obtén el URI del archivo PDF seleccionado
+            // Obtener el nombre del archivo desde la URI
+            String fileName = getFileName(selectedPdfUri);
+            textViewPdfUrl.setText("PDF seleccionado: " + fileName);  // Mostrar el URI del PDF en el TextView
+        }
+    }
+
+    // Método para obtener el nombre del archivo desde la URI
+    private String getFileName(Uri uri) {
+        String fileName = null;
+        if (uri.getScheme().equals("content")) {
+            Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                int nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                fileName = cursor.getString(nameIndex);
+                cursor.close();
+            }
+        } else if (uri.getScheme().equals("file")) {
+            fileName = new File(uri.getPath()).getName();
+        }
+        return fileName;
+    }
+
 }

@@ -3,6 +3,7 @@ package com.example.proyecto_iot.repartidor;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -129,6 +130,19 @@ public class RecojoCurso2Activity extends AppCompatActivity {
             editor.putString("ultima_vista", "EntregaCurso1Activity");
             editor.putString("idPedido", idPedido); // ID del pedido
             editor.apply();
+
+            //Actualizar pedido
+
+            db.collection("pedidos").document(idPedido)
+                    .update("estado", 7)
+                    .addOnSuccessListener(aVoid -> {
+                        // Acción si la actualización fue exitosa
+                        Log.d("Firebase", "Entrega del pedido en progreso");
+                    })
+                    .addOnFailureListener(e -> {
+                        // Acción si ocurrió un error
+                        Log.w("Firebase", "Error al tomar el recojo del pedido", e);
+                    });
 
 
             Intent intent = new Intent(this, EntregaCurso1Activity.class);

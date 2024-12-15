@@ -25,6 +25,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.json.JSONArray;
@@ -32,6 +33,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -42,6 +45,7 @@ import okhttp3.Response;
 public class NuevoPedidoActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap myMap;
+    FirebaseAuth auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +111,23 @@ public class NuevoPedidoActivity extends AppCompatActivity implements OnMapReady
             editor.putString("ultima_vista", "RecojoCurso1Activity");
             editor.putString("idPedido", idPedido); // ID del pedido
             editor.apply();
+
+            //Actualizar pedido
+            auth = FirebaseAuth.getInstance();
+            String userId = auth.getCurrentUser().getUid();
+
+            db.collection("pedidos").document(idPedido)
+                    .update("estado", 3,               // Actualiza el campo 'estado' a 7
+                            "idRepartidor", userId)
+                    .addOnSuccessListener(aVoid -> {
+                        // Acción si la actualización fue exitosa
+                        Log.d("Firebase", "Recojo del pedido en progreso");
+                    })
+                    .addOnFailureListener(e -> {
+                        // Acción si ocurrió un error
+                        Log.w("Firebase", "Error al tomar el recojo del pedido", e);
+                    });
+
 
 
             Intent intent = new Intent(this, RecojoCurso1Activity.class);

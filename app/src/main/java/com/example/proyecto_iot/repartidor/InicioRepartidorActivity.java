@@ -121,6 +121,7 @@ public class InicioRepartidorActivity extends AppCompatActivity {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         recyclerViewListaPedidosRecoger.setAdapter(adapter);
         db.collection("pedidos")
+                .whereEqualTo("estado", 2) // Filtrar pedidos en estado "1"
                 .addSnapshotListener((querySnapshot, e) -> {
                     if (e != null) {
                         Log.d("msg-test", "Error al obtener documentos: ", e);
@@ -131,9 +132,8 @@ public class InicioRepartidorActivity extends AppCompatActivity {
                     for (QueryDocumentSnapshot document : querySnapshot) {
                         String idRestaurante = document.getString("idRestaurante");
                         String direccion = document.getString("direccion");
-                        estadoPedido = document.getDouble("estado");
 
-                        if (estadoPedido == 2) {
+
 
                             PedidoRecoger pedidoRecoger = new PedidoRecoger();
                             pedidoRecoger.setIdPedido(document.getId());
@@ -161,7 +161,7 @@ public class InicioRepartidorActivity extends AppCompatActivity {
                                             }
                                         });
                             }
-                        }
+
 
 
                     }

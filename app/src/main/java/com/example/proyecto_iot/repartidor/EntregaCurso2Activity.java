@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -30,6 +31,7 @@ import java.util.TimeZone;
 public class EntregaCurso2Activity extends AppCompatActivity {
 
     String idRestaurante;
+    String idPedido;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +41,7 @@ public class EntregaCurso2Activity extends AppCompatActivity {
 
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        String idPedido = getIntent().getStringExtra("idPedido");
+        idPedido = getIntent().getStringExtra("idPedido");
         db.collection("pedidos").document(idPedido)
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
@@ -134,6 +136,20 @@ public class EntregaCurso2Activity extends AppCompatActivity {
         String repartidorId = auth.getCurrentUser().getUid(); // Obtener UID del repartidor
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        //Actualizar pedido
+
+        db.collection("pedidos").document(idPedido)
+                .update("estado", 4)
+                .addOnSuccessListener(aVoid -> {
+                    // Acción si la actualización fue exitosa
+                    Log.d("Firebase", "Entrega del pedido exitosamente");
+                })
+                .addOnFailureListener(e -> {
+                    // Acción si ocurrió un error
+                    Log.w("Firebase", "Error al entregar el pedido", e);
+                });
+
         // Ahora consulta los datos del cliente
         db.collection("restaurantes").document(idRestaurante)
                 .get()

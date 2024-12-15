@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -63,7 +64,7 @@ public class PerfilRestauranteActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_perfil_restaurante_cliente);
 
-        // Inicializar Firestore
+        // Inicializar Firesto
         db = FirebaseFirestore.getInstance();
 
         // Obtener los datos del Intent
@@ -276,7 +277,6 @@ public class PerfilRestauranteActivity extends AppCompatActivity {
 
 
         EditText searchText = findViewById(R.id.search_text);
-
         searchText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -284,6 +284,7 @@ public class PerfilRestauranteActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                Log.d("Search", "Text Changed: " + charSequence.toString());
                 adapter.filterList(charSequence.toString());
             }
 
@@ -319,9 +320,12 @@ public class PerfilRestauranteActivity extends AppCompatActivity {
                 navegarAInicioCliente(); // Navegar directamente si no se añadieron productos
             }
         });
+        ImageView clearSearchIcon = findViewById(R.id.clear_search_icon);
 
-
-
+        // Listener para el ícono de basurero
+        clearSearchIcon.setOnClickListener(view -> {
+            searchText.setText(""); // Borra el texto del EditText
+        });
 
 
     }
@@ -367,24 +371,26 @@ public class PerfilRestauranteActivity extends AppCompatActivity {
     }
 
     private void fetchPlatosPorCategorias(List<String> categoriaIds) {
-        // Consultar los platos que pertenecen a las categorías
         db.collection("platos")
-                .whereIn("idCategoria", categoriaIds) // Filtrar por las categorías obtenidas
+                .whereIn("idCategoria", categoriaIds)
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && task.getResult() != null) {
                         productosList.clear();
 
                         for (DocumentSnapshot document : task.getResult()) {
-                            String id =document.getId();
+                            String id = document.getId();
                             String nombre = document.getString("Nombre");
                             String descripcion = document.getString("Descripcion");
                             double precio = document.contains("Precio") ? document.getDouble("Precio") : 0.0;
                             String imageUrl = document.getString("Imagen");
                             int cantidadInicial = 1;
 
-                            productosList.add(new Producto(id,nombre, descripcion, precio, cantidadInicial, imageUrl));
+                            productosList.add(new Producto(id, nombre, descripcion, precio, cantidadInicial, imageUrl));
                         }
+
+                        // Actualizar productosListFull para el filtrado
+                        adapter.updateProductosListFull(new ArrayList<>(productosList));
 
                         // Notificar al adaptador de los cambios
                         adapter.notifyDataSetChanged();

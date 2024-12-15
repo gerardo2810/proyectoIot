@@ -35,7 +35,7 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_margin="16dp"
-        android:background="@drawable/circle_shape"
+        android:background="@drawable/aaaaaaaaa"
         app:layout_constraintTop_toTopOf="@id/cover_image"
         app:layout_constraintStart_toStartOf="parent">
 
@@ -115,9 +115,9 @@
                 android:id="@+id/cart_count"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:background="@drawable/circle_shape"
+                android:background="@drawable/aaaaaaaaa"
                 android:text="4"
-                android:textColor="#fff"
+                android:textColor="#0B0B0B"
                 android:textStyle="bold"
                 android:gravity="center"
                 android:layout_gravity="end|top"
@@ -229,6 +229,7 @@
     </androidx.cardview.widget.CardView>
 
     <!-- Barra de búsqueda -->
+    <!-- Barra de búsqueda con icono de basurero -->
     <LinearLayout
         android:id="@+id/search_bar"
         android:layout_width="0dp"
@@ -239,6 +240,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
+        <!-- EditText de búsqueda -->
         <EditText
             android:id="@+id/search_text"
             android:layout_width="0dp"
@@ -246,7 +248,19 @@
             android:hint="¿Qué es lo que quieres comer?"
             android:layout_weight="1"
             android:padding="12dp"
-            android:background="@drawable/search_background" />
+            android:background="@drawable/search_background"
+            android:textSize="16sp" />
+
+        <!-- Icono de basurero -->
+        <ImageView
+            android:id="@+id/clear_search_icon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/baseline_delete_24"
+        android:contentDescription="Borrar búsqueda"
+        android:padding="8dp"
+        android:tint="#808080" />
     </LinearLayout>
 
     <!-- RecyclerView -->

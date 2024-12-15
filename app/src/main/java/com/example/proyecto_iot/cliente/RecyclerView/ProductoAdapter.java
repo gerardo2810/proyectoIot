@@ -31,6 +31,10 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.Produc
         this.productosListFull = new ArrayList<>(productos); // Copia de la lista original
         this.listener = listener; // Inicializamos el listener
     }
+    public void updateProductosListFull(List<Producto> productosFull) {
+        this.productosListFull = new ArrayList<>(productosFull);
+        this.productos = new ArrayList<>(productosFull);
+    }
 
     @NonNull
     @Override

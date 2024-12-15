@@ -46,10 +46,11 @@ public class PedidoEntregadoAdapter extends RecyclerView.Adapter<PedidoEntregado
         Pedido pedido = pedidoList.get(position);
 
         // Asignar datos iniciales al ViewHolder
-        holder.tvFechaHora.setText(pedido.getFechaHora());
+        holder.tvPedidoCodigo.setText(pedido.getCodigo());
         holder.tvCantidadProductos.setText(pedido.getProductos().size() + " productos");
         holder.tvTotal.setText("S/. " + pedido.getPagoTotal());
-
+        holder.tvCliente.setText(pedido.getNombreCliente() + " " +
+                (pedido.getApellidoCliente() != null ? pedido.getApellidoCliente() : "Cliente no disponible"));
         // Repartidor
         holder.tvRepartidor.setText(pedido.getNombreRepartidor());
         if (!pedido.isRepartidorAsignado()) {
@@ -58,30 +59,6 @@ public class PedidoEntregadoAdapter extends RecyclerView.Adapter<PedidoEntregado
             holder.tvRepartidor.setTextColor(ContextCompat.getColor(context, android.R.color.holo_green_dark));
         }
 
-        // Obtener el nombre del cliente desde Firestore si no está disponible
-        if (pedido.getNombreCliente() == null || pedido.getNombreCliente().isEmpty()) {
-            db.collection("clientes").document(pedido.getIdCliente())
-                    .get()
-                    .addOnSuccessListener(documentSnapshot -> {
-                        if (documentSnapshot.exists()) {
-                            String nombreCliente = documentSnapshot.getString("Nombre");
-                            if (nombreCliente != null) {
-                                holder.tvCliente.setText(nombreCliente);
-                                pedido.setNombreCliente(nombreCliente); // Actualizar el pedido para evitar futuras consultas
-                            } else {
-                                holder.tvCliente.setText("Cliente desconocido");
-                            }
-                        } else {
-                            holder.tvCliente.setText("Cliente no encontrado");
-                        }
-                    })
-                    .addOnFailureListener(e -> {
-                        holder.tvCliente.setText("Error al obtener cliente");
-                    });
-        } else {
-            // Si el nombre del cliente ya está disponible, simplemente lo mostramos
-            holder.tvCliente.setText(pedido.getNombreCliente());
-        }
     }
 
     @Override
@@ -90,11 +67,11 @@ public class PedidoEntregadoAdapter extends RecyclerView.Adapter<PedidoEntregado
     }
 
     public static class PedidoEntregadoViewHolder extends RecyclerView.ViewHolder {
-        TextView tvFechaHora, tvCliente, tvCantidadProductos, tvTotal, tvRepartidor;
+        TextView tvPedidoCodigo, tvCliente, tvCantidadProductos, tvTotal, tvRepartidor;
 
         public PedidoEntregadoViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvFechaHora = itemView.findViewById(R.id.fecha_hora);
+            tvPedidoCodigo = itemView.findViewById(R.id.codID);
             tvCliente = itemView.findViewById(R.id.cliente);
             tvCantidadProductos = itemView.findViewById(R.id.cant_productos);
             tvTotal = itemView.findViewById(R.id.total);

@@ -65,6 +65,23 @@ public class OrdenesRestauranteFragment extends Fragment {
         rvOrdersList = view.findViewById(R.id.rv_orders_list);
         rvOrdersList.setLayoutManager(new LinearLayoutManager(getContext()));
 
+        // Inicializar búsqueda
+        EditText orderSearch = view.findViewById(R.id.order_search);
+
+        orderSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                filterOrders(s.toString()); // Filtra en tiempo real
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+
+
         // Configurar TextView de fecha
         tvFecha = view.findViewById(R.id.tv_fecha);
         selectedDate = Calendar.getInstance(); // Fecha inicial: hoy
@@ -144,6 +161,25 @@ public class OrdenesRestauranteFragment extends Fragment {
                 selectedDate.get(Calendar.DAY_OF_MONTH)
         );
         datePickerDialog.show();
+    }
+
+
+    private void filterOrders(String query) {
+        filteredList.clear();
+
+        if (query.isEmpty()) {
+            // Si no hay búsqueda, mostrar todos los pedidos filtrados por fecha
+            filterOrdersByDate(selectedDate.getTime());
+        } else {
+            for (Pedido pedido : orderList) {
+                // Filtrar por código de pedido o nombre del cliente
+                if ((pedido.getCodigo() != null && pedido.getCodigo().toLowerCase().contains(query.toLowerCase())) ||
+                        (pedido.getNombreCliente() != null && pedido.getNombreCliente().toLowerCase().contains(query.toLowerCase()))) {
+                    filteredList.add(pedido);
+                }
+            }
+            orderAdapter.notifyDataSetChanged();
+        }
     }
 
     private void filterOrdersByDate(Date date) {

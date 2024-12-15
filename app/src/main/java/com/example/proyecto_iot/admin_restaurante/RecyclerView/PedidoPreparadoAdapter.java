@@ -33,7 +33,11 @@ import com.example.proyecto_iot.admin_restaurante.MasDetallesPedidoActivity;
 import com.example.proyecto_iot.admin_restaurante.PedidoDetallesActivity;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class PedidoPreparadoAdapter extends RecyclerView.Adapter<PedidoPreparadoAdapter.PedidoViewHolder> {
 
@@ -58,21 +62,15 @@ public class PedidoPreparadoAdapter extends RecyclerView.Adapter<PedidoPreparado
     public void onBindViewHolder(@NonNull PedidoViewHolder holder, int position) {
         Pedido pedido = pedidoList.get(position);
 
-        // Mostrar datos básicos del pedido
-        holder.fechaHora.setText(pedido.getFechaHora());
-        holder.cant_productos.setText(pedido.getProductos().size() + " productos");
+        // Extraer solo la hora de la fecha
+        String horaFormateada = obtenerSoloHora(pedido.getFechaHora());
+        holder.fechaHora.setText(horaFormateada); // Mostrar solo la hora
 
-        // Obtener el nombre del cliente desde Firestore
-        db.collection("clientes").document(pedido.getIdCliente())
-                .get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        String nombreCliente = documentSnapshot.getString("Nombre");
-                        holder.cliente.setText("Cliente: " + (nombreCliente != null ? nombreCliente : "Desconocido"));
-                    } else {
-                        holder.cliente.setText("Cliente: Desconocido");
-                    }
-                });
+        // Mostrar datos básicos del pedido
+        holder.cant_productos.setText(pedido.getProductos().size() + " productos");
+        holder.tvPedidoCodigo.setText(pedido.getCodigo());
+        holder.cliente.setText(pedido.getNombreCliente() + " " +
+                (pedido.getApellidoCliente() != null ? pedido.getApellidoCliente() : "Cliente no disponible"));
 
         // Configurar botón "Pedido Listo"
         holder.btn_ready_to_deliver.setOnClickListener(v -> {
@@ -89,19 +87,15 @@ public class PedidoPreparadoAdapter extends RecyclerView.Adapter<PedidoPreparado
             // Crear el diálogo
             AlertDialog dialog = builder.setView(customLayout).create();
 
-            // Configurar acciones de los botones
             btnConfirm.setOnClickListener(v1 -> {
-                cambiarEstadoPedido(pedido, 2); // Cambiar estado a "2"
-                dialog.dismiss(); // Cierra el diálogo
+                cambiarEstadoPedido(pedido, 2);
+                dialog.dismiss();
             });
 
-            btnCancel.setOnClickListener(v12 -> dialog.dismiss()); // Cierra el diálogo
-
-            // Mostrar el diálogo
+            btnCancel.setOnClickListener(v12 -> dialog.dismiss());
             dialog.show();
         });
 
-        // Manejar clic en "Ver más detalles"
         holder.verMasDetalles.setOnClickListener(v -> {
             Intent intent = new Intent(context, PedidoDetallesActivity.class);
             intent.putExtra("pedidoId", pedido.getId());
@@ -136,14 +130,32 @@ public class PedidoPreparadoAdapter extends RecyclerView.Adapter<PedidoPreparado
     public static class PedidoViewHolder extends RecyclerView.ViewHolder {
         TextView fechaHora, cliente, cant_productos, verMasDetalles;
         Button btn_ready_to_deliver;
+        TextView tvPedidoCodigo;
 
         public PedidoViewHolder(@NonNull View itemView) {
             super(itemView);
+            tvPedidoCodigo = itemView.findViewById(R.id.codID);
             fechaHora = itemView.findViewById(R.id.fecha_hora);
             cliente = itemView.findViewById(R.id.cliente);
             cant_productos = itemView.findViewById(R.id.cant_productos);
             verMasDetalles = itemView.findViewById(R.id.vermas);
             btn_ready_to_deliver = itemView.findViewById(R.id.btn_ready_to_deliver);
+        }
+    }
+
+    private String obtenerSoloHora(String fechaCompleta) {
+        try {
+            // Formato de entrada: "15 de diciembre de 2024, 03:52:01 a. m."
+            SimpleDateFormat formatoEntrada = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy, hh:mm:ss a", Locale.getDefault());
+
+            // Formato de salida: "03:52:01 a. m."
+            SimpleDateFormat formatoHora = new SimpleDateFormat("hh:mm:ss a", Locale.getDefault());
+
+            Date fecha = formatoEntrada.parse(fechaCompleta); // Parsear la fecha completa
+            return formatoHora.format(fecha); // Formatear solo la hora
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return "Hora no disponible";
         }
     }
 }

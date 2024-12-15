@@ -22,7 +22,7 @@
         <!-- Imagen circular -->
         <ImageView
             android:layout_width="10dp"
-            android:layout_height="75dp"
+            android:layout_height="110dp"
             android:layout_marginEnd="16dp"
             android:src="@drawable/btn1" />
 
@@ -33,25 +33,44 @@
             android:layout_weight="1"
             android:orientation="vertical">
 
-            <!-- Fecha y Hora -->
             <TextView
-                android:id="@+id/fecha_hora"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Fecha y Hora"
-                android:textColor="@android:color/black"
+                android:text="Pedido Listo"
+                android:textColor="#1565C0"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/codID"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ID"
+                android:textColor="@color/purple"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
             <!-- Nombre del cliente -->
-            <TextView
-                android:id="@+id/cliente"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Nombre"
-                android:textColor="@color/md_theme_onTertiaryFixedVariant"
-                android:textSize="13sp"
-                android:textStyle="bold" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/custom_person_icon"
+                    android:layout_marginEnd="8dp" />
+
+                <TextView
+                    android:id="@+id/cliente"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nombre cliente"
+                    android:textColor="@color/md_theme_onTertiaryFixedVariant"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
 
             <!-- Cantidad de productos -->
             <TextView
@@ -59,7 +78,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="XXX-1234 - 2 productos"
-                android:textColor="#888888"
+                android:textColor="#545252"
                 android:textSize="13sp"
                 android:textStyle="bold" />
 
@@ -68,8 +87,8 @@
                 android:id="@+id/total"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Total"
-                android:textColor="#888888"
+                android:text="Precio"
+                android:textColor="#545252"
                 android:textSize="13sp"
                 android:textStyle="bold" />
 

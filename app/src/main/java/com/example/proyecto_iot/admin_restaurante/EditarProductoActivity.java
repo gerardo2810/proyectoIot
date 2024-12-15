@@ -3,13 +3,16 @@ package com.example.proyecto_iot.admin_restaurante;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
@@ -33,6 +36,8 @@ public class EditarProductoActivity extends AppCompatActivity {
     private StorageReference storageRef;
     private String productId;
     private Producto producto;
+    private Button btnDeleteProduct;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +65,7 @@ public class EditarProductoActivity extends AppCompatActivity {
         btnUploadImage = findViewById(R.id.btn_upload_image);
         btnSaveProduct = findViewById(R.id.btn_save_product);
         imageView5 = findViewById(R.id.imageView5);
+        btnDeleteProduct = findViewById(R.id.borrar_producto);
 
         // Cargar datos del producto desde Firestore
         loadProductData();
@@ -69,6 +75,9 @@ public class EditarProductoActivity extends AppCompatActivity {
 
         // Configurar botón para guardar cambios
         btnSaveProduct.setOnClickListener(v -> saveProductChanges());
+
+        // Configurar botón de borrar producto
+        btnDeleteProduct.setOnClickListener(v -> showDeleteConfirmationDialog());
 
         // Configurar botón de retroceso
         ImageView backButton = findViewById(R.id.back_button);
@@ -159,5 +168,40 @@ public class EditarProductoActivity extends AppCompatActivity {
                     finish();
                 })
                 .addOnFailureListener(e -> Toast.makeText(this, "Error al actualizar el producto.", Toast.LENGTH_SHORT).show());
+    }
+
+    private void showDeleteConfirmationDialog() {
+        // Crear diálogo personalizado
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View customLayout = LayoutInflater.from(this).inflate(R.layout.dialog_confirm_delete, null);
+
+        Button btnConfirmDelete = customLayout.findViewById(R.id.btn_confirm_delete);
+        Button btnCancelDelete = customLayout.findViewById(R.id.btn_cancel_delete);
+        TextView tvDeleteMessage = customLayout.findViewById(R.id.tv_delete_message);
+
+        // Personalizar mensaje
+        tvDeleteMessage.setText("¿Estás seguro de borrar este producto?");
+
+        builder.setView(customLayout);
+        AlertDialog dialog = builder.create();
+
+        btnConfirmDelete.setOnClickListener(v -> {
+            deleteProductFromFirestore();
+            dialog.dismiss();
+        });
+
+        btnCancelDelete.setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
+    }
+
+    private void deleteProductFromFirestore() {
+        db.collection("platos").document(productId)
+                .delete()
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(this, "Producto eliminado correctamente.", Toast.LENGTH_SHORT).show();
+                    finish(); // Cierra la actividad
+                })
+                .addOnFailureListener(e -> Toast.makeText(this, "Error al eliminar el producto: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 }

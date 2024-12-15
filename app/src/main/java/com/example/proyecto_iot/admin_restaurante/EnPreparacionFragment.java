@@ -72,6 +72,8 @@ public class EnPreparacionFragment extends Fragment {
         rvOrdersList = view.findViewById(R.id.rv_orders_list);
         rvOrdersList.setLayoutManager(new LinearLayoutManager(getContext()));
 
+        EditText orderSearch = view.findViewById(R.id.order_search);
+
         // Inicializar listas
         pedidoList = new ArrayList<>();
         filteredList = new ArrayList<>();
@@ -82,6 +84,20 @@ public class EnPreparacionFragment extends Fragment {
 
         // Cargar pedidos desde Firestore
         fetchOrders();
+
+        // Implementar búsqueda
+        orderSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                filterOrders(s.toString()); // Filtrar en tiempo real
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
 
         return view;
     }
@@ -131,6 +147,23 @@ public class EnPreparacionFragment extends Fragment {
                     Toast.makeText(getContext(), "Error al obtener nombre del cliente: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
+
+    private void filterOrders(String query) {
+        filteredList.clear();
+        if (query.isEmpty()) {
+            filteredList.addAll(pedidoList); // Mostrar todos los pedidos si la búsqueda está vacía
+        } else {
+            for (Pedido pedido : pedidoList) {
+                // Filtrar por código de pedido y nombre del cliente
+                if ((pedido.getCodigo() != null && pedido.getCodigo().toLowerCase().contains(query.toLowerCase())) ||
+                        (pedido.getNombreCliente() != null && pedido.getNombreCliente().toLowerCase().contains(query.toLowerCase()))) {
+                    filteredList.add(pedido);
+                }
+            }
+        }
+        pedidoPreparadoAdapter.notifyDataSetChanged();
+    }
+
 }
 
 

@@ -113,7 +113,7 @@
                         android:layout_width="75dp"
                         android:layout_height="75dp"
                         android:layout_gravity="center"
-                        android:background="@drawable/user" />
+                         />
 
                     <Button
                         android:id="@+id/buttonUploadImage"
@@ -145,18 +145,39 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingBottom="5dp"
-                    android:text="Nombre y Apellidos:"
+                    android:text="Nombres:"
                     android:textColor="@color/md_theme_primaryFixed_highContrast"
                     android:textSize="15sp"
                     android:textStyle="bold" />
 
                 <EditText
-                    android:id="@+id/et_name"
+                    android:id="@+id/et_nombre"
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:maxLength="15"
+                    android:background="@drawable/border_editar_info"
+                    android:padding="10dp"
+                    android:text="Pedro"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="5dp"
+                    android:paddingTop="10dp"
+                    android:text="Apellidos:"
+                    android:textColor="@color/md_theme_primaryFixed_highContrast"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/et_apellido"
                     android:layout_width="match_parent"
                     android:layout_height="35dp"
                     android:background="@drawable/border_editar_info"
                     android:padding="10dp"
-                    android:text="Pedro Perez"
+                    android:maxLength="15"
+                    android:text="Perez"
                     android:textSize="13sp" />
 
 
@@ -176,6 +197,7 @@
                     android:layout_height="35dp"
                     android:background="@drawable/border_editar_info"
                     android:padding="10dp"
+                    android:maxLength="8"
                     android:text="60784512"
                     android:textSize="13sp" />
 
@@ -189,7 +211,7 @@
                     android:textSize="15sp"
                     android:textStyle="bold" />
 
-                <EditText
+                <TextView
                     android:id="@+id/et_fecha"
                     android:layout_width="match_parent"
                     android:layout_height="35dp"
@@ -208,7 +230,7 @@
                     android:textSize="15sp"
                     android:textStyle="bold" />
 
-                <EditText
+                <TextView
                     android:id="@+id/et_correo"
                     android:layout_width="match_parent"
                     android:layout_height="35dp"
@@ -233,6 +255,7 @@
                     android:layout_height="35dp"
                     android:background="@drawable/border_editar_info"
                     android:padding="10dp"
+                    android:maxLength="9"
                     android:text="987654321"
                     android:textSize="13sp" />
 
@@ -252,6 +275,7 @@
                     android:layout_height="35dp"
                     android:background="@drawable/border_editar_info"
                     android:padding="10dp"
+                    android:maxLength="50"
                     android:text="Av. Universitaria 1801, San Miguel, Lima"
                     android:textSize="13sp" />
 
@@ -270,9 +294,6 @@
             </LinearLayout>
 
         </ScrollView>
-
-
-
 
     </LinearLayout>
 

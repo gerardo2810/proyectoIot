@@ -71,6 +71,10 @@ public class lista_usuarios_superadmin extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String rolSeleccionado = spinnerRol.getSelectedItem().toString();
+
+                // Restablecer spinnerEstado a "-Seleccionar-" cuando cambie el rol
+                spinnerEstado.setSelection(0);
+
                 if (!rolSeleccionado.equals("-Seleccionar-")) {
                     spinnerEstado.setEnabled(true);
                     cargarUsuariosPorRol(rolSeleccionado);
@@ -140,13 +144,13 @@ public class lista_usuarios_superadmin extends AppCompatActivity {
                         if(coleccion.equals("administradores") || coleccion.equals("repartidores")){
                             String nombre = doc.getString("nombre") + " " + doc.getString("apellido");
                             String estado = doc.getBoolean("habilitado") ? "Activo" : "Inactivo";
-                            //String foto = doc.getString("foto") != null ? doc.getString("foto") : doc.getString("FotoURL");
-                            listaUsuarios.add(new UsuarioSA(doc.getId(), nombre, rol, estado));
+                            String foto = doc.getString("foto") != null ? doc.getString("foto") : doc.getString("FotoURL");
+                            listaUsuarios.add(new UsuarioSA(doc.getId(), nombre, rol, estado, foto));
                         } else {
                             String nombre = doc.getString("Nombre") + " " + doc.getString("Apellido");
                             String estado = doc.getBoolean("habilitado") ? "Activo" : "Inactivo";
-                            //String foto = doc.getString("foto") != null ? doc.getString("foto") : doc.getString("FotoURL");
-                            listaUsuarios.add(new UsuarioSA(doc.getId(), nombre, rol, estado));
+                            String foto = doc.getString("foto") != null ? doc.getString("foto") : doc.getString("FotoURL");
+                            listaUsuarios.add(new UsuarioSA(doc.getId(), nombre, rol, estado, foto));
                         }
                     }
                     adapter.notifyDataSetChanged();

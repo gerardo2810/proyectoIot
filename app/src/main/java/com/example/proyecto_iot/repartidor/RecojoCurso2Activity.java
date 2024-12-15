@@ -52,7 +52,7 @@ public class RecojoCurso2Activity extends AppCompatActivity {
 
                             int cantidadProductos = productos.size();
                             TextView cantidadTextView = findViewById(R.id.cantidadProductos);
-                            String texto7 = cantidadProductos + " productos";
+                            String texto7 = cantidadProductos + " producto(s)";
                             cantidadTextView.setText(texto7);
                             // Muestra los nombres de los productos en la vista
 

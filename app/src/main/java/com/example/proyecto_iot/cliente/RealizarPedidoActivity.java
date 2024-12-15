@@ -23,6 +23,7 @@ import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.cliente.RecyclerView.Producto;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -55,6 +56,10 @@ public class RealizarPedidoActivity extends AppCompatActivity {
     private static final int DIGIT_LENGTH = 6;
     private static final Random random = new Random();
     private final Set<String> generatedNumbers = new HashSet<>();
+    private FirebaseFirestore db;
+    private FirebaseAuth auth;
+    private TextView addressSection;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +73,15 @@ public class RealizarPedidoActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        // Inicializar Firebase
+        db = FirebaseFirestore.getInstance();
+        auth = FirebaseAuth.getInstance();
+
+        // Referencia al TextView donde se imprimirá la dirección
+        addressSection = findViewById(R.id.address_section1);
+
+        // Obtener y mostrar la dirección del cliente
+        obtenerDireccionCliente();
 
         // Recibir los datos del Intent
         Intent intent = getIntent();
@@ -206,10 +220,38 @@ public class RealizarPedidoActivity extends AppCompatActivity {
                         System.err.println("Error al obtener los datos del cliente: " + e.getMessage());
                         Toast.makeText(RealizarPedidoActivity.this, "Error al obtener la dirección del cliente.", Toast.LENGTH_SHORT).show();
                     });
-        });
+        });    }
+    private void obtenerDireccionCliente() {
+        FirebaseUser user = auth.getCurrentUser();
 
+        if (user != null) {
+            String userId = user.getUid(); // Obtener el UID del usuario autenticado
+
+            // Buscar el documento del usuario en Firestore
+            db.collection("clientes").document(userId)
+                    .get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        if (documentSnapshot.exists()) {
+                            String direccion = documentSnapshot.getString("Direccion");
+
+                            if (direccion != null && !direccion.isEmpty()) {
+                                // Mostrar la dirección en el TextView
+                                addressSection.setText(direccion);
+                            } else {
+                                addressSection.setText("Dirección no disponible");
+                            }
+                        } else {
+                            addressSection.setText("No se encontró el cliente");
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        addressSection.setText("Error al obtener la dirección");
+                        e.printStackTrace();
+                    });
+        } else {
+            addressSection.setText("Usuario no autenticado");
+        }
     }
-
     private void guardarQRCodeEnStorage(String pedidoId, Bitmap qrBitmap) {
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference().child("qrCodes/" + pedidoId + ".png");

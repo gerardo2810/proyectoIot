@@ -16,6 +16,17 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+    packagingOptions {
+        exclude 'META-INF/NOTICE.md'
+        exclude 'META-INF/LICENSE.md'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/mimetypes.default'  // Excluir el archivo conflictivo
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/NOTICE'   // Incluye esta línea adicional
+        exclude 'META-INF/LICENSE'  // Incluye esta línea adicional
+        exclude 'META-INF/mailcap.default'    // Nuevo archivo duplicado encontrado
+    }
 
     buildTypes {
         release {
@@ -85,5 +96,11 @@ dependencies {
     implementation 'com.journeyapps:zxing-android-embedded:4.3.0'
 
     implementation 'com.squareup.okhttp3:okhttp:4.11.0'
+
+    implementation 'com.sun.mail:android-mail:1.6.7'
+    implementation 'com.sun.mail:android-activation:1.6.7'
+    implementation 'org.eclipse.angus:angus-activation:2.0.1'
+
+    implementation 'com.itextpdf:itext7-core:7.2.5'
 
 }

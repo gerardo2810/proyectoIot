@@ -209,17 +209,49 @@
                     android:textSize="18dp" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <LinearLayout
+                android:id="@+id/linearLayoutPDF"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txtPassword">
+
+                <!-- Botón para seleccionar el archivo PDF -->
+                <Button
+                    android:id="@+id/buttonSelectPdf"
+                    android:layout_width="match_parent"
+                    android:fontFamily="@font/montserratbold"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#F44336"
+                    android:text="Suba su CV en PDF" />
+
+                <!-- TextView para mostrar la URL del PDF subido -->
+                <TextView
+                    android:id="@+id/textViewPdfUrl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:fontFamily="@font/montserratbold"
+                    android:paddingTop="5dp"
+                    android:textSize="12sp"
+                    android:scrollbars="vertical" />
+
+            </LinearLayout>
+
             <Button
                 android:id="@+id/btnRegister"
                 android:layout_width="330dp"
                 android:layout_height="55dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="10dp"
                 android:backgroundTint="#558B2F"
                 android:fontFamily="@font/montserratbold"
                 android:text="Registrar"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txtPassword" />
+                app:layout_constraintTop_toBottomOf="@+id/linearLayoutPDF" />
 
             <TextView
                 android:id="@+id/textView10"

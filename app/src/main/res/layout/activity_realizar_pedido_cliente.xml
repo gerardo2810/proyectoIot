@@ -68,10 +68,11 @@
 
         <!-- Input para dirección con esquinas redondeadas -->
         <EditText
+            android:id="@+id/address_section1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="El Molle #156 B, La Molina"
-            android:background="@drawable/rounded_background_grey"
+            android:background="@drawable/border_editar_info"
             android:padding="12dp"
             android:layout_marginTop="8dp" />
 
@@ -88,7 +89,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Escribe referencias"
-            android:background="@drawable/rounded_background_grey"
+            android:background="@drawable/border_editar_info"
             android:padding="12dp"
             android:layout_marginTop="8dp" />
     </LinearLayout>

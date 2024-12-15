@@ -12,12 +12,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
 import com.example.proyecto_iot.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -32,6 +36,8 @@ public class EntregaCurso2Activity extends AppCompatActivity {
 
     String idRestaurante;
     String idPedido;
+    String qrUrl;
+    Button escanearQrButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +75,7 @@ public class EntregaCurso2Activity extends AppCompatActivity {
 
                             int cantidadProductos = productos.size();
                             TextView cantidadTextView = findViewById(R.id.cantidadProductos);
-                            String texto7 = cantidadProductos + " productos";
+                            String texto7 = cantidadProductos + " producto(s)";
                             cantidadTextView.setText(texto7);
                             // Muestra los nombres de los productos en la vista
 
@@ -119,13 +125,93 @@ public class EntregaCurso2Activity extends AppCompatActivity {
         btnShowDialog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showQrDialog();
+                showQrDialog(idRestaurante, db);
             }
         });
 
-    }
-    public void abrirPagInicio (View view) {
+        escanearQrButton = findViewById(R.id.button3);
+        escanearQrButton.setOnClickListener(v -> iniciarEscaneoQR());
 
+    }
+
+
+    @SuppressWarnings("MissingSuperCall")
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, InicioRepartidorActivity.class); // Regresar a la vistaInicio
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Limpia la pila de actividades
+        startActivity(intent);
+    }
+
+    private void showQrDialog(String idRestaurante, FirebaseFirestore db) {
+        // Crear el diálogo
+        final Dialog dialog = new Dialog(this);
+        db.collection("restaurantes").document(idRestaurante)
+                .get()
+                .addOnSuccessListener(restauranteSnapshot -> {
+                    if (restauranteSnapshot.exists()) {
+                        qrUrl = restauranteSnapshot.getString("qrCodeUrl");
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Error al cargar los datos del restaurante", Toast.LENGTH_SHORT).show();
+                });
+
+
+        dialog.setContentView(R.layout.dialog_qr_repartidor);
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT); // Ajustar tamaño
+
+        ImageView imgPhoto = dialog.findViewById(R.id.imgPhoto);
+        Glide.with(this)
+                .load(qrUrl)
+                .placeholder(R.drawable.placeholder)
+                .into(imgPhoto);
+
+        // Configurar el botón de cierre
+        Button btnClose = dialog.findViewById(R.id.btnClose);
+        btnClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+    }
+
+    // Método para iniciar el escaneo de QR
+    private void iniciarEscaneoQR() {
+        IntentIntegrator integrator = new IntentIntegrator(this);
+        integrator.setPrompt("Escanea el código QR del cliente");
+        integrator.setOrientationLocked(false);
+        integrator.setBeepEnabled(true);
+        integrator.initiateScan();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+
+        if (result != null) {
+            if (result.getContents() != null) {
+                String qrEscaneado = result.getContents(); // QR escaneado contiene el ID del restaurante
+
+                // Validar si el ID escaneado coincide con el idRestaurante del Intent
+                if (qrEscaneado.equals(idPedido)) {
+                    qrExitoso(); // Llama al método para abrir ConfirmarPagoActivity
+                } else {
+                    Toast.makeText(this, "QR inválido. Inténtalo nuevamente.", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(this, "No se escaneó ningún QR.", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(this, "Error al escanear el QR.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void qrExitoso(){
         SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("ultima_vista", "InicioRepartidorActivity");
@@ -140,7 +226,7 @@ public class EntregaCurso2Activity extends AppCompatActivity {
         //Actualizar pedido
 
         db.collection("pedidos").document(idPedido)
-                .update("estado", 4)
+                .update("estado", 8)
                 .addOnSuccessListener(aVoid -> {
                     // Acción si la actualización fue exitosa
                     Log.d("Firebase", "Entrega del pedido exitosamente");
@@ -185,36 +271,6 @@ public class EntregaCurso2Activity extends AppCompatActivity {
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Error al cargar los datos del restaurante", Toast.LENGTH_SHORT).show();
                 });
-
-    }
-
-    @SuppressWarnings("MissingSuperCall")
-    @Override
-    public void onBackPressed() {
-        Intent intent = new Intent(this, InicioRepartidorActivity.class); // Regresar a la vistaInicio
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Limpia la pila de actividades
-        startActivity(intent);
-    }
-
-    private void showQrDialog() {
-        // Crear el diálogo
-        final Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.dialog_qr_repartidor);
-        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT); // Ajustar tamaño
-
-        ImageView imgPhoto = dialog.findViewById(R.id.imgPhoto);
-        imgPhoto.setImageResource(R.drawable.imagen_qr_code);
-
-        // Configurar el botón de cierre
-        Button btnClose = dialog.findViewById(R.id.btnClose);
-        btnClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-
-        dialog.show();
     }
 
 }

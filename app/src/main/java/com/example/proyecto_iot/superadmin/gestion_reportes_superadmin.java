@@ -53,6 +53,7 @@ public class gestion_reportes_superadmin extends AppCompatActivity {
         adapter = new RestReportAdapter(restaurantes, restauranteUID -> {
             Intent intent = new Intent(this, reporte_restaurante_superadmin.class);
             intent.putExtra("restauranteUID", restauranteUID);
+            intent.putExtra("SELECTED_ITEM_ID", R.id.navigation_reportes);
             startActivity(intent);
         });
         recyclerView.setAdapter(adapter);

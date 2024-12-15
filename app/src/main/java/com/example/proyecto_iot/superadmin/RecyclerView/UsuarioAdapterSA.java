@@ -2,10 +2,14 @@ package com.example.proyecto_iot.superadmin.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
 import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.superadmin.info_usuario_superadmin;
 
@@ -42,7 +46,18 @@ public class UsuarioAdapterSA extends RecyclerView.Adapter<UsuarioAdapterSA.Usua
         holder.nombre.setText(usuario.getNombre());
         holder.rol.setText(usuario.getRol());
         holder.estado.setText(usuario.getEstado());
-        //Picasso.get().load(usuario.getFoto()).into(holder.foto);
+
+        // Determinar el campo de la foto en función del rol y cargarla
+        String fotoURL = usuario.getFoto();
+
+        // Log para verificar la URL de la foto
+        Log.d("UsuarioAdapterSA", "Foto URL: " + fotoURL);
+
+        // Usar Glide para cargar la foto en el ImageView
+        Glide.with(context)
+                .load(fotoURL)
+                .placeholder(R.drawable.load)  // Imagen de carga por defecto
+                .into(holder.imageViewFoto);
 
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, info_usuario_superadmin.class);
@@ -59,14 +74,15 @@ public class UsuarioAdapterSA extends RecyclerView.Adapter<UsuarioAdapterSA.Usua
 
     public static class UsuarioSAViewHolder extends RecyclerView.ViewHolder {
         TextView nombre, rol, estado;
-        //ImageView foto;
+        ImageView imageViewFoto;  // Para mostrar la foto
 
         public UsuarioSAViewHolder(@NonNull View itemView) {
             super(itemView);
             nombre = itemView.findViewById(R.id.textViewNombre);
             rol = itemView.findViewById(R.id.textViewRol);
             estado = itemView.findViewById(R.id.textViewEstadoCuenta);
-            //foto = itemView.findViewById(R.id.imageViewFoto);
+            imageViewFoto = itemView.findViewById(R.id.imageViewFoto);
+
         }
     }
 

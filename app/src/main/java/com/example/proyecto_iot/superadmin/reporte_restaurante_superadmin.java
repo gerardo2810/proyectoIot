@@ -1,21 +1,36 @@
 package com.example.proyecto_iot.superadmin;
 
+import android.Manifest;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
 import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.superadmin.RecyclerView.PedidoSA;
@@ -35,14 +50,25 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-
-import java.text.SimpleDateFormat;
+import com.itextpdf.io.image.ImageData;
+import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Image;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 public class reporte_restaurante_superadmin extends AppCompatActivity {
+
+    private static final int PERMISSION_REQUEST_CODE = 100;
 
     private BottomNavigationView bottomNavigationView;
     private FirebaseFirestore db;
@@ -56,10 +82,17 @@ public class reporte_restaurante_superadmin extends AppCompatActivity {
     private Map<String, ProductoResumen> resumenProductos = new HashMap<>();
     private TextView textView4;
 
+    String totalsales, totalorders, selectedValue;
+    private Button btnDownloadPdf;
+    Bitmap barChartBitmap;
+    String nombreRestaurante;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.superadmin_activity_reporte_restaurante);
+
+        createNotificationChannel();
 
         // Inicializar Firestore
         db = FirebaseFirestore.getInstance();
@@ -68,9 +101,8 @@ public class reporte_restaurante_superadmin extends AppCompatActivity {
         barChart = findViewById(R.id.barChartVentas);
         tvVentasTotales = findViewById(R.id.tvVentasTotales);
         tvTotalPedidos = findViewById(R.id.tvTotalPedidos);
-        spinnerMes = findViewById(R.id.spinnerMes);
         linearLayoutContainer = findViewById(R.id.linearLayoutContainer);
-
+        spinnerMes = findViewById(R.id.spinnerMes);
         restauranteUID = getIntent().getStringExtra("restauranteUID");
 
         // Referencia al documento en la colección "restaurantes"
@@ -85,7 +117,7 @@ public class reporte_restaurante_superadmin extends AppCompatActivity {
                 DocumentSnapshot document = task.getResult();
                 if (document.exists()) {
                     // Obtener el campo 'nombre' del documento
-                    String nombreRestaurante = document.getString("nombre");
+                    nombreRestaurante = document.getString("nombre");
 
                     textView4.setText("Reporte de Ventas de " + nombreRestaurante);
 
@@ -96,6 +128,22 @@ public class reporte_restaurante_superadmin extends AppCompatActivity {
         configurarSpinnerMes();
 
         obtenerPedidos();
+
+        // Inicializa los elementos de la vista
+        spinnerMes = findViewById(R.id.spinnerMes); // Spinner de los meses
+        btnDownloadPdf = findViewById(R.id.buttonDownloadPDF);
+
+        // Configura el botón para descargar el PDF
+        btnDownloadPdf.setOnClickListener(v -> {
+            // Verificar si tenemos permiso para mostrar notificaciones
+            if (!hasNotificationPermission()) {
+                // Si no tenemos el permiso, solicitarlo
+                requestNotificationPermission();
+            } else {
+                // Si ya tenemos el permiso, generamos el reporte PDF
+                generateSalesReport(this, resumenProductos, barChartBitmap, selectedValue, totalsales, totalorders);
+            }
+        });
 
         //Volver una pantalla atras
         ImageView arrowIcon = findViewById(R.id.arrow_back_icon);
@@ -132,6 +180,115 @@ public class reporte_restaurante_superadmin extends AppCompatActivity {
 
     }
 
+    public void generateSalesReport(
+            Context context,
+            Map<String, ProductoResumen> salesData,
+            Bitmap barChartBitmap,
+            String selectedMonth,
+            String totalSales,
+            String totalOrders
+    ) {
+        if (salesData.isEmpty()) {
+            Toast.makeText(context, "No se puede generar el reporte ya que no hay datos", Toast.LENGTH_SHORT).show();
+        } else {
+            // Define the file path
+            String pdfPath = "";
+            if(selectedMonth.equals("-Seleccionar-")){
+                pdfPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS) + "/ReporteVentas" + nombreRestaurante + "General2024.pdf";
+            } else {
+                pdfPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS) + "/ReporteVentas" + nombreRestaurante + selectedMonth + "2024.pdf";
+            }
+            File pdfFile = new File(pdfPath);
+
+            try {
+                // Create a PDF writer instance
+                PdfWriter writer = new PdfWriter(new FileOutputStream(pdfFile));
+                PdfDocument pdfDocument = new PdfDocument(writer);
+                Document document = new Document(pdfDocument);
+
+                // Add dynamic title
+                String title = selectedMonth.equals("-Seleccionar-")
+                        ? "Reporte de Ventas General"
+                        : "Reporte de Ventas del Mes: " + selectedMonth;
+
+                Paragraph titleParagraph = new Paragraph(title)
+                        .setFontSize(18)
+                        .setBold()
+                        .setFontColor(ColorConstants.BLACK)
+                        .setMarginBottom(20);
+                document.add(titleParagraph);
+
+                // Add total sales and orders
+                Paragraph totalsParagraph = new Paragraph(
+                        "Total de Ventas: " + totalSales + "\nTotal de Pedidos: " + totalOrders)
+                        .setFontSize(12)
+                        .setFontColor(ColorConstants.BLACK)
+                        .setMarginBottom(20);
+                document.add(totalsParagraph);
+
+                // Define the table column widths (added column for Unit Price)
+                float[] columnWidths = {200f, 100f, 100f, 100f}; // Adjust column widths
+                Table table = new Table(columnWidths);
+
+                // Add table header
+                table.addCell("Producto");
+                table.addCell("Cantidad");
+                table.addCell("Precio Unitario (S/)");
+                table.addCell("Total (S/)");
+
+                // Populate the table with sales data
+                for (Map.Entry<String, ProductoResumen> entry : salesData.entrySet()) {
+                    ProductoResumen productoResumen = entry.getValue(); // Get the ProductoResumen object
+
+                    // Extract product data from ProductoResumen
+                    String nombreProducto = productoResumen.getNombre();
+                    int cantidadVendida = productoResumen.getCantidad();
+                    double precioUnitario = productoResumen.getPrecio(); // Get unit price
+                    double totalVentas = productoResumen.getTotal();
+
+                    // Add the product data to the table
+                    table.addCell(nombreProducto);
+                    table.addCell(String.valueOf(cantidadVendida)); // Add quantity
+                    table.addCell("S/ " + String.format("%.2f", precioUnitario)); // Add unit price
+                    table.addCell("S/ " + String.format("%.2f", totalVentas)); // Add total sales (formatted)
+                }
+
+                // Add the table to the document
+                document.add(table);
+
+                // Add bar chart image
+                if (barChartBitmap != null) {
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    barChartBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    byte[] imageBytes = stream.toByteArray();
+
+                    ImageData imageData = ImageDataFactory.create(imageBytes);
+                    Image image = new Image(imageData);
+                    image.setAutoScale(true); // Auto-scale image to fit
+                    image.setMarginTop(20);
+                    document.add(image);
+                }
+
+                // Close the document
+                document.close();
+                Toast.makeText(context, "Reporte generado exitosamente.", Toast.LENGTH_LONG).show();
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(context, "Error al generar el PDF", Toast.LENGTH_SHORT).show();
+            }
+            showDownloadNotification(pdfPath);
+        }
+    }
+
+    private Bitmap getBarChartBitmap(BarChart barChart) {
+        // Captura el gráfico como un Bitmap
+        barChart.setDrawingCacheEnabled(true);
+        barChart.buildDrawingCache();
+        Bitmap bitmap = Bitmap.createBitmap(barChart.getDrawingCache());
+        barChart.setDrawingCacheEnabled(false);
+        return bitmap;
+    }
+
     private void configurarSpinnerMes() {
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.meses_array, android.R.layout.simple_spinner_item);
@@ -165,7 +322,7 @@ public class reporte_restaurante_superadmin extends AppCompatActivity {
                     PedidoSA pedido = document.toObject(PedidoSA.class);
 
                     // Filtrar por restaurante y estado
-                    if (pedido.getIdRestaurante().equals(restauranteUID) && pedido.getEstado() == 4) {
+                    if (pedido.getIdRestaurante().equals(restauranteUID) && pedido.getEstado() == 8) {
                         pedidosFiltrados.add(pedido);
                         pedidosOriginales.add(pedido); // Agrega a la lista original
                     }
@@ -255,10 +412,10 @@ public class reporte_restaurante_superadmin extends AppCompatActivity {
         TextView platoHeader = crearTextoEncabezado("Plato");
         headerRow.addView(platoHeader);
 
-        TextView precioHeader = crearTextoEncabezado("Precio Unitario");
+        TextView precioHeader = crearTextoEncabezado("Cantidad");
         headerRow.addView(precioHeader);
 
-        TextView cantidadHeader = crearTextoEncabezado("Cantidad");
+        TextView cantidadHeader = crearTextoEncabezado("Precio Unitario");
         headerRow.addView(cantidadHeader);
 
         TextView totalHeader = crearTextoEncabezado("Total");
@@ -276,7 +433,7 @@ public class reporte_restaurante_superadmin extends AppCompatActivity {
 
                 if (!resumenProductos.containsKey(nombreProducto)) {
                     resumenProductos.put(nombreProducto, new ProductoResumen(
-                            producto.getNombre(), producto.getPrecio(), producto.getCantidad(), producto.getTotal()
+                            producto.getNombre(), producto.getCantidad(), producto.getPrecio(), producto.getTotal()
                     ));
                 } else {
                     ProductoResumen resumen = resumenProductos.get(nombreProducto);
@@ -301,13 +458,14 @@ public class reporte_restaurante_superadmin extends AppCompatActivity {
             TextView tvNombre = crearTextoCelda(resumen.getNombre());
             row.addView(tvNombre);
 
-            TextView tvCantidad = crearTextoCelda("S/ " + String.valueOf(resumen.getCantidad())); // Cantidad
+            // Mostrar solo la cantidad (sin "S/")
+            TextView tvCantidad = crearTextoCelda(String.valueOf(resumen.getCantidad())); // Cantidad sin "S/"
             row.addView(tvCantidad);
 
-            TextView tvPrecio = crearTextoCelda(String.format("%.0f", resumen.getPrecio())); // Precio Unitario
+            TextView tvPrecio = crearTextoCelda("S/ " + String.format("%.2f", resumen.getPrecio())); // Precio Unitario
             row.addView(tvPrecio);
 
-            TextView tvTotal = crearTextoCelda("S/ " + String.format("%.2f", resumen.getTotal())); // Total
+            TextView tvTotal = crearTextoCelda("S/ " + String.format("%.2f", resumen.getTotal())); // Total con "S/"
             row.addView(tvTotal);
 
             // Agregar la fila al contenedor
@@ -400,6 +558,79 @@ public class reporte_restaurante_superadmin extends AppCompatActivity {
         barChart.getXAxis().setGranularityEnabled(true);
         barChart.getAxisLeft().setGranularity(1f);
         barChart.invalidate();
+        barChart.getDescription().setEnabled(false);
+
+        barChartBitmap = getBarChartBitmap(barChart);
+        totalsales = tvVentasTotales.getText().toString();
+        totalorders = tvTotalPedidos.getText().toString();
+        selectedValue = spinnerMes.getSelectedItem().toString();
+    }
+
+    // Método para crear la notificación
+    private void showDownloadNotification(String pdfPath) {
+
+        // Obtener el archivo PDF
+        File pdfFile = new File(pdfPath);
+
+        // Usar FileProvider para obtener una URI de contenido
+        Uri pdfUri = FileProvider.getUriForFile(this, this.getPackageName() + ".provider", pdfFile);
+
+        // Crear el Intent para abrir el archivo PDF
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(pdfUri, "application/pdf");
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        // Conceder permisos para acceder a la URI
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+        // Crear el PendingIntent
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                this,
+                0,
+                intent,
+                PendingIntent.FLAG_IMMUTABLE);
+
+        // Crear la notificación
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, "default")
+                .setSmallIcon(R.drawable.logoapp45) // Icono de la notificación
+                .setContentTitle("PDF descargado")  // Título de la notificación
+                .setContentText("Toca para abrir el PDF")
+                .setAutoCancel(true)  // Se elimina la notificación al hacer clic
+                .setContentIntent(pendingIntent);  // El PendingIntent que abrirá el PDF
+
+        // Obtener el NotificationManager
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        notificationManager.notify(1, notificationBuilder.build());
+    }
+
+    private void requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // Solicitar permiso para enviar notificaciones en Android 13 o superior
+            requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 100);
+        }
+    }
+
+    private boolean hasNotificationPermission() {
+        // Verifica si el permiso para enviar notificaciones ha sido concedido
+        return Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
+                NotificationManagerCompat.from(this).areNotificationsEnabled();
+    }
+
+    public void createNotificationChannel() {
+        // Verifica si la versión de Android es Oreo o superior
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            String channelId = "default";  // ID del canal
+            CharSequence channelName = "Default Channel";  // Nombre del canal
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;  // Prioridad del canal
+            NotificationChannel channel = new NotificationChannel(channelId, channelName, importance);
+
+            // Puedes configurar otras propiedades del canal aquí (por ejemplo, sonido, vibración, etc.)
+            channel.setDescription("Canal por defecto para notificaciones");
+
+            // Registra el canal en el sistema
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 
 }

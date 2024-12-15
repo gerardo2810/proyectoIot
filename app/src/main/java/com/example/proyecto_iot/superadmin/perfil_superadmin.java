@@ -8,9 +8,11 @@ import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.proyecto_iot.LoginActivity;
 import com.example.proyecto_iot.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class perfil_superadmin extends AppCompatActivity {
 
@@ -21,12 +23,25 @@ public class perfil_superadmin extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.superadmin_activity_perfil);
 
+        // Obtener la instancia de FirebaseAuth
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+
         //Gestion de los cardviews
         LinearLayout personalInfoLayout = findViewById(R.id.edit_personal_info);
+        LinearLayout logout = findViewById(R.id.logOutBttn);
 
         personalInfoLayout.setOnClickListener(v -> {
             Intent intent = new Intent(this, editar_perfil_superadmin.class);
+            intent.putExtra("SELECTED_ITEM_ID", R.id.navigation_perfil);
             startActivity(intent);
+        });
+
+        logout.setOnClickListener(v -> {
+            mAuth.signOut();
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
         });
         //----------------------------------------------------------------------------
 

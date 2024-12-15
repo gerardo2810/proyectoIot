@@ -8,11 +8,12 @@ public class UsuarioSA {
     private String estado;
     private String foto;
 
-    public UsuarioSA(String id, String nombre, String rol, String estado) {
+    public UsuarioSA(String id, String nombre, String rol, String estado, String foto) {
         this.id = id;
         this.nombre = nombre;
         this.rol = rol;
         this.estado = estado;
+        this.foto = foto;
     }
 
     public String getId() {

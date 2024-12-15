@@ -468,32 +468,20 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
 
         if (result != null) {
             if (result.getContents() != null) {
-                String qrEscaneado = result.getContents();
+                String qrEscaneado = result.getContents(); // QR escaneado contiene el ID del restaurante
 
-                // Validar el QR escaneado
-                db.collection("restaurantes").document(idRestaurante)
-                        .get()
-                        .addOnSuccessListener(documentSnapshot -> {
-                            if (documentSnapshot.exists()) {
-                                String qrRestaurante = documentSnapshot.getString("qrCodeUrl");
-                                System.out.println("Seguimiento Pedido el qr escaneado " +  qrRestaurante);
-                                if (qrEscaneado.equals(qrRestaurante)) {
-                                    // QR correcto, abrir la vista de confirmación de pago
-                                    abrirVistaDePago();
-                                } else {
-                                    // QR incorrecto
-                                    Toast.makeText(this, "QR incorrecto. Inténtalo nuevamente.", Toast.LENGTH_SHORT).show();
-                                }
-                            } else {
-                                Toast.makeText(this, "No se encontró el restaurante.", Toast.LENGTH_SHORT).show();
-                            }
-                        })
-                        .addOnFailureListener(e -> {
-                            Toast.makeText(this, "Error al validar QR: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        });
+                // Validar si el ID escaneado coincide con el idRestaurante del Intent
+                if (qrEscaneado.equals(idRestaurante)) {
+                    Toast.makeText(this, "QR correcto. Procediendo al pago...", Toast.LENGTH_SHORT).show();
+                    abrirVistaDePago(); // Llama al método para abrir ConfirmarPagoActivity
+                } else {
+                    Toast.makeText(this, "QR incorrecto. Inténtalo nuevamente.", Toast.LENGTH_SHORT).show();
+                }
             } else {
                 Toast.makeText(this, "No se escaneó ningún QR.", Toast.LENGTH_SHORT).show();
             }
+        } else {
+            Toast.makeText(this, "Error al escanear el QR.", Toast.LENGTH_SHORT).show();
         }
     }
 

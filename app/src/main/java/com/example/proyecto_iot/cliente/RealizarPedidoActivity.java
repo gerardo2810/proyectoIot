@@ -151,52 +151,48 @@ public class RealizarPedidoActivity extends AppCompatActivity {
                             dateFormat.setTimeZone(TimeZone.getTimeZone("America/Lima"));
                             String fechaHora = dateFormat.format(new Date());
 
-                            // Generar un código único
-                            generarCodigoUnico(db, codigo -> {
-                                // Crear el mapa de datos del pedido
-                                Map<String, Object> pedidoData = new HashMap<>();
-                                pedidoData.put("idCliente", userId);
-                                pedidoData.put("direccion", direccionCliente);
-                                pedidoData.put("estado", 0);
-                                pedidoData.put("fechaHora", fechaHora);
-                                pedidoData.put("nombreCliente", nombreCliente);
-                                pedidoData.put("apellidoCliente", apellidoCliente);
-                                pedidoData.put("productos", productos);
-                                pedidoData.put("idRepartidor", "");
-                                pedidoData.put("idRestaurante", restauranteId);
-                                pedidoData.put("nombreRestaurante", nombreRestaurante);
-                                pedidoData.put("pagoTotal", pagoTotal);
-                                pedidoData.put("codigo", codigo); // Código único
 
-                                // Guardar el pedido en Firestore
-                                db.collection("pedidos")
-                                        .add(pedidoData)
-                                        .addOnSuccessListener(documentReference -> {
-                                            String pedidoId = documentReference.getId();
-                                            Bitmap qrBitmap = generarQRCode(pedidoId);
-                                            guardarQRCodeEnStorage(pedidoId, qrBitmap);
 
-                                            // Redirigir a CreandoPedidoActivity
-                                            Intent intent1 = new Intent(RealizarPedidoActivity.this, CreandoPedidoActivity.class);
-                                            intent1.putExtra("pedidoId", pedidoId);
-                                            intent1.putExtra("direccion", direccionCliente);
-                                            intent1.putExtra("fechaHora", fechaHora);
-                                            intent1.putExtra("codigo", codigo);
-                                            intent1.putExtra("subtotal", subtotal);
-                                            intent1.putExtra("precioTotal", pagoTotal);
-                                            intent1.putExtra("precioDelivery", precioDelivery);
-                                            intent1.putExtra("productos", (ArrayList<Producto>) productos);
-                                            intent1.putExtra("nombreRestaurante", nombreRestaurante);
-                                            intent1.putExtra("idRestaurante", restauranteId);
+                            // Crear el mapa de datos del pedido
+                            Map<String, Object> pedidoData = new HashMap<>();
+                            pedidoData.put("idCliente", userId);
+                            pedidoData.put("direccion", direccionCliente);
+                            pedidoData.put("estado", 0); // Inicializamos el estado en 0
+                            pedidoData.put("fechaHora", fechaHora);
+                            pedidoData.put("nombreCliente", nombreCliente);
+                            pedidoData.put("apellidoCliente", apellidoCliente);
+                            pedidoData.put("productos", productos); // Lista de productos
+                            pedidoData.put("idRepartidor", "");
+                            pedidoData.put("idRestaurante", restauranteId);
+                            pedidoData.put("nombreRestaurante", nombreRestaurante);
+                            pedidoData.put("pagoTotal", pagoTotal);
 
-                                            startActivity(intent1);
-                                            finish();
-                                        })
-                                        .addOnFailureListener(e -> {
-                                            System.err.println("Error al crear el pedido: " + e.getMessage());
-                                            Toast.makeText(RealizarPedidoActivity.this, "Error al realizar el pedido. Intenta de nuevo.", Toast.LENGTH_SHORT).show();
-                                        });
-                            });
+                            db.collection("pedidos")
+                                    .add(pedidoData)
+                                    .addOnSuccessListener(documentReference -> {
+                                        String pedidoId = documentReference.getId();
+                                        Bitmap qrBitmap = generarQRCode(pedidoId);
+                                        guardarQRCodeEnStorage(pedidoId, qrBitmap);
+
+                                        // Redirigir a CreandoPedidoActivity
+                                        Intent intent1 = new Intent(RealizarPedidoActivity.this, CreandoPedidoActivity.class);
+                                        intent1.putExtra("pedidoId", pedidoId);
+                                        intent1.putExtra("direccion", direccionCliente);
+                                        intent1.putExtra("fechaHora", fechaHora);
+                                        intent1.putExtra("subtotal", subtotal);
+                                        intent1.putExtra("precioTotal", pagoTotal);
+                                        intent1.putExtra("precioDelivery", precioDelivery);
+                                        intent1.putExtra("productos", (ArrayList<Producto>) productos); // Enviar productos como ArrayList
+                                        intent1.putExtra("nombreRestaurante", nombreRestaurante);
+                                        intent1.putExtra("idRestaurante", restauranteId);
+
+                                        startActivity(intent1);
+                                        finish(); // Finalizar esta actividad
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        System.err.println("Error al crear el pedido: " + e.getMessage());
+                                        Toast.makeText(RealizarPedidoActivity.this, "Error al realizar el pedido. Intenta de nuevo.", Toast.LENGTH_SHORT).show();
+                                    });
                         } else {
                             System.err.println("Cliente no encontrado en la base de datos.");
                             Toast.makeText(RealizarPedidoActivity.this, "No se encontró la información del cliente.", Toast.LENGTH_SHORT).show();
@@ -207,7 +203,6 @@ public class RealizarPedidoActivity extends AppCompatActivity {
                         Toast.makeText(RealizarPedidoActivity.this, "Error al obtener la dirección del cliente.", Toast.LENGTH_SHORT).show();
                     });
         });
-
     }
 
     private void guardarQRCodeEnStorage(String pedidoId, Bitmap qrBitmap) {

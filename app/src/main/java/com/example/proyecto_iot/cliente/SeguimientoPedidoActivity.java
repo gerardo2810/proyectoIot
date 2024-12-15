@@ -133,7 +133,7 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
                         if (documentSnapshot != null && documentSnapshot.exists()) {
                             int estado = documentSnapshot.getLong("estado").intValue();
 
-                            if (estado == 3) { // Estado "En camino"
+                            if (estado == 3 || estado == 7) { // Estado "En camino"
                                 qrButton.setVisibility(View.VISIBLE);
 
                                 // Configurar el listener para abrir la cámara de QR
@@ -153,12 +153,11 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
                                 Toast.makeText(this, "Error al recuperar pedido.", Toast.LENGTH_SHORT).show();
                                 return;
                             }
-
                             // Procesar datos del documento Firestore si se encuentran correctamente
                             if (documentSnapshot != null && documentSnapshot.exists()) {
                                 int estado = documentSnapshot.getLong("estado").intValue();
 
-                                if (estado == 3) {
+                                if (estado == 3 || estado==7) {
                                     iniciarEscaneoQR(); // Llama a tu método para abrir el escáner de QR
                                 } else {
                                     Toast.makeText(this, "El pedido aún no está en el estado válido para pago.", Toast.LENGTH_SHORT).show();
@@ -374,6 +373,25 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
                             });
                 }
                 break;
+            case 7:
+                findViewById(R.id.linea_2).setVisibility(View.VISIBLE);
+                findViewById(R.id.contenedor_camino).setVisibility(View.VISIBLE);
+
+                // Mostrar el nombre del repartidor si está disponible
+                if (idRepartidor != null && !idRepartidor.isEmpty()) {
+                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+                    db.collection("repartidores").document(idRepartidor)
+                            .get()
+                            .addOnSuccessListener(documentSnapshot -> {
+                                if (documentSnapshot.exists()) {
+                                    String nombreRepartidor = documentSnapshot.getString("nombre");
+                                    TextView repartidorTextView = findViewById(R.id.repartidor);
+                                    repartidorTextView.setText(nombreRepartidor);
+                                }
+                            });
+                }
+                break;
+
             case 4: // Entregado
                 findViewById(R.id.linea_3).setVisibility(View.VISIBLE);
                 findViewById(R.id.contenedor_entregado).setVisibility(View.VISIBLE);
@@ -430,6 +448,8 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
                 return "Rechazado";
             case 6:
                 return "Cancelado";
+            case 7:
+                return "En camnio";
             default:
                 return "Desconocido";
         }

@@ -86,16 +86,20 @@ public class InicioClienteActivity extends AppCompatActivity {
         // Configurar RecyclerView
         recyclerCategories = findViewById(R.id.recycler_categories);
         recyclerCategories.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        categoryAdapter = new CategoriaAdapter(new ArrayList<>(), this);
+        // Obtener la lista de categorías hardcodeadas
+        List<Categoria> categoryList = getCategoryList();
+        // Configurar el adaptador con la lista de categorías
+        categoryAdapter = new CategoriaAdapter(categoryList, this);
         recyclerCategories.setAdapter(categoryAdapter);
-        fetchCategoriesFromFirebase();
+
+
+
 
         recyclerOrders = findViewById(R.id.recycler_orders);
         recyclerOrders.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         ordersList = new ArrayList<>();
         orderAdapter = new OrderAdapter(this, ordersList);
         recyclerOrders.setAdapter(orderAdapter);
-
         fetchOrdersForCurrentUser();
 
         // Inicializar RecyclerView de favoritos
@@ -172,29 +176,11 @@ public class InicioClienteActivity extends AppCompatActivity {
         fetchBestOptionsFromFirebase();
 
         // Inicializar BottomNavigationView
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
 
         // Marcar el ítem de "Restaurantes" como seleccionado
 
     }
 
-    private void fetchCategoriesFromFirebase() {
-        db.collection("categorias").get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && task.getResult() != null) {
-                        List<Categoria> categoryList = new ArrayList<>();
-                        for (DocumentSnapshot document : task.getResult()) {
-                            String nombre = document.getString("Nombre");
-                            String iconFoto = document.getString("iconFoto");
-                            String idRestaurante = document.getString("idRestaurante");
-                            categoryList.add(new Categoria(nombre, iconFoto, idRestaurante));
-                        }
-                        categoryAdapter.updateData(categoryList); // Método para actualizar datos del adaptador
-                    } else {
-                        Log.e("Firestore", "Error al obtener categorías", task.getException());
-                    }
-                });
-    }
 
     // Método para obtener los restaurantes desde Firebase que esten abiertos
     private void fetchBestOptionsFromFirebase() {
@@ -428,6 +414,22 @@ public class InicioClienteActivity extends AppCompatActivity {
                     }
                 });
     }
+
+    private List<Categoria> getCategoryList() {
+        List<Categoria> categoryList = new ArrayList<>();
+        categoryList.add(new Categoria("Pollo", R.drawable.chicken));
+        categoryList.add(new Categoria("Carnes", R.drawable.carne));
+        categoryList.add(new Categoria("Hamburguesas", R.drawable.hamburguesa));
+        categoryList.add(new Categoria("Pizzas", R.drawable.pizza));
+        categoryList.add(new Categoria("Pastas", R.drawable.pasta));
+        categoryList.add(new Categoria("Sushi", R.drawable.makis));
+        categoryList.add(new Categoria("Postres", R.drawable.postre));
+        categoryList.add(new Categoria("Helados", R.drawable.helados));
+        categoryList.add(new Categoria("Jugos", R.drawable.jugo));
+        categoryList.add(new Categoria("Bowls", R.drawable.bowls));
+        return categoryList;
+    }
+
 
 
 }

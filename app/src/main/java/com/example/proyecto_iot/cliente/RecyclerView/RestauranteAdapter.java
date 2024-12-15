@@ -49,9 +49,10 @@ public class RestauranteAdapter extends RecyclerView.Adapter<RestauranteAdapter.
         Restaurante option = bestOptionList.get(position);
 
         // Asignar datos al ViewHolder
+        String temp = "• " ;
         holder.productName.setText(option.getNombre());
         holder.productPrice.setText("S/. " + option.getPrecioDelivery());
-        holder.productCategory.setText(option.getTipoDeComida());
+        holder.productCategory.setText(temp + option.getTipoDeComida());
         holder.productLocation.setText(option.getUbicacion());
 
         // Cargar fotoLogo en productImage1 usando Glide

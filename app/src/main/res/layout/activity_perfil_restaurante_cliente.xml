@@ -93,7 +93,8 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_marginStart="8dp"
-                android:src="@drawable/baseline_favorite_24" />
+                android:src="@drawable/corazonborde"
+                android:visibility="visible" />
         </LinearLayout>
 
         <!-- Carrito con contador alineado a la derecha -->

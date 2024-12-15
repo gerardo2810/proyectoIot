@@ -2,11 +2,16 @@ package com.example.proyecto_iot.cliente.RecyclerView;
 
 public class Categoria {
     private String nombre;
-    private String iconFoto;
+    private int iconFoto;
     private String idRestaurante;
 
     // Constructor
-    public Categoria(String nombre, String iconFoto, String idRestaurante) {
+    public Categoria(String nombre, int iconFoto, String idRestaurante) {
+        this.nombre = nombre;
+        this.iconFoto = iconFoto;
+        this.idRestaurante = idRestaurante;
+    }
+    public Categoria(String nombre, int iconFoto) {
         this.nombre = nombre;
         this.iconFoto = iconFoto;
         this.idRestaurante = idRestaurante;
@@ -21,11 +26,11 @@ public class Categoria {
         this.nombre = nombre;
     }
 
-    public String getIconFoto() {
+    public int getIconFoto() {
         return iconFoto;
     }
 
-    public void setIconFoto(String iconFoto) {
+    public void setIconFoto(int iconFoto) {
         this.iconFoto = iconFoto;
     }
 

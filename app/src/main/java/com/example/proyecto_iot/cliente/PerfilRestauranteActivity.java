@@ -100,7 +100,7 @@ public class PerfilRestauranteActivity extends AppCompatActivity {
         // Obtener la referencia al icono de favorito
         ImageView favoriteIcon = findViewById(R.id.favorite_icon);
 
-        String restauranteName = intent.getStringExtra("restauranteName"); // Para mostrar nombre si es necesario
+        String restauranteName = intent.getStringExtra("nombre_restaurante"); // Para mostrar nombre si es necesario
 
 // Crear un listener para el clic en el icono de favorito
         favoriteIcon.setOnClickListener(v -> {
@@ -110,56 +110,126 @@ public class PerfilRestauranteActivity extends AppCompatActivity {
                 String userId = user.getUid();
                 FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-                // Obtener la referencia del documento de usuario en la colección 'clientes'
+                // Obtener la referencia del documento del cliente
                 DocumentReference userRef = db.collection("clientes").document(userId);
 
-                // Consultar si el restaurante ya está en la lista de favoritos
+                // Consultar si el restaurante está en favoritos
                 userRef.get().addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
-                        // Obtener la lista de favoritos del usuario
                         List<String> favoritos = (List<String>) documentSnapshot.get("favoritos");
 
                         if (favoritos != null && favoritos.contains(restauranteId)) {
-                            // Si ya está en favoritos, eliminarlo
+                            // Eliminar el restaurante de favoritos
                             userRef.update("favoritos", FieldValue.arrayRemove(restauranteId))
                                     .addOnSuccessListener(aVoid -> {
-                                        // Aquí puedes mostrar un mensaje si la operación es exitosa
+                                        // Actualizar el ícono a corazón con borde
+                                        favoriteIcon.setImageResource(R.drawable.corazonborde);
+                                        favoriteIcon.setImageTintList(ColorStateList.valueOf(Color.BLACK));
+                                        favoriteIcon.setVisibility(View.VISIBLE);
+
+                                        // Animación de desfavoritar
+                                        animateFavoriteIcon(favoriteIcon, false);
+
+                                        // Mostrar mensaje de confirmación
                                         Toast.makeText(this, restauranteName + " eliminado de favoritos", Toast.LENGTH_SHORT).show();
-
-                                        // Animación para eliminar del favorito
-                                        favoriteIcon.setImageResource(R.drawable.baseline_heart_broken_24); // Cambio a icono vacío
-                                        animateFavoriteIcon(favoriteIcon, false); // Animación de desfavoritar
-
-                                        // Puedes también mostrar un mensaje de animación de corazones si es necesario
-                                        showFloatingHearts(false);
                                     })
                                     .addOnFailureListener(e -> {
-                                        // En caso de error
                                         Toast.makeText(this, "Error al eliminar de favoritos", Toast.LENGTH_SHORT).show();
                                     });
                         } else {
-                            // Si no está en favoritos, agregarlo
+                            // Agregar el restaurante a favoritos
                             userRef.update("favoritos", FieldValue.arrayUnion(restauranteId))
                                     .addOnSuccessListener(aVoid -> {
-                                        // Aquí puedes mostrar un mensaje si la operación es exitosa
-                                        Toast.makeText(this, restauranteName + " agregado a favoritos", Toast.LENGTH_SHORT).show();
+                                        // Actualizar el ícono a corazón rojo
+                                        favoriteIcon.setImageResource(R.drawable.baseline_favorite_24);
+                                        favoriteIcon.setImageTintList(ColorStateList.valueOf(Color.RED));
+                                        favoriteIcon.setVisibility(View.VISIBLE);
 
-                                        // Animación de cambio de color con efecto de zoom
-                                        favoriteIcon.setImageResource(R.drawable.baseline_favorite_24); // Icono lleno
-                                        animateFavoriteIcon(favoriteIcon, true); // Animación de favorito
-
-                                        // Mostrar corazones flotando en pantalla por 3 segundos
+                                        // Animación de favorito
+                                        animateFavoriteIcon(favoriteIcon, true);
                                         showFloatingHearts(true);
+
+                                        // Mostrar mensaje de confirmación
+                                        Toast.makeText(this, restauranteName + " agregado a favoritos", Toast.LENGTH_SHORT).show();
                                     })
                                     .addOnFailureListener(e -> {
-                                        // En caso de error
-                                        Toast.makeText(this, "Error al agregar restaurante a favoritos", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(this, "Error al agregar a favoritos", Toast.LENGTH_SHORT).show();
                                     });
                         }
                     }
                 });
             }
         });
+
+// Verificar el estado inicial del corazón
+        // Estado inicial del ícono
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            String userId = user.getUid();
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+            DocumentReference userRef = db.collection("clientes").document(userId);
+            userRef.get().addOnSuccessListener(documentSnapshot -> {
+                if (documentSnapshot.exists()) {
+                    List<String> favoritos = (List<String>) documentSnapshot.get("favoritos");
+
+                    if (favoritos != null && favoritos.contains(restauranteId)) {
+                        // Restaurante está en favoritos, cambiar ícono a rojo
+                        favoriteIcon.setImageResource(R.drawable.baseline_favorite_24);
+                        favoriteIcon.setImageTintList(ColorStateList.valueOf(Color.RED));
+                    } else {
+                        // Restaurante no está en favoritos, mostrar corazón con borde
+                        favoriteIcon.setImageResource(R.drawable.corazonborde);
+                        favoriteIcon.setImageTintList(null); // Evitar aplicar tintes al borde
+                    }
+                    favoriteIcon.setVisibility(View.VISIBLE); // Asegurar visibilidad
+                }
+            }).addOnFailureListener(e -> {
+                Toast.makeText(this, "Error al verificar favoritos", Toast.LENGTH_SHORT).show();
+            });
+        }
+
+// Listener del ícono favorito
+        favoriteIcon.setOnClickListener(v -> {
+            FirebaseUser user1 = FirebaseAuth.getInstance().getCurrentUser();
+            if (user1 != null) {
+                String userId1 = user1.getUid();
+                FirebaseFirestore db1 = FirebaseFirestore.getInstance();
+                DocumentReference userRef1 = db1.collection("clientes").document(userId1);
+
+                userRef1.get().addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        List<String> favoritos = (List<String>) documentSnapshot.get("favoritos");
+
+                        if (favoritos != null && favoritos.contains(restauranteId)) {
+                            // Eliminar de favoritos
+                            userRef1.update("favoritos", FieldValue.arrayRemove(restauranteId))
+                                    .addOnSuccessListener(aVoid -> {
+                                        Toast.makeText(this, restauranteName + " eliminado de favoritos", Toast.LENGTH_SHORT).show();
+
+                                        // Restaurar el ícono sin tintes
+                                        favoriteIcon.setImageResource(R.drawable.corazonborde);
+                                        favoriteIcon.setImageTintList(null); // Sin tinte
+                                        animateFavoriteIcon(favoriteIcon, false);
+                                    });
+                        } else {
+                            // Agregar a favoritos
+                            userRef1.update("favoritos", FieldValue.arrayUnion(restauranteId))
+                                    .addOnSuccessListener(aVoid -> {
+                                        Toast.makeText(this, restauranteName + " agregado a favoritos", Toast.LENGTH_SHORT).show();
+
+                                        // Cambiar a corazón rojo
+                                        favoriteIcon.setImageResource(R.drawable.baseline_favorite_24);
+                                        favoriteIcon.setImageTintList(ColorStateList.valueOf(Color.RED));
+                                        animateFavoriteIcon(favoriteIcon, true);
+                                        showFloatingHearts(true);
+                                    });
+                        }
+                    }
+                });
+            }
+        });
+
 
         System.out.println("perfil resta");
         System.out.println(precioDelivery);
@@ -222,10 +292,6 @@ public class PerfilRestauranteActivity extends AppCompatActivity {
             }
         });
 
-
-
-
-
         fetchProductosFromFirebase();
 
         // Inicializar y configurar la alerta
@@ -253,6 +319,9 @@ public class PerfilRestauranteActivity extends AppCompatActivity {
                 navegarAInicioCliente(); // Navegar directamente si no se añadieron productos
             }
         });
+
+
+
 
 
     }
@@ -367,21 +436,12 @@ public class PerfilRestauranteActivity extends AppCompatActivity {
 
     // Método para realizar la animación de color y zoom
     private void animateFavoriteIcon(ImageView icon, boolean isFavorited) {
-        // Animación de zoom
         ObjectAnimator scaleXAnim = ObjectAnimator.ofFloat(icon, "scaleX", 1f, 1.5f, 1f);
         ObjectAnimator scaleYAnim = ObjectAnimator.ofFloat(icon, "scaleY", 1f, 1.5f, 1f);
 
-        // Cambiar el color del icono dependiendo de si es favorito o no
-        if (isFavorited) {
-            icon.setImageTintList(ColorStateList.valueOf(Color.RED)); // Cambiar a color rojo cuando es favorito
-        } else {
-            icon.setImageTintList(ColorStateList.valueOf(Color.WHITE)); // Cambiar a blanco cuando no es favorito
-        }
-
-        // Duración total de la animación
         AnimatorSet animatorSet = new AnimatorSet();
         animatorSet.playTogether(scaleXAnim, scaleYAnim);
-        animatorSet.setDuration(300); // Duración de la animación
+        animatorSet.setDuration(300);
         animatorSet.start();
     }
 

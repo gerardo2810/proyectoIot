@@ -206,8 +206,6 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
                     });
         }
 
-
-
         // Verificar que el idRestaurante no sea nulo ni vacío
         if (idRestaurante != null && !idRestaurante.isEmpty()) {
             // Consultar Firestore para obtener los datos del restaurante
@@ -477,8 +475,8 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
                         .get()
                         .addOnSuccessListener(documentSnapshot -> {
                             if (documentSnapshot.exists()) {
-                                String qrRestaurante = documentSnapshot.getString("qr");
-
+                                String qrRestaurante = documentSnapshot.getString("qrCodeUrl");
+                                System.out.println("Seguimiento Pedido el qr escaneado " +  qrRestaurante);
                                 if (qrEscaneado.equals(qrRestaurante)) {
                                     // QR correcto, abrir la vista de confirmación de pago
                                     abrirVistaDePago();

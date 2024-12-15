@@ -69,7 +69,9 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.Produc
         // Lógica para añadir el producto al carrito
         holder.buttonAddProduct.setOnClickListener(view -> {
             int cantidadSeleccionada = producto.getCantidad(); // Obtener la cantidad seleccionada
-            listener.onProductoAñadido(producto, cantidadSeleccionada); // Notificar a la actividad
+
+            // Notificar a la actividad a través del listener
+            listener.onProductoAñadido(producto, cantidadSeleccionada);
         });
     }
 
@@ -115,6 +117,12 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.Produc
 
     // Definir la interfaz del listener para manejar la acción de añadir productos al carrito
     public interface OnProductoAñadidoListener {
+        /**
+         * Método para manejar la acción de añadir productos al carrito y mostrar alerta.
+         *
+         * @param producto Producto que se intenta añadir al carrito.
+         * @param cantidad Cantidad seleccionada para el producto.
+         */
         void onProductoAñadido(Producto producto, int cantidad);
     }
 }

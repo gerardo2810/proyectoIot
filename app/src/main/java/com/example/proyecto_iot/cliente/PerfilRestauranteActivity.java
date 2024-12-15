@@ -14,9 +14,11 @@ import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,6 +52,9 @@ public class PerfilRestauranteActivity extends AppCompatActivity {
     private TextView carritoCantidadTextView;
     private ImageView carritoIcon;
     private int totalCantidadCarrito = 0;
+    private boolean productosAñadidos = false; // Indicador para saber si se añadieron productos al carrito
+    private LinearLayout alertLayout; // Layout de la alerta
+
     private FirebaseFirestore db;
 
 
@@ -217,41 +222,44 @@ public class PerfilRestauranteActivity extends AppCompatActivity {
             }
         });
 
-        ImageView backArrow = findViewById(R.id.back_arrow);
-        backArrow.setOnClickListener(view -> {
-            Intent intent2 = new Intent(PerfilRestauranteActivity.this, InicioClienteActivity.class);
-            startActivity(intent2);
-            finish();
-        });
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
-        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                int id = item.getItemId();
 
-                if (id == R.id.nav_restaurantes) {
-                    startActivity(new Intent(PerfilRestauranteActivity.this, InicioClienteActivity.class));
-                    return true;
-                } else if (id == R.id.nav_carrito) {
-                    Intent intent = new Intent(PerfilRestauranteActivity.this, CarritoClienteActivity.class);
-                    intent.putExtra("carrito", new ArrayList<>(carritoList));
-                    startActivity(intent);
-                    return true;
-                } else if (id == R.id.navigation_ordenes) {
-                    startActivity(new Intent(PerfilRestauranteActivity.this, HistorialPedidosActivity.class));
-                    return true;
-                } else if (id == R.id.nav_perfil) {
-                    startActivity(new Intent(PerfilRestauranteActivity.this, PerfilClienteActivity.class));
-                    return true;
-                }
 
-                return false;
-            }
-        });
 
         fetchProductosFromFirebase();
 
+        // Inicializar y configurar la alerta
+        alertLayout = findViewById(R.id.alert_layout);
+        Button btnKeep = findViewById(R.id.btn_keep);
+        Button btnDelete = findViewById(R.id.btn_delete);
+
+        // Ocultar la alerta al iniciar
+        alertLayout.setVisibility(View.GONE);
+
+        // Configurar el botón "Mantener"
+        btnKeep.setOnClickListener(v -> ocultarAlerta());
+
+        // Configurar el botón "Sí, eliminar"
+        btnDelete.setOnClickListener(v -> {
+            carritoList.clear(); // Limpiar el carrito
+            productosAñadidos = false; // Reiniciar el indicador
+            navegarAInicioCliente(); // Navegar a la vista de inicio
+        });
+        ImageView backArrow = findViewById(R.id.back_arrow);
+        backArrow.setOnClickListener(view -> {
+            if (productosAñadidos) {
+                mostrarAlerta(); // Mostrar la alerta si hay productos añadidos
+            } else {
+                navegarAInicioCliente(); // Navegar directamente si no se añadieron productos
+            }
+        });
+
+
+    }
+    private void navegarAInicioCliente() {
+        Intent intent = new Intent(PerfilRestauranteActivity.this, InicioClienteActivity.class);
+        startActivity(intent);
+        finish();
     }
 
 
@@ -317,6 +325,7 @@ public class PerfilRestauranteActivity extends AppCompatActivity {
                 });
     }
 
+
     private void agregarProductoAlCarrito(Producto producto, int cantidad) {
         boolean productoExistente = false;
         for (Producto p : carritoList) {
@@ -333,8 +342,10 @@ public class PerfilRestauranteActivity extends AppCompatActivity {
         }
 
         totalCantidadCarrito += cantidad;
+        productosAñadidos = true; // Indicar que se añadieron productos
         actualizarCarritoCantidad();
     }
+
 
     private void actualizarCarritoCantidad() {
         if (totalCantidadCarrito > 0) {
@@ -346,6 +357,14 @@ public class PerfilRestauranteActivity extends AppCompatActivity {
             carritoCantidadTextView.setVisibility(View.GONE);
         }
     }
+    private void mostrarAlerta() {
+        alertLayout.setVisibility(View.VISIBLE);
+    }
+
+    private void ocultarAlerta() {
+        alertLayout.setVisibility(View.GONE);
+    }
+
     // Método para realizar la animación de color y zoom
     private void animateFavoriteIcon(ImageView icon, boolean isFavorited) {
         // Animación de zoom

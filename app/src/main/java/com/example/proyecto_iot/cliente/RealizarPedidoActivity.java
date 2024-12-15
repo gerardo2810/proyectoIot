@@ -37,9 +37,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 import java.util.TimeZone;
 
 public class RealizarPedidoActivity extends AppCompatActivity {
@@ -48,6 +51,10 @@ public class RealizarPedidoActivity extends AppCompatActivity {
     private Button payButton;
     private TextView seeMore;
     private List<Producto> productos;
+    private static final String PREFIX = "AP-";
+    private static final int DIGIT_LENGTH = 6;
+    private static final Random random = new Random();
+    private final Set<String> generatedNumbers = new HashSet<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,48 +145,58 @@ public class RealizarPedidoActivity extends AppCompatActivity {
                     .addOnSuccessListener(documentSnapshot -> {
                         if (documentSnapshot.exists()) {
                             String direccionCliente = documentSnapshot.getString("Direccion");
+                            String nombreCliente = documentSnapshot.getString("Nombre");
+                            String apellidoCliente = documentSnapshot.getString("Apellido");
                             SimpleDateFormat dateFormat = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy, HH:mm:ss a", new Locale("es", "PE"));
                             dateFormat.setTimeZone(TimeZone.getTimeZone("America/Lima"));
                             String fechaHora = dateFormat.format(new Date());
 
-                            // Crear el mapa de datos del pedido
-                            Map<String, Object> pedidoData = new HashMap<>();
-                            pedidoData.put("idCliente", userId);
-                            pedidoData.put("direccion", direccionCliente);
-                            pedidoData.put("estado", 0); // Inicializamos el estado en 0
-                            pedidoData.put("fechaHora", fechaHora);
-                            pedidoData.put("productos", productos); // Lista de productos
-                            pedidoData.put("idRepartidor", "");
-                            pedidoData.put("idRestaurante", restauranteId);
-                            pedidoData.put("nombreRestaurante", nombreRestaurante);
-                            pedidoData.put("pagoTotal", pagoTotal);
+                            // Generar un código único
+                            generarCodigoUnico(db, codigo -> {
+                                // Crear el mapa de datos del pedido
+                                Map<String, Object> pedidoData = new HashMap<>();
+                                pedidoData.put("idCliente", userId);
+                                pedidoData.put("direccion", direccionCliente);
+                                pedidoData.put("estado", 0);
+                                pedidoData.put("fechaHora", fechaHora);
+                                pedidoData.put("nombreCliente", nombreCliente);
+                                pedidoData.put("apellidoCliente", apellidoCliente);
+                                pedidoData.put("productos", productos);
+                                pedidoData.put("idRepartidor", "");
+                                pedidoData.put("idRestaurante", restauranteId);
+                                pedidoData.put("nombreRestaurante", nombreRestaurante);
+                                pedidoData.put("pagoTotal", pagoTotal);
+                                pedidoData.put("codigo", codigo); // Código único
 
-                            db.collection("pedidos")
-                                    .add(pedidoData)
-                                    .addOnSuccessListener(documentReference -> {
-                                        String pedidoId = documentReference.getId();
-                                        Bitmap qrBitmap = generarQRCode(pedidoId);
-                                        guardarQRCodeEnStorage(pedidoId, qrBitmap);
+                                // Guardar el pedido en Firestore
+                                db.collection("pedidos")
+                                        .add(pedidoData)
+                                        .addOnSuccessListener(documentReference -> {
+                                            String pedidoId = documentReference.getId();
+                                            Bitmap qrBitmap = generarQRCode(pedidoId);
+                                            guardarQRCodeEnStorage(pedidoId, qrBitmap);
 
-                                        // Redirigir a CreandoPedidoActivity
-                                        Intent intent1 = new Intent(RealizarPedidoActivity.this, CreandoPedidoActivity.class);
-                                        intent1.putExtra("pedidoId", pedidoId);
-                                        intent1.putExtra("direccion", direccionCliente);
-                                        intent1.putExtra("fechaHora", fechaHora);
-                                        intent1.putExtra("subtotal", subtotal);
-                                        intent1.putExtra("precioTotal", pagoTotal);
-                                        intent1.putExtra("precioDelivery", precioDelivery);
-                                        intent1.putExtra("productos", (ArrayList<Producto>) productos); // Enviar productos como ArrayList
-                                        intent1.putExtra("nombreRestaurante", nombreRestaurante);
-                                        intent1.putExtra("idRestaurante", restauranteId);
+                                            // Redirigir a CreandoPedidoActivity
+                                            Intent intent1 = new Intent(RealizarPedidoActivity.this, CreandoPedidoActivity.class);
+                                            intent1.putExtra("pedidoId", pedidoId);
+                                            intent1.putExtra("direccion", direccionCliente);
+                                            intent1.putExtra("fechaHora", fechaHora);
+                                            intent1.putExtra("codigo", codigo);
+                                            intent1.putExtra("subtotal", subtotal);
+                                            intent1.putExtra("precioTotal", pagoTotal);
+                                            intent1.putExtra("precioDelivery", precioDelivery);
+                                            intent1.putExtra("productos", (ArrayList<Producto>) productos);
+                                            intent1.putExtra("nombreRestaurante", nombreRestaurante);
+                                            intent1.putExtra("idRestaurante", restauranteId);
 
-                                        startActivity(intent1);
-                                        finish(); // Finalizar esta actividad
-                                    })
-                                    .addOnFailureListener(e -> {
-                                        System.err.println("Error al crear el pedido: " + e.getMessage());
-                                        Toast.makeText(RealizarPedidoActivity.this, "Error al realizar el pedido. Intenta de nuevo.", Toast.LENGTH_SHORT).show();
-                                    });
+                                            startActivity(intent1);
+                                            finish();
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            System.err.println("Error al crear el pedido: " + e.getMessage());
+                                            Toast.makeText(RealizarPedidoActivity.this, "Error al realizar el pedido. Intenta de nuevo.", Toast.LENGTH_SHORT).show();
+                                        });
+                            });
                         } else {
                             System.err.println("Cliente no encontrado en la base de datos.");
                             Toast.makeText(RealizarPedidoActivity.this, "No se encontró la información del cliente.", Toast.LENGTH_SHORT).show();
@@ -190,7 +207,6 @@ public class RealizarPedidoActivity extends AppCompatActivity {
                         Toast.makeText(RealizarPedidoActivity.this, "Error al obtener la dirección del cliente.", Toast.LENGTH_SHORT).show();
                     });
         });
-
 
     }
 
@@ -222,6 +238,33 @@ public class RealizarPedidoActivity extends AppCompatActivity {
             e.printStackTrace();
             return null;
         }
+    }
+    // Método para generar un código único con validación en la base de datos
+    private void generarCodigoUnico(FirebaseFirestore db, OnCodigoGeneradoListener listener) {
+        Random random = new Random();
+
+        String nuevoCodigo = "AP-" + (10000000 + random.nextInt(90000000)); // Generar número de 8 dígitos con prefijo
+        db.collection("pedidos")
+                .whereEqualTo("codigo", nuevoCodigo)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    if (querySnapshot.isEmpty()) {
+                        // Si no existe en la base de datos, retornar el código
+                        listener.onCodigoGenerado(nuevoCodigo);
+                    } else {
+                        // Si existe, generar uno nuevo recursivamente
+                        generarCodigoUnico(db, listener);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    System.err.println("Error al validar el código único: " + e.getMessage());
+                    Toast.makeText(RealizarPedidoActivity.this, "Error al generar el código único.", Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    // Interfaz de callback para el código generado
+    interface OnCodigoGeneradoListener {
+        void onCodigoGenerado(String codigo);
     }
 
     private Bitmap toBitmap(com.google.zxing.common.BitMatrix matrix) {

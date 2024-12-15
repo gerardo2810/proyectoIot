@@ -165,7 +165,7 @@ public class reporte_restaurante_superadmin extends AppCompatActivity {
                     PedidoSA pedido = document.toObject(PedidoSA.class);
 
                     // Filtrar por restaurante y estado
-                    if (pedido.getIdRestaurante().equals(restauranteUID) && pedido.getEstado() == 4) {
+                    if (pedido.getIdRestaurante().equals(restauranteUID) && pedido.getEstado() == 8) {
                         pedidosFiltrados.add(pedido);
                         pedidosOriginales.add(pedido); // Agrega a la lista original
                     }

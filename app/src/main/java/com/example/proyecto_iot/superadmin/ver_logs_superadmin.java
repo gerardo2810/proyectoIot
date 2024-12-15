@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,6 +16,8 @@ import com.example.proyecto_iot.superadmin.RecyclerView.LogSA;
 import com.example.proyecto_iot.superadmin.RecyclerView.LogAdapterSA;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,9 +25,10 @@ import java.util.List;
 public class ver_logs_superadmin extends AppCompatActivity {
 
     private BottomNavigationView bottomNavigationView;
-    private RecyclerView recyclerViewVerLogs;
+    private RecyclerView recyclerViewLogs;
     private LogAdapterSA adapter;
-    private List<LogSA> listaLogs;
+    private List<LogSA> logsList;
+    private FirebaseFirestore firestore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,15 +44,17 @@ public class ver_logs_superadmin extends AppCompatActivity {
         //----------------------------------------------------------------------------
 
         //Gestion del Recycler View
-        recyclerViewVerLogs = findViewById(R.id.recyclerViewLogsSA);
-        recyclerViewVerLogs.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewLogs = findViewById(R.id.recyclerViewLogsSA);
+        recyclerViewLogs.setLayoutManager(new LinearLayoutManager(this));
 
-        listaLogs = new ArrayList<>();
-        listaLogs.add(new LogSA("El administrador Ana Armas ha cambiado el nombre de su restaurante 'Pardos Chicken' a 'Marlos Chicken' "));
-        listaLogs.add(new LogSA("El repartidor Benito Bueno ha finalizado y recibido su pago por la entrega N°1993321 "));
+        logsList = new ArrayList<>();
+        adapter = new LogAdapterSA(logsList);
+        recyclerViewLogs.setAdapter(adapter);
 
-        adapter = new LogAdapterSA(listaLogs);
-        recyclerViewVerLogs.setAdapter(adapter);
+        firestore = FirebaseFirestore.getInstance();
+
+        // Cargar los logs desde Firebase
+        loadLogs();
         //----------------------------------------------------------------------------
 
         //Gestion de la bottom navigation bar
@@ -76,4 +82,23 @@ public class ver_logs_superadmin extends AppCompatActivity {
         //----------------------------------------------------------------------------
 
     }
+
+    private void loadLogs() {
+        firestore.collection("logs")
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    logsList.clear();
+                    for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
+                        LogSA log = document.toObject(LogSA.class);
+                        if (log != null) {
+                            logsList.add(log);
+                        }
+                    }
+                    adapter.notifyDataSetChanged();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Error al cargar logs", Toast.LENGTH_SHORT).show();
+                });
+    }
+
 }

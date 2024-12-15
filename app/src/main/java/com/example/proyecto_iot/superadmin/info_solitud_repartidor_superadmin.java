@@ -16,10 +16,14 @@ import com.example.proyecto_iot.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class info_solitud_repartidor_superadmin extends AppCompatActivity {
@@ -27,6 +31,7 @@ public class info_solitud_repartidor_superadmin extends AppCompatActivity {
     private BottomNavigationView bottomNavigationView;
 
     private FirebaseFirestore db;
+    private FirebaseAuth mAuth;
 
     private String UID;
     private String nombrecompleto;
@@ -40,6 +45,7 @@ public class info_solitud_repartidor_superadmin extends AppCompatActivity {
         UID = intent.getStringExtra("document_id");
 
         db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
         Button btnAceptar = findViewById(R.id.btnAceptar);
         Button btnRechazar = findViewById(R.id.btnRechazar);
 
@@ -67,7 +73,7 @@ public class info_solitud_repartidor_superadmin extends AppCompatActivity {
 
                         textViewNombre.setText(nombrecompleto);
                         textViewDNI.setText(documentSnapshot.getString("dni"));
-                        textViewCorreo.setText(documentSnapshot.getString("email"));
+                        textViewCorreo.setText(documentSnapshot.getString("correo"));
                         textViewTelefono.setText(documentSnapshot.getString("telefono"));
                         textViewFechNaci.setText(documentSnapshot.getString("nacimiento"));
                         textViewDireccion.setText(documentSnapshot.getString("direccion"));
@@ -81,6 +87,7 @@ public class info_solitud_repartidor_superadmin extends AppCompatActivity {
             db.collection("repartidores").document(UID)
                     .update("aceptado", true)
                     .addOnSuccessListener(aVoid ->{
+                            guardarLog("Se aceptó la solicitud para ser repartidor de " + nombrecompleto, "Super Administrador");
                             Intent intent3 = new Intent(this, solicitudes_repartidores_superadmin.class);
                             Toast.makeText(this, "Se aceptó la solicitud de " + nombrecompleto, Toast.LENGTH_SHORT).show();
                             startActivity(intent3);
@@ -99,6 +106,7 @@ public class info_solitud_repartidor_superadmin extends AppCompatActivity {
             db.collection("repartidores").document(UID)
                     .update("habilitado", false)
                     .addOnSuccessListener(aVoid ->{
+                        guardarLog("Se rechazó la solicitud para ser repartidor de " + nombrecompleto, "Super Administrador");
                         Intent intent3 = new Intent(this, solicitudes_repartidores_superadmin.class);
                         Toast.makeText(this, "Se rechazó la solicitud de " + nombrecompleto, Toast.LENGTH_SHORT).show();
                         startActivity(intent3);
@@ -138,6 +146,35 @@ public class info_solitud_repartidor_superadmin extends AppCompatActivity {
         });
         //----------------------------------------------------------------------------
 
+    }
+
+    public void guardarLog(String mensaje, String rol) {
+        // Obtener el UID del usuario logueado
+        String usuarioUID = mAuth.getCurrentUser() != null ? mAuth.getCurrentUser().getUid() : "Usuario desconocido";
+
+        // Obtener fecha y hora actuales
+        String fechaActual = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        String horaActual = new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new Date());
+
+        // Crear un mapa para guardar el log
+        HashMap<String, Object> logData = new HashMap<>();
+        logData.put("mensaje", mensaje);
+        logData.put("usuarioUID", usuarioUID);
+        logData.put("rol", rol);
+        logData.put("fecha", fechaActual);
+        logData.put("hora", horaActual);
+
+        // Guardar el log en Firestore
+        db.collection("logs")
+                .add(logData)
+                .addOnSuccessListener(documentReference -> {
+                    // Éxito al guardar el log
+                    System.out.println("Log guardado con éxito. ID: " + documentReference.getId());
+                })
+                .addOnFailureListener(e -> {
+                    // Error al guardar el log
+                    System.err.println("Error al guardar el log: " + e.getMessage());
+                });
     }
 
 }

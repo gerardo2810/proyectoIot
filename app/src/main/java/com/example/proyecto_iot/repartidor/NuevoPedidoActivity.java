@@ -79,6 +79,9 @@ public class NuevoPedidoActivity extends AppCompatActivity implements OnMapReady
 
                                         nombreRestauranteTextView.setText(nombreRestaurante);
                                         direccionRestauranteTextView.setText(direccionRestaurante);
+
+                                        // Lógica para calcular la distancia
+                                        calcularDistancia(direccionRestaurante, direccionCliente);
                                     }
                                 })
                                 .addOnFailureListener(e -> {
@@ -221,6 +224,51 @@ public class NuevoPedidoActivity extends AppCompatActivity implements OnMapReady
     // Interfaz para manejar las coordenadas obtenidas
     interface OnCoordenadasObtenidas {
         void onCoordenadasObtenidas(LatLng coordenadas);
+    }
+
+    private void calcularDistancia(String origen, String destino) {
+        String apiKey = "AIzaSyAaD_Wke_n8sefeq8OMyVNlm9fJmU9CH-c"; // Reemplaza con tu clave de Google API
+        String url = "https://maps.googleapis.com/maps/api/directions/json?origin=" + origen.replace(" ", "%20") +
+                "&destination=" + destino.replace(" ", "%20") + "&key=" + apiKey;
+
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String jsonResponse = response.body().string();
+
+                    runOnUiThread(() -> {
+                        try {
+                            JSONObject json = new JSONObject(jsonResponse);
+                            String distancia = json
+                                    .getJSONArray("routes")
+                                    .getJSONObject(0)
+                                    .getJSONArray("legs")
+                                    .getJSONObject(0)
+                                    .getJSONObject("distance")
+                                    .getString("text");
+
+                            // Mostrar la distancia en el TextView
+                            TextView textViewDistancia = findViewById(R.id.textView3);
+                            String texto11 = "S/ 10.00 (" + distancia+")";
+                            textViewDistancia.setText(texto11);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    });
+                }
+            }
+        });
     }
 
 }

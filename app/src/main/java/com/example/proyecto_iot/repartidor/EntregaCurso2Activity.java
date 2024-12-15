@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
 import com.example.proyecto_iot.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FieldValue;
@@ -32,6 +33,7 @@ public class EntregaCurso2Activity extends AppCompatActivity {
 
     String idRestaurante;
     String idPedido;
+    String qrUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,7 +121,7 @@ public class EntregaCurso2Activity extends AppCompatActivity {
         btnShowDialog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showQrDialog();
+                showQrDialog(idRestaurante, db);
             }
         });
 
@@ -140,7 +142,7 @@ public class EntregaCurso2Activity extends AppCompatActivity {
         //Actualizar pedido
 
         db.collection("pedidos").document(idPedido)
-                .update("estado", 4)
+                .update("estado", 8)
                 .addOnSuccessListener(aVoid -> {
                     // Acción si la actualización fue exitosa
                     Log.d("Firebase", "Entrega del pedido exitosamente");
@@ -196,14 +198,29 @@ public class EntregaCurso2Activity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void showQrDialog() {
+    private void showQrDialog(String idRestaurante, FirebaseFirestore db) {
         // Crear el diálogo
         final Dialog dialog = new Dialog(this);
+        db.collection("restaurantes").document(idRestaurante)
+                .get()
+                .addOnSuccessListener(restauranteSnapshot -> {
+                    if (restauranteSnapshot.exists()) {
+                        qrUrl = restauranteSnapshot.getString("qrCodeUrl");
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Error al cargar los datos del restaurante", Toast.LENGTH_SHORT).show();
+                });
+
+
         dialog.setContentView(R.layout.dialog_qr_repartidor);
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT); // Ajustar tamaño
 
         ImageView imgPhoto = dialog.findViewById(R.id.imgPhoto);
-        imgPhoto.setImageResource(R.drawable.imagen_qr_code);
+        Glide.with(this)
+                .load(qrUrl)
+                .placeholder(R.drawable.placeholder)
+                .into(imgPhoto);
 
         // Configurar el botón de cierre
         Button btnClose = dialog.findViewById(R.id.btnClose);

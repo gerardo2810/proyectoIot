@@ -20,8 +20,9 @@
         android:theme="@style/Theme.Proyecto_Iot"
         tools:targetApi="31">
         <activity
-            android:name=".alert_background"
+            android:name=".cliente.PreloaderActivity"
             android:exported="false" />
+
         <activity
             android:name=".cliente.CreandoPedidoActivity"
             android:exported="false" />

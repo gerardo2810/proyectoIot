@@ -17,6 +17,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.bumptech.glide.Glide;
 import com.example.proyecto_iot.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
@@ -43,6 +44,7 @@ public class info_usuario_superadmin extends AppCompatActivity {
         Log.d("VERIFICAR", "Rol: " + rol);
         switchEstadoCuenta = findViewById(R.id.switchEstadoCuenta);
         db = FirebaseFirestore.getInstance();
+        ImageView imageView3 = findViewById(R.id.imageView3);
 
         //Volver una pantalla atras
         ImageView arrowIcon = findViewById(R.id.arrow_back_icon);
@@ -68,7 +70,12 @@ public class info_usuario_superadmin extends AppCompatActivity {
                             TextView textViewRol = findViewById(R.id.textViewRol);
                             TextView textViewRestaurante = findViewById(R.id.textViewRestaurante);
                             TextView textViewDireccion = findViewById(R.id.textViewDireccion);
+                            String imagenUrl = documentSnapshot.getString("foto");
 
+                            Glide.with(this)
+                                    .load(imagenUrl)
+                                    .placeholder(R.drawable.load)// URL de la imagen
+                                    .into(imageView3);
                             textViewNombre.setText(nombrecompleto);
                             textViewDNI.setText(documentSnapshot.getString("dni"));
                             textViewCorreo.setText(documentSnapshot.getString("correo"));
@@ -99,7 +106,12 @@ public class info_usuario_superadmin extends AppCompatActivity {
                             TextView textViewRol = findViewById(R.id.textViewRol);
                             TextView textViewRestaurante = findViewById(R.id.textViewRestaurante);
                             TextView textViewDireccion = findViewById(R.id.textViewDireccion);
+                            String imagenUrl = documentSnapshot.getString("foto");
 
+                            Glide.with(this)
+                                    .load(imagenUrl)
+                                    .placeholder(R.drawable.load)// URL de la imagen
+                                    .into(imageView3);
                             textViewNombre.setText(nombrecompleto);
                             textViewDNI.setText(documentSnapshot.getString("dni"));
                             textViewCorreo.setText(documentSnapshot.getString("correo"));
@@ -130,6 +142,12 @@ public class info_usuario_superadmin extends AppCompatActivity {
                             TextView textViewRol = findViewById(R.id.textViewRol);
                             TextView textViewRestaurante = findViewById(R.id.textViewRestaurante);
                             TextView textViewDireccion = findViewById(R.id.textViewDireccion);
+                            String imagenUrl = documentSnapshot.getString("FotoURL");
+
+                            Glide.with(this)
+                                    .load(imagenUrl)
+                                    .placeholder(R.drawable.load)// URL de la imagen
+                                    .into(imageView3);
 
                             textViewNombre.setText(nombrecompleto);
                             textViewDNI.setText(documentSnapshot.getString("DNI"));

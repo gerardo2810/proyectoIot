@@ -5,11 +5,13 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.superadmin.info_solitud_repartidor_superadmin;
 
@@ -41,10 +43,10 @@ public class RepartidorAdapterSA extends RecyclerView.Adapter<RepartidorAdapterS
         holder.textViewFecha.setText(repartidor.getFecha());
 
         // Cargar imagen desde el URL usando Glide
-        /*Glide.with(context)
-                .load(repartidor.getFoto())
+        Glide.with(context)
+                .load(repartidor.getFoto()) // Cargar la URL de la foto
                 .placeholder(R.drawable.placeholder) // Imagen de carga por defecto
-                .into(holder.imageViewFoto);*/
+                .into(holder.imageViewFoto); // El ImageView donde se mostrará la foto
 
         // Configurar redirección al hacer clic en el item
         holder.itemView.setOnClickListener(v -> {
@@ -61,13 +63,13 @@ public class RepartidorAdapterSA extends RecyclerView.Adapter<RepartidorAdapterS
 
     public static class RepartidorSAViewHolder extends RecyclerView.ViewHolder {
         TextView textViewNombre, textViewFecha;
-        //ImageView imageViewFoto;
+        ImageView imageViewFoto;
 
         public RepartidorSAViewHolder(@NonNull View itemView) {
             super(itemView);
             textViewNombre = itemView.findViewById(R.id.textViewNombre);
             textViewFecha = itemView.findViewById(R.id.textViewFecha);
-            //imageViewFoto = itemView.findViewById(R.id.imageViewFoto);
+            imageViewFoto = itemView.findViewById(R.id.imageViewFoto);
         }
     }
 

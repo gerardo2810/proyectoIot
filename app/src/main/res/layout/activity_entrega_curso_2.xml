@@ -310,7 +310,6 @@
         android:layout_marginStart="92dp"
         android:layout_marginBottom="28dp"
         android:backgroundTint="@color/md_theme_onTertiaryFixed"
-        android:onClick="abrirPagInicio"
         android:text="Registrar el pedido"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"

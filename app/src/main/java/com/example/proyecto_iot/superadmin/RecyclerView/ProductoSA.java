@@ -6,8 +6,8 @@ public class ProductoSA {
     private String nombre;
     private String descripcion;
     private int cantidad;
-    private int precio;
-    private int total;
+    private double precio;
+    private double total;
     private String imageUrl;
 
     // Getters y Setters
@@ -43,19 +43,19 @@ public class ProductoSA {
         this.cantidad = cantidad;
     }
 
-    public int getPrecio() {
+    public double getPrecio() {
         return precio;
     }
 
-    public void setPrecio(int precio) {
+    public void setPrecio(double precio) {
         this.precio = precio;
     }
 
-    public int getTotal() {
+    public double getTotal() {
         return total;
     }
 
-    public void setTotal(int total) {
+    public void setTotal(double total) {
         this.total = total;
     }
 

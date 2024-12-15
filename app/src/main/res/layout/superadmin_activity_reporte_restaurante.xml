@@ -126,7 +126,7 @@
                 android:layout_marginTop="40dp"
                 android:text="Reporte de Ventas de MES"
                 android:textColor="@color/purple"
-                android:textSize="18sp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <!-- Sección de métricas clave -->
@@ -152,7 +152,7 @@
                         android:layout_height="wrap_content"
                         android:text="Ventas Totales"
                         android:textColor="@color/black"
-                        android:textSize="16sp"
+                        android:textSize="18sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -179,7 +179,7 @@
                         android:layout_height="wrap_content"
                         android:text="Total de Pedidos"
                         android:textColor="@color/black"
-                        android:textSize="16sp"
+                        android:textSize="18sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -200,7 +200,7 @@
                 android:layout_marginBottom="8dp"
                 android:text="Detalles de Ventas por Platos"
                 android:textColor="@color/black"
-                android:textSize="16sp"
+                android:textSize="18sp"
                 android:textStyle="bold" />
 
             <ScrollView
@@ -222,7 +222,7 @@
                 android:layout_marginTop="20dp"
                 android:text="Gráfico de Ventas por Platos"
                 android:textColor="@color/black"
-                android:textSize="16sp"
+                android:textSize="18sp"
                 android:textStyle="bold" />
 
             <com.github.mikephil.charting.charts.BarChart
@@ -231,7 +231,14 @@
                 android:layout_height="200dp"
                 android:layout_marginBottom="16dp" />
 
-
+            <!-- Botón para seleccionar el archivo PDF -->
+            <Button
+                android:id="@+id/buttonDownloadPDF"
+                android:layout_marginTop="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#F44336"
+                android:text="Descargar Reporte en PDF" />
 
         </LinearLayout>
     </ScrollView>

@@ -113,6 +113,7 @@
                         android:layout_width="118dp"
                         android:layout_height="86dp"
                         android:layout_gravity="center"
+                        android:scaleType="centerCrop"
                         android:background="@drawable/placeholder" />
 
                     <Button
@@ -207,18 +208,6 @@
                 android:backgroundTint="#7854A4"
                 android:text="Guardar y continuar"
                 android:textColor="@android:color/white" />
-
-            <Button
-                android:id="@+id/borrar_producto"
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:layout_marginTop="20dp"
-                android:layout_gravity="end"
-                android:backgroundTint="#9CFFCDD2"
-                android:text="ELIMINAR PRODUCTO"
-                android:textColor="@color/md_theme_errorContainer_mediumContrast"
-                android:textSize="11sp"
-                android:textStyle="bold" />
         </LinearLayout>
 
     </ScrollView>

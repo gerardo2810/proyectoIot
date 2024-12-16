@@ -69,21 +69,6 @@ public class ViewRestaurantScheduleActivity extends AppCompatActivity {
         ImageView backButton = findViewById(R.id.back_button);
         backButton.setOnClickListener(v -> finish());
 
-
-        Button btnCloseRestaurant = findViewById(R.id.btn_close_restaurant);
-        btnCloseRestaurant.setOnClickListener(v -> {
-            // Lógica para cerrar el restaurante (puedes mostrar un dialogo de confirmación)
-            Toast.makeText(this, "Restaurante cerrado", Toast.LENGTH_SHORT).show();
-        });
-
-        btnCloseRestaurant.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Mostrar el diálogo de confirmación
-                showConfirmDialog();
-            }
-        });
-
     }
 
 

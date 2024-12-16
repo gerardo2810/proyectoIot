@@ -117,6 +117,7 @@
                         android:layout_width="118dp"
                         android:layout_height="86dp"
                         android:layout_gravity="center"
+                        android:scaleType="centerCrop"
                         android:background="@drawable/placeholder" />
 
                     <Button

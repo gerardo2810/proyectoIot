@@ -236,6 +236,7 @@ public class EntregaCurso2Activity extends AppCompatActivity {
                 .update("estado", 8)
                 .addOnSuccessListener(aVoid -> {
                     // Acción si la actualización fue exitosa
+                    guardarLog("se ha entregado exitosamente el pedido de id: " + idPedido, "Repartidor");
                     Log.d("Firebase", "Entrega del pedido exitosamente");
                 })
                 .addOnFailureListener(e -> {
@@ -277,6 +278,38 @@ public class EntregaCurso2Activity extends AppCompatActivity {
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Error al cargar los datos del restaurante", Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    public void guardarLog(String mensaje, String rol) {
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        // Obtener el UID del usuario logueado
+        String usuarioUID = mAuth.getCurrentUser() != null ? mAuth.getCurrentUser().getUid() : "Usuario desconocido";
+
+        // Obtener fecha y hora actuales
+        String fechaActual = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        String horaActual = new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new Date());
+
+        // Crear un mapa para guardar el log
+        HashMap<String, Object> logData = new HashMap<>();
+        logData.put("mensaje", mensaje);
+        logData.put("usuarioUID", usuarioUID);
+        logData.put("rol", rol);
+        logData.put("fecha", fechaActual);
+        logData.put("hora", horaActual);
+
+        // Guardar el log en Firestore
+        db.collection("logs")
+                .add(logData)
+                .addOnSuccessListener(documentReference -> {
+                    // Éxito al guardar el log
+                    System.out.println("Log guardado con éxito. ID: " + documentReference.getId());
+                })
+                .addOnFailureListener(e -> {
+                    // Error al guardar el log
+                    System.err.println("Error al guardar el log: " + e.getMessage());
                 });
     }
 

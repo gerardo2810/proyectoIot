@@ -7,6 +7,7 @@ import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -61,6 +62,7 @@ public class PerfilClienteActivity extends AppCompatActivity {
             finish();
         }
 
+
         // Inicializar vistas
         etNombre = findViewById(R.id.et_name);
         etApellido = findViewById(R.id.et_apellido);
@@ -87,6 +89,18 @@ public class PerfilClienteActivity extends AppCompatActivity {
         btnGuardar.setOnClickListener(v -> saveClienteData());
 
         btnSubirFoto.setOnClickListener(v -> selectImage());
+        // Encontrar el botón por su ID
+        ImageButton backButton = findViewById(R.id.back_button);
+
+        // Configurar el listener del botón
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Crear un Intent para iniciar MenuActivity
+                Intent intent = new Intent(PerfilClienteActivity.this, MenuClienteActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void fetchClienteData() {
@@ -98,13 +112,10 @@ public class PerfilClienteActivity extends AppCompatActivity {
                         etDireccion.setText(documentSnapshot.getString("Direccion"));
                         etCorreo.setText(documentSnapshot.getString("Email"));
                         etTelefono.setText(documentSnapshot.getString("Telefono"));
-                        etDni.setText(documentSnapshot.getString("DNI")); // Mostrar el DNI
+                        etDni.setText(documentSnapshot.getString("DNI"));
+                        etEdad.setText(documentSnapshot.getString("Nacimiento"));// Mostrar el DNI
                         // Calcular edad a partir de la fecha de nacimiento
-                        String fechaNacimiento = documentSnapshot.getString("Nacimiento");
-                        if (fechaNacimiento != null) {
-                            int edad = calcularEdad(fechaNacimiento);
-                            etEdad.setText(String.valueOf(edad)); // Mostrar edad calculada
-                        }
+
 
                         String fotoUrl = documentSnapshot.getString("FotoURL");
                         if (fotoUrl != null && !fotoUrl.isEmpty()) {

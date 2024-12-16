@@ -477,6 +477,20 @@ public class InicioClienteActivity extends AppCompatActivity {
             finish();
         }
     }
+    private String obtenerEstadoPedido(int estado) {
+        switch (estado) {
+            case 1: return "Recibido";
+            case 2: return "En preparación";
+            case 3: return "En camino";
+            case 4: return "Entregado";
+            case 5: return "Cancelado";
+            case 6: return "Rechazado";
+            case 8: return  "Entregado";
+            case 7:
+                return "En camino";
+            default: return "Desconocido";
+        }
+    }
 
 }
 

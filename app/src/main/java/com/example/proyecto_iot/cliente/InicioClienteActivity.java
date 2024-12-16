@@ -375,7 +375,7 @@ public class InicioClienteActivity extends AppCompatActivity {
                             }
 
                             // Manejar estados 2 y 3
-                            if (estado == 2 || estado == 3) {
+                            if (estado == 2 || estado == 3 || estado==7) {
                                 ordersList.add(new Pedido(idPedido, idRestaurante, nombreRestaurante, estado, fechaHora, direccion, pagoTotal, productos));
                             }
 
@@ -475,6 +475,20 @@ public class InicioClienteActivity extends AppCompatActivity {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
             finish();
+        }
+    }
+    private String obtenerEstadoPedido(int estado) {
+        switch (estado) {
+            case 1: return "Recibido";
+            case 2: return "En preparación";
+            case 3: return "En camino";
+            case 4: return "Entregado";
+            case 5: return "Cancelado";
+            case 6: return "Rechazado";
+            case 8: return  "Entregado";
+            case 7:
+                return "En camino";
+            default: return "Desconocido";
         }
     }
 

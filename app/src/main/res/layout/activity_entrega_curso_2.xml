@@ -1,10 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:id="@+id/header_layout"
@@ -246,8 +249,8 @@
 
     <LinearLayout
         android:id="@+id/linearLayout5"
-        android:layout_width="388dp"
-        android:layout_height="230dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="12dp"
         android:orientation="vertical"
@@ -276,30 +279,20 @@
             android:id="@+id/instruccion2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
             android:text="- Proporcionarle el código QR para el pago respectivo"
             android:textColor="#000000"
             android:textSize="16sp" />
 
-        <Button
-            android:id="@+id/button11"
-            android:layout_width="242dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="8dp"
-            android:text="Mostrar el QR"
-            android:textSize="18sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.496"
-            app:layout_constraintStart_toStartOf="parent" />
+        <!-- Imagen del código QR -->
+        <ImageView
+            android:id="@+id/qr_image"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:src="@drawable/placeholder"
+            android:layout_gravity="center"
+            android:contentDescription="QR Code" />
 
-        <TextView
-            android:id="@+id/instruccion3"
-            android:layout_width="369dp"
-            android:layout_height="64dp"
-            android:layout_marginEnd="60dp"
-            android:text="- Solicitarle al cliente el código QR enviado por el restaurante para el registro de la recepción del pedido"
-            android:textColor="#000000"
-            android:textSize="16sp" />
 
     </LinearLayout>
 
@@ -309,11 +302,14 @@
         android:layout_height="48dp"
         android:layout_marginStart="92dp"
         android:layout_marginBottom="28dp"
+        android:layout_marginTop="15dp"
         android:backgroundTint="@color/md_theme_onTertiaryFixed"
         android:text="Registrar el pedido"
         android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout5"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

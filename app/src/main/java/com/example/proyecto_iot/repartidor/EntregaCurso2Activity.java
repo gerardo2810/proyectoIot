@@ -45,11 +45,14 @@ public class EntregaCurso2Activity extends AppCompatActivity {
     String idPedido;
     String qrUrl;
     Button escanearQrButton;
+    ImageView imgPhoto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_entrega_curso_2);
+
+        imgPhoto = findViewById(R.id.qr_image);
 
         mostrarUbicacion();
 
@@ -128,13 +131,22 @@ public class EntregaCurso2Activity extends AppCompatActivity {
                     Toast.makeText(this, "Error al cargar los datos del pedido", Toast.LENGTH_SHORT).show();
                 });
 
-        Button btnShowDialog = findViewById(R.id.button11);
-        btnShowDialog.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showQrDialog(idRestaurante, db);
-            }
-        });
+        db.collection("restaurantes").document(idRestaurante)
+                .get()
+                .addOnSuccessListener(restauranteSnapshot -> {
+                    if (restauranteSnapshot.exists()) {
+                        qrUrl = restauranteSnapshot.getString("qrCodeUrl");
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Error al cargar los datos del restaurante", Toast.LENGTH_SHORT).show();
+                });
+
+
+        Glide.with(this)
+                .load(qrUrl)
+                .placeholder(R.drawable.placeholder)
+                .into(imgPhoto);
 
         escanearQrButton = findViewById(R.id.button3);
         escanearQrButton.setOnClickListener(v -> iniciarEscaneoQR());
@@ -148,42 +160,6 @@ public class EntregaCurso2Activity extends AppCompatActivity {
         Intent intent = new Intent(this, InicioRepartidorActivity.class); // Regresar a la vistaInicio
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Limpia la pila de actividades
         startActivity(intent);
-    }
-
-    private void showQrDialog(String idRestaurante, FirebaseFirestore db) {
-        // Crear el diálogo
-        final Dialog dialog = new Dialog(this);
-        db.collection("restaurantes").document(idRestaurante)
-                .get()
-                .addOnSuccessListener(restauranteSnapshot -> {
-                    if (restauranteSnapshot.exists()) {
-                        qrUrl = restauranteSnapshot.getString("qrCodeUrl");
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Error al cargar los datos del restaurante", Toast.LENGTH_SHORT).show();
-                });
-
-
-        dialog.setContentView(R.layout.dialog_qr_repartidor);
-        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT); // Ajustar tamaño
-
-        ImageView imgPhoto = dialog.findViewById(R.id.imgPhoto);
-        Glide.with(this)
-                .load(qrUrl)
-                .placeholder(R.drawable.placeholder)
-                .into(imgPhoto);
-
-        // Configurar el botón de cierre
-        Button btnClose = dialog.findViewById(R.id.btnClose);
-        btnClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-
-        dialog.show();
     }
 
     // Método para iniciar el escaneo de QR
@@ -250,7 +226,7 @@ public class EntregaCurso2Activity extends AppCompatActivity {
                 .addOnSuccessListener(restauranteSnapshot -> {
                     if (restauranteSnapshot.exists()) {
                         // Datos del pedido
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", new Locale("es", "PE"));
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss a", new Locale("es", "PE"));
                         dateFormat.setTimeZone(TimeZone.getTimeZone("America/Lima"));
                         String fecha = dateFormat.format(new Date());
 

@@ -104,7 +104,7 @@
             android:id="@+id/see_more"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Cancelar Órden"
+            android:text="Actualizar"
             android:textColor="#FF0640"
             android:textStyle="bold"
             app:layout_constraintTop_toBottomOf="@id/order_title"

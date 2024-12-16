@@ -84,7 +84,7 @@ public class HistorialPedidosActivity extends AppCompatActivity {
                             int estado = document.getLong("estado").intValue();
                             System.out.println("PEDIDO " + estado);
                             // Filtrar pedidos por estado (4, 5 o 6)
-                            if (estado == 4 || estado == 5 || estado == 6) {
+                            if (estado == 4 || estado == 5 || estado == 6 || estado==8) {
                                 String fechaHora = document.getString("fechaHora");
                                 String direccion = document.getString("direccion");
                                 System.out.println("ENTRO" + fechaHora);

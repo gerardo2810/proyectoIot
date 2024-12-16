@@ -145,6 +145,7 @@ public class HistorialPedidosAdapter extends RecyclerView.Adapter<HistorialPedid
             case 4: return "Entregado";
             case 5: return "Cancelado";
             case 6: return "Rechazado";
+            case 8: return  "Entregado";
             default: return "Desconocido";
         }
     }
@@ -153,10 +154,13 @@ public class HistorialPedidosAdapter extends RecyclerView.Adapter<HistorialPedid
             case 4: // Entregado
                 return context.getResources().getColor(R.color.verde_estado);
             case 5: // Cancelado
+                return context.getResources().getColor(R.color.rojo_estado);
             case 6: // Rechazado
                 return context.getResources().getColor(R.color.rojo_estado);
             case 3: // En camino
                 return context.getResources().getColor(R.color.amarillo_estado);
+            case 8:
+                return context.getResources().getColor(R.color.verde_estado);
             default: // Otros estados
                 return context.getResources().getColor(R.color.gris_estado);
         }

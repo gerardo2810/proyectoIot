@@ -375,7 +375,7 @@ public class InicioClienteActivity extends AppCompatActivity {
                             }
 
                             // Manejar estados 2 y 3
-                            if (estado == 2 || estado == 3) {
+                            if (estado == 2 || estado == 3 || estado==7) {
                                 ordersList.add(new Pedido(idPedido, idRestaurante, nombreRestaurante, estado, fechaHora, direccion, pagoTotal, productos));
                             }
 

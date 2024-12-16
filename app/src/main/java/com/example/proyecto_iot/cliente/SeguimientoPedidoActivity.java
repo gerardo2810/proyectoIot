@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Build;
 import android.util.Log;
@@ -84,6 +85,23 @@ public class SeguimientoPedidoActivity extends AppCompatActivity implements OnMa
                         1);
             }
         }
+        // Encuentra la vista por id
+        TextView seeMoreButton = findViewById(R.id.see_more);
+
+        // Guarda el estado actual si es necesario
+        String currentText = seeMoreButton.getText().toString();
+
+        // Realiza actualizaciones en la vista
+        seeMoreButton.setText(currentText); // Mantener el texto
+        seeMoreButton.setBackgroundColor(Color.GREEN); // Cambiar el color
+
+        // Refresca la vista para que los cambios sean visibles
+        seeMoreButton.invalidate();
+
+        // Opcional: Agrega un listener para acciones dinámicas
+        seeMoreButton.setOnClickListener(v -> {
+            Toast.makeText(this, "Botón actualizado sin perder datos", Toast.LENGTH_SHORT).show();
+        });
 
         // Ajustar los márgenes para las barras del sistema
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {

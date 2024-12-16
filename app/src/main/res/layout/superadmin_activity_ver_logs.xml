@@ -62,15 +62,67 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/header_layout" />
 
+    <!-- Spinners para ROL y ESTADO DE CUENTA -->
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="170dp"
+        android:layout_height="66dp"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="30dp"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView4">
+
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ROL:"
+            android:textStyle="bold" />
+
+        <Spinner
+            android:id="@+id/spinnerRol"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/border_layout_combobox" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="170dp"
+        android:layout_height="66dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="25dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView4">
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="FECHA:"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btnFecha"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:text="Seleccionar Fecha"
+            android:background="@drawable/border_layout_combobox" />
+    </LinearLayout>
+
     <!-- RecyclerView para los Logs -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewLogsSA"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="10dp"
         android:padding="16dp"
         app:layout_constraintBottom_toTopOf="@id/view_bottom_navigation"
-        app:layout_constraintTop_toBottomOf="@id/textView4" />
+        app:layout_constraintTop_toBottomOf="@id/linearLayout" />
 
     <!-- Bottom Navigation -->
     <View

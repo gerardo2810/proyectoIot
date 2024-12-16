@@ -53,6 +53,7 @@ public class RecojoCurso2Activity extends AppCompatActivity {
                     if (documentSnapshot.exists()) {
                         String idRestaurante = documentSnapshot.getString("idRestaurante");
                         String idCliente = documentSnapshot.getString("idCliente");
+                        String codigo = documentSnapshot.getString("codigo");
                         String estadoPedido = "Listo para recojer";
                         // Recupera el array de productos (IDs)
                         List<Map<String,Object>> productos = (List<Map<String,Object>>) documentSnapshot.get("productos");
@@ -81,7 +82,7 @@ public class RecojoCurso2Activity extends AppCompatActivity {
                         }
 
                         TextView tvIdPedido = findViewById(R.id.idPedido);
-                        tvIdPedido.setText(idPedido);
+                        tvIdPedido.setText(codigo);
 
                         TextView tvEstadoPedido = findViewById(R.id.texto2);
                         tvEstadoPedido.setText(estadoPedido);

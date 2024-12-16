@@ -65,6 +65,7 @@ public class EntregaCurso2Activity extends AppCompatActivity {
                         String idCliente = documentSnapshot.getString("idCliente");
                         String direccion = documentSnapshot.getString("direccion");
                         idRestaurante = documentSnapshot.getString("idRestaurante");
+                        String codigo = documentSnapshot.getString("codigo");
 
                         TextView direccionClienteTextView = findViewById(R.id.direccion_destino);
                         direccionClienteTextView.setText(direccion);
@@ -97,7 +98,7 @@ public class EntregaCurso2Activity extends AppCompatActivity {
                         }
 
                         TextView tvIdPedido = findViewById(R.id.idPedido);
-                        tvIdPedido.setText(idPedido);
+                        tvIdPedido.setText(codigo);
 
                         // Ahora consulta los datos del cliente
                         db.collection("clientes").document(idCliente)

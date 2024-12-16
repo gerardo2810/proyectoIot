@@ -7,15 +7,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.admin_restaurante.EditarProductoActivity;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
 
@@ -38,20 +43,24 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.Produc
     @Override
     public void onBindViewHolder(@NonNull ProductoViewHolder holder, int position) {
         Producto product = productList.get(position);
+
+        // Configurar datos del producto
         holder.tvProductName.setText(product.getNombre());
         holder.tvProductStock.setText("Stock: " + product.getStock() + " unidades");
 
-        // Cargar la imagen del producto desde la URL
+        // Cargar imagen del producto
         Glide.with(context)
                 .load(product.getImagen())
-                .placeholder(R.drawable.sinfoto) // Imagen por defecto mientras carga
-                .into(holder.img_product);
+                .placeholder(R.drawable.sinfoto)
+                .into(holder.imgProduct);
 
-        // Configurar el switch
-        holder.switchProduct.setChecked(product.getActive() != null ? product.getActive() : false);
+        // Configurar el estado inicial del Switch
+        holder.switchProduct.setOnCheckedChangeListener(null); // Evitar el llamado inicial
+        holder.switchProduct.setChecked(product.isActive());
+
+        // Listener del Switch para cambiar estado
         holder.switchProduct.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            product.setActive(isChecked);
-            // Aquí puedes guardar el estado del producto si es necesario
+            mostrarDialogoConfirmacion(holder, product, position, isChecked);
         });
 
         // Acción del botón editar
@@ -67,15 +76,55 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.Produc
         return productList.size();
     }
 
-    // Método para actualizar los datos del adaptador
+    // Método para actualizar la lista de productos
     public void updateData(List<Producto> newProductList) {
         this.productList = newProductList;
         notifyDataSetChanged();
     }
 
+    // Mostrar diálogo de confirmación
+    private void mostrarDialogoConfirmacion(ProductoViewHolder holder, Producto product, int position, boolean nuevoEstado) {
+        String mensaje = nuevoEstado
+                ? "¿Está seguro de que desea activar este producto?"
+                : "¿Está seguro de que desea desactivar este producto?";
+
+        new AlertDialog.Builder(context)
+                .setTitle("Confirmación")
+                .setMessage(mensaje)
+                .setPositiveButton("Sí", (dialog, which) -> {
+                    // Actualizar estado del producto
+                    product.setActive(nuevoEstado);
+                    actualizarEstadoProducto(product);
+
+                    // Actualizar la interfaz
+                    holder.switchProduct.setChecked(nuevoEstado);
+                    notifyItemChanged(position);
+                })
+                .setNegativeButton("No", (dialog, which) -> {
+                    // Revertir el estado del Switch
+                    holder.switchProduct.setChecked(!nuevoEstado);
+                })
+                .show();
+    }
+
+    // Actualizar estado en la base de datos
+    private void actualizarEstadoProducto(Producto product) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("platos")
+                .document(product.getId())
+                .update("isActive", product.isActive())
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(context, "Estado del producto actualizado correctamente", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(context, "Error al actualizar el estado", Toast.LENGTH_SHORT).show();
+                });
+    }
+
+
     public static class ProductoViewHolder extends RecyclerView.ViewHolder {
         TextView tvProductName, tvProductStock;
-        ImageView img_product;
+        ImageView imgProduct;
         Switch switchProduct;
         Button btnEditProduct;
 
@@ -83,7 +132,7 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.Produc
             super(itemView);
             tvProductName = itemView.findViewById(R.id.tv_product_name);
             tvProductStock = itemView.findViewById(R.id.tv_product_stock);
-            img_product = itemView.findViewById(R.id.img_product);
+            imgProduct = itemView.findViewById(R.id.img_product);
             switchProduct = itemView.findViewById(R.id.switch_product);
             btnEditProduct = itemView.findViewById(R.id.btn_edit_product);
         }

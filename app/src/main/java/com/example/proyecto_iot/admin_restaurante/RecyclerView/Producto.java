@@ -10,7 +10,7 @@ public class Producto {
     private int TiempoPreparacion;
     private int cantidadDeVentas;
     private String idCategoria;
-    private Boolean isActive;
+    private boolean isActive;
 
     public Producto() {
     }
@@ -87,11 +87,11 @@ public class Producto {
         this.idCategoria = idCategoria;
     }
 
-    public Boolean getActive() {
+    public boolean isActive() {
         return isActive;
     }
 
-    public void setActive(Boolean active) {
+    public void setActive(boolean active) {
         isActive = active;
     }
 }

@@ -36,7 +36,6 @@ public class EditarProductoActivity extends AppCompatActivity {
     private StorageReference storageRef;
     private String productId;
     private Producto producto;
-    private Button btnDeleteProduct;
 
 
     @Override
@@ -65,7 +64,6 @@ public class EditarProductoActivity extends AppCompatActivity {
         btnUploadImage = findViewById(R.id.btn_upload_image);
         btnSaveProduct = findViewById(R.id.btn_save_product);
         imageView5 = findViewById(R.id.imageView5);
-        btnDeleteProduct = findViewById(R.id.borrar_producto);
 
         // Cargar datos del producto desde Firestore
         loadProductData();
@@ -75,9 +73,6 @@ public class EditarProductoActivity extends AppCompatActivity {
 
         // Configurar botón para guardar cambios
         btnSaveProduct.setOnClickListener(v -> saveProductChanges());
-
-        // Configurar botón de borrar producto
-        btnDeleteProduct.setOnClickListener(v -> showDeleteConfirmationDialog());
 
         // Configurar botón de retroceso
         ImageView backButton = findViewById(R.id.back_button);
@@ -180,13 +175,13 @@ public class EditarProductoActivity extends AppCompatActivity {
         TextView tvDeleteMessage = customLayout.findViewById(R.id.tv_delete_message);
 
         // Personalizar mensaje
-        tvDeleteMessage.setText("¿Estás seguro de borrar este producto?");
+        tvDeleteMessage.setText("¿Estás seguro de desactivar este producto?");
 
         builder.setView(customLayout);
         AlertDialog dialog = builder.create();
 
         btnConfirmDelete.setOnClickListener(v -> {
-            deleteProductFromFirestore();
+            deactivateProductInFirestore(); // Actualiza el campo isActive
             dialog.dismiss();
         });
 
@@ -195,13 +190,17 @@ public class EditarProductoActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    private void deleteProductFromFirestore() {
+    private void deactivateProductInFirestore() {
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("isActive", false); // Actualizar campo isActive a false
+
         db.collection("platos").document(productId)
-                .delete()
+                .update(updates)
                 .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(this, "Producto eliminado correctamente.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Producto desactivado correctamente.", Toast.LENGTH_SHORT).show();
                     finish(); // Cierra la actividad
                 })
-                .addOnFailureListener(e -> Toast.makeText(this, "Error al eliminar el producto: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                .addOnFailureListener(e -> Toast.makeText(this, "Error al desactivar el producto: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
+
 }

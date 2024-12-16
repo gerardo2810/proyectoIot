@@ -167,6 +167,9 @@ public class reporte_restaurante_superadmin extends AppCompatActivity {
                 } else if (item.getItemId() == R.id.navigation_reportes) {
                     intent = new Intent(reporte_restaurante_superadmin.this, gestion_reportes_superadmin.class);
                 }
+                else if (item.getItemId() == R.id.navigation_perfil) {
+                    intent = new Intent(reporte_restaurante_superadmin.this, gestion_reportes_superadmin.class);
+                }
                 if (intent != null) {
                     intent.putExtra("SELECTED_ITEM_ID", item.getItemId());
                     startActivity(intent);

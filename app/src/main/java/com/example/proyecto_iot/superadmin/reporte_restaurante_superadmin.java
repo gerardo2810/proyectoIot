@@ -553,6 +553,9 @@ public class reporte_restaurante_superadmin extends AppCompatActivity {
             }
         });
 
+        // Desactivar los xlabels
+        barChart.getXAxis().setDrawLabels(false);
+
         barChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
         barChart.getXAxis().setGranularity(1f);
         barChart.getXAxis().setGranularityEnabled(true);

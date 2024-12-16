@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -24,6 +25,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.proyecto_iot.LoginActivity;
 import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.repartidor.RecyclerView.PedidoRecoger;
 import com.example.proyecto_iot.repartidor.RecyclerView.PedidosRecogerAdapter;
@@ -56,6 +58,8 @@ public class InicioRepartidorActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inicio_repartidor);
+
+        verificarEstadoUsuario();
 
         textViewUbicacion = findViewById(R.id.textViewUbicacion);
 
@@ -203,6 +207,50 @@ public class InicioRepartidorActivity extends AppCompatActivity {
 
                 });
 
+    }
+
+    private void verificarEstadoUsuario() {
+        // Obtener instancia de FirebaseAuth
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser usuarioActual = firebaseAuth.getCurrentUser();
+
+        if (usuarioActual != null) {
+            String uid = usuarioActual.getUid();
+
+            // Referencia a Firestore
+            FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+
+            // Buscar el documento del usuario por UID
+            firestore.collection("repartidores").document(uid).get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            if (document.exists()) {
+                                Boolean habilitado = document.getBoolean("habilitado");
+                                Boolean aceptado = document.getBoolean("aceptado");
+                                if (!habilitado && !aceptado) {
+                                    // Desloguear al usuario y redirigir al LoginActivity
+                                    FirebaseAuth.getInstance().signOut();
+                                    Intent intent = new Intent(this, LoginActivity.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    startActivity(intent);
+                                    Toast.makeText(this, "Su cuenta está inhabilitada. Contáctese con soporte.", Toast.LENGTH_LONG).show();
+                                    finish();
+                                }
+                            } else {
+                                Toast.makeText(this, "El documento no existe.", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Toast.makeText(this, "Error al verificar el estado del usuario.", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        } else {
+            // Si no hay un usuario logueado, redirigir al LoginActivity
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+        }
     }
 
     public void mostrarAlerta(){

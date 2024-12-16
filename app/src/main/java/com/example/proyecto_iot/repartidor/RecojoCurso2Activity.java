@@ -24,9 +24,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class RecojoCurso2Activity extends AppCompatActivity {
@@ -151,6 +154,7 @@ public class RecojoCurso2Activity extends AppCompatActivity {
                     .update("estado", 7)
                     .addOnSuccessListener(aVoid -> {
                         // Acción si la actualización fue exitosa
+                        guardarLog("Recogió el pedido de id: " + idPedido + " y ya esta en camino a la entrega.", "Repartidor");
                         Log.d("Firebase", "Entrega del pedido en progreso");
                     })
                     .addOnFailureListener(e -> {
@@ -164,6 +168,38 @@ public class RecojoCurso2Activity extends AppCompatActivity {
             startActivity(intent);
         });
 
+    }
+
+    public void guardarLog(String mensaje, String rol) {
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        // Obtener el UID del usuario logueado
+        String usuarioUID = mAuth.getCurrentUser() != null ? mAuth.getCurrentUser().getUid() : "Usuario desconocido";
+
+        // Obtener fecha y hora actuales
+        String fechaActual = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        String horaActual = new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new Date());
+
+        // Crear un mapa para guardar el log
+        HashMap<String, Object> logData = new HashMap<>();
+        logData.put("mensaje", mensaje);
+        logData.put("usuarioUID", usuarioUID);
+        logData.put("rol", rol);
+        logData.put("fecha", fechaActual);
+        logData.put("hora", horaActual);
+
+        // Guardar el log en Firestore
+        db.collection("logs")
+                .add(logData)
+                .addOnSuccessListener(documentReference -> {
+                    // Éxito al guardar el log
+                    System.out.println("Log guardado con éxito. ID: " + documentReference.getId());
+                })
+                .addOnFailureListener(e -> {
+                    // Error al guardar el log
+                    System.err.println("Error al guardar el log: " + e.getMessage());
+                });
     }
 
     @SuppressWarnings("MissingSuperCall")

@@ -61,8 +61,11 @@ public class ConfirmarPagoActivity extends AppCompatActivity {
                                 .addOnSuccessListener(aVoid1 -> {
                                     Toast.makeText(this, "Pago completado correctamente.", Toast.LENGTH_SHORT).show();
                                     // Redirigir al inicio
+                                    // Redirigir al inicio sin borrar los datos previos
                                     Intent intent1 = new Intent(this, SeguimientoPedidoActivity.class);
-                                    finish();
+                                    intent1.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT); // Reutiliza la actividad existente
+                                    startActivity(intent1);
+                                    finish(); // Finaliza la actividad actual si es necesario
                                 })
                                 .addOnFailureListener(e -> {
                                     Toast.makeText(this, "Error al guardar el historial.", Toast.LENGTH_SHORT).show();

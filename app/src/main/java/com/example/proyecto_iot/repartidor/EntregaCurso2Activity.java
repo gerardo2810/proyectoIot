@@ -126,28 +126,31 @@ public class EntregaCurso2Activity extends AppCompatActivity {
                                 .addOnFailureListener(e -> {
                                     Toast.makeText(this, "Error al cargar los datos del restaurante", Toast.LENGTH_SHORT).show();
                                 });
+
+                        db.collection("restaurantes").document(idRestaurante)
+                                .get()
+                                .addOnSuccessListener(restauranteSnapshot -> {
+                                    if (restauranteSnapshot.exists()) {
+                                        qrUrl = restauranteSnapshot.getString("qrCodeUrl");
+                                        Glide.with(this)
+                                                .load(qrUrl)
+                                                .placeholder(R.drawable.placeholder)
+                                                .into(imgPhoto);
+                                    }
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(this, "Error al cargar los datos del restaurante", Toast.LENGTH_SHORT).show();
+                                });
                     }
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Error al cargar los datos del pedido", Toast.LENGTH_SHORT).show();
                 });
 
-        db.collection("restaurantes").document(idRestaurante)
-                .get()
-                .addOnSuccessListener(restauranteSnapshot -> {
-                    if (restauranteSnapshot.exists()) {
-                        qrUrl = restauranteSnapshot.getString("qrCodeUrl");
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Error al cargar los datos del restaurante", Toast.LENGTH_SHORT).show();
-                });
 
 
-        Glide.with(this)
-                .load(qrUrl)
-                .placeholder(R.drawable.placeholder)
-                .into(imgPhoto);
+
+
 
         escanearQrButton = findViewById(R.id.button3);
         escanearQrButton.setOnClickListener(v -> iniciarEscaneoQR());

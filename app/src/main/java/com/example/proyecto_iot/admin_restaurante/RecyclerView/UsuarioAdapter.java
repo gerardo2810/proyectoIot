@@ -75,6 +75,7 @@ public class UsuarioAdapter extends RecyclerView.Adapter<UsuarioAdapter.UsuarioV
             Intent intent = new Intent(context, DetalleUsuarioActivity.class);
             intent.putExtra("idCliente", idCliente);
             intent.putExtra("cantPedidos", usuario.getCantPedidos());
+            intent.putExtra("montoacumulado", usuario.getGastado());
             context.startActivity(intent);
         });
     }

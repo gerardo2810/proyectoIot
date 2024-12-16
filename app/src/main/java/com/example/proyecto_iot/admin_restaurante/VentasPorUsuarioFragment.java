@@ -106,6 +106,11 @@ public class VentasPorUsuarioFragment extends Fragment {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerMeses.setAdapter(adapter);
 
+        // Spinner inicia en el mes actual
+        Calendar calendario = Calendar.getInstance();
+        int mesActual = calendario.get(Calendar.MONTH);
+        spinnerMeses.setSelection(mesActual);
+
         // Observar el idRestaurante
         restauranteViewModel.getIdRestaurante().observe(getViewLifecycleOwner(), idRestaurante -> {
             idRestauranteActual = idRestaurante;
@@ -138,10 +143,11 @@ public class VentasPorUsuarioFragment extends Fragment {
 
         db.collection("pedidos")
                 .whereEqualTo("idRestaurante", idRestauranteActual)
-                .whereEqualTo("estado", 4) // Solo pedidos completados
+                .whereEqualTo("estado", 8) // Solo pedidos completados
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
-                    Map<String, Integer> acumuladoPorCliente = new HashMap<>();
+                    Map<String, Integer> cantidadPorCliente = new HashMap<>();
+                    Map<String, Double> totalGastadoPorCliente = new HashMap<>();
 
                     for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                         String fechaStr = doc.getString("fechaHora");
@@ -164,18 +170,23 @@ public class VentasPorUsuarioFragment extends Fragment {
                             cal.setTime(fechaDate);
                             int mesPedido = cal.get(Calendar.MONTH) + 1;
                             if (mesPedido == mesSeleccionado) {
-                                // Contar a partir del campo idCliente
+                                // Contar pedidos y sumar pagoTotal
                                 String idCliente = doc.getString("idCliente");
+                                double pagoTotal = doc.getDouble("pagoTotal") != null ? doc.getDouble("pagoTotal") : 0.0;
+
                                 if (idCliente != null && !idCliente.isEmpty()) {
-                                    int cantidadActual = acumuladoPorCliente.getOrDefault(idCliente, 0);
-                                    acumuladoPorCliente.put(idCliente, cantidadActual + 1);
+                                    int cantidadActual = cantidadPorCliente.getOrDefault(idCliente, 0);
+                                    cantidadPorCliente.put(idCliente, cantidadActual + 1);
+
+                                    double totalActual = totalGastadoPorCliente.getOrDefault(idCliente, 0.0);
+                                    totalGastadoPorCliente.put(idCliente, totalActual + pagoTotal);
                                 }
                             }
                         }
                     }
 
                     // Ordenar por cantidad desc
-                    List<Map.Entry<String, Integer>> listaOrdenada = new ArrayList<>(acumuladoPorCliente.entrySet());
+                    List<Map.Entry<String, Integer>> listaOrdenada = new ArrayList<>(cantidadPorCliente.entrySet());
                     listaOrdenada.sort((o1, o2) -> o2.getValue().compareTo(o1.getValue()));
 
                     // Top 10
@@ -184,12 +195,11 @@ public class VentasPorUsuarioFragment extends Fragment {
                     for (Map.Entry<String, Integer> entry : top10) {
                         String idCliente = entry.getKey();
                         int cantPedidos = entry.getValue();
+                        double totalGastado = totalGastadoPorCliente.getOrDefault(idCliente, 0.0);
 
-                        // Crear objeto Usuario.
-                        // Aquí solo tenemos idCliente y la cantidad de pedidos.
-                        // Podemos mostrar el idCliente en el nombre, y la cantidad de pedidos en cantPedidos.
-                        // El resto de campos se pueden dejar vacíos o estaticos.
-                        Usuario u = new Usuario(idCliente, "", "", "", "", String.valueOf(cantPedidos), "");
+                        // Crear objeto Usuario
+                        Usuario u = new Usuario(idCliente, "", "", "", "",
+                                "Pedidos: " + cantPedidos, "Total: $" + String.format("%.2f", totalGastado));
                         listaUser.add(u);
                     }
 

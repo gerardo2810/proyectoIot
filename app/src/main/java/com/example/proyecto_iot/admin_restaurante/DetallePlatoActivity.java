@@ -3,52 +3,99 @@ package com.example.proyecto_iot.admin_restaurante;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
 import com.example.proyecto_iot.R;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class DetallePlatoActivity extends AppCompatActivity {
+
+    private FirebaseFirestore db;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.restaurante_activity_detalle_plato);
 
-        ImageView ivImagenPlato = findViewById(R.id.iv_imagen_plato);
-        TextView tvNombrePlato = findViewById(R.id.tv_nombre_plato_detalle);
-        TextView tvCategoriaPlato = findViewById(R.id.tv_categoria_plato_detalle);
-        TextView tvDescripcion = findViewById(R.id.tv_descripcion_plato_detalle);
-        TextView tvPrecio = findViewById(R.id.tv_precio_plato_detalle);
-        TextView tvCantidadVendida = findViewById(R.id.tv_cantidad_vendida);
-        TextView tvGanancia = findViewById(R.id.tv_ganancia);
+        db = FirebaseFirestore.getInstance();
 
-        // Obtener datos del intent
+        ImageButton backButton = findViewById(R.id.back_button);
+        ImageView imageView5 = findViewById(R.id.imageView5);
+        TextView etProductNombre = findViewById(R.id.et_product_nombre);
+        TextView etProductCategoria = findViewById(R.id.et_product_categoría);
+        TextView etProductDescription = findViewById(R.id.et_product_description);
+        TextView etProductPrice = findViewById(R.id.et_product_price);
+        TextView etProductStock = findViewById(R.id.et_product_stock);
+        TextView etTimePreparation = findViewById(R.id.et_time_preparation);
+
+        // Obtener idProducto del intent
         Intent intent = getIntent();
-        String imageResId = intent.getStringExtra("imageResId");
-        String nombre = intent.getStringExtra("nombre");
-        String categoria = intent.getStringExtra("categoria");
-        String descripcion = intent.getStringExtra("descripcion");
-        String precio = intent.getStringExtra("precio");
-        String cantVendida = intent.getStringExtra("cantVendida");
-        String ganancia = intent.getStringExtra("ganancia");
+        String idProducto = intent.getStringExtra("idProducto");
 
-        // Asignar valores a la vista
-        tvNombrePlato.setText(nombre);
-        tvCategoriaPlato.setText(categoria);
-        tvDescripcion.setText(descripcion);
-        tvPrecio.setText(precio);
-        tvCantidadVendida.setText(cantVendida);
-        tvGanancia.setText(ganancia);
-        ivImagenPlato.setImageResource(Integer.parseInt(imageResId));
+        // Si se requiere, puedes mostrar un indicador de carga mientras se obtienen los datos.
+        // Realizar la consulta a la colección "platos" con el idProducto
+        db.collection("platos").document(idProducto).get()
+                .addOnSuccessListener(platoDoc -> {
+                    if (platoDoc.exists()) {
+                        String nombre = platoDoc.getString("Nombre");
+                        String descripcion = platoDoc.getString("Descripcion");
+                        Double precio = platoDoc.getDouble("Precio");
+                        Long stockLong = platoDoc.getLong("Stock");
+                        Long tiempoPrepLong = platoDoc.getLong("TiempoPreparacion");
+                        String imagenUrl = platoDoc.getString("Imagen");
+                        String idCategoria = platoDoc.getString("idCategoria");
 
-        ImageView backButton = findViewById(R.id.back_button);
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+                        // Asignar los campos obtenidos
+                        if (nombre != null) etProductNombre.setText(nombre);
+                        if (descripcion != null) etProductDescription.setText(descripcion);
+                        if (precio != null) etProductPrice.setText("S/" + precio);
+                        if (stockLong != null) etProductStock.setText(stockLong + " unidades");
+                        if (tiempoPrepLong != null) etTimePreparation.setText(String.valueOf(tiempoPrepLong));
+
+                        // Cargar la imagen con Glide si hay URL
+                        if (imagenUrl != null && !imagenUrl.isEmpty()) {
+                            Glide.with(this)
+                                    .load(imagenUrl)
+                                    .placeholder(R.drawable.placeholder)
+                                    .into(imageView5);
+                        }
+
+                        // Ahora obtener el nombre de la categoría
+                        if (idCategoria != null && !idCategoria.isEmpty()) {
+                            db.collection("categorias").document(idCategoria).get()
+                                    .addOnSuccessListener(catDoc -> {
+                                        if (catDoc.exists()) {
+                                            String nombreCat = catDoc.getString("nombre");
+                                            if (nombreCat != null) {
+                                                etProductCategoria.setText(nombreCat);
+                                            } else {
+                                                etProductCategoria.setText("Sin categoría");
+                                            }
+                                        } else {
+                                            etProductCategoria.setText("Categoría no encontrada");
+                                        }
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        etProductCategoria.setText("Error al cargar categoría");
+                                    });
+                        } else {
+                            etProductCategoria.setText("Sin categoría");
+                        }
+
+                    } else {
+                        Toast.makeText(this, "No se encontró el producto", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Error al cargar datos del producto", Toast.LENGTH_SHORT).show();
+                });
+
+        backButton.setOnClickListener(v -> finish());
     }
 }

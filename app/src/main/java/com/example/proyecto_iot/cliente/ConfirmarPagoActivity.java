@@ -61,8 +61,7 @@ public class ConfirmarPagoActivity extends AppCompatActivity {
                                 .addOnSuccessListener(aVoid1 -> {
                                     Toast.makeText(this, "Pago completado correctamente.", Toast.LENGTH_SHORT).show();
                                     // Redirigir al inicio
-                                    Intent intent1 = new Intent(this, InicioClienteActivity.class);
-                                    startActivity(intent1);
+                                    Intent intent1 = new Intent(this, SeguimientoPedidoActivity.class);
                                     finish();
                                 })
                                 .addOnFailureListener(e -> {

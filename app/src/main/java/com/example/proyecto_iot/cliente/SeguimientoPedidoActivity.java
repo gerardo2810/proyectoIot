@@ -509,6 +509,7 @@ public class SeguimientoPedidoActivity extends AppCompatActivity implements OnMa
         intent.putExtra("nombreRestaurante", idRestaurante);
         startActivity(intent);
     }
+
     private void iniciarTemporizadorParaEstado3() {
         // Crear un temporizador de 30 segundos
         new android.os.Handler().postDelayed(() -> {

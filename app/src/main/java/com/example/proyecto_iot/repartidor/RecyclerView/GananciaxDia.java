@@ -1,6 +1,9 @@
 package com.example.proyecto_iot.repartidor.RecyclerView;
 
+import com.google.firebase.Timestamp;
+
 public class GananciaxDia {
+    private Timestamp fechaHora;
     private String fecha;
     private String nombreRestaurante;
     private String gananciaPedido;
@@ -12,6 +15,14 @@ public class GananciaxDia {
 
     public void setFecha(String fecha) {
         this.fecha = fecha;
+    }
+
+    public Timestamp getFechaHora() {
+        return fechaHora;
+    }
+
+    public void setFechaHora(Timestamp fechaHora) {
+        this.fechaHora = fechaHora;
     }
 
     public String getNombreRestaurante() {

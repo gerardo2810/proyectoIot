@@ -51,6 +51,13 @@
         <item>Repartidores</item>
         <item>Clientes</item>
     </string-array>
+    <string-array name="superadmin_lista_roles_2">
+        <item>-Seleccionar-</item>
+        <item>Super Administrador</item>
+        <item>Administradores</item>
+        <item>Repartidores</item>
+        <item>Clientes</item>
+    </string-array>
     <string-array name="superadmin_lista_estados">
         <item>-Seleccionar-</item>
         <item>Activo</item>

@@ -43,7 +43,7 @@ public class LogAdapterSA extends RecyclerView.Adapter<LogAdapterSA.LogsSAViewHo
         holder.textViewRol.setText(log.getRol());
 
         // Configurar fecha y hora
-        holder.textViewFechayHora.setText(log.getFecha() + " " + log.getHora());
+        holder.textViewFechayHora.setText(log.getFecha() + "/" + log.getHora());
 
         // Verificar si el rol es null
         String rol = log.getRol();

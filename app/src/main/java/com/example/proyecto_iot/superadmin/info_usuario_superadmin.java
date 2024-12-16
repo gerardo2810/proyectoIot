@@ -32,6 +32,7 @@ public class info_usuario_superadmin extends AppCompatActivity {
     private String nombrecompleto;
     private boolean habilitado;
     private SwitchMaterial switchEstadoCuenta;
+    private ImageView imageView3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +45,7 @@ public class info_usuario_superadmin extends AppCompatActivity {
         Log.d("VERIFICAR", "Rol: " + rol);
         switchEstadoCuenta = findViewById(R.id.switchEstadoCuenta);
         db = FirebaseFirestore.getInstance();
-        ImageView imageView3 = findViewById(R.id.imageView3);
+        imageView3 = findViewById(R.id.imageView3);
 
         //Volver una pantalla atras
         ImageView arrowIcon = findViewById(R.id.arrow_back_icon);

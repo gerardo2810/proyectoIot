@@ -20,7 +20,13 @@ import androidx.lifecycle.ViewModelProvider;
 import com.bumptech.glide.Glide;
 import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.admin_restaurante.RecyclerView.RestauranteViewModel;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
 
 public class AbrirRestauranteActivity extends AppCompatActivity {
 
@@ -117,6 +123,8 @@ public class AbrirRestauranteActivity extends AppCompatActivity {
                         .addOnSuccessListener(aVoid -> {
                             Toast.makeText(AbrirRestauranteActivity.this, "Restaurante abierto exitosamente.", Toast.LENGTH_SHORT).show();
 
+                            guardarLog("El administrador acaba de abrir su restaurante", "Administrador");
+
                             Intent inicioIntent = new Intent(AbrirRestauranteActivity.this, InicioRestauranteActivity.class);
                             inicioIntent.putExtra("idRestaurante", idRestaurante);
                             startActivity(inicioIntent);
@@ -136,4 +144,37 @@ public class AbrirRestauranteActivity extends AppCompatActivity {
 
         dialog.show();
     }
+
+    public void guardarLog(String mensaje, String rol) {
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        // Obtener el UID del usuario logueado
+        String usuarioUID = mAuth.getCurrentUser() != null ? mAuth.getCurrentUser().getUid() : "Usuario desconocido";
+
+        // Obtener fecha y hora actuales
+        String fechaActual = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        String horaActual = new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new Date());
+
+        // Crear un mapa para guardar el log
+        HashMap<String, Object> logData = new HashMap<>();
+        logData.put("mensaje", mensaje);
+        logData.put("usuarioUID", usuarioUID);
+        logData.put("rol", rol);
+        logData.put("fecha", fechaActual);
+        logData.put("hora", horaActual);
+
+        // Guardar el log en Firestore
+        db.collection("logs")
+                .add(logData)
+                .addOnSuccessListener(documentReference -> {
+                    // Éxito al guardar el log
+                    System.out.println("Log guardado con éxito. ID: " + documentReference.getId());
+                })
+                .addOnFailureListener(e -> {
+                    // Error al guardar el log
+                    System.err.println("Error al guardar el log: " + e.getMessage());
+                });
+    }
+
 }

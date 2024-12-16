@@ -1,5 +1,6 @@
 package com.example.proyecto_iot;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -23,6 +24,7 @@ import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -66,6 +68,7 @@ public class RegisterRepartidorActivity extends AppCompatActivity {
         txtPassword = findViewById(R.id.txtPassword);
         btnRegister = findViewById(R.id.btnRegister);
         lblLogin = findViewById(R.id.lblLogin);
+        etNacimiento.setOnClickListener(v -> mostrarDatePicker());
 
         //PDF
         textViewPdfUrl = findViewById(R.id.textViewPdfUrl);
@@ -81,6 +84,30 @@ public class RegisterRepartidorActivity extends AppCompatActivity {
 
         // Redirección al login
         lblLogin.setOnClickListener(view -> openLoginActivity());
+    }
+
+    private void mostrarDatePicker() {
+        // Obtener la fecha actual
+        final Calendar calendario = Calendar.getInstance();
+
+        // Configurar el DatePickerDialog
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                this,
+                (view, year, month, dayOfMonth) -> {
+                    // Formatear la fecha seleccionada
+                    String fechaSeleccionada = String.format(Locale.getDefault(), "%02d/%02d/%04d", dayOfMonth, month + 1, year);
+                    etNacimiento.setText(fechaSeleccionada);
+                },
+                calendario.get(Calendar.YEAR),  // Año inicial
+                calendario.get(Calendar.MONTH), // Mes inicial
+                calendario.get(Calendar.DAY_OF_MONTH) // Día inicial
+        );
+
+        // Restringir la fecha máxima (hoy) para que no se puedan seleccionar fechas futuras
+        datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
+
+        // Mostrar el diálogo
+        datePickerDialog.show();
     }
 
     public void openLoginActivity() {

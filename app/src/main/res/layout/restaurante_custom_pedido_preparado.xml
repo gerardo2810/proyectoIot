@@ -34,7 +34,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:backgroundTint="#6A1B9A"
+            android:backgroundTint="@color/green"
             android:text="Sí"
             android:textColor="@android:color/white"
             android:textSize="14sp" />
@@ -43,7 +43,7 @@
             android:id="@+id/btn_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="#B00020"
+            android:backgroundTint="@color/sin_repartidor"
             android:text="No"
             android:textColor="@android:color/white"
             android:textSize="14sp" />

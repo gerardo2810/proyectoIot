@@ -23,7 +23,10 @@ import android.widget.Toast;
 import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.admin_restaurante.RecyclerView.RestauranteViewModel;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.WriteBatch;
 
 import java.util.Arrays;
 
@@ -253,21 +256,59 @@ public class HomeRestauranteFragment extends Fragment {
     private void validatePendingOrders() {
         db.collection("pedidos")
                 .whereEqualTo("idRestaurante", restaurantId)
-                .whereIn("estado", Arrays.asList(0, 1, 2, 3, 7))
+                .whereIn("estado", Arrays.asList(1, 2, 3))
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     if (!querySnapshot.isEmpty()) {
+                        // Si hay pedidos en estado 1, 2 o 3, mostrar un mensaje y cancelar el cierre
                         new AlertDialog.Builder(requireContext())
                                 .setTitle("Pedidos pendientes")
-                                .setMessage("No puedes cerrar el restaurante porque hay pedidos pendientes.")
+                                .setMessage("No puedes cerrar el restaurante porque aún hay pedidos en proceso.")
                                 .setPositiveButton("Aceptar", null)
                                 .show();
                     } else {
+                        // Si no hay pedidos en 1, 2 o 3, validar pedidos en estado 0
+                        handlePendingStateZeroOrders();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(getContext(), "Error al validar pedidos.", Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void handlePendingStateZeroOrders() {
+        db.collection("pedidos")
+                .whereEqualTo("idRestaurante", restaurantId)
+                .whereEqualTo("estado", 0) // Obtener pedidos en estado 0
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    if (!querySnapshot.isEmpty()) {
+                        // Actualizar todos los pedidos con estado 0 a estado 5
+                        WriteBatch batch = db.batch();
+
+                        for (QueryDocumentSnapshot doc : querySnapshot) {
+                            DocumentReference pedidoRef = doc.getReference();
+                            batch.update(pedidoRef, "estado", 5);
+                        }
+
+                        batch.commit()
+                                .addOnSuccessListener(aVoid -> {
+                                    Toast.makeText(getContext(), "Pedidos rechazados y restaurante cerrado.", Toast.LENGTH_SHORT).show();
+                                    toggleRestaurantStatus(); // Cerrar restaurante
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(getContext(), "Error al actualizar pedidos.", Toast.LENGTH_SHORT).show();
+                                });
+                    } else {
+                        // Si no hay pedidos en estado 0, simplemente cerrar el restaurante
                         toggleRestaurantStatus();
                     }
                 })
-                .addOnFailureListener(e -> Toast.makeText(getContext(), "Error al validar pedidos.", Toast.LENGTH_SHORT).show());
+                .addOnFailureListener(e -> {
+                    Toast.makeText(getContext(), "Error al validar pedidos en estado 0.", Toast.LENGTH_SHORT).show();
+                });
     }
+
 
     private void showCustomAlertDialog(String title, String message) {
         Dialog dialog = new Dialog(requireContext());

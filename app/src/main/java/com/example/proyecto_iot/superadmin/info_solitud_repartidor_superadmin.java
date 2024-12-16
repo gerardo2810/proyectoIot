@@ -12,12 +12,19 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
+import com.example.proyecto_iot.LoginActivity;
 import com.example.proyecto_iot.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 
 import java.text.SimpleDateFormat;
@@ -35,6 +42,8 @@ public class info_solitud_repartidor_superadmin extends AppCompatActivity {
 
     private String UID;
     private String nombrecompleto;
+    private ImageView imageView3;
+    private ImageView imageView4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +52,46 @@ public class info_solitud_repartidor_superadmin extends AppCompatActivity {
 
         Intent intent = getIntent();
         UID = intent.getStringExtra("document_id");
+        imageView4 = findViewById(R.id.imageView4);
+
+        // Referencia a Firestore
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+
+        // Buscar el documento del usuario por UID
+        firestore.collection("repartidores").document(UID).get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            String cv = document.getString("cv");
+                            if (cv.equals("No adjuntó")) {
+                                Glide.with(this)
+                                        .load(R.drawable.nocvpdf) // Asegúrate de tener esta imagen en res/drawable
+                                        .placeholder(R.drawable.load)
+                                        .into(imageView4);
+
+                                // Configurar el click para mostrar un Toast
+                                imageView4.setOnClickListener(v ->
+                                        Toast.makeText(this, "El repartidor no adjuntó un cv", Toast.LENGTH_SHORT).show());
+                            } else {
+                                Glide.with(this)
+                                        .load(R.drawable.pdf_sa) // Asegúrate de tener esta imagen en res/drawable
+                                        .placeholder(R.drawable.load)
+                                        .into(imageView4);
+
+                                // Configurar el click para abrir el PDF
+                                imageView4.setOnClickListener(v -> openPDF(cv));
+                            }
+                        } else {
+                            Toast.makeText(this, "El documento no existe.", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(this, "Error al verificar el estado del usuario.", Toast.LENGTH_SHORT).show();
+                    }
+                });
 
         db = FirebaseFirestore.getInstance();
+        imageView3 = findViewById(R.id.imageView3);
         mAuth = FirebaseAuth.getInstance();
         Button btnAceptar = findViewById(R.id.btnAceptar);
         Button btnRechazar = findViewById(R.id.btnRechazar);
@@ -70,6 +117,12 @@ public class info_solitud_repartidor_superadmin extends AppCompatActivity {
                         TextView textViewFechNaci = findViewById(R.id.textViewFechNaci);
                         TextView textViewDireccion = findViewById(R.id.textViewDireccion);
                         nombrecompleto = documentSnapshot.getString("nombre") + " " + documentSnapshot.getString("apellido");
+                        String imagenUrl = documentSnapshot.getString("foto");
+
+                        Glide.with(this)
+                                .load(imagenUrl)
+                                .placeholder(R.drawable.load)// URL de la imagen
+                                .into(imageView3);
 
                         textViewNombre.setText(nombrecompleto);
                         textViewDNI.setText(documentSnapshot.getString("dni"));
@@ -146,6 +199,20 @@ public class info_solitud_repartidor_superadmin extends AppCompatActivity {
         });
         //----------------------------------------------------------------------------
 
+    }
+
+    private void openPDF(String cvUrl) {
+        // Referencia al archivo en Firebase Storage
+        StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(cvUrl);
+
+        // Obtener la URL de descarga
+        storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setDataAndType(uri, "application/pdf");
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }).addOnFailureListener(e ->
+                Toast.makeText(this, "No se pudo abrir el PDF", Toast.LENGTH_SHORT).show());
     }
 
     public void guardarLog(String mensaje, String rol) {

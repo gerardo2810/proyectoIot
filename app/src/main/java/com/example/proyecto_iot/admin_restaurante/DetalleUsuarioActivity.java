@@ -26,7 +26,7 @@ public class DetalleUsuarioActivity extends AppCompatActivity {
     private TextView etDni;
     private TextView etCorreo;
     private TextView etTelefono;
-    private TextView etTotalGastado;
+    private TextView etTotalGastado, etCantPedidos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,16 +44,24 @@ public class DetalleUsuarioActivity extends AppCompatActivity {
         etCorreo = findViewById(R.id.et_correo);
         etTelefono = findViewById(R.id.et_telefono);
         etTotalGastado = findViewById(R.id.et_total_gastado);
+        etCantPedidos = findViewById(R.id.et_total_pedidos);
 
         // Obtener idCliente y gastado del intent
         String idCliente = getIntent().getStringExtra("idCliente");
-        String gastado = getIntent().getStringExtra("gastado");
+        String gastado = getIntent().getStringExtra("montoacumulado");
+        String cantpedidos = getIntent().getStringExtra("cantPedidos");
 
         // Asignar el valor de gastado proveniente del Intent
         if (gastado != null && !gastado.isEmpty()) {
             etTotalGastado.setText(gastado);
         } else {
-            etTotalGastado.setText("N/A");
+            etTotalGastado.setText("-");
+        }
+
+        if (cantpedidos != null && !cantpedidos.isEmpty()) {
+            etCantPedidos.setText(cantpedidos);
+        } else {
+            etCantPedidos.setText("-");
         }
 
         // Consulta a la colección "clientes" para obtener los datos del cliente
@@ -77,7 +85,7 @@ public class DetalleUsuarioActivity extends AppCompatActivity {
                         if (nombre != null && apellido != null) {
                             etNombre.setText(nombre + " " + apellido);
                         }
-                        etEdad.setText("N/A"); // Si quisieras calcularla a partir de nacimiento podrías hacerlo
+                        etEdad.setText(nacimiento);
                         if (dni != null) etDni.setText(dni);
                         if (email != null) etCorreo.setText(email);
                         if (telefono != null) etTelefono.setText(telefono);

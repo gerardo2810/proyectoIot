@@ -82,7 +82,7 @@
         <Spinner
             android:id="@+id/spinnerTipoReporte"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:layout_marginTop="5dp"
             android:background="@drawable/border_layout_combobox" />
     </LinearLayout>
@@ -106,7 +106,7 @@
         <Spinner
             android:id="@+id/spinnerRestaurante"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:layout_marginTop="5dp"
             android:background="@drawable/border_layout_combobox" />
     </LinearLayout>
@@ -116,7 +116,7 @@
         android:id="@+id/recyclerViewReportesRecibidos"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:padding="16dp"
         app:layout_constraintBottom_toTopOf="@id/view_bottom_navigation"
         app:layout_constraintTop_toBottomOf="@id/linearLayout" />

@@ -30,6 +30,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -88,14 +89,23 @@ public class HistorialRepartidorActivity extends AppCompatActivity {
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     listaGananciasDia.clear();
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        Timestamp fechaHora = document.getTimestamp("fechaHora");
                         String fecha = document.getString("fecha");
                         String nombreRestaurante = document.getString("nombreRestaurante");
 
                         GananciaxDia gananciaxDia = new GananciaxDia();
+                        gananciaxDia.setFechaHora(fechaHora);
                         gananciaxDia.setFecha(fecha);
                         gananciaxDia.setNombreRestaurante(nombreRestaurante);
                         listaGananciasDia.add(gananciaxDia);
                     }
+
+                    // Ordena la lista manualmente por fechaHora (más reciente primero)
+                    Collections.sort(listaGananciasDia, (o1, o2) ->
+                            o2.getFechaHora().compareTo(o1.getFechaHora())
+                    );
+
+
                     adapter.notifyDataSetChanged();
                 });
 

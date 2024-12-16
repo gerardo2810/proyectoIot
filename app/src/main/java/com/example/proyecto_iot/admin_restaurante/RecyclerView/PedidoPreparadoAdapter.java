@@ -29,6 +29,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.proyecto_iot.MainActivity;
 import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.admin_restaurante.EnPreparacionFragment;
+import com.example.proyecto_iot.admin_restaurante.InfoPedidoHistorialActivity;
 import com.example.proyecto_iot.admin_restaurante.InicioRestauranteActivity;
 import com.example.proyecto_iot.admin_restaurante.MasDetallesPedidoActivity;
 import com.example.proyecto_iot.admin_restaurante.PedidoDetallesActivity;
@@ -65,10 +66,6 @@ public class PedidoPreparadoAdapter extends RecyclerView.Adapter<PedidoPreparado
     public void onBindViewHolder(@NonNull PedidoViewHolder holder, int position) {
         Pedido pedido = pedidoList.get(position);
 
-        // Extraer solo la hora de la fecha
-        String horaFormateada = obtenerSoloHora(pedido.getFechaHora());
-        holder.fechaHora.setText(horaFormateada); // Mostrar solo la hora
-
         // Mostrar datos básicos del pedido
         holder.cant_productos.setText(pedido.getProductos().size() + " productos");
         holder.tvPedidoCodigo.setText(pedido.getCodigo());
@@ -100,7 +97,7 @@ public class PedidoPreparadoAdapter extends RecyclerView.Adapter<PedidoPreparado
         });
 
         holder.verMasDetalles.setOnClickListener(v -> {
-            Intent intent = new Intent(context, PedidoDetallesActivity.class);
+            Intent intent = new Intent(context, InfoPedidoHistorialActivity.class);
             intent.putExtra("pedidoId", pedido.getId());
             context.startActivity(intent);
         });
@@ -138,49 +135,10 @@ public class PedidoPreparadoAdapter extends RecyclerView.Adapter<PedidoPreparado
         public PedidoViewHolder(@NonNull View itemView) {
             super(itemView);
             tvPedidoCodigo = itemView.findViewById(R.id.codID);
-            fechaHora = itemView.findViewById(R.id.fecha_hora);
             cliente = itemView.findViewById(R.id.cliente);
             cant_productos = itemView.findViewById(R.id.cant_productos);
             verMasDetalles = itemView.findViewById(R.id.vermas);
             btn_ready_to_deliver = itemView.findViewById(R.id.btn_ready_to_deliver);
-        }
-    }
-
-    private String obtenerSoloHora(String fechaCompleta) {
-        try {
-            Log.d("obtenerSoloHora", "Fecha recibida: " + fechaCompleta);
-
-            // Formato de entrada (según lo recibido desde Firestore en UTC)
-            SimpleDateFormat formatoEntrada = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy, hh:mm:ss a", new Locale("es", "PE"));
-            formatoEntrada.setTimeZone(TimeZone.getTimeZone("UTC")); // La entrada está en UTC
-
-            // Parsear la fecha en UTC
-            Date fechaUTC = formatoEntrada.parse(fechaCompleta);
-
-            if (fechaUTC != null) {
-                // Crear un calendario para manejar la fecha
-                Calendar calendario = Calendar.getInstance();
-                calendario.setTime(fechaUTC);
-
-                // Restar 7 horas (en milisegundos)
-                calendario.add(Calendar.HOUR_OF_DAY, -7);
-
-                // Obtener hora, minuto y segundo ajustados
-                int hora = calendario.get(Calendar.HOUR_OF_DAY);
-                int minuto = calendario.get(Calendar.MINUTE);
-                int segundo = calendario.get(Calendar.SECOND);
-
-                // Formatear la hora ajustada manualmente
-                String horaFormateada = String.format("%02d:%02d:%02d", hora, minuto, segundo);
-                Log.d("obtenerSoloHora", "Hora final obtenida: " + horaFormateada);
-                return horaFormateada;
-            } else {
-                Log.e("obtenerSoloHora", "Error: Fecha parseada es nula.");
-                return "Hora no disponible";
-            }
-        } catch (ParseException e) {
-            Log.e("obtenerSoloHora", "Error al parsear la fecha: " + fechaCompleta, e);
-            return "Hora no disponible";
         }
     }
 }

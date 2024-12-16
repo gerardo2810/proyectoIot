@@ -22,13 +22,17 @@ import com.example.proyecto_iot.admin_restaurante.RecyclerView.Pedido;
 import com.example.proyecto_iot.admin_restaurante.RecyclerView.Producto;
 import com.example.proyecto_iot.admin_restaurante.RecyclerView.ProductoPedido;
 import com.example.proyecto_iot.admin_restaurante.RecyclerView.ProductoPedidoAdapter;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 public class PedidoDetallesActivity extends AppCompatActivity {
     private FirebaseFirestore db;
@@ -156,10 +160,12 @@ public class PedidoDetallesActivity extends AppCompatActivity {
                                 if (nuevoEstado == 1) {
                                     actualizarCantidadDeVentas(() -> {
                                         Toast.makeText(this, "Pedido aceptado y actualizado.", Toast.LENGTH_SHORT).show();
+                                        guardarLog("El administrador aceptó el pedido de id: " + pedidoId, "Administrador");
                                         finish();
                                     });
                                 } else {
                                     Toast.makeText(this, "Pedido rechazado.", Toast.LENGTH_SHORT).show();
+                                    guardarLog("El administrador rechazó el pedido de id: " + pedidoId, "Administrador");
                                     finish();
                                 }
                             });
@@ -169,7 +175,37 @@ public class PedidoDetallesActivity extends AppCompatActivity {
                 });
     }
 
+    public void guardarLog(String mensaje, String rol) {
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+        // Obtener el UID del usuario logueado
+        String usuarioUID = mAuth.getCurrentUser() != null ? mAuth.getCurrentUser().getUid() : "Usuario desconocido";
+
+        // Obtener fecha y hora actuales
+        String fechaActual = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        String horaActual = new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new Date());
+
+        // Crear un mapa para guardar el log
+        HashMap<String, Object> logData = new HashMap<>();
+        logData.put("mensaje", mensaje);
+        logData.put("usuarioUID", usuarioUID);
+        logData.put("rol", rol);
+        logData.put("fecha", fechaActual);
+        logData.put("hora", horaActual);
+
+        // Guardar el log en Firestore
+        db.collection("logs")
+                .add(logData)
+                .addOnSuccessListener(documentReference -> {
+                    // Éxito al guardar el log
+                    System.out.println("Log guardado con éxito. ID: " + documentReference.getId());
+                })
+                .addOnFailureListener(e -> {
+                    // Error al guardar el log
+                    System.err.println("Error al guardar el log: " + e.getMessage());
+                });
+    }
 
     private void actualizarCantidadDeVentas(Runnable onComplete) {
         List<ProductoPedido> productos = pedidoActual.getProductos();

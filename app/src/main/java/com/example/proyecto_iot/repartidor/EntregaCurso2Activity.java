@@ -226,7 +226,7 @@ public class EntregaCurso2Activity extends AppCompatActivity {
                 .addOnSuccessListener(restauranteSnapshot -> {
                     if (restauranteSnapshot.exists()) {
                         // Datos del pedido
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", new Locale("es", "PE"));
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss a", new Locale("es", "PE"));
                         dateFormat.setTimeZone(TimeZone.getTimeZone("America/Lima"));
                         String fecha = dateFormat.format(new Date());
 

@@ -99,7 +99,9 @@
             android:exported="false" />
         <activity
             android:name=".superadmin.gestion_usuarios_superadmin"
-            android:exported="true" />
+            android:exported="true" >
+
+        </activity>
         <activity
             android:name=".superadmin.gestion_reportes_superadmin"
             android:exported="true"></activity>

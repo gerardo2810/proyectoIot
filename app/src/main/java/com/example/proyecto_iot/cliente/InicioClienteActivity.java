@@ -78,6 +78,11 @@ public class InicioClienteActivity extends AppCompatActivity {
         // Enlazar el EditText de búsqueda
         orderSearch = findViewById(R.id.order_search);
         db = FirebaseFirestore.getInstance();
+
+        // Deshabilitar el foco para que no abra el teclado
+        orderSearch.setFocusable(false);
+        orderSearch.setClickable(true); // Hace que el EditText sea clicable
+
         // Configurar un listener para que, al hacer clic, abra la actividad de búsqueda
         orderSearch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,6 +91,13 @@ public class InicioClienteActivity extends AppCompatActivity {
                 Intent intent = new Intent(InicioClienteActivity.this, SearchRestaurantesActivity.class);
                 startActivity(intent);
             }
+        });
+        // También asegurarte de que se capture si el usuario intenta interactuar con el ícono
+        orderSearch.setOnTouchListener((v, event) -> {
+            // Detecta cualquier toque en el EditText, incluido el ícono
+            Intent intent = new Intent(InicioClienteActivity.this, SearchRestaurantesActivity.class);
+            startActivity(intent);
+            return true; // Retorna true para indicar que el evento fue manejado
         });
 
         // Configurar RecyclerView
@@ -129,7 +141,7 @@ public class InicioClienteActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        // Obtener los datos del cliente
+                        // Obte ner los datos del cliente
                         String direccion = document.getString("Direccion");
                         String fotoUrl = document.getString("FotoURL");
 
@@ -157,7 +169,6 @@ public class InicioClienteActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
 
 
 
@@ -390,7 +401,7 @@ public class InicioClienteActivity extends AppCompatActivity {
                                         long timeDiff = currentTime - orderTime;
 
                                         // Si han pasado menos de 2 minutos, agregar a la lista
-                                        if (timeDiff <= 2 * 60 * 1000) { // 2 minutos en milisegundos
+                                        if (timeDiff <= 4 * 60 * 1000) { // 4 minutos en milisegundos
                                             ordersList.add(new Pedido(idPedido, idRestaurante, nombreRestaurante, estado, fechaHora, direccion, pagoTotal, productos));
                                         } else {
                                             // Si han pasado más de 2 minutos, eliminar de Firestore

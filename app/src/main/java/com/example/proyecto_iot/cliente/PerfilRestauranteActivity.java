@@ -384,9 +384,13 @@ public class PerfilRestauranteActivity extends AppCompatActivity {
                             String descripcion = document.getString("Descripcion");
                             double precio = document.contains("Precio") ? document.getDouble("Precio") : 0.0;
                             String imageUrl = document.getString("Imagen");
+                            Boolean isActive = document.getBoolean("isActive");
                             int cantidadInicial = 1;
 
-                            productosList.add(new Producto(id, nombre, descripcion, precio, cantidadInicial, imageUrl));
+                            if(isActive == true){
+                                productosList.add(new Producto(id, nombre, descripcion, precio, cantidadInicial, imageUrl));
+
+                            }
                         }
 
                         // Actualizar productosListFull para el filtrado

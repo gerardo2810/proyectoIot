@@ -85,7 +85,6 @@ public class ConfirmarPagoActivity extends AppCompatActivity {
                     .update("estado", 4)
                     .addOnSuccessListener(aVoid -> {
                         // Agregar el pedido al historial del cliente
-                        agregarPedidoAlHistorial();
 
                         // Notificar al usuario y regresar al inicio
                         Toast.makeText(this, "Pago completado correctamente.", Toast.LENGTH_SHORT).show();
@@ -99,17 +98,5 @@ public class ConfirmarPagoActivity extends AppCompatActivity {
         }
     }
 
-    private void agregarPedidoAlHistorial() {
-        // Obtener el ID del cliente (este debe ser definido según tu implementación)
-        String clienteId = "vJB3EEcNL9ZS5EybdVHWXwtDhL22"; // Ejemplo, reemplaza con el real
 
-        db.collection("clientes").document(clienteId)
-                .update("historialPedidos", FieldValue.arrayUnion(pedidoId))
-                .addOnSuccessListener(aVoid -> {
-                    System.out.println("Pedido agregado al historial del cliente.");
-                })
-                .addOnFailureListener(e -> {
-                    System.err.println("Error al agregar el pedido al historial: " + e.getMessage());
-                });
-    }
 }

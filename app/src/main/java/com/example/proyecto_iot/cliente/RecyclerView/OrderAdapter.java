@@ -57,6 +57,14 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
             case 4:
                 holder.orderStatus.setText("Entregado");
                 break;
+            case 7:
+                holder.orderStatus.setText("En camino");
+            case 8:
+                holder.orderStatus.setText("Validado");
+            case 5:
+                holder.orderStatus.setText("Rechazado");
+            case 6:
+                holder.orderStatus.setText("Cancelado" );
             default:
                 holder.orderStatus.setText("Estado desconocido");
                 break;

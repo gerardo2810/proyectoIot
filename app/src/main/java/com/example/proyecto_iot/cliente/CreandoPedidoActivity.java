@@ -112,8 +112,6 @@ public class CreandoPedidoActivity extends AppCompatActivity {
     private void cancelOrder() {
         // Cambiar estado del pedido a "6"
         updateOrderStatus(6);
-
-
         finish(); // Finalizar esta actividad
     }
 

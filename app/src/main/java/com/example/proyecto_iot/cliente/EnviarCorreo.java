@@ -46,8 +46,17 @@ public class EnviarCorreo extends AsyncTask<Void, Void, Boolean> {
             MimeMessage mm = new MimeMessage(session);
             mm.setFrom(new InternetAddress("telecompucp39@gmail.com")); // Remitente
             mm.addRecipient(Message.RecipientType.TO, new InternetAddress(correoDestino)); // Destinatario
-            mm.setSubject(asunto); // Asunto del correo
-            mm.setText(mensaje); // Cuerpo del correo
+            mm.setSubject(asunto); // Asunto detel correo
+            if (mensaje.contains("<") && mensaje.contains(">")) {
+                // Mensaje contiene HTML
+                mm.setContent(mensaje, "text/html; charset=utf-8");
+            } else {
+                // Mensaje es texto plano
+                mm.setText(mensaje);
+            }
+            System.out.println("Intentando enviar correo a: " + correoDestino);
+            System.out.println("Asunto: " + asunto);
+            System.out.println("Mensaje: " + mensaje);
 
             // Enviar el correo
             Transport.send(mm);

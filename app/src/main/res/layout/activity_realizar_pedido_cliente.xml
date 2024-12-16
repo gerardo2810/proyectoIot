@@ -62,7 +62,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Dirección de entrega"
+            android:text="Dirección de entrega - ¡Editala si no estas aqui!"
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -71,7 +71,7 @@
             android:id="@+id/address_section1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="El Molle #156 B, La Molina"
+            android:hint=""
             android:background="@drawable/border_editar_info"
             android:padding="12dp"
             android:layout_marginTop="8dp" />
@@ -79,7 +79,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Agregar referencias"
+            android:text="Agregar referencias - ¡Ayuda a tu repartidor!"
             android:textSize="16sp"
             android:textStyle="bold"
             android:layout_marginTop="16dp" />
@@ -158,7 +158,8 @@
             android:id="@+id/see_more"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Ver más"
+            android:text=""
+            android:visibility="gone"
             android:textSize="14sp"
             android:textColor="#00B050"
             android:textStyle="bold" />

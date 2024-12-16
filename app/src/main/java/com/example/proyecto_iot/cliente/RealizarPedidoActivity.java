@@ -3,6 +3,8 @@ package com.example.proyecto_iot.cliente;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Base64;
 import android.view.MenuItem;
 import android.view.View;
@@ -59,6 +61,7 @@ public class RealizarPedidoActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private FirebaseAuth auth;
     private TextView addressSection;
+    private String direccionActual = ""; // Variable para guardar la dirección
 
 
     @Override
@@ -79,9 +82,24 @@ public class RealizarPedidoActivity extends AppCompatActivity {
 
         // Referencia al TextView donde se imprimirá la dirección
         addressSection = findViewById(R.id.address_section1);
-
-        // Obtener y mostrar la dirección del cliente
         obtenerDireccionCliente();
+
+        // Detectar cambios en el TextView
+        addressSection.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // Actualizar la dirección actual si se edita
+                direccionActual = s.toString();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
 
         // Recibir los datos del Intent
         Intent intent = getIntent();
@@ -150,6 +168,7 @@ public class RealizarPedidoActivity extends AppCompatActivity {
         });
 
 
+// Configurar el botón de pago
         payButton.setOnClickListener(v -> {
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -158,9 +177,14 @@ public class RealizarPedidoActivity extends AppCompatActivity {
                     .get()
                     .addOnSuccessListener(documentSnapshot -> {
                         if (documentSnapshot.exists()) {
+                            // Datos del cliente
                             String direccionCliente = documentSnapshot.getString("Direccion");
                             String nombreCliente = documentSnapshot.getString("Nombre");
                             String apellidoCliente = documentSnapshot.getString("Apellido");
+
+                            // Si el usuario no ha editado la dirección, usar la predeterminada
+                            String direccionPedido = direccionActual.isEmpty() ? direccionCliente : direccionActual;
+
                             SimpleDateFormat dateFormat = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy, HH:mm:ss a", new Locale("es", "PE"));
                             dateFormat.setTimeZone(TimeZone.getTimeZone("America/Lima"));
                             String fechaHora = dateFormat.format(new Date());
@@ -170,7 +194,7 @@ public class RealizarPedidoActivity extends AppCompatActivity {
                                 // Crear el mapa de datos del pedido
                                 Map<String, Object> pedidoData = new HashMap<>();
                                 pedidoData.put("idCliente", userId);
-                                pedidoData.put("direccion", direccionCliente);
+                                pedidoData.put("direccion", direccionPedido); // Dirección dinámica
                                 pedidoData.put("estado", 0);
                                 pedidoData.put("fechaHora", fechaHora);
                                 pedidoData.put("nombreCliente", nombreCliente);
@@ -193,7 +217,7 @@ public class RealizarPedidoActivity extends AppCompatActivity {
                                             // Redirigir a CreandoPedidoActivity
                                             Intent intent1 = new Intent(RealizarPedidoActivity.this, CreandoPedidoActivity.class);
                                             intent1.putExtra("pedidoId", pedidoId);
-                                            intent1.putExtra("direccion", direccionCliente);
+                                            intent1.putExtra("direccion", direccionPedido);
                                             intent1.putExtra("fechaHora", fechaHora);
                                             intent1.putExtra("codigo", codigo);
                                             intent1.putExtra("subtotal", subtotal);
@@ -220,7 +244,12 @@ public class RealizarPedidoActivity extends AppCompatActivity {
                         System.err.println("Error al obtener los datos del cliente: " + e.getMessage());
                         Toast.makeText(RealizarPedidoActivity.this, "Error al obtener la dirección del cliente.", Toast.LENGTH_SHORT).show();
                     });
-        });    }
+        });
+
+
+    }
+
+
     private void obtenerDireccionCliente() {
         FirebaseUser user = auth.getCurrentUser();
 
@@ -285,7 +314,7 @@ public class RealizarPedidoActivity extends AppCompatActivity {
     private void generarCodigoUnico(FirebaseFirestore db, OnCodigoGeneradoListener listener) {
         Random random = new Random();
 
-        String nuevoCodigo = "AP-" + (10000000 + random.nextInt(90000000)); // Generar número de 8 dígitos con prefijo
+        String nuevoCodigo = "AP-" + (1000000000 + random.nextInt(900000000)); // Generar número de 8 dígitos con prefijo
         db.collection("pedidos")
                 .whereEqualTo("codigo", nuevoCodigo)
                 .get()

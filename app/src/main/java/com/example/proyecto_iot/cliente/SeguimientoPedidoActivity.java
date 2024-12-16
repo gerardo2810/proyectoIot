@@ -40,12 +40,18 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Source;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class SeguimientoPedidoActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -375,6 +381,12 @@ public class SeguimientoPedidoActivity extends AppCompatActivity implements OnMa
             findViewById(R.id.btn_verificacion_envio).setBackgroundResource(R.drawable.rounded_background_white);  // Fondo seleccionado
             findViewById(R.id.btn_detalle_orden).setBackgroundResource(R.drawable.rounded_background_grey);  // Fondo no seleccionado
         });
+
+        // Monitorear el estado del pedido
+        verificarEstadoPedido(pedidoId);
+
+
+
     }
 
     private void actualizarEstado(int estado, String idRepartidor) {
@@ -528,20 +540,6 @@ public class SeguimientoPedidoActivity extends AppCompatActivity implements OnMa
         startActivity(intent);
     }
 
-    private void iniciarTemporizadorParaEstado3() {
-        // Crear un temporizador de 30 segundos
-        new android.os.Handler().postDelayed(() -> {
-            db.collection("pedidos").document(pedidoId)
-                    .update("estado", 3)
-                    .addOnSuccessListener(aVoid -> {
-                        System.out.println("Estado actualizado a 3 (En camino) después de 30 segundos.");
-                        sendNotification("Estado del pedido", "Tu pedido ahora está en camino.");
-                    })
-                    .addOnFailureListener(e -> {
-                        System.err.println("Error al actualizar el estado a 3: " + e.getMessage());
-                    });
-        }, 30000); // 30,000 ms = 30 segundos
-    }
 
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
@@ -596,4 +594,150 @@ public class SeguimientoPedidoActivity extends AppCompatActivity implements OnMa
 
     }
 
+    private void verificarEstadoPedido(String pedidoId) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        // Referencia al documento del pedido
+        DocumentReference pedidoRef = db.collection("pedidos").document(pedidoId);
+
+        pedidoRef.addSnapshotListener((snapshot, e) -> {
+            if (e != null) {
+                Log.w("Firestore", "Error al obtener el estado del pedido", e);
+                return;
+            }
+
+            if (snapshot != null && snapshot.exists()) {
+                Long estado = snapshot.getLong("estado");
+
+                if (estado != null && estado == 8) {
+                    // Lógica cuando el estado llega a 8
+                    enviarCorreoPedido(pedidoId);
+                    String idRestaurante = snapshot.getString("idRestaurante");
+                    if (idRestaurante != null) {
+                        actualizarVentasRestaurante(idRestaurante);
+                    }
+
+                    agregarHistorialPedidos(userId, pedidoId);
+
+                    // Ir a PedidoFinActivity
+                    Intent intent = new Intent(this, PedidoFinActivity.class);
+                    intent.putExtra("pedidoId", pedidoId);
+                    startActivity(intent);
+                    finish(); // Cerrar la actividad actual
+                }
+            }
+        });
+    }
+
+    private void actualizarVentasRestaurante(String idRestaurante) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        // Referencia al restaurante
+        DocumentReference restauranteRef = db.collection("restaurantes").document(idRestaurante);
+
+        // Incrementar el campo 'ventas' en 1
+        restauranteRef.update("ventas", FieldValue.increment(1))
+                .addOnSuccessListener(aVoid -> Log.d("Firestore", "Ventas actualizadas correctamente"))
+                .addOnFailureListener(e -> Log.w("Firestore", "Error al actualizar ventas", e));
+    }
+
+    private void agregarHistorialPedidos(String userId, String pedidoId) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        // Referencia al cliente
+        DocumentReference clienteRef = db.collection("clientes").document(userId);
+
+        // Agregar el ID del pedido al historialPedidos
+        clienteRef.update("historialPedidos", FieldValue.arrayUnion(pedidoId))
+                .addOnSuccessListener(aVoid -> Log.d("Firestore", "Pedido añadido al historial del cliente"))
+                .addOnFailureListener(e -> Log.w("Firestore", "Error al actualizar historialPedidos", e));
+    }
+
+
+
+    public void enviarCorreoPedido(String idPedido) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        String uidCliente = auth.getCurrentUser().getUid(); // UID del usuario logueado
+
+        db.collection("clientes").document(uidCliente).get()
+                .addOnSuccessListener(clienteSnapshot -> {
+                    if (clienteSnapshot.exists()) {
+                        final String correoDestino = clienteSnapshot.getString("Email");
+                        // final o efectivamente final
+                        System.out.println("SEGUIMIENTO PEDIDO" + correoDestino);
+
+                        db.collection("pedidos").document(idPedido).get()
+                                .addOnSuccessListener(documentSnapshot -> {
+                                    if (documentSnapshot.exists()) {
+                                        Long estado = documentSnapshot.getLong("estado");
+                                        System.out.println("SEGUIMIENTO PEIDDO CORREO EL ESTADO ES "+estado);
+                                        if (estado != null && estado == 8 || estado ==4) { // Solo si estado == 8
+                                            final String nombreCliente = documentSnapshot.getString("nombreCliente");
+                                            final String apellidoCliente = documentSnapshot.getString("apellidoCliente");
+                                            final List<Map<String, Object>> productos =
+                                                    (List<Map<String, Object>>) documentSnapshot.get("productos");
+
+                                            // Calcular costo total de productos
+                                            final StringBuilder detallesProductos = new StringBuilder();
+                                            final double[] costoTotalProductos = {0.0}; // Usar un array mutable
+
+                                            for (Map<String, Object> producto : productos) {
+                                                String nombre = (String) producto.get("nombre");
+                                                Long cantidad = (Long) producto.get("cantidad");
+                                                Double precio = (Double) producto.get("precio");
+                                                String imageUrl = (String) producto.get("imageUrl");
+
+                                                double total = cantidad * precio;
+                                                costoTotalProductos[0] += total;
+
+                                                // Formatear producto
+                                                detallesProductos.append("<div>")
+                                                        .append("<img src='").append(imageUrl).append("' width='50' height='50'/>")
+                                                        .append("<strong>").append(nombre).append("</strong>")
+                                                        .append(" - ").append(cantidad).append(" unidad(es) x ").append(precio)
+                                                        .append(" = ").append(total).append("</div>");
+                                            }
+
+                                            // Obtener precio de delivery
+                                            String idRestaurante = documentSnapshot.getString("idRestaurante");
+                                            db.collection("restaurantes").document(idRestaurante).get()
+                                                    .addOnSuccessListener(restaurantSnapshot -> {
+                                                        if (restaurantSnapshot.exists()) {
+                                                            Double precioDelivery = restaurantSnapshot.getDouble("precioDelivery");
+                                                            if (precioDelivery == null) precioDelivery = 0.0;
+
+                                                            final double totalPagar = costoTotalProductos[0] + precioDelivery;
+
+                                                            // Crear el mensaje HTML
+                                                            final String mensaje = "<html><body style='font-family:Arial, sans-serif;'>"
+                                                                    + "<h2>Hola, " + nombreCliente + " " + apellidoCliente + "</h2>"
+                                                                    + "<p>Gracias por tu pedido.</p>"
+                                                                    + "<h3>Resumen del Pedido</h3>"
+                                                                    + detallesProductos
+                                                                    + "<p><strong>Costo de Productos:</strong> S/" + costoTotalProductos[0] + "</p>"
+                                                                    + "<p><strong>Delivery:</strong> S/" + precioDelivery + "</p>"
+                                                                    + "<p><strong>Total a Pagar:</strong> S/" + totalPagar + "</p>"
+                                                                    + "<div style='text-align:center; margin-top:20px;'>"
+                                                                    + "<img src='' width='100' height='100' style='opacity:0.2;'/>"
+                                                                    + "</div>"
+                                                                    + "</body></html>";
+
+                                                            // Enviar correo
+                                                            EnviarCorreo enviarCorreo = new EnviarCorreo(
+                                                                    correoDestino,
+                                                                    "Resumen de tu Pedido",
+                                                                    mensaje
+                                                            );
+                                                            enviarCorreo.execute();
+                                                            System.out.println("Correo enviado a: " + correoDestino);
+                                                        }
+                                                    });
+                                        }
+                                    }
+                                });
+                    }
+                });
+    }
 }

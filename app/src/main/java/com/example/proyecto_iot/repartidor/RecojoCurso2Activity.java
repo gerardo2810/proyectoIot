@@ -2,6 +2,7 @@ package com.example.proyecto_iot.repartidor;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -10,21 +11,34 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import com.bumptech.glide.Glide;
 import com.example.proyecto_iot.R;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class RecojoCurso2Activity extends AppCompatActivity {
+
+    FirebaseAuth auth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recojo_curso_2);
+
+        mostrarUbicacion();
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -159,5 +173,67 @@ public class RecojoCurso2Activity extends AppCompatActivity {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Limpia la pila de actividades
         startActivity(intent);
     }
+
+    public void mostrarUbicacion() {
+
+        //Actualizar pedido
+        auth = FirebaseAuth.getInstance();
+        String userId = auth.getCurrentUser().getUid();
+
+        int selfPermissionFineLocation = ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION);
+        int selfPermissionCoarseLocation = ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION);
+
+        if (selfPermissionFineLocation == PackageManager.PERMISSION_GRANTED &&
+                selfPermissionCoarseLocation == PackageManager.PERMISSION_GRANTED) {
+
+            //tenemos permisos
+            FusedLocationProviderClient providerClient = LocationServices.getFusedLocationProviderClient(this);
+            providerClient.getLastLocation().addOnSuccessListener(this, location -> {
+                if (location != null) {
+                    double latitud = location.getLatitude();
+                    double longitud = location.getLongitude();
+                    Map<String, Object> ubicacion = new HashMap<>();
+                    ubicacion.put("lat", latitud);
+                    ubicacion.put("lng", longitud);
+                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+                    db.collection("repartidores")
+                            .document(userId)
+                            .set(new HashMap<String, Object>() {{
+                                put("ubicacionRepartidor", ubicacion);
+                            }}, SetOptions.merge()) // Usar merge para no sobrescribir otros datos
+                            .addOnSuccessListener(aVoid -> Log.d("Location", "Ubicación actualizada"))
+                            .addOnFailureListener(e -> Log.e("Location", "Error al actualizar ubicación", e));
+
+                }
+
+            });
+
+        } else {
+            //no tenemos permisos, se deben solicitar
+            locationPermissionLauncher.launch(new String[]{
+                    android.Manifest.permission.ACCESS_FINE_LOCATION,
+                    android.Manifest.permission.ACCESS_COARSE_LOCATION
+            });
+
+        }
+
+    }
+
+    ActivityResultLauncher<String[]> locationPermissionLauncher = registerForActivityResult(
+            new ActivityResultContracts.RequestMultiplePermissions(),
+            result -> {
+                Boolean fineLocationGranted = result.get(android.Manifest.permission.ACCESS_FINE_LOCATION);
+                Boolean coarseLocationGranted = result.get(android.Manifest.permission.ACCESS_COARSE_LOCATION);
+                if (fineLocationGranted != null && fineLocationGranted) {
+                    Log.d("msg-test-locationPermissionLauncher", "Permiso de ubicación precisa concedido");
+                    mostrarUbicacion();
+                } else if (coarseLocationGranted != null && coarseLocationGranted) {
+                    Log.d("msg-test-locationPermissionLauncher", "Permiso de ubicación aproximada concedido");
+                } else {
+                    Log.d("msg-test-locationPermissionLauncher", "Ningún permiso concedido");
+                }
+            }
+    );
 
 }

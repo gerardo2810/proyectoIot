@@ -16,11 +16,14 @@ import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -45,9 +48,13 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class RecojoCurso1Activity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -55,6 +62,7 @@ public class RecojoCurso1Activity extends AppCompatActivity implements OnMapRead
     FusedLocationProviderClient fusedLocationClient;
     LocationCallback locationCallback;
     Marker marcadorActual;
+    FirebaseAuth auth;
 
     private final String CHANNEL_ID = "order_ready_channel";
     private Handler handler;
@@ -65,6 +73,8 @@ public class RecojoCurso1Activity extends AppCompatActivity implements OnMapRead
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recojo_curso_1);
+
+        mostrarUbicacion();
 
         // Obtén el mapa
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -335,5 +345,67 @@ public class RecojoCurso1Activity extends AppCompatActivity implements OnMapRead
     interface OnCoordenadasObtenidasCallback {
         void onCoordenadasObtenidas(LatLng coordenadas);
     }
+
+    public void mostrarUbicacion() {
+
+        //Actualizar pedido
+        auth = FirebaseAuth.getInstance();
+        String userId = auth.getCurrentUser().getUid();
+
+        int selfPermissionFineLocation = ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION);
+        int selfPermissionCoarseLocation = ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION);
+
+        if (selfPermissionFineLocation == PackageManager.PERMISSION_GRANTED &&
+                selfPermissionCoarseLocation == PackageManager.PERMISSION_GRANTED) {
+
+            //tenemos permisos
+            FusedLocationProviderClient providerClient = LocationServices.getFusedLocationProviderClient(this);
+            providerClient.getLastLocation().addOnSuccessListener(this, location -> {
+                if (location != null) {
+                    double latitud = location.getLatitude();
+                    double longitud = location.getLongitude();
+                    Map<String, Object> ubicacion = new HashMap<>();
+                    ubicacion.put("lat", latitud);
+                    ubicacion.put("lng", longitud);
+                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+                    db.collection("repartidores")
+                            .document(userId)
+                            .set(new HashMap<String, Object>() {{
+                                put("ubicacionRepartidor", ubicacion);
+                            }}, SetOptions.merge()) // Usar merge para no sobrescribir otros datos
+                            .addOnSuccessListener(aVoid -> Log.d("Location", "Ubicación actualizada"))
+                            .addOnFailureListener(e -> Log.e("Location", "Error al actualizar ubicación", e));
+
+                }
+
+            });
+
+        } else {
+            //no tenemos permisos, se deben solicitar
+            locationPermissionLauncher.launch(new String[]{
+                    android.Manifest.permission.ACCESS_FINE_LOCATION,
+                    android.Manifest.permission.ACCESS_COARSE_LOCATION
+            });
+
+        }
+
+    }
+
+    ActivityResultLauncher<String[]> locationPermissionLauncher = registerForActivityResult(
+            new ActivityResultContracts.RequestMultiplePermissions(),
+            result -> {
+                Boolean fineLocationGranted = result.get(android.Manifest.permission.ACCESS_FINE_LOCATION);
+                Boolean coarseLocationGranted = result.get(android.Manifest.permission.ACCESS_COARSE_LOCATION);
+                if (fineLocationGranted != null && fineLocationGranted) {
+                    Log.d("msg-test-locationPermissionLauncher", "Permiso de ubicación precisa concedido");
+                    mostrarUbicacion();
+                } else if (coarseLocationGranted != null && coarseLocationGranted) {
+                    Log.d("msg-test-locationPermissionLauncher", "Permiso de ubicación aproximada concedido");
+                } else {
+                    Log.d("msg-test-locationPermissionLauncher", "Ningún permiso concedido");
+                }
+            }
+    );
 
 }

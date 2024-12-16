@@ -20,6 +20,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Proyecto_Iot"
         tools:targetApi="31">
+        <activity
+            android:name=".cliente.PedidoFinalizadoActivity"
+            android:exported="false" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -34,7 +37,6 @@
         <activity
             android:name=".cliente.PreloaderActivity"
             android:exported="false" />
-
         <activity
             android:name=".cliente.CreandoPedidoActivity"
             android:exported="false" />
@@ -100,9 +102,7 @@
             android:exported="true" />
         <activity
             android:name=".superadmin.gestion_reportes_superadmin"
-            android:exported="true" >
-
-        </activity>
+            android:exported="true"></activity>
         <activity
             android:name=".superadmin.lista_usuarios_superadmin"
             android:exported="true" />
@@ -213,7 +213,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
         <activity
             android:name=".RegisterActivity"

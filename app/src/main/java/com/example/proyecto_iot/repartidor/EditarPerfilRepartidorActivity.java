@@ -1,9 +1,11 @@
 package com.example.proyecto_iot.repartidor;
 
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -27,16 +29,20 @@ import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class EditarPerfilRepartidorActivity extends AppCompatActivity {
 
+    private StorageReference storageReference;
     BottomNavigationView bottomNavigationView;
     EditText etNombre, etApellido, etFecha, etDireccion, etCorreo, etTelefono, etDni;
     Button btnUploadImage, btnGuardarDatos;
+    private Uri imageUriSelected; // URI de la imagen seleccionada
     ImageView ivFoto;
     FirebaseFirestore db;
     FirebaseAuth auth;
@@ -61,6 +67,10 @@ public class EditarPerfilRepartidorActivity extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
+
+        storageReference = FirebaseStorage.getInstance().getReference();
+
+        btnUploadImage.setOnClickListener(v -> openImageChooser());
 
         cargarDatosUsuario();
 
@@ -141,7 +151,6 @@ public class EditarPerfilRepartidorActivity extends AppCompatActivity {
 
     private void guardarDatosRepartidor() {
         String userId = auth.getCurrentUser().getUid();
-
         Map<String, Object> userData = new HashMap<>();
         userData.put("nombre", etNombre.getText().toString());
         userData.put("apellido", etApellido.getText().toString());
@@ -151,15 +160,74 @@ public class EditarPerfilRepartidorActivity extends AppCompatActivity {
         userData.put("telefono", etTelefono.getText().toString());
         userData.put("direccion", etDireccion.getText().toString());
 
-        // Guardar los datos en Firestore
-        db.collection("repartidores").document(userId)
-                .update(userData)
-                .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(this, "Datos guardados correctamente.", Toast.LENGTH_SHORT).show();
-                    finish();
-                }).addOnFailureListener(e -> {
-                    Toast.makeText(this, "Error al guardar los datos: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        });
+        if (imageUriSelected != null) {
+            StorageReference fileRef = storageReference.child("fotosRepartidores/" + userId + ".jpg");
+            UploadTask uploadTask = fileRef.putFile(imageUriSelected);
+
+            uploadTask.addOnSuccessListener(taskSnapshot -> {
+                fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                    String fotoUrl = uri.toString();
+
+                    userData.put("foto", fotoUrl);
+
+                    /// Guardar los datos en Firestore
+                    db.collection("repartidores").document(userId)
+                            .update(userData)
+                            .addOnSuccessListener(aVoid -> {
+                                Toast.makeText(this, "Datos guardados correctamente.", Toast.LENGTH_SHORT).show();
+                                finish();
+                            }).addOnFailureListener(e -> {
+                                Toast.makeText(this, "Error al guardar los datos", Toast.LENGTH_SHORT).show();
+                            });
+                });
+            }).addOnFailureListener(e -> {
+                Toast.makeText(this, "Error al subir la imagen", Toast.LENGTH_SHORT).show();
+            });
+        } else {
+            // Si no se seleccionó una nueva imagen, guardar otros datos
+
+            db.collection("repartidores").document(userId)
+                    .update(userData)
+                    .addOnSuccessListener(aVoid -> {
+                        Toast.makeText(this, "Datos guardados correctamente.", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }).addOnFailureListener(e -> {
+                        Toast.makeText(this, "Error al guardar los datos", Toast.LENGTH_SHORT).show();
+                    });
+        }
+    }
+
+    private void openImageChooser() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, PICK_IMAGE_REQUEST);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
+            Uri imageUri = data.getData();
+            if (imageUri != null && isImageFile(imageUri)) {
+                imageUriSelected = imageUri; // Asigna el URI seleccionado
+                ivFoto.setImageURI(imageUriSelected);
+                ivFoto.setBackground(null);
+            } else {
+                Toast.makeText(this, "Solo se permiten imágenes JPEG, PNG, JPG o AVIF", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private boolean isImageFile(Uri uri) {
+        ContentResolver contentResolver = getContentResolver();
+        String type = contentResolver.getType(uri);
+        Log.d("Image File Type", "MIME Type: " + type);
+
+        if (type != null) {
+            boolean isValidImage = type.equals("image/jpeg") || type.equals("image/png") || type.equals("image/jpg") || type.equals("image/avif");
+            Log.d("Image File Validation", "Is Valid Image: " + isValidImage);
+            return isValidImage;
+        }
+        return false;
     }
 
 }

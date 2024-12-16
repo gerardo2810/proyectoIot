@@ -537,11 +537,15 @@ public class SeguimientoPedidoActivity extends AppCompatActivity implements OnMa
 
                         if (idRepartidor != null && !idRepartidor.isEmpty()) {
 
-                            // Ahora consulta los datos del restaurante
+                            // Agrega un listener en el documento del repartidor
                             db.collection("repartidores").document(idRepartidor)
-                                    .get()
-                                    .addOnSuccessListener(repartidorSnapshot -> {
-                                        if (repartidorSnapshot.exists()) {
+                                    .addSnapshotListener((repartidorSnapshot, error) -> {
+                                        if (error != null) {
+                                            Toast.makeText(this, "Error al escuchar cambios de ubicación", Toast.LENGTH_SHORT).show();
+                                            return;
+                                        }
+
+                                        if (repartidorSnapshot != null && repartidorSnapshot.exists()) {
                                             Map<String, Object> ubicacion = (Map<String, Object>) repartidorSnapshot.get("ubicacionRepartidor");
 
                                             if (ubicacion != null) {
@@ -552,7 +556,7 @@ public class SeguimientoPedidoActivity extends AppCompatActivity implements OnMa
                                                 LatLng ubicacionRepartidor = new LatLng(lat, lng);
                                                 myMap.clear(); // Limpia marcadores anteriores
 
-                                                // Crea el marcador inicial si no existe
+                                                // Crea el marcador actualizado
                                                 Bitmap original = BitmapFactory.decodeResource(getResources(), R.drawable.delivery_bike_map);
                                                 Bitmap resized = Bitmap.createScaledBitmap(original, 150, 150, false);
 
@@ -563,9 +567,6 @@ public class SeguimientoPedidoActivity extends AppCompatActivity implements OnMa
                                                 myMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ubicacionRepartidor, 15));
                                             }
                                         }
-                                    })
-                                    .addOnFailureListener(e -> {
-                                        Toast.makeText(this, "Error al cargar los datos del restaurante", Toast.LENGTH_SHORT).show();
                                     });
                         }
                     }

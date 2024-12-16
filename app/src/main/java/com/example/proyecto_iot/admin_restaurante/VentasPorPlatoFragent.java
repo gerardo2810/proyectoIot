@@ -149,6 +149,7 @@ public class VentasPorPlatoFragent extends Fragment {
         // Consulta a la colección "pedidos" del restaurante actual
         db.collection("pedidos")
                 .whereEqualTo("idRestaurante", idRestauranteActual)
+                .whereEqualTo("estado", 8) // Validación: solo pedidos con estado = 8
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     // Map para acumular cantidad total vendida por producto
@@ -218,5 +219,6 @@ public class VentasPorPlatoFragent extends Fragment {
                     Toast.makeText(getContext(), "Error al cargar datos.", Toast.LENGTH_SHORT).show();
                 });
     }
+
 }
 

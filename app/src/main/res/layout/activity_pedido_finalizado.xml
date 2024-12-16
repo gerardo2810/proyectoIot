@@ -42,16 +42,7 @@
         android:layout_height="1dp"
         android:layout_below="@id/header"
         android:background="#DADADA"/>
-
-    <!-- Fondo verde con curva -->
-    <com.google.android.material.shape.MaterialShapeDrawable
-        android:id="@+id/curvedBackground"
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:layout_below="@id/header"
-        android:backgroundTint="@color/green"
-        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay"/>
-
+    
     <!-- Imagen centrada -->
     <ImageView
         android:id="@+id/centerImage"

@@ -11,10 +11,15 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.proyecto_iot.LoginActivity;
 import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.admin_restaurante.RecyclerView.RestauranteViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class InicioRestauranteActivity extends AppCompatActivity {
     private final HomeRestauranteFragment homeRestauranteFragment = new HomeRestauranteFragment();
@@ -30,6 +35,8 @@ public class InicioRestauranteActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.restaurante_activity_inicio);
+
+        verificarEstadoUsuario();
 
         // Inicializar ViewModel
         restauranteViewModel = new ViewModelProvider(this).get(RestauranteViewModel.class);
@@ -97,5 +104,49 @@ public class InicioRestauranteActivity extends AppCompatActivity {
                 .replace(R.id.frame_navigation_container, fragment)  // Contenedor principal de BottomNavigationView
                 .commit();
     }
+
+    private void verificarEstadoUsuario() {
+        // Obtener instancia de FirebaseAuth
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser usuarioActual = firebaseAuth.getCurrentUser();
+
+        if (usuarioActual != null) {
+            String uid = usuarioActual.getUid();
+
+            // Referencia a Firestore
+            FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+
+            // Buscar el documento del usuario por UID
+            firestore.collection("administradores").document(uid).get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            if (document.exists()) {
+                                Boolean habilitado = document.getBoolean("habilitado");
+                                if (!habilitado) {
+                                    // Desloguear al usuario y redirigir al LoginActivity
+                                    FirebaseAuth.getInstance().signOut();
+                                    Intent intent = new Intent(this, LoginActivity.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    startActivity(intent);
+                                    Toast.makeText(this, "Su cuenta está inhabilitada. Contáctese con soporte.", Toast.LENGTH_LONG).show();
+                                    finish();
+                                }
+                            } else {
+                                Toast.makeText(this, "El documento no existe.", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Toast.makeText(this, "Error al verificar el estado del usuario.", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        } else {
+            // Si no hay un usuario logueado, redirigir al LoginActivity
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+        }
+    }
+
 }
 

@@ -31,8 +31,16 @@ public class DetallePlatoActivity extends AppCompatActivity {
         TextView etProductCategoria = findViewById(R.id.et_product_categoría);
         TextView etProductDescription = findViewById(R.id.et_product_description);
         TextView etProductPrice = findViewById(R.id.et_product_price);
-        TextView etProductStock = findViewById(R.id.et_product_stock);
-        TextView etTimePreparation = findViewById(R.id.et_time_preparation);
+        TextView etCantPedidos = findViewById(R.id.et_product_stock);
+
+        String cantpedidos = getIntent().getStringExtra("cantVendida");
+
+        // Asignar el valor de gastado proveniente del Intent
+        if (cantpedidos != null && !cantpedidos.isEmpty()) {
+            etCantPedidos.setText(cantpedidos);
+        } else {
+            etCantPedidos.setText("-");
+        }
 
         // Obtener idProducto del intent
         Intent intent = getIntent();
@@ -47,7 +55,6 @@ public class DetallePlatoActivity extends AppCompatActivity {
                         String descripcion = platoDoc.getString("Descripcion");
                         Double precio = platoDoc.getDouble("Precio");
                         Long stockLong = platoDoc.getLong("Stock");
-                        Long tiempoPrepLong = platoDoc.getLong("TiempoPreparacion");
                         String imagenUrl = platoDoc.getString("Imagen");
                         String idCategoria = platoDoc.getString("idCategoria");
 
@@ -55,8 +62,6 @@ public class DetallePlatoActivity extends AppCompatActivity {
                         if (nombre != null) etProductNombre.setText(nombre);
                         if (descripcion != null) etProductDescription.setText(descripcion);
                         if (precio != null) etProductPrice.setText("S/" + precio);
-                        if (stockLong != null) etProductStock.setText(stockLong + " unidades");
-                        if (tiempoPrepLong != null) etTimePreparation.setText(String.valueOf(tiempoPrepLong));
 
                         // Cargar la imagen con Glide si hay URL
                         if (imagenUrl != null && !imagenUrl.isEmpty()) {

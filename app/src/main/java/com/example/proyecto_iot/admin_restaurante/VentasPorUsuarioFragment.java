@@ -199,7 +199,7 @@ public class VentasPorUsuarioFragment extends Fragment {
 
                         // Crear objeto Usuario
                         Usuario u = new Usuario(idCliente, "", "", "", "",
-                                "Pedidos: " + cantPedidos, "Total: $" + String.format("%.2f", totalGastado));
+                                "Pedidos: " + cantPedidos, "S/" + String.format("%.2f", totalGastado));
                         listaUser.add(u);
                     }
 

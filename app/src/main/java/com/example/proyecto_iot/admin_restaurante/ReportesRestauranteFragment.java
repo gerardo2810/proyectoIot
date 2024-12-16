@@ -156,59 +156,56 @@ public class ReportesRestauranteFragment extends Fragment {
         restauranteViewModel.getIdRestaurante().observe(getViewLifecycleOwner(), idRestaurante -> {
             db.collection("pedidos")
                     .whereEqualTo("idRestaurante", idRestaurante)
-                    .whereEqualTo("estado", 4)
-                    .get()
-                    .addOnSuccessListener(queryDocumentSnapshots -> {
-                        Map<Integer, Float> ventasPorMes = new HashMap<>();
+                    .whereEqualTo("estado", 8)
+                    .addSnapshotListener((queryDocumentSnapshots, e) -> {
+                        if (e != null) {
+                            e.printStackTrace();
+                            return;
+                        }
 
-                        for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                            Object fechaObj = doc.get("fechaHora");
-                            Date fechaDate = null;
+                        if (queryDocumentSnapshots != null) {
+                            Map<Integer, Float> ventasPorMes = new HashMap<>();
 
-                            if (fechaObj instanceof com.google.firebase.Timestamp) {
-                                // Si por alguna razón fuera timestamp
-                                com.google.firebase.Timestamp ts = (com.google.firebase.Timestamp) fechaObj;
-                                fechaDate = ts.toDate();
-                            } else if (fechaObj instanceof String) {
-                                // Parsear desde String
-                                String fechaStr = (String) fechaObj;
+                            for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                                Object fechaObj = doc.get("fechaHora");
+                                Date fechaDate = null;
 
-                                // Ajustar reemplazos según el formato exacto almacenado
-                                // Suponiendo que la fecha tiene "p. m." o "a. m."
-                                fechaStr = fechaStr.replace("p. m.", "PM");
-                                fechaStr = fechaStr.replace("a. m.", "AM");
+                                if (fechaObj instanceof com.google.firebase.Timestamp) {
+                                    // Si la fecha está en Timestamp
+                                    com.google.firebase.Timestamp ts = (com.google.firebase.Timestamp) fechaObj;
+                                    fechaDate = ts.toDate();
+                                } else if (fechaObj instanceof String) {
+                                    // Parsear desde String
+                                    String fechaStr = (String) fechaObj;
 
-                                // Ajustar el patrón del formato:
-                                // Por ejemplo: "15 de diciembre de 2024, 15:36:53 p. m."
-                                // Formato: dd 'de' MMMM 'de' yyyy, HH:mm:ss a
-                                SimpleDateFormat sdf = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy, HH:mm:ss a", new Locale("es", "ES"));
-                                try {
-                                    fechaDate = sdf.parse(fechaStr);
-                                } catch (ParseException e) {
-                                    e.printStackTrace();
+                                    fechaStr = fechaStr.replace("p. m.", "PM").replace("a. m.", "AM");
+                                    SimpleDateFormat sdf = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy, HH:mm:ss a", new Locale("es", "ES"));
+                                    try {
+                                        fechaDate = sdf.parse(fechaStr);
+                                    } catch (ParseException ex) {
+                                        ex.printStackTrace();
+                                    }
+                                }
+
+                                Double pagoTotal = doc.getDouble("pagoTotal");
+
+                                if (fechaDate != null && pagoTotal != null) {
+                                    Calendar cal = Calendar.getInstance();
+                                    cal.setTime(fechaDate);
+                                    int mes = cal.get(Calendar.MONTH) + 1; // Enero=1
+
+                                    float montoActual = ventasPorMes.getOrDefault(mes, 0f);
+                                    ventasPorMes.put(mes, montoActual + pagoTotal.floatValue());
                                 }
                             }
 
-                            Double pagoTotal = doc.getDouble("pagoTotal");
-
-                            if (fechaDate != null && pagoTotal != null) {
-                                Calendar cal = Calendar.getInstance();
-                                cal.setTime(fechaDate);
-                                int mes = cal.get(Calendar.MONTH) + 1; // 0-based, se suma 1
-
-                                float montoActual = ventasPorMes.getOrDefault(mes, 0f);
-                                ventasPorMes.put(mes, montoActual + pagoTotal.floatValue());
-                            }
+                            // Actualizar el gráfico en tiempo real
+                            mostrarGrafico(ventasPorMes);
                         }
-
-                        mostrarGrafico(ventasPorMes);
-                    })
-                    .addOnFailureListener(e -> {
-                        // Manejo de error
-                        e.printStackTrace();
                     });
         });
     }
+
 
     private void mostrarGrafico(Map<Integer, Float> ventasPorMes) {
         // Se crean las entradas del gráfico. Ejemplo: 12 barras (enero a diciembre)

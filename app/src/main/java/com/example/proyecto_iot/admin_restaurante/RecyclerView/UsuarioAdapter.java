@@ -43,7 +43,7 @@ public class UsuarioAdapter extends RecyclerView.Adapter<UsuarioAdapter.UsuarioV
 
         // Asumiendo que 'usuario.getNombre()' retorna el idCliente
         String idCliente = usuario.getNombre();
-        holder.tvNombreCliente.setText(idCliente);
+
         holder.tvCantPedidos.setText(usuario.getCantPedidos() + " pedidos");
 
         // Consultar la colección "clientes" para obtener la foto
@@ -51,6 +51,9 @@ public class UsuarioAdapter extends RecyclerView.Adapter<UsuarioAdapter.UsuarioV
                 .addOnSuccessListener(doc -> {
                     if (doc.exists()) {
                         String fotoURL = doc.getString("FotoURL");
+                        String nombreC = doc.getString("Nombre");
+                        String apellidoC = doc.getString("Apellido");
+                        holder.tvNombreCliente.setText(nombreC + " " + apellidoC);
                         if (fotoURL != null && !fotoURL.isEmpty()) {
                             // Cargar imagen con Glide
                             Glide.with(context)

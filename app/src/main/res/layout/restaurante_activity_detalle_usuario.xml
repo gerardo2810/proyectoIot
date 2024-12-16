@@ -71,8 +71,8 @@ android:background="#FFFFFF">
 
         <ImageView
             android:id="@+id/iv_imagen_usuario"
-            android:layout_width="219dp"
-            android:layout_height="190dp"
+            android:layout_width="221dp"
+            android:layout_height="203dp"
             android:layout_gravity="center"
             android:background="@drawable/user"
             android:scaleType="centerCrop" />

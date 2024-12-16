@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
+    android:background="@drawable/fondo_login"
     android:padding="16dp">
 
     <TextView
@@ -26,16 +27,17 @@
     <EditText
         android:id="@+id/etCodigo"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="52dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/border_editar_info"
         android:hint="Ingresa el código"
-        android:inputType="number"
-        android:layout_marginTop="20dp" />
+        android:inputType="number" />
 
     <TextView
         android:id="@+id/tvIntentos"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Intentos: 0/4"
+        android:text=""
         android:textSize="16sp"
         android:layout_marginTop="10dp" />
 
@@ -43,11 +45,13 @@
         android:id="@+id/btnValidar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/bgPrimary"
         android:text="Validar Código"
         android:layout_marginTop="20dp" />
 
     <Button
         android:id="@+id/btnCancelar"
+
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Cancelar"

@@ -94,7 +94,7 @@ public class CreandoPedidoActivity extends AppCompatActivity {
                 int estado = snapshot.getLong("estado").intValue();
 
                 // Actualizar texto de estado
-                String statusText = "Estado del pedido: " + estado;
+                String statusText = "Estado del pedido: " + obtenerEstadoPedido(estado);
                 pedidoStatusText.setText(statusText);
 
                 // Verificar cambios de estado
@@ -152,5 +152,20 @@ public class CreandoPedidoActivity extends AppCompatActivity {
         intent.putExtras(getIntent()); // Pasar todos los datos originales
         startActivity(intent);
         finish(); // Finalizar esta actividad
+    }
+    private String obtenerEstadoPedido(int estado) {
+        switch (estado) {
+            case 0: return "Revisando pedido por el restaurante";
+            case 1: return "Recibido";
+            case 2: return "En preparación";
+            case 3: return "En camino";
+            case 4: return "Entregado";
+            case 5: return "Cancelado";
+            case 6: return "Rechazado";
+            case 8: return  "Entregado";
+            case 7:
+                return "En camino";
+            default: return "Desconocido";
+        }
     }
 }

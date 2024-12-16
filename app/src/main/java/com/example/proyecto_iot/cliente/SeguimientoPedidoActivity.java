@@ -4,6 +4,8 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Build;
 import android.util.Log;
@@ -15,6 +17,7 @@ import android.content.pm.PackageManager;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -29,13 +32,21 @@ import androidx.core.view.WindowInsetsCompat;
 import com.bumptech.glide.Glide;
 import com.example.proyecto_iot.R;
 import com.example.proyecto_iot.cliente.RecyclerView.Producto;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import java.util.ArrayList;
+import java.util.Map;
 
-public class SeguimientoPedidoActivity extends AppCompatActivity {
+public class SeguimientoPedidoActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     // Declaración de las variables para las vistas
     private ImageView qrIcon;
@@ -51,11 +62,17 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
 
     private final String CHANNEL_ID = "order_tracking_channel";
 
+    private GoogleMap myMap; //Para el mapa
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_seguimiento_pedido_cliente);
+
+        // Obtén el mapa
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
 
         // Crear canal de notificación
         createNotificationChannel();
@@ -507,5 +524,56 @@ public class SeguimientoPedidoActivity extends AppCompatActivity {
         }, 30000); // 30,000 ms = 30 segundos
     }
 
+    @Override
+    public void onMapReady(@NonNull GoogleMap googleMap) {
+        myMap = googleMap;
+
+        db.collection("pedidos").document(pedidoId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        String idRepartidor = documentSnapshot.getString("idRepartidor");
+
+                        if (idRepartidor != null && !idRepartidor.isEmpty()) {
+
+                            // Ahora consulta los datos del restaurante
+                            db.collection("repartidores").document(idRepartidor)
+                                    .get()
+                                    .addOnSuccessListener(repartidorSnapshot -> {
+                                        if (repartidorSnapshot.exists()) {
+                                            Map<String, Object> ubicacion = (Map<String, Object>) repartidorSnapshot.get("ubicacionRepartidor");
+
+                                            if (ubicacion != null) {
+                                                double lat = (double) ubicacion.get("lat");
+                                                double lng = (double) ubicacion.get("lng");
+
+                                                // Actualiza el marcador en el mapa
+                                                LatLng ubicacionRepartidor = new LatLng(lat, lng);
+                                                myMap.clear(); // Limpia marcadores anteriores
+
+                                                // Crea el marcador inicial si no existe
+                                                Bitmap original = BitmapFactory.decodeResource(getResources(), R.drawable.delivery_bike_map);
+                                                Bitmap resized = Bitmap.createScaledBitmap(original, 150, 150, false);
+
+                                                myMap.addMarker(new MarkerOptions()
+                                                        .position(ubicacionRepartidor)
+                                                        .title("Ubicación del repartidor")
+                                                        .icon(BitmapDescriptorFactory.fromBitmap(resized)));
+                                                myMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ubicacionRepartidor, 15));
+                                            }
+                                        }
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Toast.makeText(this, "Error al cargar los datos del restaurante", Toast.LENGTH_SHORT).show();
+                                    });
+                        }
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Error al cargar los datos del pedido", Toast.LENGTH_SHORT).show();
+                });
+
+
+    }
 
 }
